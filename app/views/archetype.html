@@ -1,0 +1,17 @@
+﻿<div class="archetypeEditor ng-class:model.config.customCssClass" ng-controller="Imulus.ArchetypeController">
+    <textarea class="archetypeDeveloperModel" ng-show="model.config.developerMode" ng-model="archetypeRenderModel"></textarea>
+    <ul ui-sortable="sortableOptions" ng-model="archetypeRenderModel.fieldsets">
+        <li ng-repeat="fieldset in archetypeRenderModel.fieldsets" ng-hide="fieldset.remove">
+            <fieldset>
+                <div class="archetypeEditorControls" ng-hide="model.config.hideControls || model.config.maxProperties == '1'">
+                    <i class="icon icon-add" ng-click="addRow($index)" ng-show="canAdd()"></i>
+                    <i class="icon icon-delete" ng-click="removeRow($index)" ng-show="canRemove()"></i>
+                    <i class="icon icon-navigation handle" ng-show="canSort()"></i>
+                </div>               
+                <div class="archetypeProperty" ng-repeat="property in fieldset.properties">
+                    <content-item content="property"></content-item>
+                </div>
+            </fieldset>
+        </li>
+    </ul>
+</div>

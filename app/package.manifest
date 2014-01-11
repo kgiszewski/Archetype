@@ -1,0 +1,92 @@
+﻿{
+    propertyEditors: [
+		{ 
+			alias: "Archetype",
+			name:  "Archetype",
+			editor: {
+				view: "~/App_Plugins/Archetype/views/archetype.html",
+				valueType: "JSON"
+			},
+			prevalues: {
+				fields: [			
+					{					
+						label: "Empty Fieldset Model",
+						description: "(Required) What would you like a new fieldset model to be?",
+						key: "emptyFieldsetModel",
+						view: "textarea",
+						validation: [
+							                       
+						]
+					},
+					{					
+						label: "Hide editor controls?",
+						description: "Hide the add/remove/sort controls",
+						key: "hideControls",
+						view: "boolean",
+						validation: [
+							                       
+						]
+					},
+					{					
+						label: "Default Model",
+						description: "(Optional) What would you the default model to be?  Otherwise the model will defer to the Empty Fieldset Model for new items.",
+						key: "defaultModel",
+						view: "textarea",
+						validation: [
+							                       
+						]
+					},
+					{					
+						label: "Max Fieldsets",
+						description: "(Optional) How many Fieldsets are allowed?  Entering '1' will disable the controls.  Default is unlimited.",
+						key: "maxProperties",
+						view: "number",
+						validation: [
+							                       
+						]
+					},
+					{					
+						label: "Custom Class",
+						description: "(Optional) Enter a custom CSS class.",
+						key: "customCssClass",
+						view: "textstring",
+						validation: [
+							                       
+						]
+					},
+					{					
+						label: "CSS File",
+						description: "(Optional) Enter a path for a custom CSS file to be included on the page.",
+						key: "customCssPath",
+						view: "textstring",
+						validation: [
+							                       
+						]
+					},
+					{					
+						label: "JS File",
+						description: "(Optional) Enter a path for a custom JS file to be included on the page.",
+						key: "customJsPath",
+						view: "textstring",
+						validation: [
+							                       
+						]
+					},
+					{					
+						label: "Developer Mode",
+						description: "Turn on for developer options.",
+						key: "developerMode",
+						view: "boolean",
+						validation: [
+							                       
+						]
+					}
+				]
+			}
+        }
+    ] 
+    ,
+    javascript: [
+		'~/App_Plugins/Archetype/js/archetype.js'
+    ]
+} 
