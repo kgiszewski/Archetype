@@ -18,7 +18,13 @@ module.exports = function(grunt) {
         options: {
           spawn: false,
         }
+      },
+
+      dev: {
+        files: ['app/**'],
+        tasks: ['deploy']
       }
+
     },
 
     jshint: {
@@ -34,9 +40,22 @@ module.exports = function(grunt) {
     copy: {
       main: {
        files: [
-        {expand: true, src: ['app/package.manifest'], dest: '<%= dest %>', flatten: true},
-        {expand: true, src: ['app/views/archetype.html'], dest: '<%= dest %>/views', flatten: true} 
+        {expand: true, cwd: 'app/', src: ['package.manifest'], dest: '<%= dest %>', flatten: true},
+        {expand: true, cwd: 'app/views/', src: ['archetype.html'], dest: '<%= dest %>/views', flatten: true} 
         ]
+      },
+      deploy: {
+        files: [
+          {expand: true, cwd: '<%= dest %>/', src: ['**'], dest: '<%= grunt.option("target") %>\\App_Plugins\\Imulus.Archetype', flatten: false},
+        ]
+      }
+
+    },
+
+    touch: {
+      options: {},
+      webconfig: {
+        src: ['D:\\dev\\projects\\imulus-neue\\src\\imulus.umbraco\\web.config']
       }
     },
 
@@ -57,8 +76,8 @@ module.exports = function(grunt) {
       },
       application: {
         src: [
-          'app/controllers/archetype_controller.js',
-          'app/directives/content_item.js'
+          'app/controllers/controller.js',
+          'app/directives/archetypeproperty.js'
         ],
         dest: '<%= dest %>/js/archetype.js'
       }
@@ -75,10 +94,12 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks('grunt-touch');
 
-  
+  grunt.registerTask('touchwebconfigifenabled', function() { if (grunt.option("touch")) grunt.task.run("touch:webconfig") });
+  grunt.registerTask('deploy', ['default', 'copy:deploy', 'touchwebconfigifenabled']);
   grunt.registerTask('css:build', ['less']);
   grunt.registerTask('js:build', ['concat']);
-  grunt.registerTask('default', ['clean', 'css:build', 'js:build', 'copy']);
+  grunt.registerTask('default', ['clean', 'css:build', 'js:build', 'copy:main']);
 };
 

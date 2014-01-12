@@ -12,4 +12,7 @@ Archetype
 
 
 ## Deploy ##
-Copy the files in `/dist/` to your Umbraco site, at `/App_Plugins/Archetype/` 
+    grunt deploy --target=C:\\path\\to\\umbraco\\site
+    grunt watch:dev --target=C:\\path\to\\umbraco\\site
+
+    * Add `--touch` to either command to automatically touch the web.config on a deploy
