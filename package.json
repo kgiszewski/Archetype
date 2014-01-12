@@ -12,6 +12,7 @@
     "grunt-contrib-jshint": "~0.7.2",
     "grunt-cli": "~0.1.11",
     "grunt-contrib-clean": "~0.5.0",
-    "grunt-nuget": "~0.1.1"
+    "grunt-nuget": "~0.1.1",
+    "grunt-template": "~0.2.2"
   }
 }

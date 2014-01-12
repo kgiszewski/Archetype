@@ -13,4 +13,5 @@ $RECYCLE.BIN/
 dist/
 node_modules/
 
-build/*.nupkg
+pkg/tmp/
+pkg/*.nupkg

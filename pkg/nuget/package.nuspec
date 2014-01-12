@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
         <metadata>
                 <id>Archetype</id>
-                <version>0.0.0.0</version>
+                <version><%= version %></version>
                 <title>Archetype</title>
                 <authors>imulus, tomfulton</authors>
                 <owners>imulus, tomfulton</owners>
@@ -13,6 +13,8 @@
                 <licenseUrl>http://www.opensource.org/licenses/mit-license.php</licenseUrl>
         </metadata>
         <files>
-                <file src="..\..\dist\**\*.*" target="content" /> 
+                <% for (var file in files) { %>
+                        <file src="<%- files[file].path %>" target="<%= files[file].target %>" /> 
+                <% } %>
         </files>
 </package>

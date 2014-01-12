@@ -2,6 +2,9 @@ module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     dest: 'dist',
+    version: '0.0.0',
+    package_dir: 'pkg',
+    package_temp_dir: '<%= package_dir %>/tmp/',
 
     watch: {
       less: {
@@ -37,6 +40,11 @@ module.exports = function(grunt) {
         {expand: true, src: ['app/package.manifest'], dest: '<%= dest %>', flatten: true},
         {expand: true, src: ['app/views/archetype.html'], dest: '<%= dest %>/views', flatten: true} 
         ]
+      },
+      nuget_prepare: {
+      	files: [
+      		{expand: true, cwd: '<%= dest %>/', src: ['**'], dest: '<%= package_temp_dir %>/nuget/content/', flatten: false},
+      	]
       }
     },
 
@@ -66,12 +74,29 @@ module.exports = function(grunt) {
 
     nugetpack: {
     	dist: {
-    		src: 'build/nuget/package.nuspec',
-    		dest: 'build'
+    		src: '<%= package_temp_dir %>/nuget/package.nuspec',
+    		dest: '<%= package_dir %>'
     	}
     },
 
-    clean: ['<%= dest %>']
+    template: {
+    	'nuget_manifest': {
+			'options': {
+    			'data': { 
+    				version: '<%= version %>',
+    				files: [{ path: '..\\..\\..\\<%= dest %>\\**', target: 'content\\App_Plugins\\Archetype'}]
+	    		}
+    		},
+    		'files': { 
+    			'<%= package_temp_dir %>/nuget/package.nuspec': ['<%= package_dir %>/nuget/package.nuspec']
+    		}
+    	}
+    },
+
+    clean: {
+  		build: ['<%= dest %>'],
+  		package_temp: ['<%= package_temp_dir %>']
+	}
 
   });
 
@@ -83,9 +108,10 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-nuget');
+  grunt.loadNpmTasks('grunt-template');
 
   
-  grunt.registerTask('package:nuget', ['default', ' nugetpack']);
+  grunt.registerTask('package:nuget', ['default', 'clean:package_temp', 'copy:nuget_prepare', 'template:nuget_manifest', 'nugetpack', 'clean:package_temp']);
   grunt.registerTask('css:build', ['less']);
   grunt.registerTask('js:build', ['concat']);
   grunt.registerTask('default', ['clean', 'css:build', 'js:build', 'copy']);
