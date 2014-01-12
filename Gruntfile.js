@@ -52,6 +52,13 @@ module.exports = function(grunt) {
 
     },
 
+    touch: {
+      options: {},
+      webconfig: {
+        src: ['D:\\dev\\projects\\imulus-neue\\src\\imulus.umbraco\\web.config']
+      }
+    },
+
     less: {
       build: {
         options: {
@@ -87,9 +94,10 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks('grunt-touch');
 
-
-  grunt.registerTask('deploy', ['default', 'copy:deploy']);
+  grunt.registerTask('touchwebconfigifenabled', function() { if (grunt.option("touch")) grunt.task.run("touch:webconfig") });
+  grunt.registerTask('deploy', ['default', 'copy:deploy', 'touchwebconfigifenabled']);
   grunt.registerTask('css:build', ['less']);
   grunt.registerTask('js:build', ['concat']);
   grunt.registerTask('default', ['clean', 'css:build', 'js:build', 'copy:main']);

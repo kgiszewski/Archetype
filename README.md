@@ -14,3 +14,5 @@ Archetype
 ## Deploy ##
     grunt deploy --target=C:\\path\\to\\umbraco\\site
     grunt watch:dev --target=C:\\path\to\\umbraco\\site
+
+    * Add `--touch` to either command to automatically touch the web.config on a deploy
