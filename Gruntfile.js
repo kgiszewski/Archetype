@@ -40,8 +40,8 @@ module.exports = function(grunt) {
     copy: {
       main: {
        files: [
-        {expand: true, src: ['app/package.manifest'], dest: '<%= dest %>', flatten: true},
-        {expand: true, src: ['app/views/archetype.html'], dest: '<%= dest %>/views', flatten: true} 
+        {expand: true, cwd: 'app/', src: ['package.manifest'], dest: '<%= dest %>', flatten: true},
+        {expand: true, cwd: 'app/views/', src: ['archetype.html'], dest: '<%= dest %>/views', flatten: true} 
         ]
       },
       deploy: {
