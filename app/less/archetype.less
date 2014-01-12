@@ -3,11 +3,18 @@
     padding: 5px;
     margin-bottom: 5px;
     background-color: #fff;
+    clear: both;
 }
 
 .archetypeEditor label{
     width: 75px;
     float: left;
+}
+
+.archetypeEditor fieldset>label{
+    float: left;
+    width: 200px;
+    padding-left: 0;
 }
 
 .archetypeEditor .multiPropertyTextbox{
@@ -24,6 +31,7 @@
 
 .archetypeEditor .archetypeProperty{
     clear: both;
+    overflow: hidden;
 }
 
 .archetypeEditor .umb-contentpicker{
@@ -37,4 +45,35 @@
     min-height: 100px;
     margin-bottom: 10px;
     border: 1px solid red;
+}
+
+.archetypeEditor .archetypeFieldsetToolbar {
+    margin-bottom: 10px;
+    overflow: hidden;
+}
+
+.archetypeEditor .archetypeFieldsetToolbar li {
+    float: left;
+    padding: 2px 4px;
+    margin-right: 10px;
+    border: 1px solid #ddd;
+    cursor: pointer;
+}
+
+.archetypeEditor .archetypeFieldsetHeaderText{
+    clear:both;
+    margin-bottom: 3px;
+    font-size: 12px;
+}
+
+.archetypeEditor .archetypeFieldsetFooterText{
+    clear:both;
+    margin-bottom: 3px;
+    font-size: 12px;
+}
+
+.archetypeEditor .archetypeFieldsetHelpText{
+    clear:both;
+    margin-bottom: 3px;
+    font-size: 12px;
 }
