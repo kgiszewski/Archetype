@@ -18,7 +18,13 @@ module.exports = function(grunt) {
         options: {
           spawn: false,
         }
+      },
+
+      dev: {
+        files: ['app/**'],
+        tasks: ['deploy']
       }
+
     },
 
     jshint: {
@@ -37,7 +43,13 @@ module.exports = function(grunt) {
         {expand: true, src: ['app/package.manifest'], dest: '<%= dest %>', flatten: true},
         {expand: true, src: ['app/views/archetype.html'], dest: '<%= dest %>/views', flatten: true} 
         ]
+      },
+      deploy: {
+        files: [
+          {expand: true, cwd: '<%= dest %>/', src: ['**'], dest: '<%= grunt.option("target") %>\\App_Plugins\\Archetype', flatten: false},
+        ]
       }
+
     },
 
     less: {
@@ -76,9 +88,10 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-jshint');
 
-  
+
+  grunt.registerTask('deploy', ['default', 'copy:deploy']);
   grunt.registerTask('css:build', ['less']);
   grunt.registerTask('js:build', ['concat']);
-  grunt.registerTask('default', ['clean', 'css:build', 'js:build', 'copy']);
+  grunt.registerTask('default', ['clean', 'css:build', 'js:build', 'copy:main']);
 };
 
