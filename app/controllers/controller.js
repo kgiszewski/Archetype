@@ -174,10 +174,10 @@
     //custom js
     if ($scope.model.config.customJsPath) {
         assetsService.loadJs($scope.model.config.customJsPath);
-    }
+    } 
 
     //archetype css
-    assetsService.loadCss("/App_Plugins/Imulus.Archetype/Archetype.css");
+    assetsService.loadCss("/App_Plugins/Imulus.Archetype/css/archetype.css");
 
     //custom css
     if($scope.model.config.customCssPath)

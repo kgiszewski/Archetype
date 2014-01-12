@@ -1,13 +1,13 @@
 ﻿<div class="archetypeEditor ng-class:model.config.customCssClass" ng-controller="Imulus.ArchetypeController">
     <textarea class="archetypeDeveloperModel" ng-show="model.config.developerMode" ng-model="archetypeRenderModel"></textarea>
     <div class="archetypeFieldsetToolbar" ng-show="model.config.fieldsetModels.length > 1 && model.config.hideFieldsetToolbar != '1'">
-        <ul>
+        <ul> 
             <li ng-repeat="fieldsetModel in model.config.fieldsetModels" ng-click="addRow(fieldsetModel.alias)">
                 <img ng-src='{{fieldsetModel.icon}}' title="{{fieldsetModel.tooltip}}" />
                 <span>{{fieldsetModel.label}}</span>
             </li>
         </ul>
-    </div>
+    </div> 
     <ul ui-sortable="sortableOptions" ng-model="archetypeRenderModel.fieldsets">
         <li ng-repeat="fieldset in archetypeRenderModel.fieldsets" ng-hide="fieldset.remove">
             <fieldset ng-class="fieldset.alias" ng-init="fieldsetConfigModel=getConfigFieldsetByAlias(fieldset.alias)">
