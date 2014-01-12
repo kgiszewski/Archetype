@@ -64,6 +64,13 @@ module.exports = function(grunt) {
       }
     },
 
+    nugetpack: {
+    	dist: {
+    		src: 'build/nuget/package.nuspec',
+    		dest: 'build'
+    	}
+    },
+
     clean: ['<%= dest %>']
 
   });
@@ -75,8 +82,10 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks('grunt-nuget');
 
   
+  grunt.registerTask('package:nuget', ['default', ' nugetpack']);
   grunt.registerTask('css:build', ['less']);
   grunt.registerTask('js:build', ['concat']);
   grunt.registerTask('default', ['clean', 'css:build', 'js:build', 'copy']);
