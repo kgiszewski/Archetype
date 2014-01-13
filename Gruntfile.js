@@ -8,7 +8,7 @@ module.exports = function(grunt) {
         files: ['app/less/*.less', 'lib/**/*.less'],
         tasks: ['less:build'],
         options: {
-          spawn: false,
+          spawn: false
         }
       },
 
@@ -16,15 +16,17 @@ module.exports = function(grunt) {
         files: ['app/**/*.js', 'lib/**/*.js'],
         tasks: ['concat', 'jshint'],
         options: {
-          spawn: false,
+          spawn: false
         }
       },
 
       dev: {
         files: ['app/**'],
-        tasks: ['deploy']
+        tasks: ['deploy'],
+        options: {
+          spawn: false
+        }
       }
-
     },
 
     jshint: {
@@ -33,29 +35,6 @@ module.exports = function(grunt) {
       },
       src: {
         src: ['app/**/*.js', 'lib/**/*.js']
-      }
-    },
-
-
-    copy: {
-      main: {
-       files: [
-        {expand: true, cwd: 'app/', src: ['package.manifest'], dest: '<%= dest %>', flatten: true},
-        {expand: true, cwd: 'app/views/', src: ['archetype.html'], dest: '<%= dest %>/views', flatten: true} 
-        ]
-      },
-      deploy: {
-        files: [
-          {expand: true, cwd: '<%= dest %>/', src: ['**'], dest: '<%= grunt.option("target") %>\\App_Plugins\\Imulus.Archetype', flatten: false},
-        ]
-      }
-
-    },
-
-    touch: {
-      options: {},
-      webconfig: {
-        src: ['D:\\dev\\projects\\imulus-neue\\src\\imulus.umbraco\\web.config']
       }
     },
 
@@ -83,6 +62,28 @@ module.exports = function(grunt) {
       }
     },
 
+    copy: {
+      build: {
+       files: [
+        {expand: true, cwd: 'app/', src: ['package.manifest'], dest: '<%= dest %>', flatten: true},
+        {expand: true, cwd: 'app/views/', src: ['archetype.html'], dest: '<%= dest %>/views', flatten: true} 
+        ]
+      },
+      deploy: {
+        files: [
+          {expand: true, cwd: '<%= dest %>/', src: ['**'], dest: '<%= grunt.option("target") %>\\App_Plugins\\Imulus.Archetype', flatten: false},
+        ]
+      }
+
+    },
+
+    touch: {
+      options: {},
+      webconfig: {
+        src: ['<%= grunt.option("target") %>\\Web.config']
+      }
+    },
+
     clean: ['<%= dest %>']
 
   });
@@ -100,6 +101,6 @@ module.exports = function(grunt) {
   grunt.registerTask('deploy', ['default', 'copy:deploy', 'touchwebconfigifenabled']);
   grunt.registerTask('css:build', ['less']);
   grunt.registerTask('js:build', ['concat']);
-  grunt.registerTask('default', ['clean', 'css:build', 'js:build', 'copy:main']);
+  grunt.registerTask('default', ['clean', 'css:build', 'js:build', 'copy:build']);
 };
 
