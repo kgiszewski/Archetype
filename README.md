@@ -210,3 +210,10 @@ The basis of compatibility is based on the following:
 - The model of the view must use `$scope.model.value` and the config must use `$scope.model.config`.
 
 All core properties have not been tested yet :)
+
+##Developer Notes##
+If you decide to extend this project locally, you'll want to set the `<compilation>` `debug` property in your `web.config` to `true`:
+
+    <compilation defaultLanguage="c#" debug="true" batch="false" targetFramework="4.5">
+
+This is in order to circumvent the minification and caching of the JavaScript files.
