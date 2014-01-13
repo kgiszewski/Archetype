@@ -1,5 +1,5 @@
 ﻿angular.module("umbraco").controller("Imulus.ArchetypeController", function ($scope, $http, assetsService) {
-
+ 
     //$scope.model.value = "";
 
     //set default value of the model
@@ -155,6 +155,8 @@
 
         for (var i in $scope.archetypeRenderModel.fieldsets) {
             if (!$scope.archetypeRenderModel.fieldsets[i].remove) {
+                //remove the 'remove' property as this is only for sorting/internal use
+                delete $scope.archetypeRenderModel.fieldsets[i].remove;
                 $scope.model.value.fieldsets.push($scope.archetypeRenderModel.fieldsets[i]);
             }
         }
