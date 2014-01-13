@@ -55,11 +55,10 @@ An example follows below:
             { //fieldset object
                 alias: "FS1", //fieldset alias (unique)
                 tooltip: "This is for fieldset 1", //used as a helper text
-                remove: false, //this may go away, but is used for internal fieldset removal
-                icon: "/umbraco/Images/aboutNew.png",  //what icon do you want to use?
-                label: "Fieldset 1",  //what should we call this?
-                headerText: "Please fill out the boxes.", //would you like any text to be prepended to the fieldset properties?
-                footerText: "Thanks!", //would you like any text to be appended to the fieldset properties?
+                icon: "/umbraco/Images/aboutNew.png",  //a custom icon
+                label: "Fieldset 1",  //the fieldset label
+                headerText: "Please fill out the boxes.", // text to be prepended to the fieldset properties?
+                footerText: "Thanks!", //text to be appended to the fieldset properties?
                 properties:[ //an array of property objects
                     { 
                         alias: "firstName", //uniquely name the property (unique to the fieldset)
@@ -106,7 +105,6 @@ An example follows below:
             { //another fieldset
                 alias: "FS2",
                 tooltip: "This is for fieldset 2",
-                remove: false, 
                 icon: "/umbraco/Images/about.png",
                 label: "Fieldset 2",
                 headerText: "Please fill out the boxes.",
@@ -145,7 +143,6 @@ Here is the spot to define a starting value.  This model uses only the essential
           "fieldsets": [
             {
               "alias": "FS2",
-              "remove": false,
               "properties": [
                 {
                   "alias": "bar",
@@ -159,7 +156,6 @@ Here is the spot to define a starting value.  This model uses only the essential
             },
             {
               "alias": "FS2",
-              "remove": false,
               "properties": [
                 {
                   "alias": "foo",
@@ -173,7 +169,6 @@ Here is the spot to define a starting value.  This model uses only the essential
             },
             {
               "alias": "FS1",
-              "remove": false,
               "properties": [
                 {
                   "alias": "age",
