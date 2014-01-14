@@ -116,4 +116,7 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
             }
         }
     }
+    
+    //archetype css
+    assetsService.loadCss("/App_Plugins/Imulus.Archetype/css/archetype.css");
 });
