@@ -1,30 +1,24 @@
 ﻿angular.module("umbraco").controller("Imulus.ArchetypeController", function ($scope, $http, assetsService) {
  
     //$scope.model.value = "";
-
     //set default value of the model
     //this works by checking to see if there is a model; then cascades to the default model then to an empty fieldset
 
-    //validate the user configs
-    $scope.model.config.defaultModel = getValidJson("$scope.model.config.defaultModel", $scope.model.config.defaultModel);
-    $scope.model.config.fieldsetModels = $scope.model.config.archetypeConfig;
+    $scope.model.config = $scope.model.config.archetypeConfig;
    
-    console.log($scope.model.config.archetypeConfig);
-
-    $scope.model.value = $scope.model.value || ($scope.model.config.defaultModel || { fieldsets: [getEmptyRenderItem($scope.model.config.fieldsetModels[0])] });
+    $scope.model.value = $scope.model.value || { fieldsets: [getEmptyRenderItem($scope.model.config.fieldsets[0])] };
 
     //ini
     $scope.archetypeRenderModel = {};
     initArchetypeRenderModel();
+    console.log($scope.archetypeRenderModel);
 
     /* add/remove/sort */
 
     //defines the options for the jquery sortable 
     //i used an ng-model="archetypeRenderModel" so the sort updates the right model
-    //configuration overrides the default
-    var configSortableOptions = getValidJson("$scope.model.config.sortableOptions", $scope.model.config.sortableOptions);
 
-    $scope.sortableOptions = configSortableOptions || {
+    $scope.sortableOptions = {
         axis: 'y',
         cursor: "move",
         handle: ".handle",
@@ -40,7 +34,7 @@
     $scope.addRow = function (fieldsetAlias, $index) {
         if ($scope.canAdd())
         {
-            if ($scope.model.config.fieldsetModels)
+            if ($scope.model.config.fieldsets)
             {
                 var newRenderItem = getEmptyRenderItem($scope.getConfigFieldsetByAlias(fieldsetAlias));
 
@@ -68,9 +62,9 @@
     //helpers for determining if a user can do something
     $scope.canAdd = function ()
     {
-        if ($scope.model.config.maxProperties)
+        if ($scope.model.config.maxFieldsets)
         {
-            return countVisible() < $scope.model.config.maxProperties;
+            return countVisible() < $scope.model.config.maxFieldsets;
         }
 
         return true;
@@ -91,14 +85,40 @@
     //helper, ini the render model from the server (model.value)
     function initArchetypeRenderModel() {
         $scope.archetypeRenderModel = $scope.model.value;
+        
+        for(var i in $scope.archetypeRenderModel.fieldsets)
+        {
+            $scope.archetypeRenderModel.fieldsets[i].remove = false;
+            $scope.archetypeRenderModel.fieldsets[i].collapse = true;
+        }
     }
 
     //helper to get the correct fieldset from config
     $scope.getConfigFieldsetByAlias = function(alias) {
-        for (var i in $scope.model.config.fieldsetModels) {
-            if ($scope.model.config.fieldsetModels[i].alias == alias) {
-                return $scope.model.config.fieldsetModels[i];
+        for (var i in $scope.model.config.fieldsets) {
+            if ($scope.model.config.fieldsets[i].alias == alias) {
+                return $scope.model.config.fieldsets[i];
             }
+        }
+    }
+    
+    //helper for collapsing
+    $scope.focusFieldset = function(fieldset){
+        var iniState;
+        
+        if(fieldset)
+        {
+            iniState = fieldset.collapse;
+        }
+    
+        for(var i in $scope.archetypeRenderModel.fieldsets)
+        {
+            $scope.archetypeRenderModel.fieldsets[i].collapse = true;
+        }
+        
+        if(iniState)
+        {
+            fieldset.collapse = !iniState;
         }
     }
 
@@ -157,9 +177,10 @@
 
         for (var i in $scope.archetypeRenderModel.fieldsets) {
             if (!$scope.archetypeRenderModel.fieldsets[i].remove) {
-                //remove the 'remove' property as this is only for sorting/internal use
-                delete $scope.archetypeRenderModel.fieldsets[i].remove;
-                $scope.model.value.fieldsets.push($scope.archetypeRenderModel.fieldsets[i]);
+                //clone
+                var tempFieldset = JSON.parse(JSON.stringify( $scope.archetypeRenderModel.fieldsets[i]));
+                delete tempFieldset.remove;
+                $scope.model.value.fieldsets.push(tempFieldset);
             }
         }
     }

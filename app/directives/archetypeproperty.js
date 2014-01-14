@@ -1,12 +1,12 @@
 ﻿angular.module("umbraco").directive('archetypeProperty', function ($compile, $http) {
     
-    function getFieldsetByAlias(fieldsetModels, alias)
+    function getFieldsetByAlias(fieldsets, alias)
     {
-        for (var i in fieldsetModels)
+        for (var i in fieldsets)
         {
-            if (fieldsetModels[i].alias == alias)
+            if (fieldsets[i].alias == alias)
             {
-                return fieldsetModels[i];
+                return fieldsets[i];
             }
         }
     }
@@ -23,7 +23,7 @@
 
     var linker = function (scope, element, attrs) {
          
-        var configFieldsetModel = getFieldsetByAlias(scope.archetypeConfig.fieldsetModels, scope.fieldset.alias);
+        var configFieldsetModel = getFieldsetByAlias(scope.archetypeConfig.fieldsets, scope.fieldset.alias);
 
         var view = configFieldsetModel.properties[scope.propertyConfigIndex].view;
         var label = configFieldsetModel.properties[scope.propertyConfigIndex].label;
