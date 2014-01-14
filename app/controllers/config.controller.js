@@ -1,13 +1,14 @@
 angular.module("umbraco").controller("Imulus.ArchetypeConfigController", function ($scope, $http, assetsService) {
     
     //$scope.model.value = "";
-    console.log($scope.model.value);
 
-    var defaultFieldsetConfigModel = eval("(" + newFieldsetModel + ")");
     var newPropertyModel = '{alias: "", remove: false, label: "", helpText: "", view: "", value: "", config: {}}';
     var newFieldsetModel = '{alias: "", remove: false, collapse: false, tooltip: "", icon: "", label: "", headerText: "", footerText: "", properties:[' + newPropertyModel + ']}';
+    var defaultFieldsetConfigModel = eval("({fieldsets: [" + newFieldsetModel + "]})");
     
     $scope.model.value = $scope.model.value || defaultFieldsetConfigModel;
+    
+    console.log($scope.model.value);
     
     initConfigRenderModel();
     
@@ -37,15 +38,19 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
             {
                 $scope.archetypeConfigRenderModel.fieldsets[i].collapse = true;
             }
+            else
+            {
+                $scope.archetypeConfigRenderModel.fieldsets[i].collapse = false;
+            }
         }
         
-        if(iniState && $scope.archetypeConfigRenderModel.fieldsets[i].label)
+        if(iniState)
         {
             fieldset.collapse = !iniState;
         }
     }
     
-    //helpers
+    //setup JSON.stringify helpers
     $scope.archetypeConfigRenderModel.toString = stringify;
     setConfigPropertyToString();
     
@@ -141,7 +146,8 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
     $scope.addFieldsetRow = function ($index, $event) {
         $scope.archetypeConfigRenderModel.fieldsets.splice($index + 1, 0, eval("(" + newFieldsetModel + ")"));
         $scope.focusFieldset();
-        $event.stopPropagation();
+        //$event.stopPropagation();
+        console.log($scope.archetypeConfigRenderModel);
     }
     
     //rather than splice the archetypeConfigRenderModel, we're hiding this and cleaning onFormSubmitting
@@ -175,7 +181,10 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
         for(var i in $scope.archetypeConfigRenderModel.fieldsets)
         {
             $scope.archetypeConfigRenderModel.fieldsets[i].remove = false;
-            $scope.archetypeConfigRenderModel.fieldsets[i].collapse = true;
+            if($scope.archetypeConfigRenderModel.fieldsets[i].label)
+            {
+                $scope.archetypeConfigRenderModel.fieldsets[i].collapse = true;
+            }
             
             for(var j in $scope.archetypeConfigRenderModel.fieldsets[i].properties)
             {
