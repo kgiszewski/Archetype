@@ -1,8 +1,11 @@
 angular.module("umbraco").controller("Imulus.ArchetypeConfigController", function ($scope, $http, assetsService) {
     
     //$scope.model.value = "";
+    console.log($scope.model.value);
 
-    var defaultFieldsetConfigModel = "";
+    var defaultFieldsetConfigModel = eval("(" + newFieldsetModel + ")");
+    var newPropertyModel = '{alias: "", remove: false, label: "", helpText: "", view: "", value: "", config: {}}';
+    var newFieldsetModel = '{alias: "", remove: false, tooltip: "", icon: "", label: "", headerText: "", footerText: "", properties:[' + newPropertyModel + ']}' + ")";
     
     $scope.model.value = $scope.model.value || defaultFieldsetConfigModel;
     
@@ -62,19 +65,31 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
     }, true);
     
     //helper that returns if an item can be removed
-    $scope.canRemove = function ()
+    $scope.canRemoveFieldset = function ()
     {   
-        return countVisible() > 1;
+        return countVisibleFieldset() > 1;
     }
 
     //helper that returns if an item can be sorted
-    $scope.canSort = function ()
+    $scope.canSortFieldset = function ()
     {
-        return countVisible() > 1;
+        return countVisibleFieldset() > 1;
+    }
+    
+    //helper that returns if an item can be removed
+    $scope.canRemoveProperty = function (fieldset)
+    {   
+        return countVisibleProperty(fieldset) > 1;
+    }
+
+    //helper that returns if an item can be sorted
+    $scope.canSortProperty = function (fieldset)
+    {
+        return countVisibleProperty(fieldset) > 1;
     }
     
     //helper to count what is visible
-    function countVisible()
+    function countVisibleFieldset()
     {
         var count = 0;
 
@@ -87,16 +102,64 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
         return count;
     }
     
+    function countVisibleProperty(fieldset)
+    {
+        var count = 0;
+
+        for (var i in fieldset.properties) {
+            if (fieldset.properties[i].remove == false) {
+                count++;
+            }
+        }
+
+        return count;
+    }
+   
+    
+    //handles a fieldset add
+    $scope.addFieldsetRow = function ($index) {
+        $scope.archetypeConfigRenderModel.fieldsets.splice($index + 1, 0, eval("(" + newFieldsetModel + ")"));
+    }
+    
+    //rather than splice the archetypeConfigRenderModel, we're hiding this and cleaning onFormSubmitting
+    $scope.removeFieldsetRow = function ($index) {
+        if ($scope.canRemoveFieldset()) {
+            if (confirm('Are you sure you want to remove this?')) {
+                $scope.archetypeConfigRenderModel.fieldsets[$index].remove = true;
+            }
+        }
+    }
+    
+    //handles a property add
+    $scope.addPropertyRow = function (fieldset, $index) {
+        fieldset.properties.splice($index + 1, 0, eval("(" + newPropertyModel + ")"));
+    }
+    
+    //rather than splice the archetypeConfigRenderModel, we're hiding this and cleaning onFormSubmitting
+    $scope.removePropertyRow = function (fieldset, $index) {
+        if ($scope.canRemoveProperty(fieldset)) {
+            if (confirm('Are you sure you want to remove this?')) {
+                fieldset.properties[$index].remove = true;
+            }
+        }
+    }
+    
     //helper to ini the render model
     function initConfigRenderModel()
     {
-        $scope.archetypeConfigRenderModel = {};
-        $scope.archetypeConfigRenderModel.fieldsets = [];
-        $scope.archetypeConfigRenderModel.fieldsets = $scope.model.value;
+        $scope.archetypeConfigRenderModel = $scope.model.value;
+        
+        //$scope.archetypeConfigRenderModel.fieldsets = [];
+        //$scope.archetypeConfigRenderModel.fieldsets = $scope.model.value;
         
         for(var i in $scope.archetypeConfigRenderModel.fieldsets)
         {
             $scope.archetypeConfigRenderModel.fieldsets[i].remove = false;
+            
+            for(var j in $scope.archetypeConfigRenderModel.fieldsets[i].properties)
+            {
+                $scope.archetypeConfigRenderModel.fieldsets[i].properties[j].remove = false;
+            }
         }
     }
     
@@ -108,13 +171,27 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
     //helper to sync the model to the renderModel
     function syncModelToRenderModel()
     {
-        $scope.model.value = [];
-
+        $scope.model.value = $scope.archetypeConfigRenderModel;
+        var fieldsets = [];
+        
         for (var i in $scope.archetypeConfigRenderModel.fieldsets) {
+            //check fieldsets
             if (!$scope.archetypeConfigRenderModel.fieldsets[i].remove) {
-                $scope.model.value.push($scope.archetypeConfigRenderModel.fieldsets[i]);
+                fieldsets.push($scope.archetypeConfigRenderModel.fieldsets[i]);
+                
+                //check properties
+                var properties = [];
+                for (var j in $scope.archetypeConfigRenderModel.fieldsets[i].properties)
+                {
+                    if (!$scope.archetypeConfigRenderModel.fieldsets[i].properties[j].remove) {
+                        properties.push($scope.archetypeConfigRenderModel.fieldsets[i].properties[j]);
+                    }
+                }
+                $scope.archetypeConfigRenderModel.fieldsets[i].properties = properties;
             }
         }
+        
+        $scope.model.value.fieldsets = fieldsets;
     }
     
     //archetype css
