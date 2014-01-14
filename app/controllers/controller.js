@@ -7,7 +7,9 @@
 
     //validate the user configs
     $scope.model.config.defaultModel = getValidJson("$scope.model.config.defaultModel", $scope.model.config.defaultModel);
-    $scope.model.config.fieldsetModels = getValidJson("$scope.model.config.fieldsetModels", $scope.model.config.fieldsetModels);
+    $scope.model.config.fieldsetModels = $scope.model.config.archetypeConfig;
+   
+    console.log($scope.model.config.archetypeConfig);
 
     $scope.model.value = $scope.model.value || ($scope.model.config.defaultModel || { fieldsets: [getEmptyRenderItem($scope.model.config.fieldsetModels[0])] });
 
@@ -126,7 +128,7 @@
     //watch for changes
     $scope.$watch('archetypeRenderModel', function (v) {
         if ($scope.model.config.developerMode) {
-            //console.log(v);
+            console.log(v);
             if (typeof v === 'string') {
                 $scope.archetypeRenderModel = JSON.parse(v);
                 $scope.archetypeRenderModel.toString = stringify;

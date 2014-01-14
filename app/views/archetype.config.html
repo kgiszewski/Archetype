@@ -1,0 +1,59 @@
+<div class="archetypeConfig" ng-controller="Imulus.ArchetypeConfigController">
+    <ul ui-sortable="sortableOptions" ng-model="archetypeConfigRenderModel.fieldsets">
+        <li ng-repeat="fieldset in archetypeConfigRenderModel.fieldsets">
+            <div class="archetypeFieldsetWrapper" >
+                <div>
+                    <label>Label</label><input type="text" ng-model="fieldset.label" />
+                </div>
+                <div>
+                    <label>Alias</label><input type="text" ng-model="fieldset.alias" />
+                </div>
+                <div>
+                    <label>Tooltip</label><input type="text" ng-model="fieldset.tooltip" />
+                </div>
+                <div>
+                    <label>Icon</label><input type="text" ng-model="fieldset.icon" />
+                </div>
+                <div>
+                    <label>Header Text</label><input type="text" ng-model="fieldset.headerText" />
+                </div>
+                <div>
+                    <label>Footer Text</label><input type="text" ng-model="fieldset.footerText" />
+                </div>
+                
+                <div class="archetypeEditorControls">
+                    <i class="icon icon-add" ng-click="addRow(fieldset.alias, $index)"></i>
+                    <i class="icon icon-delete" ng-click="removeRow($index)" ng-show="canRemove()"></i>
+                    <i class="icon icon-navigation handle" ng-show="canSort()"></i>
+                </div> 
+                <div class=archetypePropertyWrapper">
+                    <ul>
+                        <li ng-repeat="property in fieldset.properties">
+                            <div>
+                                 <label>Label</label><input type="text" ng-model="property.label" />
+                            </div>
+                            <div>
+                                 <label>Alias</label><input type="text" ng-model="property.alias" />
+                            </div>
+                            <div>
+                                 <label>Help Text</label><input type="text" ng-model="property.helpText" />
+                            </div>
+                            <div>
+                                 <label>View</label><input type="text" ng-model="property.view" />
+                            </div>                            
+                            <div>
+                                 <label>Default Value</label><input type="text" ng-model="property.value" />
+                            </div>
+                            <div>
+                                 <label>Config</label><textarea ng-model="property.config" /></textarea>
+                            </div>
+                            
+                             
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </li>
+    </ul>
+    <textarea class="archetypeDeveloperModel" ng-model="archetypeConfigRenderModel"></textarea>
+</div>

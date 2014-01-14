@@ -1,14 +1,25 @@
 ﻿{
-    propertyEditors: [
+    propertyEditors: [    
 		{ 
 			alias: "Imulus.Archetype",
 			name:  "Imulus Archetype",
 			editor: {
 				view: "~/App_Plugins/Imulus.Archetype/views/archetype.html",
 				valueType: "JSON"
-			},
+			}, 
 			prevalues: {
-				fields: [			
+				fields: [	
+                    {					
+						label: "Config",
+						description: "(Required) Define the fieldset models.",
+						key: "archetypeConfig",
+						view: "/App_Plugins/Imulus.Archetype/views/archetype.config.html",
+						validation: [
+			 				{
+								type: "Required"         
+							}   
+						]
+					},                
 					{					
 						label: "Empty Fieldset Models",
 						description: "(Required) Define your fieldset models?",
