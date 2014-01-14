@@ -11,20 +11,9 @@
 				fields: [	
                     {					
 						label: "Config",
-						description: "(Required) Define the fieldset models.",
+						description: "(Required) Describe your Archetype.",
 						key: "archetypeConfig",
 						view: "/App_Plugins/Imulus.Archetype/views/archetype.config.html",
-						validation: [
-			 				{
-								type: "Required"         
-							}   
-						]
-					},                
-					{					
-						label: "Empty Fieldset Models",
-						description: "(Required) Define your fieldset models?",
-						key: "fieldsetModels",
-						view: "textarea",
 						validation: [
 			 				{
 								type: "Required"         
