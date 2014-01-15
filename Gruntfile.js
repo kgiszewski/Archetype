@@ -73,14 +73,34 @@ module.exports = function(grunt) {
         files: [
           {expand: true, cwd: '<%= dest %>/', src: ['**'], dest: '<%= grunt.option("target") %>\\App_Plugins\\Imulus.Archetype', flatten: false},
         ]
+      },
+      umbracopackage: {
+        files: [
+          {expand: true, cwd: '<%= dest %>/', src: ['**'], dest: 'pkg/tmp/umbraco/App_Plugins/Archetype', flatten: false},
+        ]
       }
-
     },
 
     touch: {
       options: {},
       webconfig: {
         src: ['<%= grunt.option("target") %>\\Web.config']
+      }
+    },
+
+    umbracoPackage: {
+      options: {
+        packageName: "WAT",
+        packageVersion: '1.0',
+        packageLicenseName: 'MIT',
+        packageLicenseUrl: '#',
+        packageUrl: 'http://imulus.com',
+        authorName: 'Imulus',
+        authorUrl: '#',
+        manifest: 'pkg/umbraco/package.xml',
+        readme: 'pkg/umbraco/readme.txt',
+        sourceDir: 'pkg/tmp/umbraco',
+        outputDir: 'pkg',
       }
     },
 
@@ -96,9 +116,12 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-touch');
+  grunt.loadTasks('tasks');
+
 
   grunt.registerTask('touchwebconfigifenabled', function() { if (grunt.option("touch")) grunt.task.run("touch:webconfig") });
   grunt.registerTask('deploy', ['default', 'copy:deploy', 'touchwebconfigifenabled']);
+  grunt.registerTask('package:umbraco', ['copy:umbracopackage', 'umbracoPackage']);
   grunt.registerTask('css:build', ['less']);
   grunt.registerTask('js:build', ['concat']);
   grunt.registerTask('default', ['clean', 'css:build', 'js:build', 'copy:build']);

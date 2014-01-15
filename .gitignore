@@ -12,3 +12,4 @@ $RECYCLE.BIN/
 
 dist/
 node_modules/
+pkg/
