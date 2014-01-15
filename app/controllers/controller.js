@@ -1,8 +1,10 @@
-﻿angular.module("umbraco").controller("Imulus.ArchetypeController", function ($scope, $http, $interpolate, assetsService) {
+﻿angular.module("umbraco").controller("Imulus.ArchetypeController", function ($scope, $http, $interpolate, assetsService, angularHelper, notificationsService) {
  
     //$scope.model.value = "";
     //set default value of the model
     //this works by checking to see if there is a model; then cascades to the default model then to an empty fieldset
+
+    var form = angularHelper.getCurrentForm($scope);
 
     $scope.model.config = $scope.model.config.archetypeConfig;
    
@@ -210,9 +212,72 @@
         return eval("({ alias: '" + fieldsetModel.alias + "', remove: false, properties: []})");
     }
 
+    Array.prototype.hasValue = function(value) {
+      var i;
+      for (i=0; i<this.length; i++) { if (this[i] === value) return true; }
+      return false;
+    }
+
+    //helper for validation
+    function getValidation()
+    {
+        var validation = {}
+        validation.isValid = false;
+        validation.requiredAliases = [];
+
+        //determine which fields are required
+        for(var i in $scope.model.config.fieldsets)
+        {
+            for(var j in $scope.model.config.fieldsets[i].properties)
+            {
+                if($scope.model.config.fieldsets[i].properties[j].required)
+                {
+                    validation.requiredAliases.push($scope.model.config.fieldsets[i].properties[j].alias);
+                    validation.requiredLabels.push($scope.model.config.fieldsets[i].properties[j].label);
+                }
+            }
+        }
+
+        //if nothing required; let's go
+        if(validation.requiredAliases.length == 0)
+        {
+            validation.isValid = true;
+            return validation;
+        }
+
+        //otherwise we need to check the required aliases
+        for(var i in $scope.archetypeRenderModel.fieldsets)
+        {
+            for(var j in $scope.archetypeRenderModel.fieldsets[i].properties)
+            {
+                if(validation.requiredAliases.hasValue($scope.archetypeRenderModel.fieldsets[i].properties[j].alias))
+                {
+                    console.log("checking: " + i + " " + j + " " + $scope.archetypeRenderModel.fieldsets[i].properties[j].alias)
+                    var value = $scope.archetypeRenderModel.fieldsets[i].properties[j].value;
+                    //TODO: do the value test and highlight the fieldset/property
+                    console.log(value);
+                }
+            }
+        }
+
+        console.log(validation);
+        return validation;
+    }
+
     //sync things up on save
     $scope.$on("formSubmitting", function (ev, args) {
-        syncModelToRenderModel();
+        
+        var validation = getValidation();
+
+        if(!validation.isValid)
+        {
+            notificationsService.warning("Cannot Save Document", "The document could not be saved because of missing required fields.")
+            form.$setValidity("archetypeError", false);
+        }
+        else 
+        {
+            syncModelToRenderModel();
+        }
     });
 
     //custom js
