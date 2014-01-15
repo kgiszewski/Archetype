@@ -48,7 +48,7 @@
                                      <label>Help Text</label><input type="text" ng-model="property.helpText" />
                                 </div>
                                 <div>
-                                     <label>View</label><input type="text" ng-model="property.view" />
+                                     <label>View</label><select ng-model="property.view" ng-options="view.path as view.name for view in availableViews"></select>
                                 </div>                            
                                 <div>
                                      <label>Default Value</label><input type="text" ng-model="property.value" />

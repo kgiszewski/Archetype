@@ -57,7 +57,8 @@ module.exports = function(grunt) {
         src: [
           'app/controllers/controller.js',
           'app/controllers/config.controller.js',
-          'app/directives/archetypeproperty.js'
+          'app/directives/archetypeproperty.js',
+          'app/services/propertyeditor.js'
         ],
         dest: '<%= dest %>/js/archetype.js'
       }
@@ -67,6 +68,7 @@ module.exports = function(grunt) {
       build: {
        files: [
         {expand: true, cwd: 'app/', src: ['package.manifest'], dest: '<%= dest %>', flatten: true},
+        {expand: true, cwd: 'app/data', src: ['views.js'], dest: '<%= dest %>/js', flatten: true},
         {expand: true, cwd: 'app/views/', src: ['archetype.html', 'archetype.config.html'], dest: '<%= dest %>/views', flatten: true} 
         ]
       },

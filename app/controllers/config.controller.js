@@ -1,6 +1,7 @@
-angular.module("umbraco").controller("Imulus.ArchetypeConfigController", function ($scope, $http, assetsService) {
+angular.module("umbraco").controller("Imulus.ArchetypeConfigController", function ($scope, $http, assetsService, propertyEditorService) {
     
     //$scope.model.value = "";
+    //console.log($scope.model.value); 
 
     var newPropertyModel = '{alias: "", remove: false, label: "", helpText: "", view: "", value: "", config: {}}';
     var newFieldsetModel = '{alias: "", remove: false, collapse: false, labelExpression: "archetypeRenderModel.fieldsets[$fieldsetIndex].properties[0].value", tooltip: "", icon: "", label: "", headerText: "", footerText: "", properties:[' + newPropertyModel + ']}';
@@ -9,7 +10,11 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
     $scope.model.value = $scope.model.value || defaultFieldsetConfigModel;
     
     initConfigRenderModel();
-    
+
+    propertyEditorService.getViews().then(function(data){
+        $scope.availableViews = data;
+    });
+      
     $scope.sortableOptions = {
         axis: 'y',
         cursor: "move",
