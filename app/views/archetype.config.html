@@ -8,23 +8,26 @@
                     <i class="icon icon-navigation handle" ng-show="canSortFieldset()"></i>
                 </div> 
                 <div class="archetypeFieldsetTitle" ng-click="focusFieldset(fieldset)">{{fieldset.label}}</div>
-                <div class="arechetypeCollapser" ng-hide="fieldset.collapse && fieldset.label">
-                    <div>
+                <div class="archetypeCollapser" ng-hide="fieldset.collapse && fieldset.label">
+                    <div class="archetypeFieldsetOption">
                         <label>Label</label><input type="text" ng-model="fieldset.label" />
                     </div>
-                    <div>
+                    <div class="archetypeFieldsetOption">
                         <label>Alias</label><input type="text" ng-model="fieldset.alias" />
                     </div>
-                    <div>
+                    <div class="archetypeFieldsetOption">
+                        <label>Label Expr.</label><input type="text" ng-model="fieldset.labelExpression" />
+                    </div>
+                    <div class="archetypeFieldsetOption">
                         <label>Tooltip</label><input type="text" ng-model="fieldset.tooltip" />
                     </div>
-                    <div>
+                    <div class="archetypeFieldsetOption">
                         <label>Icon</label><input type="text" ng-model="fieldset.icon" />
                     </div>
-                    <div>
+                    <div class="archetypeFieldsetOption">
                         <label>Header Text</label><input type="text" ng-model="fieldset.headerText" />
                     </div>
-                    <div>
+                    <div class="archetypeFieldsetOption">
                         <label>Footer Text</label><input type="text" ng-model="fieldset.footerText" />
                     </div>
                     <div class="archetypePropertiesWrapper">

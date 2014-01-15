@@ -1,4 +1,4 @@
-﻿angular.module("umbraco").controller("Imulus.ArchetypeController", function ($scope, $http, assetsService) {
+﻿angular.module("umbraco").controller("Imulus.ArchetypeController", function ($scope, $http, $interpolate, assetsService) {
  
     //$scope.model.value = "";
     //set default value of the model
@@ -11,7 +11,14 @@
     //ini
     $scope.archetypeRenderModel = {};
     initArchetypeRenderModel();
-    console.log($scope.archetypeRenderModel);
+    
+    //helper to get $eval the labelExpression
+    $scope.getFieldsetTitle = function(expression, fieldsetIndex)
+    {
+        if(!expression) return "";
+        
+        return expression.replace(/\$fieldsetIndex/g, fieldsetIndex);
+    }
 
     /* add/remove/sort */
 
