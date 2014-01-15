@@ -37,6 +37,12 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
     
         for(var i in $scope.archetypeConfigRenderModel.fieldsets)
         {
+            if($scope.archetypeConfigRenderModel.fieldsets.length == 1 && $scope.archetypeConfigRenderModel.fieldsets[i].remove == false)
+            {
+                $scope.archetypeConfigRenderModel.fieldsets[i].collapse = false;
+                return;
+            }
+
             if($scope.archetypeConfigRenderModel.fieldsets[i].label)
             {
                 $scope.archetypeConfigRenderModel.fieldsets[i].collapse = true;
@@ -52,6 +58,8 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
             fieldset.collapse = !iniState;
         }
     }
+    //ini
+    $scope.focusFieldset();
 
     $scope.focusProperty = function(properties, property){
         var iniState;
