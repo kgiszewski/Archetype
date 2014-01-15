@@ -43,17 +43,19 @@
         {
             if ($scope.model.config.fieldsets)
             {
-                var newRenderItem = getEmptyRenderItem($scope.getConfigFieldsetByAlias(fieldsetAlias));
+                var newFieldset = getEmptyRenderItem($scope.getConfigFieldsetByAlias(fieldsetAlias));
 
                 if (typeof $index != 'undefined')
                 {
-                    $scope.archetypeRenderModel.fieldsets.splice($index + 1, 0, newRenderItem);
+                    $scope.archetypeRenderModel.fieldsets.splice($index + 1, 0, newFieldset);
                 }
                 else
                 {
-                    $scope.archetypeRenderModel.fieldsets.push(newRenderItem);
+                    $scope.archetypeRenderModel.fieldsets.push(newFieldset);
                 }
             }
+            newFieldset.collapse = true;
+            $scope.focusFieldset(newFieldset);
         }
     }
 
@@ -111,6 +113,7 @@
     
     //helper for collapsing
     $scope.focusFieldset = function(fieldset){
+        
         var iniState;
         
         if(fieldset)
@@ -120,6 +123,12 @@
     
         for(var i in $scope.archetypeRenderModel.fieldsets)
         {
+            if($scope.archetypeRenderModel.fieldsets.length == 1 && $scope.archetypeRenderModel.fieldsets[i].remove == false)
+            {
+                $scope.archetypeRenderModel.fieldsets[i].collapse = false;
+                return;
+            }
+        
             $scope.archetypeRenderModel.fieldsets[i].collapse = true;
         }
         
@@ -128,6 +137,9 @@
             fieldset.collapse = !iniState;
         }
     }
+    
+    //ini
+    $scope.focusFieldset();
 
     //helper returns valid JS or null
     function getValidJson(variable, json)
