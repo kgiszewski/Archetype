@@ -8,7 +8,7 @@
                     <i class="icon icon-navigation handle" ng-show="canSortFieldset()"></i>
                 </div> 
                 <div class="archetypeFieldsetTitle" ng-click="focusFieldset(fieldset)">{{fieldset.label}}</div>
-                <div class="archetypeCollapser" ng-hide="fieldset.collapse && fieldset.label">
+                <div class="archetypeFieldsetCollapser" ng-hide="fieldset.collapse && fieldset.label">
                     <div class="archetypeFieldsetOption">
                         <label>Label</label><input type="text" ng-model="fieldset.label" />
                     </div>
@@ -30,31 +30,37 @@
                     <div class="archetypeFieldsetOption">
                         <label>Footer Text</label><input type="text" ng-model="fieldset.footerText" />
                     </div>
+                    <div class="archetypeFieldsetOption">
+                        <label>Properties</label>
+                    </div>
                     <div class="archetypePropertiesWrapper">
                         <ul ui-sortable="sortableOptions" ng-model="fieldset.properties">
-                            <li ng-repeat="property in fieldset.properties" ng-hide="property.remove">
+                            <li ng-repeat="property in fieldset.properties" ng-hide="property.remove">                              
                                 <div class="archetypeEditorControls">
                                     <i class="icon icon-add" ng-click="addPropertyRow(fieldset, $index)"></i>
                                     <i class="icon icon-delete" ng-click="removePropertyRow(fieldset, $index)" ng-show="canRemoveProperty(fieldset)"></i>
                                     <i class="icon icon-navigation handle" ng-show="canSortProperty(fieldset)"></i>
-                                </div> 
-                                <div>
-                                     <label>Label</label><input type="text" ng-model="property.label" />
                                 </div>
-                                <div>
-                                     <label>Alias</label><input type="text" ng-model="property.alias" />
-                                </div>
-                                <div>
-                                     <label>Help Text</label><input type="text" ng-model="property.helpText" />
-                                </div>
-                                <div>
-                                     <label>View</label><select ng-model="property.view" ng-options="view.path as view.name for view in availableViews"></select>
-                                </div>                            
-                                <div>
-                                     <label>Default Value</label><input type="text" ng-model="property.value" />
-                                </div>
-                                <div>
-                                     <label>Config</label><textarea ng-model="property.config" /></textarea>
+                                <div class="archetypePropertyTitle" ng-click="focusProperty(fieldset.properties, property)">{{property.label}}</div>
+                                <div class="archetypePropertyCollapser" ng-hide="property.collapse && property.label">
+                                    <div>
+                                         <label>Label</label><input type="text" ng-model="property.label" />
+                                    </div>
+                                    <div>
+                                         <label>Alias</label><input type="text" ng-model="property.alias" />
+                                    </div>
+                                    <div>
+                                         <label>Help Text</label><input type="text" ng-model="property.helpText" />
+                                    </div>
+                                    <div>
+                                         <label>View</label><select ng-model="property.view" ng-options="view.path as view.name for view in availableViews"></select>
+                                    </div>                            
+                                    <div ng-hide="true">
+                                         <label>Default Value</label><input type="text" ng-model="property.value" />
+                                    </div>
+                                    <div>
+                                         <label>Config</label><textarea ng-model="property.config" /></textarea>
+                                    </div>
                                 </div>
                             </li>
                         </ul>

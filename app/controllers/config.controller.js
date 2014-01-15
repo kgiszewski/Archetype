@@ -3,7 +3,7 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
     //$scope.model.value = "";
     //console.log($scope.model.value); 
 
-    var newPropertyModel = '{alias: "", remove: false, label: "", helpText: "", view: "", value: "", config: {}}';
+    var newPropertyModel = '{alias: "", remove: false, collapse: false, label: "", helpText: "", view: "", value: "", config: {}}';
     var newFieldsetModel = '{alias: "", remove: false, collapse: false, labelExpression: "archetypeRenderModel.fieldsets[$fieldsetIndex].properties[0].value", tooltip: "", icon: "", label: "", headerText: "", footerText: "", properties:[' + newPropertyModel + ']}';
     var defaultFieldsetConfigModel = eval("({showAdvancedOptions: false, hideFieldsetToolbar: false, hideFieldsetControls: false, hideFieldsetLabels: false, hidePropertyLabel: false, maxFieldsets:1, fieldsets: [" + newFieldsetModel + "]})");
     
@@ -50,6 +50,32 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
         if(iniState)
         {
             fieldset.collapse = !iniState;
+        }
+    }
+
+    $scope.focusProperty = function(properties, property){
+        var iniState;
+        
+        if(property)
+        {
+            iniState = property.collapse;
+        }
+    
+        for(var i in properties)
+        {
+            if(properties[i].label)
+            {
+                properties[i].collapse = true;
+            }
+            else
+            {
+                properties[i].collapse = false;
+            }
+        }
+        
+        if(iniState)
+        {
+            property.collapse = !iniState;
         }
     }
     

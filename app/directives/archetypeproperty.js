@@ -30,6 +30,14 @@
         var config = configFieldsetModel.properties[scope.propertyConfigIndex].config;
         var alias = configFieldsetModel.properties[scope.propertyConfigIndex].alias;
         
+        /*
+        console.log(config);
+        if(typeof config == 'string'){
+            config = eval(config);
+        }
+        angular.isObject(config);
+        */
+
         if (view)
         {
             $http.get(view).success(function (data) {
