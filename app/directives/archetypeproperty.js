@@ -29,14 +29,47 @@
         var label = configFieldsetModel.properties[scope.propertyConfigIndex].label;
         var config = configFieldsetModel.properties[scope.propertyConfigIndex].config;
         var alias = configFieldsetModel.properties[scope.propertyConfigIndex].alias;
+        var defaultValue = configFieldsetModel.properties[scope.propertyConfigIndex].value;
         
-        /*
-        console.log(config);
+        //try to convert the config to a JS object
         if(typeof config == 'string'){
-            config = eval(config);
+            try{
+                if(scope.archetypeConfig.developerMode == '1'){
+                    console.log("Trying to eval config: " + config); 
+                }
+                config = eval("(" + config + ")");
+            }
+            catch(exception)
+            {
+                if(scope.archetypeConfig.developerMode == '1'){
+                    console.log("Failed to eval config."); 
+                }
+            }
         }
-        angular.isObject(config);
-        */
+
+        if(scope.archetypeConfig.developerMode == '1'){
+            console.log("Config post-eval: " + config); 
+        }
+
+        //try to convert the defaultValue to a JS object
+        if(typeof defaultValue == 'string'){
+            try{
+                if(scope.archetypeConfig.developerMode == '1'){
+                    console.log("Trying to eval default value: " + defaultValue); 
+                }
+                defaultValue = eval("(" + defaultValue + ")");
+            }
+            catch(exception)
+            {
+                if(scope.archetypeConfig.developerMode == '1'){
+                    console.log("Failed to eval defaultValue."); 
+                }
+            }
+        }
+
+        if(scope.archetypeConfig.developerMode == '1'){
+            console.log("Default value post-eval: " + defaultValue); 
+        }
 
         if (view)
         {
@@ -58,7 +91,7 @@
 
                     if (!renderModelPropertyIndex)
                     {
-                        scope.archetypeRenderModel.fieldsets[scope.fieldsetIndex].properties.push(eval("({alias: '" + alias + "', value:''})"));
+                        scope.archetypeRenderModel.fieldsets[scope.fieldsetIndex].properties.push(eval("({alias: '" + alias + "', value:'" + defaultValue + "'})"));
                         renderModelPropertyIndex = getPropertyIdByAlias(scope.archetypeRenderModel.fieldsets[scope.fieldsetIndex].properties, alias);
                     }
                     scope.model.value = scope.archetypeRenderModel.fieldsets[scope.fieldsetIndex].properties[renderModelPropertyIndex].value;

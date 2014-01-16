@@ -88,20 +88,10 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
     
     //setup JSON.stringify helpers
     $scope.archetypeConfigRenderModel.toString = stringify;
-    setConfigPropertyToString();
     
     //encapsulate stringify (should be built into browsers, not sure of IE support)
     function stringify() {
         return JSON.stringify(this);
-    }
-    
-    function setConfigPropertyToString()
-    {
-        _.each($scope.archetypeConfigRenderModel.fieldsets, function(fieldset){
-            _.each(fieldset.properties, function(property){
-                property.config.toString = stringify;
-            });
-        });
     }
     
     //watch for changes
@@ -111,17 +101,6 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
             $scope.archetypeConfigRenderModel = JSON.parse(v);
             $scope.archetypeConfigRenderModel.toString = stringify;
         }
-
-        //add stringify back in
-        _.each($scope.archetypeConfigRenderModel.fieldsets, function(fieldset){
-            _.each(fieldset.properties, function(property){
-                if(typeof property.config === 'string')
-                {
-                    property.config = JSON.parse($scope.archetypeConfigRenderModel.fieldsets[i].properties[j].config);
-                    property.config.toString = stringify;
-                }
-            });
-        });
     }, true);
     
     //helper that returns if an item can be removed
