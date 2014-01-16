@@ -12,52 +12,6 @@ using Archetype.Umbraco.Extensions;
 namespace Archetype.Umbraco.PropertyConverters
 {
     /* based on the Tim Geyssens sample at:  https://github.com/TimGeyssens/MatrixPropEditor/blob/master/SamplePropertyValueConverter/SamplePropertyValueConverter/MatrixValueConverter.cs */
-
-    /* sample model
-     * 
-     * {
-  "fieldsets": [
-    {
-      "alias": "FS1",
-      "remove": false,
-      "properties": [
-        {
-          "alias": "age",
-          "value": "abc"
-        },
-        {
-          "alias": "name",
-          "value": "123"
-        },
-        {
-          "alias": "blah",
-          "value": ""
-        },
-        {
-          "alias": "age2",
-          "value": ""
-        }
-      ]
-    },
-    {
-      "alias": "FS2",
-      "remove": false,
-      "properties": [
-        {
-          "alias": "foo",
-          "value": ""
-        },
-        {
-          "alias": "bar",
-          "value": ""
-        }
-      ]
-    }
-  ]
-}
-     * 
-     */
-
     [PropertyValueType(typeof(Archetype.Umbraco.Models.Archetype))]
     [PropertyValueCache(PropertyCacheValue.All, PropertyCacheLevel.Content)]
     public class ArchetypeValueConverter : PropertyValueConverterBase
