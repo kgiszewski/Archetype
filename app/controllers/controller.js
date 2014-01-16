@@ -240,14 +240,13 @@
     {
         var validation = {}
         validation.isValid = true;
-        validation.requiredAliases = [];
         validation.invalidProperties = [];
 
         //determine which fields are required
         _.each($scope.model.config.fieldsets, function(fieldset){
             validation.requiredAliases = _.find(fieldset.properties, function(property){
                 return property.required;
-            });
+            }) || [];
         });
 
         //if nothing required; let's go
