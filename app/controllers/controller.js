@@ -198,10 +198,14 @@
         $scope.model.value = { fieldsets: [] };
 
         for (var i in $scope.archetypeRenderModel.fieldsets) {
-            if (!$scope.archetypeRenderModel.fieldsets[i].remove) {
+            var fieldset = $scope.archetypeRenderModel.fieldsets[i];
+
+            if (typeof fieldset != 'function' && !fieldset.remove){
+                console.log($scope.archetypeRenderModel.fieldsets[i]);
                 //clone
-                var tempFieldset = JSON.parse(JSON.stringify( $scope.archetypeRenderModel.fieldsets[i]));
+                var tempFieldset = JSON.parse(JSON.stringify(fieldset));
                 delete tempFieldset.remove;
+                delete tempFieldset.isValid;
                 $scope.model.value.fieldsets.push(tempFieldset);
             }
         }
@@ -213,9 +217,9 @@
         return eval("({ alias: '" + fieldsetModel.alias + "', remove: false, properties: []})");
     }
 
-    Array.prototype.hasValue = function(value) {
+    $scope.hasValue = function(array, value) {
       var i;
-      for (i=0; i<this.length; i++) { if (this[i] === value) return true; }
+      for (i=0; i<array.length; i++) { if (array[i] === value) return true; }
       return false;
     }
 
@@ -225,6 +229,7 @@
         var validation = {}
         validation.isValid = true;
         validation.requiredAliases = [];
+        validation.invalidProperties = [];
 
         //determine which fields are required
         for(var i in $scope.model.config.fieldsets)
@@ -247,19 +252,24 @@
         //otherwise we need to check the required aliases
         for(var i in $scope.archetypeRenderModel.fieldsets)
         {
-            for(var j in $scope.archetypeRenderModel.fieldsets[i].properties)
+            var fieldset = $scope.archetypeRenderModel.fieldsets[i];
+            fieldset.isValid = true;
+
+            for(var j in fieldset.properties)
             {
-                if(validation.requiredAliases.hasValue($scope.archetypeRenderModel.fieldsets[i].properties[j].alias))
-                {
-                    console.log("checking: " + i + " " + j + " " + $scope.archetypeRenderModel.fieldsets[i].properties[j].alias)
-                    var value = $scope.archetypeRenderModel.fieldsets[i].properties[j].value;
-                    //TODO: do the value test and highlight the fieldset/property
-                    //if not valie
-                    if(true){
-                        $scope.archetypeRenderModel.fieldsets[i].isValid = false;
+                var property = $scope.archetypeRenderModel.fieldsets[i].properties[j];
+                property.isValid = true;
+
+                if($scope.hasValue(validation.requiredAliases, property.alias))
+                {                
+                    //TODO: do a better validation test
+                    if(property.value == ""){
+                        fieldset.isValid = false;
+                        property.isValid = false;
                         validation.isValid = false;
+
+                        validation.invalidProperties.push({ fieldset: i, property: j, alias: property.alias, value: property.value, isValid: property.isValid});
                     }
-                    console.log(value);
                 }
             }
         }
@@ -281,6 +291,7 @@
         else 
         {
             syncModelToRenderModel();
+            form.$setValidity("archetypeError", true);
         }
     });
 
