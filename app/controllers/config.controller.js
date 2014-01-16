@@ -11,6 +11,7 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
     
     initConfigRenderModel();
 
+    //get the available views
     propertyEditorService.getViews().then(function(data){
         $scope.availableViews = data;
     });
@@ -34,24 +35,23 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
         {
             iniState = fieldset.collapse;
         }
-    
-        for(var i in $scope.archetypeConfigRenderModel.fieldsets)
-        {
-            if($scope.archetypeConfigRenderModel.fieldsets.length == 1 && $scope.archetypeConfigRenderModel.fieldsets[i].remove == false)
+        
+        _.each($scope.archetypeConfigRenderModel.fieldsets, function(fieldset){
+            if($scope.archetypeConfigRenderModel.fieldsets.length == 1 && fieldset.remove == false)
             {
-                $scope.archetypeConfigRenderModel.fieldsets[i].collapse = false;
+                fieldset.collapse = false;
                 return;
             }
 
-            if($scope.archetypeConfigRenderModel.fieldsets[i].label)
+            if(fieldset.label)
             {
-                $scope.archetypeConfigRenderModel.fieldsets[i].collapse = true;
+                fieldset.collapse = true;
             }
             else
             {
-                $scope.archetypeConfigRenderModel.fieldsets[i].collapse = false;
+                fieldset.collapse = false;
             }
-        }
+        });
         
         if(iniState)
         {
@@ -68,18 +68,17 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
         {
             iniState = property.collapse;
         }
-    
-        for(var i in properties)
-        {
-            if(properties[i].label)
+
+        _.each(properties, function(property){
+            if(property.label)
             {
-                properties[i].collapse = true;
+                property.collapse = true;
             }
             else
             {
-                properties[i].collapse = false;
+                property.collapse = false;
             }
-        }
+        });
         
         if(iniState)
         {
@@ -98,13 +97,11 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
     
     function setConfigPropertyToString()
     {
-        for(var i in $scope.archetypeConfigRenderModel.fieldsets)
-        {
-            for(var j in $scope.archetypeConfigRenderModel.fieldsets[i].properties)
-            {
-                $scope.archetypeConfigRenderModel.fieldsets[i].properties[j].config.toString = stringify;
-            }
-        }
+        _.each($scope.archetypeConfigRenderModel.fieldsets, function(fieldset){
+            _.each(fieldset.properties, function(property){
+                property.config.toString = stringify;
+            });
+        });
     }
     
     //watch for changes
@@ -114,18 +111,17 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
             $scope.archetypeConfigRenderModel = JSON.parse(v);
             $scope.archetypeConfigRenderModel.toString = stringify;
         }
-        
-        for(var i in $scope.archetypeConfigRenderModel.fieldsets)
-        {
-            for(var j in $scope.archetypeConfigRenderModel.fieldsets[i].properties)
-            {
-                if(typeof $scope.archetypeConfigRenderModel.fieldsets[i].properties[j].config === 'string')
+
+        //add stringify back in
+        _.each($scope.archetypeConfigRenderModel.fieldsets, function(fieldset){
+            _.each(fieldset.properties, function(property){
+                if(typeof property.config === 'string')
                 {
-                    $scope.archetypeConfigRenderModel.fieldsets[i].properties[j].config = JSON.parse($scope.archetypeConfigRenderModel.fieldsets[i].properties[j].config);
-                    $scope.archetypeConfigRenderModel.fieldsets[i].properties[j].config.toString = stringify;
+                    property.config = JSON.parse($scope.archetypeConfigRenderModel.fieldsets[i].properties[j].config);
+                    property.config.toString = stringify;
                 }
-            }
-        }
+            });
+        });
     }, true);
     
     //helper that returns if an item can be removed
@@ -157,11 +153,11 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
     {
         var count = 0;
 
-        for (var i in $scope.archetypeConfigRenderModel.fieldsets) {
-            if ($scope.archetypeConfigRenderModel.fieldsets[i].remove == false) {
+        _.each($scope.archetypeConfigRenderModel.fieldsets, function(fieldset){
+            if (fieldset.remove == false) {
                 count++;
             }
-        }
+        });
 
         return count;
     }
@@ -212,20 +208,20 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
     function initConfigRenderModel()
     {
         $scope.archetypeConfigRenderModel = $scope.model.value;
-        
-        for(var i in $scope.archetypeConfigRenderModel.fieldsets)
-        {
-            $scope.archetypeConfigRenderModel.fieldsets[i].remove = false;
-            if($scope.archetypeConfigRenderModel.fieldsets[i].label)
+
+        _.each($scope.archetypeConfigRenderModel.fieldsets, function(fieldset){
+
+            fieldset.remove = false;
+
+            if(fieldset.label)
             {
-                $scope.archetypeConfigRenderModel.fieldsets[i].collapse = true;
+                fieldset.collapse = true;
             }
-            
-            for(var j in $scope.archetypeConfigRenderModel.fieldsets[i].properties)
-            {
-                $scope.archetypeConfigRenderModel.fieldsets[i].properties[j].remove = false;
-            }
-        }
+
+            _.each(fieldset.properties, function(fieldset){
+                fieldset.remove = false;
+            });
+        });
     }
     
     //sync things up on save
@@ -239,22 +235,22 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
         $scope.model.value = $scope.archetypeConfigRenderModel;
         var fieldsets = [];
         
-        for (var i in $scope.archetypeConfigRenderModel.fieldsets) {
+        _.each($scope.archetypeConfigRenderModel.fieldsets, function(fieldset){
             //check fieldsets
-            if (!$scope.archetypeConfigRenderModel.fieldsets[i].remove) {
-                fieldsets.push($scope.archetypeConfigRenderModel.fieldsets[i]);
+            if (!fieldset.remove) {
+                fieldsets.push(fieldset);
                 
-                //check properties
                 var properties = [];
-                for (var j in $scope.archetypeConfigRenderModel.fieldsets[i].properties)
-                {
-                    if (!$scope.archetypeConfigRenderModel.fieldsets[i].properties[j].remove) {
-                        properties.push($scope.archetypeConfigRenderModel.fieldsets[i].properties[j]);
-                    }
-                }
-                $scope.archetypeConfigRenderModel.fieldsets[i].properties = properties;
+
+                _.each(fieldset.properties, function(property){
+                   if (!property.remove) {
+                        properties.push(property);
+                    } 
+                });
+
+                fieldset.properties = properties;
             }
-        }
+        });
         
         $scope.model.value.fieldsets = fieldsets;
     }
