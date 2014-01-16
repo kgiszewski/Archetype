@@ -96,22 +96,20 @@
     //helper, ini the render model from the server (model.value)
     function initArchetypeRenderModel() {
         $scope.archetypeRenderModel = $scope.model.value;
-        
-        for(var i in $scope.archetypeRenderModel.fieldsets)
+
+        _.each($scope.archetypeRenderModel.fieldsets, function (fieldset)
         {
-            $scope.archetypeRenderModel.fieldsets[i].remove = false;
-            $scope.archetypeRenderModel.fieldsets[i].collapse = true;
-            $scope.archetypeRenderModel.fieldsets[i].isValid = true;
-        }
+            fieldset.remove = false;
+            fieldset.collapse = false;
+            fieldset.isValid = true;
+        });      
     }
 
     //helper to get the correct fieldset from config
     $scope.getConfigFieldsetByAlias = function(alias) {
-        for (var i in $scope.model.config.fieldsets) {
-            if ($scope.model.config.fieldsets[i].alias == alias) {
-                return $scope.model.config.fieldsets[i];
-            }
-        }
+        return _.find($scope.model.config.fieldsets, function(fieldset){
+            return fieldset.alias == alias;
+        });
     }
     
     //helper for collapsing
@@ -124,16 +122,15 @@
             iniState = fieldset.collapse;
         }
     
-        for(var i in $scope.archetypeRenderModel.fieldsets)
-        {
-            if($scope.archetypeRenderModel.fieldsets.length == 1 && $scope.archetypeRenderModel.fieldsets[i].remove == false)
+        _.each($scope.archetypeRenderModel.fieldsets, function(fieldset){
+            if($scope.archetypeRenderModel.fieldsets.length == 1 && fieldset.remove == false)
             {
-                $scope.archetypeRenderModel.fieldsets[i].collapse = false;
+                fieldset.collapse = false;
                 return;
             }
         
-            $scope.archetypeRenderModel.fieldsets[i].collapse = true;
-        }
+            fieldset.collapse = true;
+        });
         
         if(iniState)
         {
@@ -183,11 +180,11 @@
     {
         var count = 0;
 
-        for (var i in $scope.archetypeRenderModel.fieldsets) {
-            if ($scope.archetypeRenderModel.fieldsets[i].remove == false) {
+        _.each($scope.archetypeRenderModel.fieldsets, function(fieldset){
+            if (fieldset.remove == false) {
                 count++;
             }
-        }
+        });
 
         return count;
     }
@@ -197,30 +194,28 @@
     {
         $scope.model.value = { fieldsets: [] };
 
-        for (var i in $scope.archetypeRenderModel.fieldsets) {
-            var fieldset = $scope.archetypeRenderModel.fieldsets[i];
-
+        _.each($scope.archetypeRenderModel.fieldsets, function(fieldset){
             if (typeof fieldset != 'function' && !fieldset.remove){
-                console.log($scope.archetypeRenderModel.fieldsets[i]);
-                //clone
+
+                //clone and clean
                 var tempFieldset = JSON.parse(JSON.stringify(fieldset));
                 delete tempFieldset.remove;
                 delete tempFieldset.isValid;
+                delete tempFieldset.collapse;
+
+                _.each(tempFieldset.properties, function(property){
+                    delete property.isValid;
+                });
+
                 $scope.model.value.fieldsets.push(tempFieldset);
             }
-        }
+        });
     }
 
     //helper to add an empty fieldset
     function getEmptyRenderItem (fieldsetModel)
     {
         return eval("({ alias: '" + fieldsetModel.alias + "', remove: false, properties: []})");
-    }
-
-    $scope.hasValue = function(array, value) {
-      var i;
-      for (i=0; i<array.length; i++) { if (array[i] === value) return true; }
-      return false;
     }
 
     //helper for validation
@@ -232,16 +227,11 @@
         validation.invalidProperties = [];
 
         //determine which fields are required
-        for(var i in $scope.model.config.fieldsets)
-        {
-            for(var j in $scope.model.config.fieldsets[i].properties)
-            {
-                if($scope.model.config.fieldsets[i].properties[j].required)
-                {
-                    validation.requiredAliases.push($scope.model.config.fieldsets[i].properties[j].alias);
-                }
-            }
-        }
+        _.each($scope.model.config.fieldsets, function(fieldset){
+            validation.requiredAliases = _.find(fieldset.properties, function(property){
+                return property.required;
+            });
+        });
 
         //if nothing required; let's go
         if(validation.requiredAliases.length == 0)
@@ -250,17 +240,14 @@
         }
 
         //otherwise we need to check the required aliases
-        for(var i in $scope.archetypeRenderModel.fieldsets)
-        {
-            var fieldset = $scope.archetypeRenderModel.fieldsets[i];
+        _.each($scope.archetypeRenderModel.fieldsets, function(fieldset){
             fieldset.isValid = true;
 
-            for(var j in fieldset.properties)
-            {
-                var property = $scope.archetypeRenderModel.fieldsets[i].properties[j];
+            _.each(fieldset.properties, function(property){
                 property.isValid = true;
 
-                if($scope.hasValue(validation.requiredAliases, property.alias))
+                //if a required field
+                if(_.find(validation.requiredAliases, function(alias){ return alias == property.alias }))
                 {                
                     //TODO: do a better validation test
                     if(property.value == ""){
@@ -268,14 +255,25 @@
                         property.isValid = false;
                         validation.isValid = false;
 
-                        validation.invalidProperties.push({ fieldset: i, property: j, alias: property.alias, value: property.value, isValid: property.isValid});
+                        validation.invalidProperties.push(property);
                     }
                 }
-            }
+            });
+        });
+
+        return validation;
+    }
+
+    $scope.getPropertyValidity = function(fieldsetIndex, alias)
+    {
+        if($scope.archetypeRenderModel.fieldsets[fieldsetIndex])
+        {
+            var property = _.find($scope.archetypeRenderModel.fieldsets[fieldsetIndex].properties, function(property){
+                return property.alias == alias;
+            });
         }
 
-        console.log(validation);
-        return validation;
+        return (typeof property == 'undefined') ? true : property.isValid;
     }
 
     //sync things up on save

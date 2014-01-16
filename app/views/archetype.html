@@ -24,7 +24,7 @@
                     <div class="archetypeFieldsetHeaderText" ng-show="fieldsetConfigModel.headerText">
                         <em>{{fieldsetConfigModel.headerText}}</em>
                     </div>             
-                    <div ng-class="{archetypeFieldsetError: property.isValid === false}" class="archetypeProperty" ng-repeat="property in fieldsetConfigModel.properties">
+                    <div ng-class="{archetypePropertyError: getPropertyValidity($parent.$index, property.alias) === false}" class="archetypeProperty" ng-repeat="property in fieldsetConfigModel.properties">
                         <label ng-hide="archetypeConfig.hidePropertyLabels == '1'">
                             <span>{{property.label}}</span>
                             <div class="archetypeFieldsetHelpText" ng-show="property.helpText">
