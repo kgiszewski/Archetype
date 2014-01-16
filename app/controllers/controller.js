@@ -101,6 +101,7 @@
         {
             $scope.archetypeRenderModel.fieldsets[i].remove = false;
             $scope.archetypeRenderModel.fieldsets[i].collapse = true;
+            $scope.archetypeRenderModel.fieldsets[i].isValid = true;
         }
     }
 
@@ -222,7 +223,7 @@
     function getValidation()
     {
         var validation = {}
-        validation.isValid = false;
+        validation.isValid = true;
         validation.requiredAliases = [];
 
         //determine which fields are required
@@ -233,7 +234,6 @@
                 if($scope.model.config.fieldsets[i].properties[j].required)
                 {
                     validation.requiredAliases.push($scope.model.config.fieldsets[i].properties[j].alias);
-                    validation.requiredLabels.push($scope.model.config.fieldsets[i].properties[j].label);
                 }
             }
         }
@@ -241,7 +241,6 @@
         //if nothing required; let's go
         if(validation.requiredAliases.length == 0)
         {
-            validation.isValid = true;
             return validation;
         }
 
@@ -255,6 +254,11 @@
                     console.log("checking: " + i + " " + j + " " + $scope.archetypeRenderModel.fieldsets[i].properties[j].alias)
                     var value = $scope.archetypeRenderModel.fieldsets[i].properties[j].value;
                     //TODO: do the value test and highlight the fieldset/property
+                    //if not valie
+                    if(true){
+                        $scope.archetypeRenderModel.fieldsets[i].isValid = false;
+                        validation.isValid = false;
+                    }
                     console.log(value);
                 }
             }
