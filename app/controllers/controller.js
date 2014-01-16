@@ -8,7 +8,7 @@
 
     $scope.model.config = $scope.model.config.archetypeConfig;
    
-    $scope.model.value = $scope.model.value || { fieldsets: [getEmptyRenderItem($scope.model.config.fieldsets[0])] };
+    $scope.model.value = $scope.model.value || { fieldsets: [getEmptyRenderFieldset($scope.model.config.fieldsets[0])] };
 
     //ini
     $scope.archetypeRenderModel = {};
@@ -45,7 +45,7 @@
         {
             if ($scope.model.config.fieldsets)
             {
-                var newFieldset = getEmptyRenderItem($scope.getConfigFieldsetByAlias(fieldsetAlias));
+                var newFieldset = getEmptyRenderFieldset($scope.getConfigFieldsetByAlias(fieldsetAlias));
 
                 if (typeof $index != 'undefined')
                 {
@@ -213,7 +213,7 @@
     }
 
     //helper to add an empty fieldset
-    function getEmptyRenderItem (fieldsetModel)
+    function getEmptyRenderFieldset (fieldsetModel)
     {
         return eval("({ alias: '" + fieldsetModel.alias + "', remove: false, properties: []})");
     }
