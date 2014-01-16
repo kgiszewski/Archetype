@@ -15,12 +15,21 @@
     initArchetypeRenderModel();
     
     //helper to get $eval the labelExpression
-    $scope.getFieldsetTitle = function(expression, fieldsetIndex)
-    {
-        if(!expression) return "";
-        
-        return expression.replace(/\$fieldsetIndex/g, fieldsetIndex);
-    }
+    $scope.getFieldsetTitle = function(fieldsetConfigModel, fieldsetIndex) {
+        var fieldset = $scope.archetypeRenderModel.fieldsets[fieldsetIndex];
+        var template = fieldsetConfigModel.labelExpression;
+        var rgx = /{{(.*?)}}*/g;
+        var results;
+        var parsedTemplate = template;
+
+        while ((results = rgx.exec(template)) !== null) {
+            var propertyAlias = results[1];
+            var propertyValue = $scope.getPropertyValueByAlias(fieldset, propertyAlias);
+            parsedTemplate = parsedTemplate.replace(results[0], propertyValue);
+        }
+
+        return parsedTemplate;
+    };
 
     /* add/remove/sort */
 
@@ -111,6 +120,14 @@
             return fieldset.alias == alias;
         });
     }
+
+    //helper to get a property by alias from a fieldset
+    $scope.getPropertyValueByAlias = function(fieldset, propertyAlias) {
+        var property = _.find(fieldset.properties, function(p) {
+            return p.alias == propertyAlias;
+        });
+        return (typeof property !== 'undefined') ? property.value : '';
+    };
     
     //helper for collapsing
     $scope.focusFieldset = function(fieldset){
