@@ -4,8 +4,8 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
     //console.log($scope.model.value); 
 
     var newPropertyModel = '{alias: "", remove: false, collapse: false, label: "", helpText: "", view: "", value: "", config: {}}';
-    var newFieldsetModel = '{alias: "", remove: false, collapse: false, labelExpression: "archetypeRenderModel.fieldsets[$fieldsetIndex].properties[0].value", tooltip: "", icon: "", label: "", headerText: "", footerText: "", properties:[' + newPropertyModel + ']}';
-    var defaultFieldsetConfigModel = eval("({showAdvancedOptions: false, hideFieldsetToolbar: false, hideFieldsetControls: false, hideFieldsetLabels: false, hidePropertyLabel: false, maxFieldsets:1, fieldsets: [" + newFieldsetModel + "]})");
+    var newFieldsetModel = '{alias: "", remove: false, collapse: false, labelExpression: "", tooltip: "", icon: "", label: "", headerText: "", footerText: "", properties:[' + newPropertyModel + ']}';
+    var defaultFieldsetConfigModel = eval("({showAdvancedOptions: false, hideFieldsetToolbar: false, enableMultipleFieldsets: false, hideFieldsetControls: false, hideFieldsetLabels: false, hidePropertyLabel: false, maxFieldsets:1, fieldsets: [" + newFieldsetModel + "]})");
     
     $scope.model.value = $scope.model.value || defaultFieldsetConfigModel;
     
@@ -256,5 +256,5 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
     }
     
     //archetype css
-    assetsService.loadCss("/App_Plugins/Imulus.Archetype/css/archetype.css");
+    assetsService.loadCss("/App_Plugins/Archetype/css/archetype.css");
 });

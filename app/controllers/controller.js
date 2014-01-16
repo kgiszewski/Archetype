@@ -13,7 +13,7 @@
     //ini
     $scope.archetypeRenderModel = {};
     initArchetypeRenderModel();
-    
+     
     //helper to get $eval the labelExpression
     $scope.getFieldsetTitle = function(fieldsetConfigModel, fieldsetIndex) {
         var fieldset = $scope.archetypeRenderModel.fieldsets[fieldsetIndex];
@@ -316,7 +316,7 @@
     } 
 
     //archetype css
-    assetsService.loadCss("/App_Plugins/Imulus.Archetype/css/archetype.css");
+    assetsService.loadCss("/App_Plugins/Archetype/css/archetype.css");
 
     //custom css
     if($scope.model.config.customCssPath)
