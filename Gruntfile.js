@@ -56,7 +56,9 @@ module.exports = function(grunt) {
       application: {
         src: [
           'app/controllers/controller.js',
-          'app/directives/archetypeproperty.js'
+          'app/controllers/config.controller.js',
+          'app/directives/archetypeproperty.js',
+          'app/services/propertyeditor.js'
         ],
         dest: '<%= dest %>/js/archetype.js'
       }
@@ -66,12 +68,13 @@ module.exports = function(grunt) {
       build: {
        files: [
         {expand: true, cwd: 'app/', src: ['package.manifest'], dest: '<%= dest %>', flatten: true},
-        {expand: true, cwd: 'app/views/', src: ['archetype.html'], dest: '<%= dest %>/views', flatten: true} 
+        {expand: true, cwd: 'app/config/', src: ['config.views.js'], dest: '<%= dest %>/js', flatten: true},
+        {expand: true, cwd: 'app/views/', src: ['archetype.html', 'archetype.config.html'], dest: '<%= dest %>/views', flatten: true} 
         ]
       },
       deploy: {
         files: [
-          {expand: true, cwd: '<%= dest %>/', src: ['**'], dest: '<%= grunt.option("target") %>\\App_Plugins\\Imulus.Archetype', flatten: false},
+          {expand: true, cwd: '<%= dest %>/', src: ['**'], dest: '<%= grunt.option("target") %>\\App_Plugins\\Archetype', flatten: false},
         ]
       }
 

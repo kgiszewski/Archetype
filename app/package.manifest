@@ -1,122 +1,23 @@
 ﻿{
-    propertyEditors: [
+    propertyEditors: [    
 		{ 
 			alias: "Imulus.Archetype",
-			name:  "Imulus Archetype",
+			name:  "Archetype",
 			editor: {
-				view: "~/App_Plugins/Imulus.Archetype/views/archetype.html",
+				view: "~/App_Plugins/Archetype/views/archetype.html",
 				valueType: "JSON"
-			},
+			}, 
 			prevalues: {
-				fields: [			
-					{					
-						label: "Empty Fieldset Models",
-						description: "(Required) Define your fieldset models?",
-						key: "fieldsetModels",
-						view: "textarea",
+				fields: [	
+                    {					
+						label: "Config",
+						description: "(Required) Describe your Archetype.",
+						key: "archetypeConfig",
+						view: "/App_Plugins/Archetype/views/archetype.config.html",
 						validation: [
 			 				{
 								type: "Required"         
 							}   
-						]
-					},
-					{					
-						label: "Hide fieldset toolbar?",
-						description: "Hides the fieldset toolbar that appears when more than one fieldset model appears.",
-						key: "hideFieldsetToolbar",
-						view: "boolean",
-						validation: [
-							                       
-						]
-					},
-					{					
-						label: "Hide fieldset editor controls?",
-						description: "Hides the fieldset add/remove/sort controls.",
-						key: "hideFieldsetControls",
-						view: "boolean",
-						validation: [
-							                       
-						]
-					},
-					{					
-						label: "Hide fieldset labels?",
-						description: "Hides the fieldset labels.",
-						key: "hideFieldsetLabels",
-						view: "boolean",
-						validation: [
-							                       
-						]
-					},
-					{					
-						label: "Hide property labels?",
-						description: "Hides the property labels.",
-						key: "hidePropertyLabels",
-						view: "boolean",
-						validation: [
-							                       
-						]
-					},
-					{					
-						label: "Default Model",
-						description: "(Optional) What would you the default model to be?  Otherwise the model will defer to the Empty Fieldset Model for new items.",
-						key: "defaultModel",
-						view: "textarea",
-						validation: [
-							                       
-						]
-					},
-					{					
-						label: "Max Fieldsets",
-						description: "(Optional) How many Fieldsets are allowed?  Entering '1' will disable the controls.  Default is unlimited.",
-						key: "maxProperties",
-						view: "number",
-						validation: [
-							                       
-						]
-					},
-					{					
-						label: "Custom Wrapper Class",
-						description: "(Optional) Enter a custom CSS class that will be applied to the wrapper div.",
-						key: "customCssClass",
-						view: "textstring",
-						validation: [
-							                       
-						]
-					},
-					{					
-						label: "CSS File",
-						description: "(Optional) Enter a path for a custom CSS file to be included on the page.",
-						key: "customCssPath",
-						view: "textstring",
-						validation: [
-							                       
-						]
-					},
-					{					
-						label: "JS File",
-						description: "(Optional) Enter a path for a custom JS file to be included on the page.",
-						key: "customJsPath",
-						view: "textstring",
-						validation: [
-						 
-						]
-					},
-					{					
-						label: "Developer Mode",
-						description: "(Advanced) Turn on for developer options.",
-						key: "developerMode",
-						view: "boolean",
-						validation: [
-							                       
-						]
-					},
-					{					
-						label: "Sortable Options",
-						description: "(Advanced) Override the default sortable controls with a JSON object.",
-						key: "sortableOptions",
-						view: "textarea",
-				     	validation: [
-							                       
 						]
 					}
 				]
@@ -124,6 +25,6 @@
         }
     ],
     javascript: [
-		'~/App_Plugins/Imulus.Archetype/js/archetype.js'
+		'~/App_Plugins/Archetype/js/archetype.js'
     ]
 } 

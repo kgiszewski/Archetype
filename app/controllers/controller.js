@@ -1,28 +1,42 @@
-﻿angular.module("umbraco").controller("Imulus.ArchetypeController", function ($scope, $http, assetsService) {
+﻿angular.module("umbraco").controller("Imulus.ArchetypeController", function ($scope, $http, $interpolate, assetsService, angularHelper, notificationsService) {
  
     //$scope.model.value = "";
-
     //set default value of the model
     //this works by checking to see if there is a model; then cascades to the default model then to an empty fieldset
 
-    //validate the user configs
-    $scope.model.config.defaultModel = getValidJson("$scope.model.config.defaultModel", $scope.model.config.defaultModel);
-    $scope.model.config.fieldsetModels = getValidJson("$scope.model.config.fieldsetModels", $scope.model.config.fieldsetModels);
+    var form = angularHelper.getCurrentForm($scope);
 
-    $scope.model.value = $scope.model.value || ($scope.model.config.defaultModel || { fieldsets: [getEmptyRenderItem($scope.model.config.fieldsetModels[0])] });
+    $scope.model.config = $scope.model.config.archetypeConfig;
+   
+    $scope.model.value = $scope.model.value || { fieldsets: [getEmptyRenderFieldset($scope.model.config.fieldsets[0])] };
 
     //ini
     $scope.archetypeRenderModel = {};
     initArchetypeRenderModel();
+     
+    //helper to get $eval the labelExpression
+    $scope.getFieldsetTitle = function(fieldsetConfigModel, fieldsetIndex) {
+        var fieldset = $scope.archetypeRenderModel.fieldsets[fieldsetIndex];
+        var template = fieldsetConfigModel.labelExpression;
+        var rgx = /{{(.*?)}}*/g;
+        var results;
+        var parsedTemplate = template;
+
+        while ((results = rgx.exec(template)) !== null) {
+            var propertyAlias = results[1];
+            var propertyValue = $scope.getPropertyValueByAlias(fieldset, propertyAlias);
+            parsedTemplate = parsedTemplate.replace(results[0], propertyValue);
+        }
+
+        return parsedTemplate;
+    };
 
     /* add/remove/sort */
 
     //defines the options for the jquery sortable 
     //i used an ng-model="archetypeRenderModel" so the sort updates the right model
-    //configuration overrides the default
-    var configSortableOptions = getValidJson("$scope.model.config.sortableOptions", $scope.model.config.sortableOptions);
 
-    $scope.sortableOptions = configSortableOptions || {
+    $scope.sortableOptions = {
         axis: 'y',
         cursor: "move",
         handle: ".handle",
@@ -38,19 +52,21 @@
     $scope.addRow = function (fieldsetAlias, $index) {
         if ($scope.canAdd())
         {
-            if ($scope.model.config.fieldsetModels)
+            if ($scope.model.config.fieldsets)
             {
-                var newRenderItem = getEmptyRenderItem($scope.getConfigFieldsetByAlias(fieldsetAlias));
+                var newFieldset = getEmptyRenderFieldset($scope.getConfigFieldsetByAlias(fieldsetAlias));
 
                 if (typeof $index != 'undefined')
                 {
-                    $scope.archetypeRenderModel.fieldsets.splice($index + 1, 0, newRenderItem);
+                    $scope.archetypeRenderModel.fieldsets.splice($index + 1, 0, newFieldset);
                 }
                 else
                 {
-                    $scope.archetypeRenderModel.fieldsets.push(newRenderItem);
+                    $scope.archetypeRenderModel.fieldsets.push(newFieldset);
                 }
             }
+            newFieldset.collapse = true;
+            $scope.focusFieldset(newFieldset);
         }
     }
 
@@ -66,9 +82,9 @@
     //helpers for determining if a user can do something
     $scope.canAdd = function ()
     {
-        if ($scope.model.config.maxProperties)
+        if ($scope.model.config.maxFieldsets)
         {
-            return countVisible() < $scope.model.config.maxProperties;
+            return countVisible() < $scope.model.config.maxFieldsets;
         }
 
         return true;
@@ -89,16 +105,58 @@
     //helper, ini the render model from the server (model.value)
     function initArchetypeRenderModel() {
         $scope.archetypeRenderModel = $scope.model.value;
+
+        _.each($scope.archetypeRenderModel.fieldsets, function (fieldset)
+        {
+            fieldset.remove = false;
+            fieldset.collapse = false;
+            fieldset.isValid = true;
+        });      
     }
 
     //helper to get the correct fieldset from config
     $scope.getConfigFieldsetByAlias = function(alias) {
-        for (var i in $scope.model.config.fieldsetModels) {
-            if ($scope.model.config.fieldsetModels[i].alias == alias) {
-                return $scope.model.config.fieldsetModels[i];
+        return _.find($scope.model.config.fieldsets, function(fieldset){
+            return fieldset.alias == alias;
+        });
+    }
+
+    //helper to get a property by alias from a fieldset
+    $scope.getPropertyValueByAlias = function(fieldset, propertyAlias) {
+        var property = _.find(fieldset.properties, function(p) {
+            return p.alias == propertyAlias;
+        });
+        return (typeof property !== 'undefined') ? property.value : '';
+    };
+    
+    //helper for collapsing
+    $scope.focusFieldset = function(fieldset){
+        
+        var iniState;
+        
+        if(fieldset)
+        {
+            iniState = fieldset.collapse;
+        }
+    
+        _.each($scope.archetypeRenderModel.fieldsets, function(fieldset){
+            if($scope.archetypeRenderModel.fieldsets.length == 1 && fieldset.remove == false)
+            {
+                fieldset.collapse = false;
+                return;
             }
+        
+            fieldset.collapse = true;
+        });
+        
+        if(iniState)
+        {
+            fieldset.collapse = !iniState;
         }
     }
+    
+    //ini
+    $scope.focusFieldset();
 
     //helper returns valid JS or null
     function getValidJson(variable, json)
@@ -126,7 +184,7 @@
     //watch for changes
     $scope.$watch('archetypeRenderModel', function (v) {
         if ($scope.model.config.developerMode) {
-            //console.log(v);
+            console.log(v);
             if (typeof v === 'string') {
                 $scope.archetypeRenderModel = JSON.parse(v);
                 $scope.archetypeRenderModel.toString = stringify;
@@ -139,11 +197,11 @@
     {
         var count = 0;
 
-        for (var i in $scope.archetypeRenderModel.fieldsets) {
-            if ($scope.archetypeRenderModel.fieldsets[i].remove == false) {
+        _.each($scope.archetypeRenderModel.fieldsets, function(fieldset){
+            if (fieldset.remove == false) {
                 count++;
             }
-        }
+        });
 
         return count;
     }
@@ -153,24 +211,103 @@
     {
         $scope.model.value = { fieldsets: [] };
 
-        for (var i in $scope.archetypeRenderModel.fieldsets) {
-            if (!$scope.archetypeRenderModel.fieldsets[i].remove) {
-                //remove the 'remove' property as this is only for sorting/internal use
-                delete $scope.archetypeRenderModel.fieldsets[i].remove;
-                $scope.model.value.fieldsets.push($scope.archetypeRenderModel.fieldsets[i]);
+        _.each($scope.archetypeRenderModel.fieldsets, function(fieldset){
+            if (typeof fieldset != 'function' && !fieldset.remove){
+
+                //clone and clean
+                var tempFieldset = JSON.parse(JSON.stringify(fieldset));
+                delete tempFieldset.remove;
+                delete tempFieldset.isValid;
+                delete tempFieldset.collapse;
+
+                _.each(tempFieldset.properties, function(property){
+                    delete property.isValid;
+                });
+
+                $scope.model.value.fieldsets.push(tempFieldset);
             }
-        }
+        });
     }
 
     //helper to add an empty fieldset
-    function getEmptyRenderItem (fieldsetModel)
+    function getEmptyRenderFieldset (fieldsetModel)
     {
         return eval("({ alias: '" + fieldsetModel.alias + "', remove: false, properties: []})");
     }
 
+    //helper for validation
+    function getValidation()
+    {
+        var validation = {}
+        validation.isValid = true;
+        validation.requiredAliases = [];
+        validation.invalidProperties = [];
+
+        //determine which fields are required
+        _.each($scope.model.config.fieldsets, function(fieldset){
+            validation.requiredAliases = _.find(fieldset.properties, function(property){
+                return property.required;
+            });
+        });
+
+        //if nothing required; let's go
+        if(validation.requiredAliases.length == 0)
+        {
+            return validation;
+        }
+
+        //otherwise we need to check the required aliases
+        _.each($scope.archetypeRenderModel.fieldsets, function(fieldset){
+            fieldset.isValid = true;
+
+            _.each(fieldset.properties, function(property){
+                property.isValid = true;
+
+                //if a required field
+                if(_.find(validation.requiredAliases, function(alias){ return alias == property.alias }))
+                {                
+                    //TODO: do a better validation test
+                    if(property.value == ""){
+                        fieldset.isValid = false;
+                        property.isValid = false;
+                        validation.isValid = false;
+
+                        validation.invalidProperties.push(property);
+                    }
+                }
+            });
+        });
+
+        return validation;
+    }
+
+    $scope.getPropertyValidity = function(fieldsetIndex, alias)
+    {
+        if($scope.archetypeRenderModel.fieldsets[fieldsetIndex])
+        {
+            var property = _.find($scope.archetypeRenderModel.fieldsets[fieldsetIndex].properties, function(property){
+                return property.alias == alias;
+            });
+        }
+
+        return (typeof property == 'undefined') ? true : property.isValid;
+    }
+
     //sync things up on save
     $scope.$on("formSubmitting", function (ev, args) {
-        syncModelToRenderModel();
+        
+        var validation = getValidation();
+
+        if(!validation.isValid)
+        {
+            notificationsService.warning("Cannot Save Document", "The document could not be saved because of missing required fields.")
+            form.$setValidity("archetypeError", false);
+        }
+        else 
+        {
+            syncModelToRenderModel();
+            form.$setValidity("archetypeError", true);
+        }
     });
 
     //custom js
@@ -179,7 +316,7 @@
     } 
 
     //archetype css
-    assetsService.loadCss("/App_Plugins/Imulus.Archetype/css/archetype.css");
+    assetsService.loadCss("/App_Plugins/Archetype/css/archetype.css");
 
     //custom css
     if($scope.model.config.customCssPath)
