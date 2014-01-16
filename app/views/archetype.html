@@ -13,7 +13,7 @@
             <fieldset ng-class="fieldset.alias" ng-init="fieldsetConfigModel = getConfigFieldsetByAlias(fieldset.alias)">
                 <label ng-hide="model.config.hideFieldsetLabels == '1'" ng-click="focusFieldset(fieldset)">
                     <img ng-src='{{fieldsetConfigModel.icon}}' title="{{fieldsetConfigModel.tooltip}}"/>
-                    <span ng-bind="$parent.$eval(getFieldsetTitle(fieldsetConfigModel.labelExpression, $index))"></span>
+                    <span ng-bind="getFieldsetTitle(fieldsetConfigModel, $index)"></span>
                 </label>
                 <div class="archetypeEditorControls" ng-hide="model.config.hideFieldsetControls || model.config.maxFieldsets == '1'">
                     <i class="icon icon-add" ng-click="addRow(fieldset.alias, $index)" ng-show="canAdd()"></i>
