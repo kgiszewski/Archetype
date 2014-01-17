@@ -2,6 +2,9 @@ module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     dest: 'dist',
+    version: '0.0.0',
+    package_dir: 'pkg',
+    package_temp_dir: '<%= package_dir %>/tmp/',
 
     watch: {
       less: {
@@ -56,22 +59,56 @@ module.exports = function(grunt) {
       application: {
         src: [
           'app/controllers/controller.js',
-          'app/directives/archetypeproperty.js'
+          'app/controllers/config.controller.js',
+          'app/directives/archetypeproperty.js',
+          'app/services/propertyeditor.js'
         ],
         dest: '<%= dest %>/js/archetype.js'
       }
+    },
+
+    nugetpack: {
+    	dist: {
+    		src: '<%= package_temp_dir %>/nuget/package.nuspec',
+    		dest: '<%= package_dir %>'
+    	}
+    },
+
+    template: {
+    	'nuget_manifest': {
+			'options': {
+    			'data': { 
+    				version: '<%= version %>',
+    				files: [{ path: '..\\..\\..\\<%= dest %>\\**', target: 'content\\App_Plugins\\Archetype'}]
+	    		}
+    		},
+    		'files': { 
+    			'<%= package_temp_dir %>/nuget/package.nuspec': ['<%= package_dir %>/nuget/package.nuspec']
+    		}
+    	}
+    },
+
+    clean: {
+  		build: ['<%= dest %>'],
+  		package_temp: ['<%= package_temp_dir %>']
     },
 
     copy: {
       build: {
        files: [
         {expand: true, cwd: 'app/', src: ['package.manifest'], dest: '<%= dest %>', flatten: true},
-        {expand: true, cwd: 'app/views/', src: ['archetype.html'], dest: '<%= dest %>/views', flatten: true} 
+        {expand: true, cwd: 'app/config/', src: ['config.views.js'], dest: '<%= dest %>/js', flatten: true},
+        {expand: true, cwd: 'app/views/', src: ['archetype.html', 'archetype.config.html'], dest: '<%= dest %>/views', flatten: true} 
         ]
       },
       deploy: {
         files: [
-          {expand: true, cwd: '<%= dest %>/', src: ['**'], dest: '<%= grunt.option("target") %>\\App_Plugins\\Imulus.Archetype', flatten: false},
+          {expand: true, cwd: '<%= dest %>/', src: ['**'], dest: '<%= grunt.option("target") %>\\App_Plugins\\Archetype', flatten: false},
+        ]
+      },
+      nuget_prepare: {
+        files: [
+          {expand: true, cwd: '<%= dest %>/', src: ['**'], dest: '<%= package_temp_dir %>/nuget/content/', flatten: false},
         ]
       },
       umbracopackage: {
@@ -105,6 +142,7 @@ module.exports = function(grunt) {
     },
 
     clean: ['<%= dest %>']
+    }
 
   });
 
@@ -115,10 +153,13 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks('grunt-nuget');
+  grunt.loadNpmTasks('grunt-template');
   grunt.loadNpmTasks('grunt-touch');
   grunt.loadTasks('tasks');
 
 
+  grunt.registerTask('package:nuget', ['default', 'clean:package_temp', 'copy:nuget_prepare', 'template:nuget_manifest', 'nugetpack', 'clean:package_temp']);
   grunt.registerTask('touchwebconfigifenabled', function() { if (grunt.option("touch")) grunt.task.run("touch:webconfig") });
   grunt.registerTask('deploy', ['default', 'copy:deploy', 'touchwebconfigifenabled']);
   grunt.registerTask('package:umbraco', ['copy:umbracopackage', 'umbracoPackage']);

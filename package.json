@@ -15,6 +15,9 @@
     "grunt-touch": "~0.1.0",
     "guid": "0.0.12",
     "adm-zip": "~0.4.3",
-    "rimraf": "~2.2.5"
+    "rimraf": "~2.2.5",
+    "grunt-nuget": "~0.1.1",
+    "grunt-template": "~0.2.2",
+    "grunt-touch": "~0.1.0"
   }
 }
