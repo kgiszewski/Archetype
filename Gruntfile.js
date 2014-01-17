@@ -11,7 +11,7 @@ module.exports = function(grunt) {
         files: ['app/less/*.less', 'lib/**/*.less'],
         tasks: ['less:build'],
         options: {
-          spawn: false,
+          spawn: false
         }
       },
 
@@ -19,7 +19,15 @@ module.exports = function(grunt) {
         files: ['app/**/*.js', 'lib/**/*.js'],
         tasks: ['concat', 'jshint'],
         options: {
-          spawn: false,
+          spawn: false
+        }
+      },
+
+      dev: {
+        files: ['app/**'],
+        tasks: ['deploy'],
+        options: {
+          spawn: false
         }
       }
     },
@@ -30,21 +38,6 @@ module.exports = function(grunt) {
       },
       src: {
         src: ['app/**/*.js', 'lib/**/*.js']
-      }
-    },
-
-
-    copy: {
-      main: {
-       files: [
-        {expand: true, src: ['app/package.manifest'], dest: '<%= dest %>', flatten: true},
-        {expand: true, src: ['app/views/archetype.html'], dest: '<%= dest %>/views', flatten: true} 
-        ]
-      },
-      nuget_prepare: {
-      	files: [
-      		{expand: true, cwd: '<%= dest %>/', src: ['**'], dest: '<%= package_temp_dir %>/nuget/content/', flatten: false},
-      	]
       }
     },
 
@@ -65,8 +58,10 @@ module.exports = function(grunt) {
       },
       application: {
         src: [
-          'app/controllers/archetype_controller.js',
-          'app/directives/content_item.js'
+          'app/controllers/controller.js',
+          'app/controllers/config.controller.js',
+          'app/directives/archetypeproperty.js',
+          'app/services/propertyeditor.js'
         ],
         dest: '<%= dest %>/js/archetype.js'
       }
@@ -96,7 +91,35 @@ module.exports = function(grunt) {
     clean: {
   		build: ['<%= dest %>'],
   		package_temp: ['<%= package_temp_dir %>']
-	}
+    },
+
+    copy: {
+      build: {
+       files: [
+        {expand: true, cwd: 'app/', src: ['package.manifest'], dest: '<%= dest %>', flatten: true},
+        {expand: true, cwd: 'app/config/', src: ['config.views.js'], dest: '<%= dest %>/js', flatten: true},
+        {expand: true, cwd: 'app/views/', src: ['archetype.html', 'archetype.config.html'], dest: '<%= dest %>/views', flatten: true} 
+        ]
+      },
+      deploy: {
+        files: [
+          {expand: true, cwd: '<%= dest %>/', src: ['**'], dest: '<%= grunt.option("target") %>\\App_Plugins\\Archetype', flatten: false},
+        ]
+      },
+      nuget_prepare: {
+        files: [
+          {expand: true, cwd: '<%= dest %>/', src: ['**'], dest: '<%= package_temp_dir %>/nuget/content/', flatten: false},
+        ]
+      }
+
+    },
+
+    touch: {
+      options: {},
+      webconfig: {
+        src: ['<%= grunt.option("target") %>\\Web.config']
+      }
+    }
 
   });
 
@@ -109,11 +132,13 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-nuget');
   grunt.loadNpmTasks('grunt-template');
+  grunt.loadNpmTasks('grunt-touch');
 
-  
   grunt.registerTask('package:nuget', ['default', 'clean:package_temp', 'copy:nuget_prepare', 'template:nuget_manifest', 'nugetpack', 'clean:package_temp']);
+  grunt.registerTask('touchwebconfigifenabled', function() { if (grunt.option("touch")) grunt.task.run("touch:webconfig") });
+  grunt.registerTask('deploy', ['default', 'copy:deploy', 'touchwebconfigifenabled']);
   grunt.registerTask('css:build', ['less']);
   grunt.registerTask('js:build', ['concat']);
-  grunt.registerTask('default', ['clean', 'css:build', 'js:build', 'copy']);
+  grunt.registerTask('default', ['clean', 'css:build', 'js:build', 'copy:build']);
 };
 

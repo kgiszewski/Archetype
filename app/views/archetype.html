@@ -1,15 +1,42 @@
 ﻿<div class="archetypeEditor ng-class:model.config.customCssClass" ng-controller="Imulus.ArchetypeController">
     <textarea class="archetypeDeveloperModel" ng-show="model.config.developerMode" ng-model="archetypeRenderModel"></textarea>
+    <div class="archetypeFieldsetToolbar" ng-show="model.config.fieldsets.length > 1 && model.config.hideFieldsetToolbar != '1'">
+        <ul> 
+            <li ng-repeat="fieldsetModel in model.config.fieldsets" ng-click="addRow(fieldsetModel.alias)">
+                <img ng-src='{{fieldsetModel.icon}}' title="{{fieldsetModel.tooltip}}" />
+                <span>{{fieldsetModel.label}}</span>
+            </li>
+        </ul>
+    </div> 
     <ul ui-sortable="sortableOptions" ng-model="archetypeRenderModel.fieldsets">
         <li ng-repeat="fieldset in archetypeRenderModel.fieldsets" ng-hide="fieldset.remove">
-            <fieldset>
-                <div class="archetypeEditorControls" ng-hide="model.config.hideControls || model.config.maxProperties == '1'">
-                    <i class="icon icon-add" ng-click="addRow($index)" ng-show="canAdd()"></i>
+            <fieldset ng-class="{archetypeFieldsetError: !fieldset.isValid}" ng-init="fieldsetConfigModel = getConfigFieldsetByAlias(fieldset.alias)">
+                <label ng-hide="model.config.hideFieldsetLabels == '1'" ng-click="focusFieldset(fieldset)">
+                    <img ng-src='{{fieldsetConfigModel.icon}}' title="{{fieldsetConfigModel.tooltip}}"/>
+                    <span ng-bind="getFieldsetTitle(fieldsetConfigModel, $index)"></span>
+                </label>
+                <div class="archetypeEditorControls" ng-hide="model.config.hideFieldsetControls || model.config.maxFieldsets == '1'">
+                    <i class="icon icon-add" ng-click="addRow(fieldset.alias, $index)" ng-show="canAdd()"></i>
                     <i class="icon icon-delete" ng-click="removeRow($index)" ng-show="canRemove()"></i>
                     <i class="icon icon-navigation handle" ng-show="canSort()"></i>
-                </div>               
-                <div class="archetypeProperty" ng-repeat="property in fieldset.properties">
-                    <content-item content="property"></content-item>
+                </div>  
+                <div class="arechetypeCollapser" ng-hide="fieldset.collapse">
+                    <div class="archetypeFieldsetHeaderText" ng-show="fieldsetConfigModel.headerText">
+                        <em>{{fieldsetConfigModel.headerText}}</em>
+                    </div>             
+                    <div ng-class="{archetypePropertyError: getPropertyValidity($parent.$index, property.alias) === false}" class="archetypeProperty" ng-repeat="property in fieldsetConfigModel.properties">
+                        <label ng-hide="archetypeConfig.hidePropertyLabels == '1'">
+                            <span>{{property.label}}</span>
+                            <div class="archetypeFieldsetHelpText" ng-show="property.helpText">
+                                <em>{{property.helpText}}</em>
+                            </div> 
+                        </label>
+
+                        <archetype-property class="archetypeEditor ng-class:property.alias" property="property" fieldset-index="$parent.$index" fieldset="fieldset" archetype-config="model.config" property-config-index="$index" archetype-render-model="archetypeRenderModel"></archetype-property>
+                    </div>
+                    <div class="archetypeFieldsetFooterText" ng-show="fieldsetConfigModel.footerText">
+                        <em>{{fieldsetConfigModel.footerText}}</em>
+                    </div>     
                 </div>
             </fieldset>
         </li>
