@@ -2,16 +2,12 @@
     
     function getFieldsetByAlias(fieldsets, alias)
     {
-        for (var i in fieldsets)
-        {
-            if (fieldsets[i].alias == alias)
-            {
-                return fieldsets[i];
-            }
-        }
+        return _.find(fieldsets, function(fieldset){
+            return fieldset.alias == alias;
+        });
     }
 
-    function getPropertyIdByAlias(properties, alias)
+    function getPropertyIndexByAlias(properties, alias)
     {
         for (var i in properties)
         {
@@ -87,12 +83,12 @@
                     scope.model.config = {};
 
                     //ini the property value after test to make sure a prop exists in the renderModel
-                    var renderModelPropertyIndex = getPropertyIdByAlias(scope.archetypeRenderModel.fieldsets[scope.fieldsetIndex].properties, alias);
+                    var renderModelPropertyIndex = getPropertyIndexByAlias(scope.archetypeRenderModel.fieldsets[scope.fieldsetIndex].properties, alias);
 
                     if (!renderModelPropertyIndex)
                     {
                         scope.archetypeRenderModel.fieldsets[scope.fieldsetIndex].properties.push(eval("({alias: '" + alias + "', value:'" + defaultValue + "'})"));
-                        renderModelPropertyIndex = getPropertyIdByAlias(scope.archetypeRenderModel.fieldsets[scope.fieldsetIndex].properties, alias);
+                        renderModelPropertyIndex = getPropertyIndexByAlias(scope.archetypeRenderModel.fieldsets[scope.fieldsetIndex].properties, alias);
                     }
                     scope.model.value = scope.archetypeRenderModel.fieldsets[scope.fieldsetIndex].properties[renderModelPropertyIndex].value;
 
