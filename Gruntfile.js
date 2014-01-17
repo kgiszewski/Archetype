@@ -2,6 +2,9 @@ module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     dest: 'dist',
+    version: '0.0.0',
+    package_dir: 'pkg',
+    package_temp_dir: '<%= package_dir %>/tmp/',
 
     watch: {
       less: {
@@ -64,6 +67,32 @@ module.exports = function(grunt) {
       }
     },
 
+    nugetpack: {
+    	dist: {
+    		src: '<%= package_temp_dir %>/nuget/package.nuspec',
+    		dest: '<%= package_dir %>'
+    	}
+    },
+
+    template: {
+    	'nuget_manifest': {
+			'options': {
+    			'data': { 
+    				version: '<%= version %>',
+    				files: [{ path: '..\\..\\..\\<%= dest %>\\**', target: 'content\\App_Plugins\\Archetype'}]
+	    		}
+    		},
+    		'files': { 
+    			'<%= package_temp_dir %>/nuget/package.nuspec': ['<%= package_dir %>/nuget/package.nuspec']
+    		}
+    	}
+    },
+
+    clean: {
+  		build: ['<%= dest %>'],
+  		package_temp: ['<%= package_temp_dir %>']
+    },
+
     copy: {
       build: {
        files: [
@@ -76,6 +105,11 @@ module.exports = function(grunt) {
         files: [
           {expand: true, cwd: '<%= dest %>/', src: ['**'], dest: '<%= grunt.option("target") %>\\App_Plugins\\Archetype', flatten: false},
         ]
+      },
+      nuget_prepare: {
+        files: [
+          {expand: true, cwd: '<%= dest %>/', src: ['**'], dest: '<%= package_temp_dir %>/nuget/content/', flatten: false},
+        ]
       }
 
     },
@@ -85,9 +119,7 @@ module.exports = function(grunt) {
       webconfig: {
         src: ['<%= grunt.option("target") %>\\Web.config']
       }
-    },
-
-    clean: ['<%= dest %>']
+    }
 
   });
 
@@ -98,8 +130,11 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks('grunt-nuget');
+  grunt.loadNpmTasks('grunt-template');
   grunt.loadNpmTasks('grunt-touch');
 
+  grunt.registerTask('package:nuget', ['default', 'clean:package_temp', 'copy:nuget_prepare', 'template:nuget_manifest', 'nugetpack', 'clean:package_temp']);
   grunt.registerTask('touchwebconfigifenabled', function() { if (grunt.option("touch")) grunt.task.run("touch:webconfig") });
   grunt.registerTask('deploy', ['default', 'copy:deploy', 'touchwebconfigifenabled']);
   grunt.registerTask('css:build', ['less']);

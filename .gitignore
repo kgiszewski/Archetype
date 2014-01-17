@@ -12,7 +12,8 @@ $RECYCLE.BIN/
 
 dist/
 node_modules/
-pkg/
+pkg/tmp/
+pkg/*.nupkg
 
 [Dd]ebug/
 [Bb]uild/
