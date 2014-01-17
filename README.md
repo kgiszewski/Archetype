@@ -22,24 +22,26 @@ Add `--touch` to either command to automatically touch the web.config on a deplo
 
 OR
 
-2) To use this package right from this repo you will need to manually download and copy the files into the appropriate spot:
+2) Deploy with Grunt (see above).  Recommended if you wish to extend this repo.
 
-###/App_Plugins###
+OR
 
-Your /App_Plugins should contain this structure:
+3) Not recommended but a down and dirty way is to manually download and copy the files into the appropriate spot:
+
+Your /App_Plugins (and /bin) should contain this structure:
 
     /App_Plugins
     - package.manifest
     - /css
     -- archetype.css
     - /js
-    -- archetype.js (our Grunt script concats the controller.js and all directives into one file, you may have to do so manually)
+    -- archetype.js (our Grunt script concats the controller.js/config.controller.js, services and all directives into one file, you will have to do so manually)
+    -- config.views.js
     - /views
     -- archetype.html
-
-###/bin###
-- Drop the Archetype.dll in the /bin of your Umbraco install (this dll only handles template helpers, PVC's at present)
-- You will have to build this yourself.
+    -- archetype.config.html
+    /bin
+    -- archectype.dll (you'll have to build it)
 
 ## Prevalue Configs ##
 
