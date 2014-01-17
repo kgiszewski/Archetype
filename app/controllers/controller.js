@@ -14,10 +14,10 @@
     $scope.archetypeRenderModel = {};
     initArchetypeRenderModel();
      
-    //helper to get $eval the labelExpression
+    //helper to get $eval the labelTemplate
     $scope.getFieldsetTitle = function(fieldsetConfigModel, fieldsetIndex) {
         var fieldset = $scope.archetypeRenderModel.fieldsets[fieldsetIndex];
-        var template = fieldsetConfigModel.labelExpression;
+        var template = fieldsetConfigModel.labelTemplate;
         var rgx = /{{(.*?)}}*/g;
         var results;
         var parsedTemplate = template;
@@ -35,7 +35,6 @@
 
     //defines the options for the jquery sortable 
     //i used an ng-model="archetypeRenderModel" so the sort updates the right model
-
     $scope.sortableOptions = {
         axis: 'y',
         cursor: "move",
@@ -240,13 +239,17 @@
     {
         var validation = {}
         validation.isValid = true;
+        validation.requiredAliases = [];
         validation.invalidProperties = [];
 
         //determine which fields are required
         _.each($scope.model.config.fieldsets, function(fieldset){
-            validation.requiredAliases = _.find(fieldset.properties, function(property){
-                return property.required;
-            }) || [];
+            _.each(fieldset.properties, function(property){
+                if(property.required)
+                {
+                    validation.requiredAliases.push(property.alias);
+                }
+            });
         });
 
         //if nothing required; let's go
@@ -276,6 +279,11 @@
                 }
             });
         });
+
+        if($scope.model.config.developerMode == '1')
+        {
+            console.log(validation);
+        }
 
         return validation;
     }

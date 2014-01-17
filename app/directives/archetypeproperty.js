@@ -32,7 +32,7 @@
         var defaultValue = configFieldsetModel.properties[scope.propertyConfigIndex].value;
         
         //try to convert the config to a JS object
-        if(typeof config == 'string'){
+        if(config && typeof config == 'string'){
             try{
                 if(scope.archetypeConfig.developerMode == '1'){
                     console.log("Trying to eval config: " + config); 
@@ -47,12 +47,12 @@
             }
         }
 
-        if(scope.archetypeConfig.developerMode == '1'){
+        if(config && scope.archetypeConfig.developerMode == '1'){
             console.log("Config post-eval: " + config); 
         }
 
         //try to convert the defaultValue to a JS object
-        if(typeof defaultValue == 'string'){
+        if(defaultValue && typeof defaultValue == 'string'){
             try{
                 if(scope.archetypeConfig.developerMode == '1'){
                     console.log("Trying to eval default value: " + defaultValue); 
@@ -67,7 +67,7 @@
             }
         }
 
-        if(scope.archetypeConfig.developerMode == '1'){
+        if(defaultValue && scope.archetypeConfig.developerMode == '1'){
             console.log("Default value post-eval: " + defaultValue); 
         }
 
