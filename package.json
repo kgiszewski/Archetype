@@ -19,6 +19,7 @@
     "grunt-nuget": "~0.1.1",
     "grunt-template": "~0.2.2",
     "grunt-touch": "~0.1.0",
-    "fs-extra": "~0.8.1"
+    "fs-extra": "~0.8.1",
+    "grunt-msbuild": "~0.1.9"
   }
 }
