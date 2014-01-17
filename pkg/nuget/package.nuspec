@@ -3,18 +3,18 @@
         <metadata>
                 <id>Archetype</id>
                 <version><%= version %></version>
-                <title>Archetype</title>
-                <authors>imulus, tomfulton</authors>
-                <owners>imulus, tomfulton</owners>
+                <title><%= name %></title>
+                <authors>imulus, kgiszewski, tomfulton</authors>
+                <owners>imulus, kgiszewski, tomfulton</owners>
                 <projectUrl>http://github.com/imulus/archetype</projectUrl>
-                <description><![CDATA[Archetype]]></description>
+                <description><![CDATA[Archetype for Umbraco]]></description>
                 <tags>umbraco</tags>
                 <iconUrl>http://github.com/imulus/archetype/raw/master/assets/logo.png</iconUrl>
-                <licenseUrl>http://www.opensource.org/licenses/mit-license.php</licenseUrl>
+                <licenseUrl><%= licenseUrl %></licenseUrl>
         </metadata>
         <files>
-                <% for (var file in files) { %>
-                        <file src="<%- files[file].path %>" target="<%= files[file].target %>" /> 
-                <% } %>
+                <% files.forEach(function(file) { %>
+                        <file src="<%- file.path %>" target="<%= file.target %>" /> 
+                <% }); %>
         </files>
 </package>

@@ -1,10 +1,11 @@
 module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
+    pkgMeta: grunt.file.readJSON('pkg/meta.json'),
     dest: 'dist',
-    version: '0.0.0',
     package_dir: 'pkg',
     package_temp_dir: '<%= package_dir %>/tmp/',
+
 
     watch: {
       less: {
@@ -78,7 +79,14 @@ module.exports = function(grunt) {
     	'nuget_manifest': {
 			'options': {
     			'data': { 
-    				version: '<%= version %>',
+            name: '<%= pkgMeta.name %>',
+    				version: '<%= pkgMeta.version %>',
+            url: '<%= pkgMeta.url %>',
+            license: '<%= pkgMeta.license %>',
+            licenseUrl: '<%= pkgMeta.licenseUrl %>',
+            author: '<%= pkgMeta.author %>',
+            authorUrl: '<%= pkgMeta.authorUrl %>',
+
     				files: [{ path: '..\\..\\..\\<%= dest %>\\**', target: 'content\\App_Plugins\\Archetype'}]
 	    		}
     		},
@@ -89,8 +97,7 @@ module.exports = function(grunt) {
     },
 
     clean: {
-  		build: ['<%= dest %>'],
-  		package_temp: ['<%= package_temp_dir %>']
+  		build: ['<%= dest %>']
     },
 
     copy: {
@@ -103,17 +110,17 @@ module.exports = function(grunt) {
       },
       deploy: {
         files: [
-          {expand: true, cwd: '<%= dest %>/', src: ['**'], dest: '<%= grunt.option("target") %>\\App_Plugins\\Archetype', flatten: false},
+          {expand: true, cwd: '<%= dest %>/', src: ['**/*'], dest: '<%= grunt.option("target") %>\\App_Plugins\\Archetype', flatten: false},
         ]
       },
       nuget_prepare: {
         files: [
-          {expand: true, cwd: '<%= dest %>/', src: ['**'], dest: '<%= package_temp_dir %>/nuget/content/', flatten: false},
+          {expand: true, cwd: '<%= dest %>/', src: ['**/*'], dest: '<%= package_temp_dir %>/nuget/content/', flatten: false},
         ]
       },
       umbracopackage: {
         files: [
-          {expand: true, cwd: '<%= dest %>/', src: ['**'], dest: 'pkg/tmp/umbraco/App_Plugins/Archetype', flatten: false},
+          {expand: true, cwd: '<%= dest %>/', src: ['**/*'], dest: 'pkg/tmp/umbraco/<%= guid %>/App_Plugins/Archetype', flatten: false},
         ]
       }
     },
@@ -127,13 +134,13 @@ module.exports = function(grunt) {
 
     umbracoPackage: {
       options: {
-        packageName: "WAT",
-        packageVersion: '1.0',
-        packageLicenseName: 'MIT',
-        packageLicenseUrl: '#',
-        packageUrl: 'http://imulus.com',
-        authorName: 'Imulus',
-        authorUrl: '#',
+        name: "<%= pkgMeta.name %>",
+        version: '<%= pkgMeta.version %>',
+        url: '<%= pkgMeta.url %>',
+        license: '<%= pkgMeta.license %>',
+        licenseUrl: '<%= pkgMeta.licenseUrl %>',
+        author: '<%= pkgMeta.author %>',
+        authorUrl: '<%= pkgMeta.authorUrl %>',
         manifest: 'pkg/umbraco/package.xml',
         readme: 'pkg/umbraco/readme.txt',
         sourceDir: 'pkg/tmp/umbraco',
@@ -141,9 +148,10 @@ module.exports = function(grunt) {
       }
     },
 
-    clean: ['<%= dest %>']
+    clean: {
+      build: ['<%= dest %>'],
+      package_temp: ['pkg/tmp'],
     }
-
   });
 
   grunt.loadNpmTasks('grunt-contrib-watch');
@@ -159,10 +167,11 @@ module.exports = function(grunt) {
   grunt.loadTasks('tasks');
 
 
-  grunt.registerTask('package:nuget', ['default', 'clean:package_temp', 'copy:nuget_prepare', 'template:nuget_manifest', 'nugetpack', 'clean:package_temp']);
+  grunt.registerTask('package', ['package:nuget', 'package:umbraco']);
+  grunt.registerTask('package:nuget', ['copy:nuget_prepare', 'template:nuget_manifest', 'nugetpack', 'clean:package_temp']);
+  grunt.registerTask('package:umbraco', ['copy:umbracopackage', 'umbracoPackage', 'clean:package_temp']);
   grunt.registerTask('touchwebconfigifenabled', function() { if (grunt.option("touch")) grunt.task.run("touch:webconfig") });
   grunt.registerTask('deploy', ['default', 'copy:deploy', 'touchwebconfigifenabled']);
-  grunt.registerTask('package:umbraco', ['copy:umbracopackage', 'umbracoPackage']);
   grunt.registerTask('css:build', ['less']);
   grunt.registerTask('js:build', ['concat']);
   grunt.registerTask('default', ['clean', 'css:build', 'js:build', 'copy:build']);
