@@ -18,17 +18,17 @@ Archetype
 Add `--touch` to either command to automatically touch the web.config on a deploy
 
 ## Installation
-1) Install the <a href='http://bit.ly/1gUYKW8'>package</a> through Umbraco.
+1) Install the <a href='http://bit.ly/1gUYKW8'>package</a> through the Umbraco package installer.  Recommended if you want to just see the packaged version.
 
 OR
 
-2) Deploy with Grunt (see above).  Recommended if you wish to extend this repo.
+2) Deploy with Grunt (see above).  Recommended if you wish to extend this repo as this will inject this project into an existing v7 Umbraco install.
 
 OR
 
 3) Not recommended but a down and dirty way is to manually download and copy the files into the appropriate spot:
 
-Your /App_Plugins (and /bin) should contain this structure:
+Your /App_Plugins and /bin should contain this structure:
 
     /App_Plugins
     - package.manifest
@@ -41,7 +41,7 @@ Your /App_Plugins (and /bin) should contain this structure:
     -- archetype.html
     -- archetype.config.html
     /bin
-    -- archectype.dll (you'll have to build it)
+    -- archetype.dll (you'll have to build it)
 
 ## Prevalue Configs ##
 
