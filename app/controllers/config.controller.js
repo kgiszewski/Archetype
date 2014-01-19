@@ -1,4 +1,4 @@
-angular.module("umbraco").controller("Imulus.ArchetypeConfigController", function ($scope, $http, assetsService, propertyEditorService) {
+angular.module("umbraco").controller("Imulus.ArchetypeConfigController", function ($scope, $http, assetsService, propertyEditorResource) {
     
     //$scope.model.value = "";
     //console.log($scope.model.value); 
@@ -10,12 +10,12 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
     $scope.model.value = $scope.model.value || defaultFieldsetConfigModel;
     
     initConfigRenderModel();
-
+ 
     //get the available views
-    propertyEditorService.getViews().then(function(data){
+    propertyEditorResource.getViews().then(function(data){
         $scope.availableViews = data;
     });
-      
+
     $scope.sortableOptions = {
         axis: 'y',
         cursor: "move",
