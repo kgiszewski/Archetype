@@ -101,7 +101,6 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
             $scope.archetypeConfigRenderModel = JSON.parse(v);
             $scope.archetypeConfigRenderModel.toString = stringify;
         }
-    }, true);
     
     //helper that returns if an item can be removed
     $scope.canRemoveFieldset = function ()
