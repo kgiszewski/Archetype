@@ -157,21 +157,6 @@
     //ini
     $scope.focusFieldset();
 
-    //helper returns valid JS or null
-    function getValidJson(variable, json)
-    {
-        if(!json) return null;
-
-        try {
-            return eval("(" + json + ")");
-        }
-        catch (e) {
-            console.log("There was an error while using 'eval' on " + variable);
-            console.log(json);
-            return null;
-        }
-    }
-
     //developerMode helpers
     $scope.archetypeRenderModel.toString = stringify;
 
