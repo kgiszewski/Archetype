@@ -1,21 +1,25 @@
-angular.module("umbraco").controller("Imulus.ArchetypeConfigController", function ($scope, $http, assetsService, propertyEditorService) {
+angular.module("umbraco").controller("Imulus.ArchetypeConfigController", function ($scope, $http, assetsService, propertyEditorResource) {
     
     //$scope.model.value = "";
     //console.log($scope.model.value); 
 
-    var newPropertyModel = '{alias: "", remove: false, collapse: false, label: "", helpText: "", view: "", value: "", config: ""}';
-    var newFieldsetModel = '{alias: "", remove: false, collapse: false, labelTemplate: "", tooltip: "", icon: "", label: "", headerText: "", footerText: "", properties:[' + newPropertyModel + ']}';
-    var defaultFieldsetConfigModel = eval("({showAdvancedOptions: false, hideFieldsetToolbar: false, enableMultipleFieldsets: false, hideFieldsetControls: false, hideFieldsetLabels: false, hidePropertyLabel: false, maxFieldsets: null, fieldsets: [" + newFieldsetModel + "]})");
+    //define empty items
+    var newPropertyModel = '{"alias": "", "remove": false, "collapse": false, "label": "", "helpText": "", "view": "", "value": "", "config": ""}';
+    var newFieldsetModel = '{"alias": "", "remove": false, "collapse": false, "labelTemplate": "", "tooltip": "", "icon": "", "label": "", "headerText": "", "footerText": "", "properties": [' + newPropertyModel + ']}';
+    var defaultFieldsetConfigModel = JSON.parse('{"showAdvancedOptions": false, "hideFieldsetToolbar": false, "enableMultipleFieldsets": false, "hideFieldsetControls": false, "hideFieldsetLabels": false, "hidePropertyLabel": false, "maxFieldsets": null, "fieldsets": [' + newFieldsetModel + ']}');
     
+    //ini the model
     $scope.model.value = $scope.model.value || defaultFieldsetConfigModel;
     
+    //ini the render model
     initConfigRenderModel();
-
+ 
     //get the available views
-    propertyEditorService.getViews().then(function(data){
+    propertyEditorResource.getViews().then(function(data){
         $scope.availableViews = data;
     });
-      
+
+    //config for the sorting
     $scope.sortableOptions = {
         axis: 'y',
         cursor: "move",
@@ -28,6 +32,7 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
         }
     };
     
+    //function that determines how to manage expanding/collapsing fieldsets
     $scope.focusFieldset = function(fieldset){
         var iniState;
         
@@ -58,9 +63,11 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
             fieldset.collapse = !iniState;
         }
     }
-    //ini
+
+    //ini the fieldsets
     $scope.focusFieldset();
 
+    //function that determines how to manage expanding/collapsing properties
     $scope.focusProperty = function(properties, property){
         var iniState;
         
@@ -101,7 +108,7 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
             $scope.archetypeConfigRenderModel = JSON.parse(v);
             $scope.archetypeConfigRenderModel.toString = stringify;
         }
-    }, true);
+    });
     
     //helper that returns if an item can be removed
     $scope.canRemoveFieldset = function ()
@@ -141,6 +148,7 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
         return count;
     }
     
+    //determines how many properties are visible
     function countVisibleProperty(fieldset)
     {
         var count = 0;
@@ -156,7 +164,7 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
    
     //handles a fieldset add
     $scope.addFieldsetRow = function ($index, $event) {
-        $scope.archetypeConfigRenderModel.fieldsets.splice($index + 1, 0, eval("(" + newFieldsetModel + ")"));
+        $scope.archetypeConfigRenderModel.fieldsets.splice($index + 1, 0, JSON.parse(newFieldsetModel));
         $scope.focusFieldset();
     }
     
@@ -171,7 +179,7 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
     
     //handles a property add
     $scope.addPropertyRow = function (fieldset, $index) {
-        fieldset.properties.splice($index + 1, 0, eval("(" + newPropertyModel + ")"));
+        fieldset.properties.splice($index + 1, 0, JSON.parse(newPropertyModel));
     }
     
     //rather than splice the archetypeConfigRenderModel, we're hiding this and cleaning onFormSubmitting

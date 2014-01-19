@@ -62,7 +62,7 @@ module.exports = function(grunt) {
           'app/controllers/controller.js',
           'app/controllers/config.controller.js',
           'app/directives/archetypeproperty.js',
-          'app/services/propertyeditor.js'
+          'app/resources/propertyeditor.js'
         ],
         dest: '<%= dest %>/js/archetype.js'
       }
