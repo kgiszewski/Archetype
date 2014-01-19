@@ -17,6 +17,31 @@
         }
     }
 
+    //helper that returns a JS ojbect from 'value' string or the original string
+    function jsonOrString(value, developerMode, debugLabel){
+        if(value && typeof value == 'string'){
+            try{
+                if(developerMode == '1'){
+                    console.log("Trying to parse " + debugLabel + ": " + value); 
+                }
+                value = JSON.parse(value);
+            }
+            catch(exception)
+            {
+                if(developerMode == '1'){
+                    console.log("Failed to parse " + debugLabel + "."); 
+                }
+            }
+        }
+
+        if(value && developerMode == '1'){
+            console.log(debugLabel + " post-parsing: ");
+            console.log(value); 
+        }
+
+        return value;
+    }
+
     var linker = function (scope, element, attrs) {
          
         var configFieldsetModel = getFieldsetByAlias(scope.archetypeConfig.fieldsets, scope.fieldset.alias);
@@ -28,44 +53,10 @@
         var defaultValue = configFieldsetModel.properties[scope.propertyConfigIndex].value;
         
         //try to convert the config to a JS object
-        if(config && typeof config == 'string'){
-            try{
-                if(scope.archetypeConfig.developerMode == '1'){
-                    console.log("Trying to eval config: " + config); 
-                }
-                config = eval("(" + config + ")");
-            }
-            catch(exception)
-            {
-                if(scope.archetypeConfig.developerMode == '1'){
-                    console.log("Failed to eval config."); 
-                }
-            }
-        }
-
-        if(config && scope.archetypeConfig.developerMode == '1'){
-            console.log("Config post-eval: " + config); 
-        }
+        config = jsonOrString(config, scope.archetypeConfig.developerMode, "config");
 
         //try to convert the defaultValue to a JS object
-        if(defaultValue && typeof defaultValue == 'string'){
-            try{
-                if(scope.archetypeConfig.developerMode == '1'){
-                    console.log("Trying to eval default value: " + defaultValue); 
-                }
-                defaultValue = eval("(" + defaultValue + ")");
-            }
-            catch(exception)
-            {
-                if(scope.archetypeConfig.developerMode == '1'){
-                    console.log("Failed to eval defaultValue."); 
-                }
-            }
-        }
-
-        if(defaultValue && scope.archetypeConfig.developerMode == '1'){
-            console.log("Default value post-eval: " + defaultValue); 
-        }
+        defaultValue = jsonOrString(defaultValue, scope.archetypeConfig.developerMode, "defaultValue");
 
         if (view)
         {
@@ -87,7 +78,7 @@
 
                     if (!renderModelPropertyIndex)
                     {
-                        scope.archetypeRenderModel.fieldsets[scope.fieldsetIndex].properties.push(eval("({alias: '" + alias + "', value:'" + defaultValue + "'})"));
+                        scope.archetypeRenderModel.fieldsets[scope.fieldsetIndex].properties.push(JSON.parse('{"alias": "' + alias + '", "value": "' + defaultValue + '"}'));
                         renderModelPropertyIndex = getPropertyIndexByAlias(scope.archetypeRenderModel.fieldsets[scope.fieldsetIndex].properties, alias);
                     }
                     scope.model.value = scope.archetypeRenderModel.fieldsets[scope.fieldsetIndex].properties[renderModelPropertyIndex].value;

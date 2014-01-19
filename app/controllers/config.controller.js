@@ -4,9 +4,9 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
     //console.log($scope.model.value); 
 
     //define empty items
-    var newPropertyModel = '{alias: "", remove: false, collapse: false, label: "", helpText: "", view: "", value: "", config: ""}';
-    var newFieldsetModel = '{alias: "", remove: false, collapse: false, labelTemplate: "", tooltip: "", icon: "", label: "", headerText: "", footerText: "", properties:[' + newPropertyModel + ']}';
-    var defaultFieldsetConfigModel = eval("({showAdvancedOptions: false, hideFieldsetToolbar: false, enableMultipleFieldsets: false, hideFieldsetControls: false, hideFieldsetLabels: false, hidePropertyLabel: false, maxFieldsets: null, fieldsets: [" + newFieldsetModel + "]})");
+    var newPropertyModel = '{"alias": "", "remove": false, "collapse": false, "label": "", "helpText": "", "view": "", "value": "", "config": ""}';
+    var newFieldsetModel = '{"alias": "", "remove": false, "collapse": false, "labelTemplate": "", "tooltip": "", "icon": "", "label": "", "headerText": "", "footerText": "", "properties": [' + newPropertyModel + ']}';
+    var defaultFieldsetConfigModel = JSON.parse('{"showAdvancedOptions": false, "hideFieldsetToolbar": false, "enableMultipleFieldsets": false, "hideFieldsetControls": false, "hideFieldsetLabels": false, "hidePropertyLabel": false, "maxFieldsets": null, "fieldsets": [' + newFieldsetModel + ']}');
     
     //ini the model
     $scope.model.value = $scope.model.value || defaultFieldsetConfigModel;
@@ -164,7 +164,7 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
    
     //handles a fieldset add
     $scope.addFieldsetRow = function ($index, $event) {
-        $scope.archetypeConfigRenderModel.fieldsets.splice($index + 1, 0, eval("(" + newFieldsetModel + ")"));
+        $scope.archetypeConfigRenderModel.fieldsets.splice($index + 1, 0, JSON.parse(newFieldsetModel));
         $scope.focusFieldset();
     }
     
@@ -179,7 +179,7 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
     
     //handles a property add
     $scope.addPropertyRow = function (fieldset, $index) {
-        fieldset.properties.splice($index + 1, 0, eval("(" + newPropertyModel + ")"));
+        fieldset.properties.splice($index + 1, 0, JSON.parse(newPropertyModel));
     }
     
     //rather than splice the archetypeConfigRenderModel, we're hiding this and cleaning onFormSubmitting
