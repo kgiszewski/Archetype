@@ -3,12 +3,15 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
     //$scope.model.value = "";
     //console.log($scope.model.value); 
 
+    //define empty items
     var newPropertyModel = '{alias: "", remove: false, collapse: false, label: "", helpText: "", view: "", value: "", config: ""}';
     var newFieldsetModel = '{alias: "", remove: false, collapse: false, labelTemplate: "", tooltip: "", icon: "", label: "", headerText: "", footerText: "", properties:[' + newPropertyModel + ']}';
     var defaultFieldsetConfigModel = eval("({showAdvancedOptions: false, hideFieldsetToolbar: false, enableMultipleFieldsets: false, hideFieldsetControls: false, hideFieldsetLabels: false, hidePropertyLabel: false, maxFieldsets: null, fieldsets: [" + newFieldsetModel + "]})");
     
+    //ini the model
     $scope.model.value = $scope.model.value || defaultFieldsetConfigModel;
     
+    //ini the render model
     initConfigRenderModel();
  
     //get the available views
@@ -16,6 +19,7 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
         $scope.availableViews = data;
     });
 
+    //config for the sorting
     $scope.sortableOptions = {
         axis: 'y',
         cursor: "move",
@@ -28,6 +32,7 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
         }
     };
     
+    //function that determines how to manage expanding/collapsing fieldsets
     $scope.focusFieldset = function(fieldset){
         var iniState;
         
@@ -58,9 +63,11 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
             fieldset.collapse = !iniState;
         }
     }
-    //ini
+
+    //ini the fieldsets
     $scope.focusFieldset();
 
+    //function that determines how to manage expanding/collapsing properties
     $scope.focusProperty = function(properties, property){
         var iniState;
         
@@ -141,6 +148,7 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
         return count;
     }
     
+    //determines how many properties are visible
     function countVisibleProperty(fieldset)
     {
         var count = 0;
