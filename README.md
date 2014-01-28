@@ -17,26 +17,31 @@ Archetype
 
 Add `--touch` to either command to automatically touch the web.config on a deploy
 
-## Installation ##
+## Installation
+1) Install the <a href='http://bit.ly/1gUYKW8'>package</a> through the Umbraco package installer.  Recommended if you want to just see the packaged version.
 
-To use this package right from this repo you will need to manually download and copy the files into the appropriate spot:
+OR
 
-###/App_Plugins###
+2) Deploy with Grunt (see above).  Recommended if you wish to extend this repo as this will inject this project into an existing v7 Umbraco install.
 
-Your /App_Plugins should contain this structure:
+OR
+
+3) Not recommended but a down and dirty way is to manually download and copy the files into the appropriate spot:
+
+Your /App_Plugins and /bin should contain this structure:
 
     /App_Plugins
     - package.manifest
     - /css
     -- archetype.css
     - /js
-    -- archetype.js (our Grunt script concats the controller.js and all directives into one file, you may have to do so manually)
+    -- archetype.js (our Grunt script concats the controller.js/config.controller.js, services and all directives into one file, you will have to do so manually)
+    -- config.views.js
     - /views
     -- archetype.html
-
-###/bin###
-- Drop the Imulus.Archetype.dll in the /bin of your Umbraco install (this dll only handles template helpers, PVC's at present)
-- You will have to build this yourself or download it here.
+    -- archetype.config.html
+    /bin
+    -- archetype.dll (you'll have to build it)
 
 ## Prevalue Configs ##
 

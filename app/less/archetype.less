@@ -1,20 +1,63 @@
 ﻿.archetypeEditor fieldset{
-    border: 1px solid #666;
-    padding: 5px;
+    border: 1px solid #dddddd;
+    padding: 0;
     margin-bottom: 5px;
-    background-color: #fff;
+    background-color: #f1f1f1;
     clear: both;
+    display: inline-block;
+    width: 100%;
 }
 
-.archetypeEditor label{
-    width: 75px;
+.archetypeEditor .archetypeFieldsetLabel {
+    padding: 8px 25px 8px 3px;
     float: left;
+    width: 98%;
+
+    span {
+        font-weight: bold;
+    }
+
+    &:hover {
+        cursor: pointer;
+
+        label span {
+            text-decoration: underline;
+        }
+    }
+
+    .caret {
+        float:left;
+        margin: 8px 1px 0 7px;
+        &.caret-right {
+            border-bottom: 4px solid transparent;
+            border-top: 4px solid transparent;
+            border-left: 4px solid #000000;
+            content: "";
+            margin-top: 6px;
+        }
+    }
+
+    label{
+        width: 75px;
+        float: left;
+    }
 }
 
-.archetypeEditor fieldset>label{
+.archetypeEditor .arechetypeCollapser{
+    clear: both;
+    height: 100%;
+    margin-top: 10px;
+    padding-top: 12px;
+    background-color: #fff;
+    border-top: 1px solid silver;
+    border-radius: 0 0 0 5px;
+}
+
+.archetypeEditor fieldset .archetypeFieldsetLabel label{
     float: left;
-    width: 200px;
-    padding-left: 0;
+    width: auto;
+    margin-bottom: 0;
+    padding: 0;
 }
 
 .archetypeEditor .multiPropertyTextbox{
@@ -23,10 +66,22 @@
 
 .archetypeEditor ul{
     list-style: none;
+    margin-left: 0;
 }
 
 .archetypeEditor .archetypeEditorControls{
     float: right;
+    i:hover {
+        cursor: pointer;
+    }
+}
+
+.archetypeEditor form {
+    margin-left:20px;
+
+    .control-label {
+        padding-top: 0 !important;
+    }
 }
 
 .archetypeEditor .archetypeProperty{
@@ -146,10 +201,6 @@
     overflow: hidden;
 }
 
-.archetypeConfig .archetypeFieldsetCollapser{
-    margin-top: 10px;
-}
-
 .archetypeConfig .archetypeOptions label{
     width: 200px;
 }
@@ -187,4 +238,9 @@
     margin-bottom: 5px;
     padding-top: 3px;
     padding-bottom: 3px;
+}
+
+.ui-sortable-placeholder {
+    visibility: visible !important;
+    background-color:   #d0e7f1 !important;
 }

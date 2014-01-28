@@ -1,16 +1,17 @@
 ﻿angular.module("umbraco").controller("Imulus.ArchetypeController", function ($scope, $http, $interpolate, assetsService, angularHelper, notificationsService) {
  
     //$scope.model.value = "";
-    //set default value of the model
-    //this works by checking to see if there is a model; then cascades to the default model then to an empty fieldset
 
+    //get a reference to the current form
     var form = angularHelper.getCurrentForm($scope);
 
+    //set the config equal to our prevalue config
     $scope.model.config = $scope.model.config.archetypeConfig;
    
+    //ini the model
     $scope.model.value = $scope.model.value || { fieldsets: [getEmptyRenderFieldset($scope.model.config.fieldsets[0])] };
 
-    //ini
+    //ini the render model
     $scope.archetypeRenderModel = {};
     initArchetypeRenderModel();
      
@@ -31,10 +32,7 @@
         return parsedTemplate;
     };
 
-    /* add/remove/sort */
-
-    //defines the options for the jquery sortable 
-    //i used an ng-model="archetypeRenderModel" so the sort updates the right model
+    //sort config
     $scope.sortableOptions = {
         axis: 'y',
         cursor: "move",
@@ -128,7 +126,7 @@
         return (typeof property !== 'undefined') ? property.value : '';
     };
     
-    //helper for collapsing
+    //helper for expanding/collapsing fieldsets
     $scope.focusFieldset = function(fieldset){
         
         var iniState;
@@ -154,23 +152,8 @@
         }
     }
     
-    //ini
+    //ini the fieldset expand/collapse
     $scope.focusFieldset();
-
-    //helper returns valid JS or null
-    function getValidJson(variable, json)
-    {
-        if(!json) return null;
-
-        try {
-            return eval("(" + json + ")");
-        }
-        catch (e) {
-            console.log("There was an error while using 'eval' on " + variable);
-            console.log(json);
-            return null;
-        }
-    }
 
     //developerMode helpers
     $scope.archetypeRenderModel.toString = stringify;
@@ -228,10 +211,10 @@
         });
     }
 
-    //helper to add an empty fieldset
+    //helper to add an empty fieldset to the render model
     function getEmptyRenderFieldset (fieldsetModel)
     {
-        return eval("({ alias: '" + fieldsetModel.alias + "', remove: false, properties: []})");
+        return JSON.parse('{"alias": "' + fieldsetModel.alias + '", "remove": false, "properties": []}');
     }
 
     //helper for validation
@@ -288,6 +271,7 @@
         return validation;
     }
 
+    //helper to lookup validity when given a fieldsetIndex and property alias
     $scope.getPropertyValidity = function(fieldsetIndex, alias)
     {
         if($scope.archetypeRenderModel.fieldsets[fieldsetIndex])

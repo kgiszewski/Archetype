@@ -12,6 +12,18 @@
     "grunt-contrib-jshint": "~0.7.2",
     "grunt-cli": "~0.1.11",
     "grunt-contrib-clean": "~0.5.0",
-    "grunt-touch": "~0.1.0"
+    "grunt-touch": "~0.1.0",
+    "guid": "0.0.12",
+    "adm-zip": "~0.4.3",
+    "rimraf": "~2.2.5",
+    "grunt-nuget": "~0.1.1",
+    "grunt-template": "~0.2.2",
+    "grunt-touch": "~0.1.0",
+    "fs-extra": "~0.8.1",
+    "grunt-msbuild": "~0.1.9"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/imulus/Archetype.git"
   }
 }

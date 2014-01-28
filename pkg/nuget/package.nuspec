@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+        <metadata>
+                <id>Archetype</id>
+                <version><%= version %></version>
+                <title><%= name %></title>
+                <authors>imulus, kgiszewski, tomfulton</authors>
+                <owners>imulus, kgiszewski, tomfulton</owners>
+                <projectUrl>http://github.com/imulus/archetype</projectUrl>
+                <description><![CDATA[Archetype for Umbraco]]></description>
+                <tags>umbraco</tags>
+                <iconUrl>http://github.com/imulus/archetype/raw/master/assets/logo.png</iconUrl>
+                <licenseUrl><%= licenseUrl %></licenseUrl>
+        </metadata>
+        <files>
+                <% files.forEach(function(file) { %>
+                        <file src="<%- file.path %>" target="<%= file.target %>" /> 
+                <% }); %>
+        </files>
+</package>
