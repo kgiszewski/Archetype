@@ -18,5 +18,21 @@
     {
         "name": "Radio Buttons",
         "path": "/umbraco/views/propertyeditors/radiobuttons/radiobuttons.html"
+    },
+    {
+        "name": "Date Picker",
+        "path": "/umbraco/views/propertyeditors/datepicker/datepicker.html"
+    },
+    {
+        "name": "Dropdown",
+        "path": "/umbraco/views/propertyeditors/dropdown/dropdown.html"
+    },
+    {
+        "name": "Textarea",
+        "path": "/umbraco/views/propertyeditors/textarea/textarea.html"
+    },
+    {
+        "name": "RTE",
+        "path": "/umbraco/views/propertyeditors/rte/rte.html"
     }
-]
+] 
