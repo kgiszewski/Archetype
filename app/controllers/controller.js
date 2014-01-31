@@ -214,7 +214,7 @@
     //helper to add an empty fieldset to the render model
     function getEmptyRenderFieldset (fieldsetModel)
     {
-        return JSON.parse('{"alias": "' + fieldsetModel.alias + '", "remove": false, "properties": []}');
+        return JSON.parse('{"alias": "' + fieldsetModel.alias + '", "remove": false, "isValid": true, "properties": []}');
     }
 
     //helper for validation

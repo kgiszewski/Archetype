@@ -4,9 +4,9 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
     //console.log($scope.model.value); 
 
     //define empty items
-    var newPropertyModel = '{"alias": "", "remove": false, "collapse": false, "label": "", "helpText": "", "dataTypeId": "-88", "value": "", "config": ""}';
+    var newPropertyModel = '{"alias": "", "remove": false, "collapse": false, "label": "", "helpText": "", "dataTypeId": "-88", "value": ""}';
     var newFieldsetModel = '{"alias": "", "remove": false, "collapse": false, "labelTemplate": "", "tooltip": "", "icon": "", "label": "", "headerText": "", "footerText": "", "properties": [' + newPropertyModel + ']}';
-    var defaultFieldsetConfigModel = JSON.parse('{"showAdvancedOptions": false, "hideFieldsetToolbar": false, "enableMultipleFieldsets": false, "hideFieldsetControls": false, "hideFieldsetLabels": false, "hidePropertyLabel": false, "maxFieldsets": null, "fieldsets": [' + newFieldsetModel + ']}');
+    var defaultFieldsetConfigModel = JSON.parse('{"showAdvancedOptions": false, "hideFieldsetToolbar": false, "enableMultipleFieldsets": false, "hideFieldsetControls": false, "hidePropertyLabel": false, "maxFieldsets": null, "fieldsets": [' + newFieldsetModel + ']}');
 
     //ini the model
     $scope.model.value = $scope.model.value || defaultFieldsetConfigModel;
@@ -92,6 +92,11 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
             property.collapse = !iniState;
         }
     }
+
+    //ini the properties
+    _.each($scope.archetypeConfigRenderModel.fieldsets, function(fieldset){
+            $scope.focusProperty(fieldset.properties);
+    });
     
     //setup JSON.stringify helpers
     $scope.archetypeConfigRenderModel.toString = stringify;
