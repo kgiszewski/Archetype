@@ -1,4 +1,4 @@
-﻿angular.module("umbraco").directive('archetypeProperty', function ($compile, $http) {
+angular.module("umbraco").directive('archetypeProperty', function ($compile, $http, propertyEditorResource, umbPropEditorHelper) {
     
     function getFieldsetByAlias(fieldsets, alias)
     {
@@ -43,21 +43,46 @@
     }
 
     var linker = function (scope, element, attrs) {
-         
         var configFieldsetModel = getFieldsetByAlias(scope.archetypeConfig.fieldsets, scope.fieldset.alias);
-
-        var view = configFieldsetModel.properties[scope.propertyConfigIndex].view;
+        var view = "";
         var label = configFieldsetModel.properties[scope.propertyConfigIndex].label;
-        var config = configFieldsetModel.properties[scope.propertyConfigIndex].config;
+        var dataTypeId = configFieldsetModel.properties[scope.propertyConfigIndex].dataTypeId;
+        var config = null;
         var alias = configFieldsetModel.properties[scope.propertyConfigIndex].alias;
         var defaultValue = configFieldsetModel.properties[scope.propertyConfigIndex].value;
-        
-        //try to convert the config to a JS object
-        config = jsonOrString(config, scope.archetypeConfig.developerMode, "config");
 
         //try to convert the defaultValue to a JS object
         defaultValue = jsonOrString(defaultValue, scope.archetypeConfig.developerMode, "defaultValue");
 
+        //grab info for the selected datatype, prepare for view
+        propertyEditorResource.getDataType(dataTypeId).then(function (data) {
+            //transform preValues array into object expected by propertyeditor views
+            var configObj = {};
+            _.each(data.preValues, function(p) {
+                configObj[p.key] = p.value;
+            });
+            config = configObj;
+
+            //determine the view to use [...] and load it
+            propertyEditorResource.getPropertyEditorMapping(data.selectedEditor).then(function(propertyEditor) {
+                var pathToView = umbPropEditorHelper.getViewPath(propertyEditor.view);
+
+                //load in the DefaultPreValues for the PropertyEditor, if any
+                var defaultConfigObj =  {};
+                if (propertyEditor.hasOwnProperty('defaultPreValues')) {
+                    _.each(propertyEditor.defaultPreValues, function(p) {
+                        _.extend(defaultConfigObj, p)
+                    });
+                }
+                var mergedConfig = _.extend(defaultConfigObj, config);
+
+                loadView(pathToView, mergedConfig, defaultValue, alias, scope, element);
+            });
+        });
+
+    }
+
+    function loadView(view, config, defaultValue, alias, scope, element) {
         if (view)
         {
             $http.get(view).success(function (data) {
@@ -66,8 +91,6 @@
                     {
                         console.log(scope);
                     }
-
-                    var rawTemplate = data;
 
                     //define the initial model and config
                     scope.model = {};
@@ -94,7 +117,7 @@
                         scope.archetypeRenderModel.fieldsets[scope.fieldsetIndex].properties[renderModelPropertyIndex].value = newValue;
                     });
 
-                    element.html(rawTemplate).show();
+                    element.html(data).show();
                     $compile(element.contents())(scope);
                 }
             });

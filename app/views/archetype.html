@@ -12,11 +12,11 @@
     <ul ui-sortable="sortableOptions" ng-model="archetypeRenderModel.fieldsets">
         <li ng-repeat="fieldset in archetypeRenderModel.fieldsets" ng-hide="fieldset.remove">
             <fieldset ng-class="{archetypeFieldsetError: !fieldset.isValid}" ng-init="fieldsetConfigModel = getConfigFieldsetByAlias(fieldset.alias)">
-                <div class="archetypeFieldsetLabel" ng-click="focusFieldset(fieldset)">
+                <div class="archetypeFieldsetLabel">
                     <span class="caret" ng-hide="fieldset.collapse"></span>
                     <span class="caret caret-right" ng-show="fieldset.collapse"></span>
 
-                    <label ng-hide="model.config.hideFieldsetLabels == '1'">
+                    <label ng-click="focusFieldset(fieldset)">
                         <img ng-src='{{fieldsetConfigModel.icon}}' title="{{fieldsetConfigModel.tooltip}}" />
                         <span ng-bind="getFieldsetTitle(fieldsetConfigModel, $index)"></span>
                     </label>
