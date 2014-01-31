@@ -92,6 +92,11 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
             property.collapse = !iniState;
         }
     }
+
+    //ini the properties
+    _.each($scope.archetypeConfigRenderModel.fieldsets, function(fieldset){
+            $scope.focusProperty(fieldset.properties);
+    });
     
     //setup JSON.stringify helpers
     $scope.archetypeConfigRenderModel.toString = stringify;
