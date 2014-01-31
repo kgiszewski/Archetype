@@ -92,8 +92,6 @@ angular.module("umbraco").directive('archetypeProperty', function ($compile, $ht
                         console.log(scope);
                     }
 
-                    var rawTemplate = data;
-
                     //define the initial model and config
                     scope.model = {};
                     scope.model.config = {};
@@ -119,7 +117,7 @@ angular.module("umbraco").directive('archetypeProperty', function ($compile, $ht
                         scope.archetypeRenderModel.fieldsets[scope.fieldsetIndex].properties[renderModelPropertyIndex].value = newValue;
                     });
 
-                    element.html(rawTemplate).show();
+                    element.html(data).show();
                     $compile(element.contents())(scope);
                 }
             });
