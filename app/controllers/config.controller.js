@@ -1,11 +1,11 @@
-angular.module("umbraco").controller("Imulus.ArchetypeConfigController", function ($scope, $http, assetsService, propertyEditorResource) {
+angular.module("umbraco").controller("Imulus.ArchetypeConfigController", function ($scope, $http, assetsService, dialogService, propertyEditorResource) {
     
     //$scope.model.value = "";
     //console.log($scope.model.value); 
 
     //define empty items
     var newPropertyModel = '{"alias": "", "remove": false, "collapse": false, "label": "", "helpText": "", "dataTypeId": "-88", "value": ""}';
-    var newFieldsetModel = '{"alias": "", "remove": false, "collapse": false, "labelTemplate": "", "tooltip": "", "icon": "", "label": "", "headerText": "", "footerText": "", "properties": [' + newPropertyModel + ']}';
+    var newFieldsetModel = '{"alias": "", "remove": false, "collapse": false, "labelTemplate": "", "icon": "", "label": "", "properties": [' + newPropertyModel + ']}';
     var defaultFieldsetConfigModel = JSON.parse('{"showAdvancedOptions": false, "hideFieldsetToolbar": false, "enableMultipleFieldsets": false, "hideFieldsetControls": false, "hidePropertyLabel": false, "maxFieldsets": null, "fieldsets": [' + newFieldsetModel + ']}');
 
     //ini the model
@@ -18,6 +18,16 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
     propertyEditorResource.getAllDataTypes().then(function(data) {
         $scope.availableDataTypes = data;
     });
+
+    //iconPicker
+    $scope.selectIcon = function(fieldset){
+        var dialog = dialogService.iconPicker({
+            callback: function(data){
+                fieldset.icon = data;
+            }
+        });
+
+    }
 
     //config for the sorting
     $scope.sortableOptions = {
