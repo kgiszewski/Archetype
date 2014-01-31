@@ -3,7 +3,7 @@
     <div class="archetypeFieldsetToolbar" ng-show="model.config.fieldsets.length > 1 && model.config.hideFieldsetToolbar != '1'">
         <ul> 
             <li ng-repeat="fieldsetModel in model.config.fieldsets" ng-click="addRow(fieldsetModel.alias)">
-                <img ng-src='{{fieldsetModel.icon}}' title="{{fieldsetModel.tooltip}}" />
+                <i class="fieldsetIcon icon ng-class:fieldsetModel.icon"></i>
                 <span>{{fieldsetModel.label}}</span>
             </li>
         </ul>
@@ -17,7 +17,7 @@
                     <span class="caret caret-right" ng-show="fieldset.collapse"></span>
 
                     <label ng-click="focusFieldset(fieldset)">
-                        <img ng-src='{{fieldsetConfigModel.icon}}' title="{{fieldsetConfigModel.tooltip}}" />
+                        <i class="fieldsetIcon icon ng-class:fieldsetConfigModel.icon"></i>
                         <span ng-bind="getFieldsetTitle(fieldsetConfigModel, $index)"></span>
                     </label>
 
