@@ -47,12 +47,9 @@ angular.module("umbraco").directive('archetypeProperty', function ($compile, $ht
         var view = "";
         var label = configFieldsetModel.properties[scope.propertyConfigIndex].label;
         var dataTypeId = configFieldsetModel.properties[scope.propertyConfigIndex].dataTypeId;
-        var config = configFieldsetModel.properties[scope.propertyConfigIndex].config;
+        var config = null;
         var alias = configFieldsetModel.properties[scope.propertyConfigIndex].alias;
         var defaultValue = configFieldsetModel.properties[scope.propertyConfigIndex].value;
-
-        //try to convert the config to a JS object
-        config = jsonOrString(config, scope.archetypeConfig.developerMode, "config");
 
         //try to convert the defaultValue to a JS object
         defaultValue = jsonOrString(defaultValue, scope.archetypeConfig.developerMode, "defaultValue");

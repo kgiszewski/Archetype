@@ -4,7 +4,7 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
     //console.log($scope.model.value); 
 
     //define empty items
-    var newPropertyModel = '{"alias": "", "remove": false, "collapse": false, "label": "", "helpText": "", "dataTypeId": "-88", "value": "", "config": ""}';
+    var newPropertyModel = '{"alias": "", "remove": false, "collapse": false, "label": "", "helpText": "", "dataTypeId": "-88", "value": ""}';
     var newFieldsetModel = '{"alias": "", "remove": false, "collapse": false, "labelTemplate": "", "tooltip": "", "icon": "", "label": "", "headerText": "", "footerText": "", "properties": [' + newPropertyModel + ']}';
     var defaultFieldsetConfigModel = JSON.parse('{"showAdvancedOptions": false, "hideFieldsetToolbar": false, "enableMultipleFieldsets": false, "hideFieldsetControls": false, "hidePropertyLabel": false, "maxFieldsets": null, "fieldsets": [' + newFieldsetModel + ']}');
 
