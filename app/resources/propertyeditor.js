@@ -9,6 +9,25 @@ angular.module('umbraco').factory('propertyEditorResource', function($q, $http, 
                     return { "id": d.id, "name": d.name }
                 });
             });
+        },
+        getDataType: function(id) {
+        	return umbRequestHelper.resourcePromise(
+        		$http.get("/umbraco/backoffice/UmbracoApi/DataType/GetById?id=" + id), 'Failed to retrieve datatype'
+    		);
+        },
+        getViewForPropertyEditor: function(alias) {
+            return umbRequestHelper.resourcePromise(
+                $http.get("/App_plugins/Archetype/js/propertyEditors.views.js"), 'Failed to retrieve datatype mappings'
+            ).then(function (data) {
+                var result = _.find(data, function(d) {
+                    return d.propertyEditorAlias === alias;
+                });
+
+                if (result != null) 
+                    return result.view;
+
+                return "";
+            });
         }
     };
 });
