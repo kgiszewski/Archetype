@@ -190,9 +190,9 @@ module.exports = function(grunt) {
   grunt.loadTasks('tasks');
 
 
-  grunt.registerTask('package', ['default', 'package:nuget', 'package:umbraco']);
-  grunt.registerTask('package:nuget', ['clean:package_artifacts', 'copy:nuget_prepare', 'template:nuget_manifest', 'nugetpack', 'clean:package_temp']);
-  grunt.registerTask('package:umbraco', ['clean:package_artifacts', 'copy:umbracopackage', 'umbracoPackage', 'clean:package_temp']);
+  grunt.registerTask('package', ['clean:package_artifacts', 'default', 'package:nuget', 'package:umbraco']);
+  grunt.registerTask('package:nuget', ['copy:nuget_prepare', 'template:nuget_manifest', 'nugetpack', 'clean:package_temp']);
+  grunt.registerTask('package:umbraco', ['copy:umbracopackage', 'umbracoPackage', 'clean:package_temp']);
   grunt.registerTask('touchwebconfigifenabled', function() { if (grunt.option("touch")) grunt.task.run("touch:webconfig") });
   grunt.registerTask('deploy', ['default', 'copy:deploy', 'touchwebconfigifenabled']);
   grunt.registerTask('css:build', ['less']);
