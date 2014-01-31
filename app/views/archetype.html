@@ -3,7 +3,7 @@
     <div class="archetypeFieldsetToolbar" ng-show="model.config.fieldsets.length > 1 && model.config.hideFieldsetToolbar != '1'">
         <ul> 
             <li ng-repeat="fieldsetModel in model.config.fieldsets" ng-click="addRow(fieldsetModel.alias)">
-                <img ng-src='{{fieldsetModel.icon}}' title="{{fieldsetModel.tooltip}}" />
+                <img ng-src='{{fieldsetModel.icon}}' ng-show='fieldsetModel.icon' title="{{fieldsetModel.label}}" />
                 <span>{{fieldsetModel.label}}</span>
             </li>
         </ul>
@@ -17,7 +17,7 @@
                     <span class="caret caret-right" ng-show="fieldset.collapse"></span>
 
                     <label ng-click="focusFieldset(fieldset)">
-                        <img ng-src='{{fieldsetConfigModel.icon}}' title="{{fieldsetConfigModel.tooltip}}" />
+                        <img ng-src='{{fieldsetConfigModel.icon}}' title="{{fieldsetConfigModel.label}}" ng-show="fieldsetConfigModel.icon" />
                         <span ng-bind="getFieldsetTitle(fieldsetConfigModel, $index)"></span>
                     </label>
 
@@ -28,11 +28,6 @@
                     </div>
                 </div>
                 <div class="arechetypeCollapser animate-hide" ng-hide="fieldset.collapse">
-
-                    <div class="archetypeFieldsetHeaderText" ng-show="fieldsetConfigModel.headerText">
-                        <em>{{fieldsetConfigModel.headerText}}</em>
-                    </div>
-
                     <form class="form-inline">
                         <div ng-class="{archetypePropertyError: getPropertyValidity($parent.$index, property.alias) === false}" class="archetypeProperty control-group" ng-repeat="property in fieldsetConfigModel.properties">
                             <label ng-hide="archetypeConfig.hidePropertyLabels == '1'" class="control-label" for="archetype-property-{{property.alias}}">
@@ -47,12 +42,6 @@
                             </div>
                         </div>
                     </form>
-
-
-                    <div class="archetypeFieldsetFooterText" ng-show="fieldsetConfigModel.footerText">
-                        <em>{{fieldsetConfigModel.footerText}}</em>
-                    </div>
-
                 </div>
             </fieldset>
         </li>
