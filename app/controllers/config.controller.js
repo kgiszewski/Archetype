@@ -4,19 +4,19 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
     //console.log($scope.model.value); 
 
     //define empty items
-    var newPropertyModel = '{"alias": "", "remove": false, "collapse": false, "label": "", "helpText": "", "view": "", "value": "", "config": ""}';
+    var newPropertyModel = '{"alias": "", "remove": false, "collapse": false, "label": "", "helpText": "", "dataTypeId": "-88", "value": "", "config": ""}';
     var newFieldsetModel = '{"alias": "", "remove": false, "collapse": false, "labelTemplate": "", "tooltip": "", "icon": "", "label": "", "headerText": "", "footerText": "", "properties": [' + newPropertyModel + ']}';
     var defaultFieldsetConfigModel = JSON.parse('{"showAdvancedOptions": false, "hideFieldsetToolbar": false, "enableMultipleFieldsets": false, "hideFieldsetControls": false, "hideFieldsetLabels": false, "hidePropertyLabel": false, "maxFieldsets": null, "fieldsets": [' + newFieldsetModel + ']}');
-    
+
     //ini the model
     $scope.model.value = $scope.model.value || defaultFieldsetConfigModel;
     
     //ini the render model
     initConfigRenderModel();
  
-    //get the available views
-    propertyEditorResource.getViews().then(function(data){
-        $scope.availableViews = data;
+    //get the available datatypes
+    propertyEditorResource.getAllDataTypes().then(function(data) {
+        $scope.availableDataTypes = data;
     });
 
     //config for the sorting

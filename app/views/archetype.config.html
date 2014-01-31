@@ -53,7 +53,7 @@
                                          <label>Help Text</label><input type="text" ng-model="property.helpText" />
                                     </div>
                                     <div>
-                                         <label>View</label><select ng-model="property.view" ng-options="view.path as view.name for view in availableViews"></select>
+                                         <label>DataType</label><select ng-model="property.dataTypeId" ng-options="value.id as value.name for (key, value) in availableDataTypes"></select>
                                     </div>                            
                                     <div>
                                          <label>Default Value</label><input type="text" ng-model="property.value" />
