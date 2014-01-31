@@ -18,10 +18,10 @@
                     <div class="archetypeFieldsetOption">
                         <label>Label Template</label><input type="text" ng-model="fieldset.labelTemplate" />
                     </div>
-                    <div class="archetypeFieldsetOption">
-                        <label>Icon</label><input type="text" ng-model="fieldset.icon" />
+                    <div class="archetypeFieldsetOption" ng-show="archetypeConfigRenderModel.enableMultipleFieldsets">
+                        <label>Icon</label><i class="fieldsetIcon icon ng-class:fieldset.icon"></i><a ng-click="selectIcon(fieldset)">Select...</a>
                     </div>
-                    <div class="archetypeFieldsetOption">
+                    <div class="archetypeFieldsetOption"> 
                         <label>Properties</label>
                     </div>
                     <div class="archetypePropertiesWrapper">

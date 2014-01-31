@@ -1,4 +1,4 @@
-angular.module("umbraco").controller("Imulus.ArchetypeConfigController", function ($scope, $http, assetsService, propertyEditorResource) {
+angular.module("umbraco").controller("Imulus.ArchetypeConfigController", function ($scope, $http, assetsService, dialogService, propertyEditorResource) {
     
     //$scope.model.value = "";
     //console.log($scope.model.value); 
@@ -18,6 +18,16 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
     propertyEditorResource.getAllDataTypes().then(function(data) {
         $scope.availableDataTypes = data;
     });
+
+    //iconPicker
+    $scope.selectIcon = function(fieldset){
+        var dialog = dialogService.iconPicker({
+            callback: function(data){
+                fieldset.icon = data;
+            }
+        });
+
+    }
 
     //config for the sorting
     $scope.sortableOptions = {

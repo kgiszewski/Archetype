@@ -1,9 +1,9 @@
-﻿<div class="archetypeEditor ng-class:model.config.customCssClass" ng-controller="Imulus.ArchetypeController">
+<div class="archetypeEditor ng-class:model.config.customCssClass" ng-controller="Imulus.ArchetypeController">
     <textarea class="archetypeDeveloperModel" ng-show="model.config.developerMode" ng-model="archetypeRenderModel"></textarea>
     <div class="archetypeFieldsetToolbar" ng-show="model.config.fieldsets.length > 1 && model.config.hideFieldsetToolbar != '1'">
         <ul> 
             <li ng-repeat="fieldsetModel in model.config.fieldsets" ng-click="addRow(fieldsetModel.alias)">
-                <img ng-src='{{fieldsetModel.icon}}' ng-show='fieldsetModel.icon' title="{{fieldsetModel.label}}" />
+                <i class="fieldsetIcon icon ng-class:fieldsetModel.icon"></i>
                 <span>{{fieldsetModel.label}}</span>
             </li>
         </ul>
@@ -17,7 +17,7 @@
                     <span class="caret caret-right" ng-show="fieldset.collapse"></span>
 
                     <label ng-click="focusFieldset(fieldset)">
-                        <img ng-src='{{fieldsetConfigModel.icon}}' title="{{fieldsetConfigModel.label}}" ng-show="fieldsetConfigModel.icon" />
+                        <i class="fieldsetIcon icon ng-class:fieldsetConfigModel.icon"></i>
                         <span ng-bind="getFieldsetTitle(fieldsetConfigModel, $index)"></span>
                     </label>
 
