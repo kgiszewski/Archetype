@@ -15,7 +15,7 @@ angular.module('umbraco').factory('propertyEditorResource', function($q, $http, 
         		$http.get("/umbraco/backoffice/UmbracoApi/DataType/GetById?id=" + id), 'Failed to retrieve datatype'
     		);
         },
-        getViewForPropertyEditor: function(alias) {
+        getPropertyEditorMapping: function(alias) {
             return umbRequestHelper.resourcePromise(
                 $http.get("/App_plugins/Archetype/js/propertyEditors.views.js"), 'Failed to retrieve datatype mappings'
             ).then(function (data) {
@@ -24,7 +24,7 @@ angular.module('umbraco').factory('propertyEditorResource', function($q, $http, 
                 });
 
                 if (result != null) 
-                    return result.view;
+                    return result;
 
                 return "";
             });

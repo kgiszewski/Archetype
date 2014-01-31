@@ -67,9 +67,19 @@ angular.module("umbraco").directive('archetypeProperty', function ($compile, $ht
             config = configObj;
 
             //determine the view to use [...] and load it
-            propertyEditorResource.getViewForPropertyEditor(data.selectedEditor).then(function(data) {
-                var pathToView = umbPropEditorHelper.getViewPath(data);
-                loadView(pathToView, config, defaultValue, alias, scope, element);
+            propertyEditorResource.getPropertyEditorMapping(data.selectedEditor).then(function(propertyEditor) {
+                var pathToView = umbPropEditorHelper.getViewPath(propertyEditor.view);
+
+                //load in the DefaultPreValues for the PropertyEditor, if any
+                var defaultConfigObj =  {};
+                if (propertyEditor.hasOwnProperty('defaultPreValues')) {
+                    _.each(propertyEditor.defaultPreValues, function(p) {
+                        _.extend(defaultConfigObj, p)
+                    });
+                }
+                var mergedConfig = _.extend(defaultConfigObj, config);
+
+                loadView(pathToView, mergedConfig, defaultValue, alias, scope, element);
             });
         });
 

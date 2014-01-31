@@ -13,11 +13,13 @@
 	},
 	{
 		"propertyEditorAlias": "Umbraco.Date",
-		"view": "datepicker"
+		"view": "datepicker",
+		"defaultPreValues": [{ "format": "yyyy-MM-dd", "pickTime": false }]
 	},
 	{
 		"propertyEditorAlias": "Umbraco.DateTime",
-		"view": "datepicker"
+		"view": "datepicker",
+		"format": "yyyy-MM-dd hh:mm:ss"
 	},
 	{
 		"propertyEditorAlias": "Umbraco.DropDown",
@@ -69,7 +71,8 @@
 	},
 	{
 		"propertyEditorAlias": "Umbraco.MediaPicker",
-		"view": "mediapicker"
+		"view": "mediapicker",
+		"defaultPreValues": [{ "multiPicker": "0" }]
 	},
 	{
 		"propertyEditorAlias": "Umbraco.MemberGroupPicker",
@@ -81,7 +84,8 @@
 	},
 	{
 		"propertyEditorAlias": "Umbraco.MultiNodeTreePicker",
-		"view": "contentpicker"
+		"view": "contentpicker",
+		"defaultPreValues": [{ "multiPicker": "1" }]
 	},
 	{
 		"propertyEditorAlias": "Umbraco.MultipleMediaPicker",
@@ -109,7 +113,8 @@
 	},
 	{
 		"propertyEditorAlias": "Umbraco.Tags",
-		"view": "tags"
+		"view": "tags",
+		"defaultPreValues": [{ "group": "default" }]
 	},
 	{
 		"propertyEditorAlias": "Umbraco.TextboxMultiple",
@@ -125,7 +130,8 @@
 	},
 	{
 		"propertyEditorAlias": "Umbraco.UserPicker",
-		"view": "entitypicker"
+		"view": "entitypicker",
+		"defaultPreValues": [{ "entityType": "User" }]
 	},
 	{
 		"propertyEditorAlias": "Umbraco.NoEdit",
