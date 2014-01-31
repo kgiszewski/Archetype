@@ -1,4 +1,8 @@
-﻿.archetypeEditor fieldset{
+﻿.archetypeEditor {
+    width: 98%;
+}
+
+.archetypeEditor fieldset{
     border: 1px solid #dddddd;
     padding: 0;
     margin-bottom: 5px;
@@ -38,8 +42,10 @@
     }
 
     label{
-        width: 75px;
         float: left;
+        width: 80%;
+        margin-bottom: 0;
+        padding: 0;
     }
 }
 
@@ -51,13 +57,6 @@
     background-color: #fff;
     border-top: 1px solid silver;
     border-radius: 0 0 0 5px;
-}
-
-.archetypeEditor fieldset .archetypeFieldsetLabel label{
-    float: left;
-    width: auto;
-    margin-bottom: 0;
-    padding: 0;
 }
 
 .archetypeEditor .multiPropertyTextbox{
@@ -238,4 +237,8 @@
 .ui-sortable-placeholder {
     visibility: visible !important;
     background-color:   #d0e7f1 !important;
+}
+
+.archetypeConfig .archetypeFieldsetCollapser{
+    margin-top: 5px;
 }
