@@ -110,7 +110,7 @@ angular.module("umbraco").directive('archetypeProperty', function ($compile, $ht
                     scope.model.config = config;
 
                     //some items need an alias
-                    scope.model.alias = "scope-" + scope.$id;
+                    scope.model.alias = "archetype-property-" + scope.fieldsetIndex + "-" + scope.propertyConfigIndex;
 
                     //watch for changes since there is no two-way binding with the local model.value
                     scope.$watch('model.value', function (newValue, oldValue) {
