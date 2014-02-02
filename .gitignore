@@ -10,6 +10,7 @@ ehthumbs.db
 Desktop.ini
 $RECYCLE.BIN/
 
+app/less/*.css
 dist/
 node_modules/
 pkg/tmp/
