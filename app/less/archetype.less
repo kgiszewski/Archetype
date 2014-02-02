@@ -163,7 +163,7 @@
 .archetypeConfig .archetypeFieldsetOption{
     margin-bottom: 15px;
     input[type=text]{
-        width: 600px;
+        max-width: 300px;
     }
 }
 
@@ -178,7 +178,7 @@
     border: 1px solid #ddd;
     padding: 8px;
     margin: -40px 10px 10px 140px;
-    width: 595px;
+    max-width: 475px;
 
     ul {
         padding: 0;
@@ -189,6 +189,15 @@
         padding: 10px;
         margin-bottom: 10px;
         background-color: #eee;
+
+        input[type=text] {
+            max-width: 190px;
+            width: auto;
+        }
+
+        select {
+            max-width: 160px;
+        }
     }
 
     li:last-child {
