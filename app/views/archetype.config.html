@@ -36,7 +36,9 @@
                                     <i class="icon icon-delete" ng-click="removePropertyRow(fieldset, $index)" ng-show="canRemoveProperty(fieldset)"></i>
                                     <i class="icon icon-navigation handle" ng-show="canSortProperty(fieldset)"></i>
                                 </div>
-                                <div class="archetypePropertyTitle" ng-click="focusProperty(fieldset.properties, property)">{{property.label}}</div>
+                                <div class="archetypePropertyTitle" ng-click="focusProperty(fieldset.properties, property)">
+                                    {{property.label}} ({{property.alias}}) - <span>{{getDataTypeNameById(property.dataTypeId)}}</span>
+                                </div>
                                 <div class="archetypePropertyCollapser" ng-hide="property.collapse && property.label">
                                     <div>
                                         <label for="archetypePropertyLabel_{{$parent.$index}}_{{$index}}">Label</label>
