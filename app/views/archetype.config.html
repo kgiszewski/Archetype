@@ -10,19 +10,19 @@
                 <div class="archetypeFieldsetTitle" ng-click="focusFieldset(fieldset)">{{fieldset.label}}</div>
                 <div class="archetypeFieldsetCollapser" ng-hide="fieldset.collapse && fieldset.label">
                     <div class="archetypeFieldsetOption">
-                        <label for="archetypeFieldLabel">Label</label>
-                        <input type="text" id="archetypeFieldLabel" ng-model="fieldset.label" />
+                        <label for="archetypeFieldLabel_{{$index}}">Label</label>
+                        <input type="text" id="archetypeFieldLabel_{{$index}}" ng-model="fieldset.label" />
                     </div>
                     <div class="archetypeFieldsetOption">
-                        <label for="archetypeFieldAlias">Alias</label>
-                        <input type="text" id="archetypeFieldAlias" ng-model="fieldset.alias" />
+                        <label for="archetypeFieldAlias_{{$index}}">Alias</label>
+                        <input type="text" id="archetypeFieldAlias_{{$index}}" ng-model="fieldset.alias" />
                     </div>
                     <div class="archetypeFieldsetOption">
-                        <label for="archetypeFieldLabelTemplate">Label Template</label>
-                        <input type="text" id="archetypeFieldLabelTemplate" ng-model="fieldset.labelTemplate" />
+                        <label for="archetypeFieldLabelTemplate_{{$index}}">Label Template</label>
+                        <input type="text" id="archetypeFieldLabelTemplate_{{$index}}" ng-model="fieldset.labelTemplate" />
                     </div>
                     <div class="archetypeFieldsetOption" ng-show="archetypeConfigRenderModel.enableMultipleFieldsets">
-                        <label for="archetypeFieldIcon">Icon</label>
+                        <label for="archetypeFieldIcon_{{$index}}">Icon</label>
                         <i class="fieldsetIcon icon ng-class:fieldset.icon"></i><a ng-click="selectIcon(fieldset)">Select...</a>
                     </div>
                     <div class="archetypeFieldsetOption">
@@ -39,28 +39,28 @@
                                 <div class="archetypePropertyTitle" ng-click="focusProperty(fieldset.properties, property)">{{property.label}}</div>
                                 <div class="archetypePropertyCollapser" ng-hide="property.collapse && property.label">
                                     <div>
-                                        <label for="archetypeProperty{{$index}}Label">Label</label>
-                                        <input type="text" id="archetypeProperty{{$index}}Label" ng-model="property.label" />
+                                        <label for="archetypePropertyLabel_{{$parent.$index}}_{{$index}}">Label</label>
+                                        <input type="text" id="archetypePropertyLabel_{{$parent.$index}}_{{$index}}" ng-model="property.label" />
                                     </div>
                                     <div>
-                                        <label for="archetypeProperty{{$index}}Alias">Alias</label>
-                                        <input type="text" id="archetypeProperty{{$index}}Alias" ng-model="property.alias" />
+                                        <label for="archetypePropertyAlias_{{$parent.$index}}_{{$index}}">Alias</label>
+                                        <input type="text" id="archetypePropertyAlias_{{$parent.$index}}_{{$index}}" ng-model="property.alias" />
                                     </div>
                                     <div>
-                                        <label for="archetypeProperty{{$index}}HelpText">Help Text</label>
-                                        <input type="text" id="archetypeProperty{{$index}}HelpText" ng-model="property.helpText" />
+                                        <label for="archetypePropertyHelpText_{{$parent.$index}}_{{$index}}">Help Text</label>
+                                        <input type="text" id="archetypePropertyHelpText_{{$parent.$index}}_{{$index}}" ng-model="property.helpText" />
                                     </div>
                                     <div>
-                                        <label for="archetypeProperty{{$index}}DataType">DataType</label>
-                                        <select ng-model="property.dataTypeId" id="archetypeProperty{{$index}}DataType" ng-options="value.id as value.name for (key, value) in availableDataTypes"></select>
+                                        <label for="archetypePropertyDataType_{{$parent.$index}}_{{$index}}">DataType</label>
+                                        <select id="archetypePropertyDataType_{{$parent.$index}}_{{$index}}" ng-model="property.dataTypeId" ng-options="value.id as value.name for (key, value) in availableDataTypes"></select>
                                     </div>
                                     <div>
-                                        <label for="archetypeProperty{{$index}}DefaultValue">Default Value</label>
-                                        <input type="text" id="archetypeProperty{{$index}}DefaultValue" ng-model="property.value" />
+                                        <label for="archetypePropertyDefaultValue_{{$parent.$index}}_{{$index}}">Default Value</label>
+                                        <input type="text" id="archetypePropertyDefaultValue_{{$parent.$index}}_{{$index}}" ng-model="property.value" />
                                     </div>
                                     <div>
-                                        <label for="archetypeProperty{{$index}}Required">Required</label>
-                                        <input type="checkbox" id="archetypeProperty{{$index}}Required" ng-model="property.required" />
+                                        <label for="archetypePropertyRequired_{{$parent.$index}}_{{$index}}">Required</label>
+                                        <input type="checkbox" id="archetypePropertyRequired_{{$parent.$index}}_{{$index}}" ng-model="property.required" />
                                     </div>
                                 </div>
                             </li>
