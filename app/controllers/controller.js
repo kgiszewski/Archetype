@@ -194,21 +194,43 @@
         $scope.model.value = { fieldsets: [] };
 
         _.each($scope.archetypeRenderModel.fieldsets, function(fieldset){
-            if (typeof fieldset != 'function' && !fieldset.remove){
+            $scope.model.value.fieldsets.push(cleanFieldset(fieldset));
+        });
+    }
 
-                //clone and clean
-                var tempFieldset = JSON.parse(JSON.stringify(fieldset));
-                delete tempFieldset.remove;
-                delete tempFieldset.isValid;
-                delete tempFieldset.collapse;
+    //helper to remove properties only used during editing that we don't want in the saved data
+    //also removes properties that are no longer in the config
+    function cleanFieldset(fieldset)
+    {
+        if (typeof fieldset != 'function' && !fieldset.remove){
 
-                _.each(tempFieldset.properties, function(property){
-                    delete property.isValid;
+            var fieldsetConfig = $scope.getConfigFieldsetByAlias(fieldset.alias);
+
+            //clone and clean
+            var tempFieldset = JSON.parse(JSON.stringify(fieldset));
+            delete tempFieldset.remove;
+            delete tempFieldset.isValid;
+            delete tempFieldset.collapse;
+
+            _.each(tempFieldset.properties, function(property, index){
+                var propertyConfig = _.find(fieldsetConfig.properties, function(p){
+                    return property.alias == p.alias;
                 });
 
-                $scope.model.value.fieldsets.push(tempFieldset);
-            }
-        });
+                //just prune the property
+                if(propertyConfig){
+                    delete property.isValid;
+                }
+                else 
+                {
+                    //need to remonve the whole property
+                    tempFieldset.properties.splice(index, 1);
+                }
+
+            });
+
+            return tempFieldset;
+        }
     }
 
     //helper to add an empty fieldset to the render model
@@ -286,6 +308,10 @@
 
     //sync things up on save
     $scope.$on("formSubmitting", function (ev, args) {
+
+        //test for form; may have to do this differently for nested archetypes
+        if(!form)
+            return;
         
         var validation = getValidation();
 
