@@ -223,7 +223,7 @@
                 }
                 else 
                 {
-                    //need to remonve the whole property
+                    //need to remove the whole property
                     tempFieldset.properties.splice(index, 1);
                 }
 
