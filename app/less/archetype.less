@@ -103,14 +103,14 @@
 .archetypeEditor .archetypeFieldsetToolbar {
     margin-bottom: 10px;
     overflow: hidden;
-}
 
-.archetypeEditor .archetypeFieldsetToolbar li {
-    float: left;
-    padding: 2px 4px;
-    margin-right: 10px;
-    border: 1px solid #ddd;
-    cursor: pointer;
+    li {
+        float: left;
+        padding: 2px 4px;
+        margin-right: 10px;
+        border: 1px solid #ddd;
+        cursor: pointer;
+    }
 }
 
 .archetypeEditor .archetypeFieldsetHeaderText{
@@ -153,41 +153,44 @@
 
 .archetypeConfig .archetypeFieldsetWrapper{
     border: 1px solid #ccc;
-    padding: 10px 5px;
+    padding: 10px;
     margin-bottom: 10px;
 }
 
-.archetypeConfig .archetypeFieldsetOption input[type=text]{
-    width: 600px;
+.archetypeConfig .archetypeFieldsetOption{
+    margin-bottom: 15px;
+    input[type=text]{
+        width: 600px;
+    }
 }
 
 .archetypeConfig .archetypeDeveloperModel {
+    font-family: monospace;
     width: 88%;
-    margin-left: 30px;
-    height: 100px;
+    margin: 5px 10px 10px;
+    height: 130px;
 }
 
-.archetypeConfig .archetypePropertiesWrapper{
+.archetypeConfig .archetypePropertiesWrapper {
     border: 1px solid #ddd;
-    padding: 10px;
-    margin: 10px;
-    margin-left: 50px;
-    width: 665px;
-}
+    padding: 8px;
+    margin: -40px 10px 10px 140px;
+    width: 595px;
 
-.archetypeConfig .archetypePropertiesWrapper ul{
-    padding: 0;
-    margin: 0;
-}
+    ul {
+        padding: 0;
+        margin: 0;
+    }
 
-.archetypeConfig .archetypePropertiesWrapper li{
-    padding: 10px;
-    margin-bottom: 10px;
-    background-color: #eee;
-}
+    li {
+        padding: 10px;
+        margin-bottom: 10px;
+        background-color: #eee;
+    }
 
-.archetypeConfig .archetypePropertiesWrapper li:last-child{
-    margin-bottom: 0;
+    li:last-child {
+        margin-bottom: 0;
+    }
 }
 
 .archetypeConfig .archetypeFieldsets {
@@ -195,33 +198,40 @@
 }
 
 .archetypeConfig .archetypeFieldsetTitle {
+    cursor: pointer;
     overflow: hidden;
 }
 
 .archetypeConfig .archetypeOptions label{
-    width: 200px;
-}
-
-.archetypeConfig .archetypeAdvancedOptions label{
     width: 400px;
 }
 
-.archetypeConfig .archetypeDeveloperModel {
-    margin-bottom: 10px;
+.archetypeConfig .archetypeAdvancedOptions {
+    margin-top: 15px;
+    div {
+        margin-bottom: 10px;
+    }
+    label {
+        width: 400px;
+    }
 }
 
 .archetypeConfig .archetypeMaxFieldsets{
     border: 1px solid #ddd;
-    width: 25px;
+    width: 40px;
     text-align: right;
 }
 
-.archetypeConfig .archetypePropertyTitle{
+.archetypeConfig .archetypePropertyTitle {
+    cursor: pointer;
     overflow: hidden;
 }
 
 .archetypeConfig .archetypePropertyCollapser{
     margin-top: 10px;
+    div {
+        margin-bottom: 10px;
+    }
 }
 
 .archetypeEditor .archetypeFieldsetError{
@@ -242,10 +252,10 @@
     background-color:   #d0e7f1 !important;
 }
 
-.archetypeConfig .archetypeFieldsetCollapser{
-    margin-top: 5px;
+.archetypeConfig .archetypeFieldsetCollapser {
+    margin-top: 15px;
 }
 
-.archetypeConfig .fieldsetIcon{
+.archetypeConfig .fieldsetIcon {
     margin-right: 10px;
 }
