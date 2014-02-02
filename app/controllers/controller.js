@@ -1,4 +1,4 @@
-﻿angular.module("umbraco").controller("Imulus.ArchetypeController", function ($scope, $http, $interpolate, assetsService, angularHelper, notificationsService) {
+﻿angular.module("umbraco").controller("Imulus.ArchetypeController", function ($scope, $http, assetsService, angularHelper, notificationsService) {
  
     //$scope.model.value = "";
 
