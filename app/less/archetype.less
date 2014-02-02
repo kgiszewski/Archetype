@@ -71,10 +71,15 @@
     margin-left: 0;
 }
 
-.archetypeEditor .archetypeEditorControls{
-    float: right;
-    i:hover {
-        cursor: pointer;
+.archetypeEditor, .archetypeConfig{
+    .archetypeEditorControls{
+        float: right;
+        i {
+            cursor: pointer;
+            &.handle {
+                cursor: move;
+            }
+        }
     }
 }
 
@@ -137,10 +142,6 @@
 
 .archetypeConfig ul{
     list-style: none;
-}
-
-.archetypeConfig .archetypeEditorControls{
-    float: right;
 }
 
 .archetypeConfig li{
