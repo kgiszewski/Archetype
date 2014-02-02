@@ -239,60 +239,6 @@
         return JSON.parse('{"alias": "' + fieldsetModel.alias + '", "remove": false, "isValid": true, "properties": []}');
     }
 
-    //helper for validation
-    function getValidation()
-    {
-        var validation = {}
-        validation.isValid = true;
-        validation.requiredAliases = [];
-        validation.invalidProperties = [];
-
-        //determine which fields are required
-        _.each($scope.model.config.fieldsets, function(fieldset){
-            _.each(fieldset.properties, function(property){
-                if(property.required)
-                {
-                    validation.requiredAliases.push(property.alias);
-                }
-            });
-        });
-
-        //if nothing required; let's go
-        if(validation.requiredAliases.length == 0)
-        {
-            return validation;
-        }
-
-        //otherwise we need to check the required aliases
-        _.each($scope.archetypeRenderModel.fieldsets, function(fieldset){
-            fieldset.isValid = true;
-
-            _.each(fieldset.properties, function(property){
-                property.isValid = true;
-
-                //if a required field
-                if(_.find(validation.requiredAliases, function(alias){ return alias == property.alias }))
-                {                
-                    //TODO: do a better validation test
-                    if(property.value == ""){
-                        fieldset.isValid = false;
-                        property.isValid = false;
-                        validation.isValid = false;
-
-                        validation.invalidProperties.push(property);
-                    }
-                }
-            });
-        });
-
-        if($scope.model.config.developerMode == '1')
-        {
-            console.log(validation);
-        }
-
-        return validation;
-    }
-
     //helper to lookup validity when given a fieldsetIndex and property alias
     $scope.getPropertyValidity = function(fieldsetIndex, alias)
     {
@@ -312,18 +258,14 @@
         //test for form; may have to do this differently for nested archetypes
         if(!form)
             return;
-        
-        var validation = getValidation();
 
-        if(!validation.isValid)
+        if(form.$invalid)
         {
             notificationsService.warning("Cannot Save Document", "The document could not be saved because of missing required fields.")
-            form.$setValidity("archetypeError", false);
         }
         else 
         {
             syncModelToRenderModel();
-            form.$setValidity("archetypeError", true);
         }
     });
 
