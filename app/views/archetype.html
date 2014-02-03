@@ -27,7 +27,7 @@
                         <i class="icon icon-navigation handle" ng-show="canSort()"></i>
                     </div>
                 </div>
-                <div class="arechetypeCollapser animate-hide" ng-hide="fieldset.collapse">
+                <div class="archetypeCollapser animate-hide" ng-hide="fieldset.collapse">
                     <form class="form-inline">
                         <div ng-class="{archetypePropertyError: getPropertyValidity($parent.$index, property.alias) === false}" class="archetypeProperty control-group" ng-repeat="property in fieldsetConfigModel.properties">
                             <label ng-hide="archetypeConfig.hidePropertyLabels == '1'" class="control-label" for="archetype-property-{{$parent.$index}}-{{$index}}">

@@ -53,7 +53,7 @@
     }
 }
 
-.archetypeEditor .arechetypeCollapser{
+.archetypeEditor .archetypeCollapser{
     clear: both;
     height: 100%;
     margin-top: 10px;
@@ -247,16 +247,21 @@
 }
 
 .archetypeEditor .archetypeFieldsetError{
-    border: 1px solid red;
+    border: 1px solid #b94a48;
 }
 
 .archetypeEditor .archetypePropertyError{
-    border: 1px solid red;
-    background-color: #8b0000;
-    color: #fff;
     margin-bottom: 5px;
     padding-top: 3px;
     padding-bottom: 3px;
+
+    label {
+
+        span {
+            color: #b94a48;
+            font-weight: bold;
+        }
+    }
 }
 
 .ui-sortable-placeholder {
@@ -270,4 +275,10 @@
 
 .archetypeConfig .fieldsetIcon {
     margin-right: 10px;
+}
+
+.archetypeEditor .show-validation.ng-invalid .control-group.error .control-label {
+    span {
+        color: #343434;
+    }
 }
