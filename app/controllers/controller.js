@@ -18,7 +18,12 @@
     //helper to get $eval the labelTemplate
     $scope.getFieldsetTitle = function(fieldsetConfigModel, fieldsetIndex) {
         var fieldset = $scope.archetypeRenderModel.fieldsets[fieldsetIndex];
+        var fieldsetConfig = $scope.getConfigFieldsetByAlias(fieldset.alias);
         var template = fieldsetConfigModel.labelTemplate;
+
+        if (template.length < 1)
+            return fieldsetConfig.label;
+
         var rgx = /{{(.*?)}}*/g;
         var results;
         var parsedTemplate = template;
