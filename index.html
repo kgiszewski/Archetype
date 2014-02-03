@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Archetype : An Umbraco 7 Property Editor Wrapper" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Archetype</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/imulus/Archetype">View on GitHub</a>
+
+          <h1 id="project_title">Archetype</h1>
+          <h2 id="project_tagline">An Umbraco 7 Property Editor Wrapper</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/imulus/Archetype/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/imulus/Archetype/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <p>Archetype is an Umbraco 7 property editor that wraps other installed property editors.  By wrapping the other properties, Archetype allows for custom and repeatable fieldset mashups.</p>
+
+<p>Checkout some videos of Archetype in action here: <a href="http://blog.imulus.com/kevin-giszewski/umbraco-7-package-preview-archetype">http://blog.imulus.com/kevin-giszewski/umbraco-7-package-preview-archetype</a></p>
+
+<h2>
+<a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h2>
+
+<p>Install the <a href="https://github.com/imulus/Archetype/releases">package</a> through the Umbraco package installer or via <a href="http://www.nuget.org/packages/Archetype/">NuGet</a>.</p>
+
+<h2>
+<a name="basic-configuration" class="anchor" href="#basic-configuration"><span class="octicon octicon-link"></span></a>Basic Configuration</h2>
+
+<p>After installation, visit the developer section and create a new data type with ‘Archetype’ as the selected property editor.</p>
+
+<p>At this point you should now see several input boxes to set up your Archetype fieldset:</p>
+
+<p><strong>Label</strong> - A label for your fieldset (i.e. person, car, etc)</p>
+
+<p><strong>Alias (required)</strong> - Pick a machine safe (A-Z 0-9 _- no spaces) name for your archetype that will be used for tracking this fieldset.</p>
+
+<p><strong>Label Template</strong></p>
+
+<p>This template will be used in the data editor and will display when the fieldset is collapsed.  Ideally you can select static text or a property alias.  If you choose to use a property value, you must use the following syntax:</p>
+
+<p><code>{{firstName}}</code> - Where ‘firstName’ is the alias of a property.</p>
+
+<p><strong>Tooltip</strong> - Appears when hovering overing over a fieldset in the data editor.  This is only applicable when multiple fieldsets are enabled.</p>
+
+<p><strong>Properties</strong> - Properties represent the actual input controls that your Archetype will encapsulate.</p>
+
+<ul>
+<li><p><em>Label</em> - A label for your property.</p></li>
+<li><p><em>Alias</em> (required) - Pick a machine safe (A-Z 0-9 _- no spaces) name for your archetype that will be used for tracking this property.</p></li>
+<li><p><em>Help Text</em> - Text that appears under the label to guide the user on what the input is for.</p></li>
+<li><p><em>Datatype</em> - Select the preconfigured Umbraco data type.</p></li>
+<li><p><em>Default Value</em> - Input either a JSON or plain text value.  This value varies and is determined by the chosen view.</p></li>
+<li><p><em>Required</em> - Simple required validation can be achieved by ticking this box.</p></li>
+</ul><h2>
+<a name="advanced-configuration" class="anchor" href="#advanced-configuration"><span class="octicon octicon-link"></span></a>Advanced Configuration</h2>
+
+<p>Advanced options can be exposed by ticking the ‘Toggle Advanced Options’ box.</p>
+
+<p><strong>Max Fieldsets</strong> - When blank, the Archetype will allow an infinite number of repeated fieldsets.  Placing an integer in this box will limit the number to the amount entered.</p>
+
+<p><strong>Enable Multiple Fieldsets</strong> - By ticking this box, a developer may add more than one type of fieldset to the Archetype.  When there are multiple fieldsets configured, a toolbar will display on the data editor to allow the editor to select the different fieldsets.</p>
+
+<p><strong>Custom Wrapper Class</strong> - If you need to inject a custom class to your Archetype wrapper, this is the place to do it.</p>
+
+<p><strong>CSS File</strong> - If you would like to alter the appearance of the default Archetype styles, simply include a file path to your CSS file here.</p>
+
+<p><strong>JS File</strong> - If you would like to inject some JavaScript on the page, simply include a file path to your JS file here.</p>
+
+<p><strong>Toggle Developer Mode</strong> - Tick this box to enable verbose debugging to the console.  This also expose the data model on the data editor page which can be live edited.</p>
+
+<p><strong>Config Model</strong> - Import/Export your Archetype between installs by copy/pasting this code.  You can also live edit your Archetype config by alter these values.  Caution should be used when doing so.</p>
+
+<h2>
+<a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h2>
+
+<p>To use your new Archetype, simply add it to any document type.</p>
+
+<p>To integrate your own property editor:</p>
+
+<ol>
+<li>Ensure your property editor is installed into Umbraco.</li>
+<li>Edit the <code>/App_Plugins/Archetype/js/propertyEditors.views.js</code> file.</li>
+<li>Add a JSON object that defines your custom property editor.</li>
+</ol><h2>
+<a name="known-issues" class="anchor" href="#known-issues"><span class="octicon octicon-link"></span></a>Known Issues</h2>
+
+<h3>
+<a name="umbraco-caching" class="anchor" href="#umbraco-caching"><span class="octicon octicon-link"></span></a>Umbraco Caching</h3>
+
+<p>If you decide to extend this project locally, you'll want to set the <code>&lt;compilation&gt;</code> debug property in your web.config to <code>true</code>:</p>
+
+<p><code>&lt;compilation defaultLanguage="c#" debug="true" batch="false" targetFramework="4.5"&gt;</code></p>
+
+<p>This is in order to circumvent the minification and caching of the JavaScript files.</p>
+
+<h3>
+<a name="prevalue-character-limit" class="anchor" href="#prevalue-character-limit"><span class="octicon octicon-link"></span></a>Prevalue Character Limit</h3>
+
+<p>If you get an error during saving that says the value will be truncated in the database, it is because you config has exceeded the 2500 character limit imposed by Umbraco.  You can get around this by upping the limit in your DB.  Please backup your DB first.</p>
+
+<p><a href="http://issues.umbraco.org/issue/U4-2120">http://issues.umbraco.org/issue/U4-2120</a></p>
+
+<h3>
+<a name="core-property-editors" class="anchor" href="#core-property-editors"><span class="octicon octicon-link"></span></a>Core Property Editors</h3>
+
+<p>RTE - The RTE doesn’t like to render on a repeatable fieldset.  It also goes bonkers when you try to sort a field.</p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Archetype maintained by <a href="https://github.com/imulus">imulus</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
