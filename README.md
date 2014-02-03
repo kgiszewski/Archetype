@@ -1,28 +1,30 @@
 Archetype
 =========
 
-## Install Dependencies ##
+## Installation
+Install the selected <a href='https://github.com/imulus/Archetype/releases'>release</a> through the Umbraco package installer or via <a href='http://www.nuget.org/packages/Archetype/'>NuGet</a>.
+
+
+## Official Docs ##
+http://imulus.github.io/Archetype
+
+## Contribute ##
+
+Want to contribute to Archetype?  You'll want to use Grunt (our task runner) to help you integrate with a local copy of Umbraco.
+
+### Install Dependencies ###
 *Requires Node.js to be installed and in your system path*
 
     npm install -g grunt-cli && npm install -g grunt
     npm install
 
-## Build ##
+### Build ###
     grunt
 
 
-## Deploy ##
+### Deploy ###
     grunt deploy --target=C:\\path\\to\\umbraco\\site
     grunt watch:dev --target=C:\\path\to\\umbraco\\site
 
 Add `--touch` to either command to automatically touch the web.config on a deploy
 
-## Installation
-1) Install the selected <a href='https://github.com/imulus/Archetype/releases'>release</a> through the Umbraco package installer.  Recommended if you want to just see the packaged version.
-
-OR
-
-2) Deploy with Grunt (see above).  Recommended if you wish to extend this repo as this will inject this project into an existing v7 Umbraco install.
-
-## Official Docs ##
-http://imulus.github.io/Archetype
