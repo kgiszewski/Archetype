@@ -7,14 +7,19 @@ angular.module("umbraco").directive('archetypeProperty', function ($compile, $ht
         });
     }
 
-    function getPropertyIndexByAlias(properties, alias)
-    {
+    function getPropertyIndexByAlias(properties, alias){
         for (var i in properties)
         {
             if (properties[i].alias == alias) {
                 return i;
             }
         }
+    }
+
+    function getPropertyByAlias(fieldset, alias){
+        return _.find(fieldset.properties, function(property){
+            return property.alias == alias; 
+        });
     }
 
     //helper that returns a JS ojbect from 'value' string or the original string
@@ -87,9 +92,14 @@ angular.module("umbraco").directive('archetypeProperty', function ($compile, $ht
             var valid = true;
 
             _.each(renderModel, function(fieldset){
+                fieldset.isValid = true;
                 _.each(fieldset.properties, function(property){
                     property.isValid = true;
-                    if(property.value == ""){
+
+                    var propertyConfig = getPropertyByAlias(configFieldsetModel, property.alias);
+
+                    if(propertyConfig && propertyConfig.required && property.value == ""){
+                        fieldset.isValid = false;
                         property.isValid = false;
                         valid = false;
                     }

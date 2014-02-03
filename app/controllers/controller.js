@@ -194,7 +194,11 @@
         $scope.model.value = { fieldsets: [] };
 
         _.each($scope.archetypeRenderModel.fieldsets, function(fieldset){
-            $scope.model.value.fieldsets.push(cleanFieldset(fieldset));
+            var cleanedFieldset =  cleanFieldset(fieldset);
+
+            if(cleanFieldset){
+                $scope.model.value.fieldsets.push(cleanedFieldset);
+            }
         });
     }
 
