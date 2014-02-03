@@ -148,6 +148,17 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
     {
         return countVisibleProperty(fieldset) > 1;
     }
+
+    $scope.getDataTypeNameById = function (id) {
+        if ($scope.availableDataTypes == null) // Might not be initialized yet?
+            return "";
+
+        var dataType = _.find($scope.availableDataTypes, function(d) {
+            return d.id == id;
+        });
+
+        return dataType == null ? "" : dataType.name;
+    }
     
     //helper to count what is visible
     function countVisibleFieldset()
