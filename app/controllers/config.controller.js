@@ -1,23 +1,33 @@
-angular.module("umbraco").controller("Imulus.ArchetypeConfigController", function ($scope, $http, assetsService, propertyEditorResource) {
+angular.module("umbraco").controller("Imulus.ArchetypeConfigController", function ($scope, $http, assetsService, dialogService, propertyEditorResource) {
     
     //$scope.model.value = "";
     //console.log($scope.model.value); 
 
     //define empty items
-    var newPropertyModel = '{"alias": "", "remove": false, "collapse": false, "label": "", "helpText": "", "view": "", "value": "", "config": ""}';
-    var newFieldsetModel = '{"alias": "", "remove": false, "collapse": false, "labelTemplate": "", "tooltip": "", "icon": "", "label": "", "headerText": "", "footerText": "", "properties": [' + newPropertyModel + ']}';
-    var defaultFieldsetConfigModel = JSON.parse('{"showAdvancedOptions": false, "hideFieldsetToolbar": false, "enableMultipleFieldsets": false, "hideFieldsetControls": false, "hideFieldsetLabels": false, "hidePropertyLabel": false, "maxFieldsets": null, "fieldsets": [' + newFieldsetModel + ']}');
-    
+    var newPropertyModel = '{"alias": "", "remove": false, "collapse": false, "label": "", "helpText": "", "dataTypeId": "-88", "value": ""}';
+    var newFieldsetModel = '{"alias": "", "remove": false, "collapse": false, "labelTemplate": "", "icon": "", "label": "", "properties": [' + newPropertyModel + ']}';
+    var defaultFieldsetConfigModel = JSON.parse('{"showAdvancedOptions": false, "hideFieldsetToolbar": false, "enableMultipleFieldsets": false, "hideFieldsetControls": false, "hidePropertyLabel": false, "maxFieldsets": null, "fieldsets": [' + newFieldsetModel + ']}');
+
     //ini the model
     $scope.model.value = $scope.model.value || defaultFieldsetConfigModel;
     
     //ini the render model
     initConfigRenderModel();
  
-    //get the available views
-    propertyEditorResource.getViews().then(function(data){
-        $scope.availableViews = data;
+    //get the available datatypes
+    propertyEditorResource.getAllDataTypes().then(function(data) {
+        $scope.availableDataTypes = data;
     });
+
+    //iconPicker
+    $scope.selectIcon = function(fieldset){
+        var dialog = dialogService.iconPicker({
+            callback: function(data){
+                fieldset.icon = data;
+            }
+        });
+
+    }
 
     //config for the sorting
     $scope.sortableOptions = {
@@ -92,6 +102,11 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
             property.collapse = !iniState;
         }
     }
+
+    //ini the properties
+    _.each($scope.archetypeConfigRenderModel.fieldsets, function(fieldset){
+            $scope.focusProperty(fieldset.properties);
+    });
     
     //setup JSON.stringify helpers
     $scope.archetypeConfigRenderModel.toString = stringify;
@@ -132,6 +147,17 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
     $scope.canSortProperty = function (fieldset)
     {
         return countVisibleProperty(fieldset) > 1;
+    }
+
+    $scope.getDataTypeNameById = function (id) {
+        if ($scope.availableDataTypes == null) // Might not be initialized yet?
+            return "";
+
+        var dataType = _.find($scope.availableDataTypes, function(d) {
+            return d.id == id;
+        });
+
+        return dataType == null ? "" : dataType.name;
     }
     
     //helper to count what is visible

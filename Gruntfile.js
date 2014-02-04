@@ -104,8 +104,8 @@ module.exports = function(grunt) {
       build: {
        files: [
         {expand: true, cwd: 'app/', src: ['package.manifest'], dest: '<%= dest %>', flatten: true},
-        {expand: true, cwd: 'app/config/', src: ['config.views.js'], dest: '<%= dest %>/js', flatten: true},
         {expand: true, cwd: 'app/views/', src: ['archetype.html', 'archetype.config.html'], dest: '<%= dest %>/views', flatten: true},
+        {expand: true, cwd: 'app/config/', src: ['propertyEditors.views.js'], dest: '<%= dest %>/js', flatten: true},
         {expand: true, cwd: 'app/Umbraco/Umbraco.Archetype/bin/Debug/', src: ['Archetype.dll'], dest: '<%= dest %>/bin', flatten: true} 
         ]
       },
@@ -155,6 +155,7 @@ module.exports = function(grunt) {
     clean: {
       build: ['<%= dest %>'],
       package_temp: ['pkg/tmp'],
+      package_artifacts: ['pkg/*.zip', 'pkg/*.nupkg'],
     },
 
     msbuild: {
@@ -189,7 +190,7 @@ module.exports = function(grunt) {
   grunt.loadTasks('tasks');
 
 
-  grunt.registerTask('package', ['package:nuget', 'package:umbraco']);
+  grunt.registerTask('package', ['clean:package_artifacts', 'default', 'package:nuget', 'package:umbraco']);
   grunt.registerTask('package:nuget', ['copy:nuget_prepare', 'template:nuget_manifest', 'nugetpack', 'clean:package_temp']);
   grunt.registerTask('package:umbraco', ['copy:umbracopackage', 'umbracoPackage', 'clean:package_temp']);
   grunt.registerTask('touchwebconfigifenabled', function() { if (grunt.option("touch")) grunt.task.run("touch:webconfig") });
