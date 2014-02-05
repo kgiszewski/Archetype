@@ -1,4 +1,4 @@
-angular.module('umbraco').factory('propertyEditorResource', function($q, $http, umbRequestHelper){
+angular.module('umbraco.resources').factory('propertyEditorResource', function($q, $http, umbRequestHelper){
     return { 
         getAllDataTypes: function() {
             // Hack - grab DataTypes from Tree API, as `dataTypeService.getAll()` isn't implemented yet
