@@ -1,3 +1,0 @@
-{
-    "langIso": "en-us"
-}
