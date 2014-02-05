@@ -19,29 +19,22 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
         $scope.availableDataTypes = data;
     });
 
-    //get the current user
-
-    userService.getCurrentUser().then(function (user) {
-        $scope.model.language = user.locale;
-        console.log($scope.model.language);
-    });
-
     //load the localization info
     userService.getCurrentUser()
         .then(function (user) {
             $scope.model.langIso = user.locale;
             return user.locale;
         })
-            .then(function(langIso){
-                archetypePropertyEditorResource.getLocale(langIso)
-                    .then(function(locale){
-                        archetypePropertyEditorResource.getDefaultLocale(locale)
-                            .then(function(defaultLocale) {
-                                $scope.locales = {}
-                                $scope.locales.locale = locale;
-                                $scope.locales.defaultLocale = defaultLocale;
-                            });
+        .then(function(langIso){
+            archetypePropertyEditorResource.getLocale(langIso)
+                .then(function(locale){
+                    archetypePropertyEditorResource.getDefaultLocale(locale)
+                        .then(function(defaultLocale) {
+                            $scope.locales = {}
+                            $scope.locales.locale = locale;
+                            $scope.locales.defaultLocale = defaultLocale;
                         });
+                    });
     });
 
     $scope.getLocales = function(){
