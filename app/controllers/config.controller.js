@@ -10,6 +10,7 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
 
     //ini the model
     $scope.model.value = $scope.model.value || defaultFieldsetConfigModel;
+    $scope.locales = {}
     
     //ini the render model
     initConfigRenderModel();
@@ -17,6 +18,10 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
     //get the available datatypes
     archetypePropertyEditorResource.getAllDataTypes().then(function(data) {
         $scope.availableDataTypes = data;
+    });
+
+    archetypePropertyEditorResource.getDefaultLocale().then(function(defaultLocale){
+        $scope.locales.defaultLocale = defaultLocale;
     });
 
     //load the localization info
@@ -30,15 +35,17 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
                 .then(function(locale){
                     archetypePropertyEditorResource.getDefaultLocale(locale)
                         .then(function(defaultLocale) {
-                            $scope.locales = {}
                             $scope.locales.locale = locale;
-                            $scope.locales.defaultLocale = defaultLocale;
                         });
                     });
     });
 
     $scope.getLocales = function(){
         if($scope.locales){
+
+            if(!$scope.locales.locale)
+                $scope.locales.locale = $scope.locales.defaultLocale;
+
             return $scope.locales;
         }
     }
