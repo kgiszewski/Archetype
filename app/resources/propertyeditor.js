@@ -29,14 +29,9 @@ angular.module('umbraco.resources').factory('archetypePropertyEditorResource', f
                 return "";
             });
         },
-        getSettings: function() {
-            return umbRequestHelper.resourcePromise(
-                $http.get("/App_plugins/Archetype/js/settings.js"), 'Failed to retrieve config'
-            );
-        },
         getLocale: function(langIso) {
             return umbRequestHelper.resourcePromise(
-                $http.get("/App_plugins/Archetype/js/" + langIso + ".js"), 'Failed to retrieve locale'
+                $http.get("/App_plugins/Archetype/js/" + langIso.toLowerCase() + ".js"), 'Failed to retrieve locale'
             );
         },
         getDefaultLocale: function() {
