@@ -1,4 +1,4 @@
-angular.module("umbraco").directive('archetypeProperty', function ($compile, $http, propertyEditorResource, umbPropEditorHelper) {
+angular.module("umbraco").directive('archetypeProperty', function ($compile, $http, archetypePropertyEditorResource, umbPropEditorHelper) {
     
     function getFieldsetByAlias(fieldsets, alias)
     {
@@ -60,7 +60,7 @@ angular.module("umbraco").directive('archetypeProperty', function ($compile, $ht
         defaultValue = jsonOrString(defaultValue, scope.archetypeConfig.developerMode, "defaultValue");
 
         //grab info for the selected datatype, prepare for view
-        propertyEditorResource.getDataType(dataTypeId).then(function (data) {
+        archetypePropertyEditorResource.getDataType(dataTypeId).then(function (data) {
             //transform preValues array into object expected by propertyeditor views
             var configObj = {};
             _.each(data.preValues, function(p) {
@@ -69,7 +69,7 @@ angular.module("umbraco").directive('archetypeProperty', function ($compile, $ht
             config = configObj;
 
             //determine the view to use [...] and load it
-            propertyEditorResource.getPropertyEditorMapping(data.selectedEditor).then(function(propertyEditor) {
+            archetypePropertyEditorResource.getPropertyEditorMapping(data.selectedEditor).then(function(propertyEditor) {
                 var pathToView = umbPropEditorHelper.getViewPath(propertyEditor.view);
 
                 //load in the DefaultPreValues for the PropertyEditor, if any
