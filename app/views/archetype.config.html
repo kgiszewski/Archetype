@@ -15,7 +15,7 @@
                     </div>
                     <div class="archetypeFieldsetOption">
                         <label for="archetypeFieldAlias_{{$index}}">Alias</label>
-                        <input type="text" id="archetypeFieldAlias_{{$index}}" ng-model="fieldset.alias" />
+                        <input type="text" id="archetypeFieldAlias_{{$index}}" ng-model="fieldset.alias" required/>
                     </div>
                     <div class="archetypeFieldsetOption">
                         <label for="archetypeFieldLabelTemplate_{{$index}}">Label Template</label>
@@ -46,7 +46,7 @@
                                     </div>
                                     <div>
                                         <label for="archetypePropertyAlias_{{$parent.$index}}_{{$index}}">Alias</label>
-                                        <input type="text" id="archetypePropertyAlias_{{$parent.$index}}_{{$index}}" ng-model="property.alias" />
+                                        <input type="text" id="archetypePropertyAlias_{{$parent.$index}}_{{$index}}" ng-model="property.alias" required/>
                                     </div>
                                     <div>
                                         <label for="archetypePropertyHelpText_{{$parent.$index}}_{{$index}}">Help Text</label>
@@ -54,7 +54,7 @@
                                     </div>
                                     <div>
                                         <label for="archetypePropertyDataType_{{$parent.$index}}_{{$index}}">DataType</label>
-                                        <select id="archetypePropertyDataType_{{$parent.$index}}_{{$index}}" ng-model="property.dataTypeId" ng-options="value.id as value.name for (key, value) in availableDataTypes"></select>
+                                        <select id="archetypePropertyDataType_{{$parent.$index}}_{{$index}}" ng-model="property.dataTypeId" ng-options="datatype.id as datatype.name for datatype in availableDataTypes"></select>
                                     </div>
                                     <div>
                                         <label for="archetypePropertyDefaultValue_{{$parent.$index}}_{{$index}}">Default Value</label>
