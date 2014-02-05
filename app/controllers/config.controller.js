@@ -27,17 +27,13 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
     //load the localization info
     userService.getCurrentUser()
         .then(function (user) {
-            $scope.model.langIso = user.locale;
             return user.locale;
         })
         .then(function(langIso){
             archetypePropertyEditorResource.getLocale(langIso)
                 .then(function(locale){
-                    archetypePropertyEditorResource.getDefaultLocale(locale)
-                        .then(function(defaultLocale) {
-                            $scope.locales.locale = locale;
-                        });
-                    });
+                    $scope.locales.locale = locale;  
+                });
     });
 
     $scope.getLocales = function(){
