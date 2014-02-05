@@ -1,6 +1,6 @@
-angular.module("umbraco").controller("Imulus.ArchetypeConfigController", function ($scope, $http, assetsService, dialogService, propertyEditorResource) {
+angular.module("umbraco").controller("Imulus.ArchetypeConfigController", function ($scope, $http, assetsService, dialogService, archetypePropertyEditorResource) {
     
-    //$scope.model.value = "";
+    //$scope.model.value = ""; 
     //console.log($scope.model.value); 
 
     //define empty items
@@ -15,9 +15,35 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
     initConfigRenderModel();
  
     //get the available datatypes
-    propertyEditorResource.getAllDataTypes().then(function(data) {
+    archetypePropertyEditorResource.getAllDataTypes().then(function(data) {
         $scope.availableDataTypes = data;
     });
+
+    //load the localization info
+    archetypePropertyEditorResource.getSettings()
+        .then(function(settings) {
+            $scope.settings = settings;
+            return settings.langIso;
+        })
+        .then(function(langIso){
+            archetypePropertyEditorResource.getLocale(langIso)
+                .then(function(locale) {
+                    return locale;
+                }).then(function(locale){
+                    archetypePropertyEditorResource.getDefaultLocale(locale)
+                        .then(function(defaultLocale) {
+                            $scope.locales = {}
+                            $scope.locales.locale = locale;
+                            $scope.locales.defaultLocale = defaultLocale;
+                        });
+                    });
+        });
+
+    $scope.getLocales = function(){
+        if($scope.locales){
+            return $scope.locales;
+        }
+    }
 
     //iconPicker
     $scope.selectIcon = function(fieldset){
