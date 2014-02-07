@@ -7,7 +7,7 @@ angular.module('umbraco.resources').factory('archetypePropertyEditorResource', f
             ).then(function (data) {
                 return data.map(function(d) {
                     return { "id": d.id, "name": d.name }
-                });
+                }); 
             });
         },
         getDataType: function(id) {
@@ -28,16 +28,6 @@ angular.module('umbraco.resources').factory('archetypePropertyEditorResource', f
 
                 return "";
             });
-        },
-        getLocale: function(langIso) {
-            return umbRequestHelper.resourcePromise(
-                $http.get("/App_plugins/Archetype/js/" + langIso.toLowerCase() + ".js"), 'Failed to retrieve locale'
-            );
-        },
-        getDefaultLocale: function() {
-            return umbRequestHelper.resourcePromise(
-                $http.get("/App_plugins/Archetype/js/en-us.js"), 'Failed to retrieve default locale'
-            );
         }
-    };
-});
+    }
+}); 

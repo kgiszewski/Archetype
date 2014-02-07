@@ -1,4 +1,4 @@
-angular.module("umbraco").directive('archetypeProperty', function ($compile, $http, archetypePropertyEditorResource, umbPropEditorHelper) {
+angular.module("umbraco.directives").directive('archetypeProperty', function ($compile, $http, archetypePropertyEditorResource, umbPropEditorHelper) {
     
     function getFieldsetByAlias(fieldsets, alias)
     {

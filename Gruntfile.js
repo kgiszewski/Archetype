@@ -62,8 +62,9 @@ module.exports = function(grunt) {
           'app/controllers/controller.js',
           'app/controllers/config.controller.js',
           'app/directives/archetypeproperty.js',
-          'app/resources/propertyeditor.js',
-          'app/filters/locale.js'
+          'app/directives/localize.js',
+          'app/services/localization.js',
+          'app/resources/propertyeditor.js'
         ],
         dest: '<%= dest %>/js/archetype.js'
       }
@@ -107,9 +108,7 @@ module.exports = function(grunt) {
         {expand: true, cwd: 'app/', src: ['package.manifest'], dest: '<%= dest %>', flatten: true},
         {expand: true, cwd: 'app/views/', src: ['archetype.html', 'archetype.config.html'], dest: '<%= dest %>/views', flatten: true},
         {expand: true, cwd: 'app/config/', src: ['propertyEditors.views.js'], dest: '<%= dest %>/js', flatten: true},
-        {expand: true, cwd: 'app/config/', src: ['en-gb.js'], dest: '<%= dest %>/js', flatten: true},
-        {expand: true, cwd: 'app/config/', src: ['en-us.js'], dest: '<%= dest %>/js', flatten: true},
-        {expand: true, cwd: 'app/config/', src: ['fr-fr.js'], dest: '<%= dest %>/js', flatten: true},
+        {expand: true, cwd: 'app/langs/', src: ['**'], dest: '<%= dest %>/langs', flatten: true},
         {expand: true, cwd: 'app/Umbraco/Umbraco.Archetype/bin/Debug/', src: ['Archetype.dll'], dest: '<%= dest %>/bin', flatten: true} 
         ]
       },
