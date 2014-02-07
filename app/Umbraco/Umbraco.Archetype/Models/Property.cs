@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Archetype.Umbraco.Models
+﻿namespace Archetype.Umbraco.Models
 {
-    public class Property
+	internal class Property
     {
-        public string Alias { get; set; }
-        public string Value { get; set; }
+		internal string Alias { get; set; }
+		internal object Value { get; set; }
+
+		// If you decide to make Properties public
+		// ensure these properties remain internal
+		// as they aren't meant for external use
+		internal int DataTypeId { get; set; }
+		internal string PropertyEditorAlias { get; set; }
     }
 }

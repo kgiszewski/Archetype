@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace Archetype.Umbraco.Models
 {
     public class Archetype
     {
-        public IEnumerable<Fieldset> Fieldsets { get; set; }
+	    public IEnumerable<Fieldset> Fieldsets { get; set; }
 
         public Archetype()
         {
