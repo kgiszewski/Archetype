@@ -10,23 +10,23 @@
                 <div class="archetypeFieldsetTitle" ng-click="focusFieldset(fieldset)">{{fieldset.label}}</div>
                 <div class="archetypeFieldsetCollapser" ng-hide="fieldset.collapse && fieldset.label">
                     <div class="archetypeFieldsetOption">
-                        <label for="archetypeFieldLabel_{{$index}}">{{'label' | archetypeLocale:getLocales()}}</label>
+                        <label for="archetypeFieldLabel_{{$index}}"><archetype-localize key="label">Label</archetype-localize></label>
                         <input type="text" id="archetypeFieldLabel_{{$index}}" ng-model="fieldset.label" />
                     </div>
                     <div class="archetypeFieldsetOption">
-                        <label for="archetypeFieldAlias_{{$index}}">{{'alias' | archetypeLocale:getLocales()}}</label>
+                        <label for="archetypeFieldAlias_{{$index}}"><archetype-localize key="alias">Alias</archetype-localize></label>
                         <input type="text" id="archetypeFieldAlias_{{$index}}" ng-model="fieldset.alias" required/>
                     </div>
                     <div class="archetypeFieldsetOption">
-                        <label for="archetypeFieldLabelTemplate_{{$index}}">{{'labelTemplate' | archetypeLocale:getLocales()}}</label>
+                        <label for="archetypeFieldLabelTemplate_{{$index}}"><archetype-localize key="labelTemplate">Alias</archetype-localize></label>
                         <input type="text" id="archetypeFieldLabelTemplate_{{$index}}" ng-model="fieldset.labelTemplate" />
                     </div>
                     <div class="archetypeFieldsetOption" ng-show="archetypeConfigRenderModel.enableMultipleFieldsets">
-                        <label for="archetypeFieldIcon_{{$index}}">{{'icon' | archetypeLocale:getLocales()}}</label>
-                        <i class="fieldsetIcon icon ng-class:fieldset.icon"></i><a ng-click="selectIcon(fieldset)">{{'select' | archetypeLocale:getLocales()}}…</a>
+                        <label for="archetypeFieldIcon_{{$index}}"><archetype-localize key="icon">Alias</archetype-localize></label>
+                        <i class="fieldsetIcon icon ng-class:fieldset.icon"></i><a ng-click="selectIcon(fieldset)"><archetype-localize key="select">Alias</archetype-localize>…</a>
                     </div>
                     <div class="archetypeFieldsetOption">
-                        <label>{{'properties' | archetypeLocale:getLocales()}}</label>
+                        <label>{{'properties'}}</label>
                     </div> 
                     <div class="archetypePropertiesWrapper">
                         <ul ui-sortable="sortableOptions" ng-model="fieldset.properties">
@@ -41,27 +41,27 @@
                                 </div>
                                 <div class="archetypePropertyCollapser" ng-hide="property.collapse && property.label">
                                     <div>
-                                        <label for="archetypePropertyLabel_{{$parent.$index}}_{{$index}}">{{'label' | archetypeLocale:getLocales()}}</label>
+                                        <label for="archetypePropertyLabel_{{$parent.$index}}_{{$index}}"><archetype-localize key="label">Alias</archetype-localize></label>
                                         <input type="text" id="archetypePropertyLabel_{{$parent.$index}}_{{$index}}" ng-model="property.label" />
                                     </div>
                                     <div>
-                                        <label for="archetypePropertyAlias_{{$parent.$index}}_{{$index}}">{{'alias' | archetypeLocale:getLocales()}}</label>
+                                        <label for="archetypePropertyAlias_{{$parent.$index}}_{{$index}}"><archetype-localize key="alias">Alias</archetype-localize></label>
                                         <input type="text" id="archetypePropertyAlias_{{$parent.$index}}_{{$index}}" ng-model="property.alias" required/>
                                     </div>
                                     <div>
-                                        <label for="archetypePropertyHelpText_{{$parent.$index}}_{{$index}}">{{'helpText' | archetypeLocale:getLocales()}}</label>
+                                        <label for="archetypePropertyHelpText_{{$parent.$index}}_{{$index}}"><archetype-localize key="helpText">Alias</archetype-localize></label>
                                         <input type="text" id="archetypePropertyHelpText_{{$parent.$index}}_{{$index}}" ng-model="property.helpText" />
                                     </div>
                                     <div>
-                                        <label for="archetypePropertyDataType_{{$parent.$index}}_{{$index}}">{{'dataType' | archetypeLocale:getLocales()}}</label>
+                                        <label for="archetypePropertyDataType_{{$parent.$index}}_{{$index}}"><archetype-localize key="dataType">Alias</archetype-localize></label>
                                         <select id="archetypePropertyDataType_{{$parent.$index}}_{{$index}}" ng-model="property.dataTypeId" ng-options="datatype.id as datatype.name for datatype in availableDataTypes"></select>
                                     </div>
                                     <div>
-                                        <label for="archetypePropertyDefaultValue_{{$parent.$index}}_{{$index}}">{{'defaultValue' | archetypeLocale:getLocales()}}</label>
+                                        <label for="archetypePropertyDefaultValue_{{$parent.$index}}_{{$index}}"><archetype-localize key="defaultValue">Alias</archetype-localize></label>
                                         <input type="text" id="archetypePropertyDefaultValue_{{$parent.$index}}_{{$index}}" ng-model="property.value" />
                                     </div>
                                     <div>
-                                        <label for="archetypePropertyRequired_{{$parent.$index}}_{{$index}}">{{'required' | archetypeLocale:getLocales()}}</label>
+                                        <label for="archetypePropertyRequired_{{$parent.$index}}_{{$index}}"><archetype-localize key="required">Alias</archetype-localize></label>
                                         <input type="checkbox" id="archetypePropertyRequired_{{$parent.$index}}_{{$index}}" ng-model="property.required" />
                                     </div>
                                 </div>
@@ -75,50 +75,50 @@
 
     <div class="archetypeOptions">
         <div>
-            <label for="archetypeOptionsToggle">{{'toggleAdvanced' | archetypeLocale:getLocales()}}<small>{{'toggleAdvancedDescription' | archetypeLocale:getLocales()}}</small></label>
+            <label for="archetypeOptionsToggle"><archetype-localize key="toggleAdvanced">Alias</archetype-localize><small><archetype-localize key="toggleAdvancedDescription">Alias</archetype-localize></small></label>
             <input type="checkbox" id="archetypeOptionsToggle" ng-model="archetypeConfigRenderModel.showAdvancedOptions"/>
         </div>
     </div>
 
     <div class="archetypeAdvancedOptions" ng-show="archetypeConfigRenderModel.showAdvancedOptions">
         <div>
-            <label for="archetypeAdvancedOptionsHideControls">{{'hideFieldsetControls' | archetypeLocale:getLocales()}}<small>{{'hideFieldsetControlsDescription' | archetypeLocale:getLocales()}}</small></label>
+            <label for="archetypeAdvancedOptionsHideControls"><archetype-localize key="hideFieldsetControls">hideFieldsetControls</archetype-localize><small><archetype-localize key="hideFieldsetControlsDescription">Alias</archetype-localize></small></label>
             <input type="checkbox" id="archetypeAdvancedOptionsHideControls" ng-model="archetypeConfigRenderModel.hideFieldsetControls"/>
         </div>
         <div>
-            <label for="archetypeAdvancedOptionsHideLabels">{{'hidePropertyLabels' | archetypeLocale:getLocales()}}<small>{{'hidePropertyLabelsDescription' | archetypeLocale:getLocales()}}</small></label>
+            <label for="archetypeAdvancedOptionsHideLabels"><archetype-localize key="hidePropertyLabels">hidePropertyLabels</archetype-localize><small><archetype-localize key="hidePropertyLabelsDescription">Alias</archetype-localize></small></label>
             <input type="checkbox" id="archetypeAdvancedOptionsHideLabels" ng-model="archetypeConfigRenderModel.hidePropertyLabels"/>
         </div>
         <div>
-            <label for="archetypeAdvancedOptionsMaxFieldsets">{{'maxFieldsets' | archetypeLocale:getLocales()}}<small>{{'maxFieldsetsDescription' | archetypeLocale:getLocales()}}</small></label>
+            <label for="archetypeAdvancedOptionsMaxFieldsets"><archetype-localize key="maxFieldsets">Alias</archetype-localize><small><archetype-localize key="maxFieldsetsDescription">Alias</archetype-localize></small></label>
             <input type="number" id="archetypeAdvancedOptionsMaxFieldsets" class="archetypeMaxFieldsets" ng-model="archetypeConfigRenderModel.maxFieldsets"/>
         </div>
         <div>
-            <label for="archetypeAdvancedOptionsMultipleFieldsets">{{'enableMultipleFieldsets' | archetypeLocale:getLocales()}}<small>{{'enableMultipleFieldsetsDescription' | archetypeLocale:getLocales()}}</small></label>
+            <label for="archetypeAdvancedOptionsMultipleFieldsets"><archetype-localize key="enableMultipleFieldsets">Alias</archetype-localize><small><archetype-localize key="enableMultipleFieldsetsDescription">Alias</archetype-localize></small></label>
             <input type="checkbox" id="archetypeAdvancedOptionsMultipleFieldsets" ng-model="archetypeConfigRenderModel.enableMultipleFieldsets"/>
         </div> 
         <div>
-            <label for="archetypeAdvancedOptionsFieldsetToolbar">{{'hideFieldsetToolbar' | archetypeLocale:getLocales()}}<small>{{'hideFieldsetToolbarDescription' | archetypeLocale:getLocales()}}</small></label>
+            <label for="archetypeAdvancedOptionsFieldsetToolbar"><archetype-localize key="hideFieldsetToolbar">Alias</archetype-localize><small><archetype-localize key="hideFieldsetToolbarDescription">Alias</archetype-localize></small></label>
             <input type="checkbox" id="archetypeAdvancedOptionsFieldsetToolbar" ng-model="archetypeConfigRenderModel.hideFieldsetToolbar"/>
         </div>
         <div>
-            <label for="archetypeAdvancedOptionsCustomClass">{{'customWrapperClass' | archetypeLocale:getLocales()}}<small>{{'customWrapperClass' | archetypeLocale:getLocales()}}</small></label>
+            <label for="archetypeAdvancedOptionsCustomClass"><archetype-localize key="customWrapperClass">Alias</archetype-localize><small><archetype-localize key="customWrapperClassDescription">Alias</archetype-localize></small></label>
             <input type="text" id="archetypeAdvancedOptionsCustomClass" ng-model="archetypeConfigRenderModel.customCssClass"/>
         </div>
         <div>
-            <label for="archetypeAdvancedOptionsCustomCss">{{'cssFile' | archetypeLocale:getLocales()}}<small>{{'cssFileDescription' | archetypeLocale:getLocales()}}</small></label>
+            <label for="archetypeAdvancedOptionsCustomCss"><archetype-localize key="cssFile">Alias</archetype-localize><small><archetype-localize key="cssFileDescription">Alias</archetype-localize></small></label>
             <input type="text" id="archetypeAdvancedOptionsCustomCss" ng-model="archetypeConfigRenderModel.customCssPath"/>
         </div>
         <div>
-            <label for="archetypeAdvancedOptionsCustomJs">{{'jsFile' | archetypeLocale:getLocales()}}<small>{{'jsFileDescription' | archetypeLocale:getLocales()}}</small></label>
+            <label for="archetypeAdvancedOptionsCustomJs"><archetype-localize key="jsFile">Alias</archetype-localize><small><archetype-localize key="jsFileDescription">Alias</archetype-localize></small></label>
             <input type="text" id="archetypeAdvancedOptionsCustomJs" ng-model="archetypeConfigRenderModel.customJsPath"/>
         </div>
         <div>
-            <label for="archetypeAdvancedOptionsDeveloperMode">{{'toggleDeveloperMode' | archetypeLocale:getLocales()}}<small>{{'toggleDeveloperModeDescription' | archetypeLocale:getLocales()}}</small></label>
+            <label for="archetypeAdvancedOptionsDeveloperMode"><archetype-localize key="toggleDeveloperMode">Alias</archetype-localize><small><archetype-localize key="toggleDeveloperModeDescription">Alias</archetype-localize></small></label>
             <input type="checkbox" id="archetypeAdvancedOptionsDeveloperMode" ng-model="archetypeConfigRenderModel.developerMode"/>
         </div>
         <div>
-            <label for="archetypeAdvancedOptionsConfigModel">{{'configModel' | archetypeLocale:getLocales()}}<small>{{'configModelDescription' | archetypeLocale:getLocales()}}</small></label>
+            <label for="archetypeAdvancedOptionsConfigModel"><archetype-localize key="configModel">Alias</archetype-localize><small><archetype-localize key="configModelDescription">Alias</archetype-localize></small></label>
             <textarea class="archetypeDeveloperModel" id="archetypeAdvancedOptionsConfigModel" ng-model="archetypeConfigRenderModel"></textarea>
         </div>
     </div>

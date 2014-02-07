@@ -1,4 +1,4 @@
-angular.module("umbraco").controller("Imulus.ArchetypeConfigController", function ($scope, $http, assetsService, dialogService, archetypePropertyEditorResource, userService) {
+angular.module("umbraco").controller("Imulus.ArchetypeConfigController", function ($scope, $http, assetsService, dialogService, archetypePropertyEditorResource) {
     
     //$scope.model.value = ""; 
     //console.log($scope.model.value); 
@@ -10,7 +10,6 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
 
     //ini the model
     $scope.model.value = $scope.model.value || defaultFieldsetConfigModel;
-    $scope.locales = {}
     
     //ini the render model
     initConfigRenderModel();
@@ -20,32 +19,6 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
         $scope.availableDataTypes = data;
     });
 
-    archetypePropertyEditorResource.getDefaultLocale().then(function(defaultLocale){
-        $scope.locales.defaultLocale = defaultLocale;
-    });
-
-    //load the localization info
-    userService.getCurrentUser()
-        .then(function (user) {
-            return user.locale;
-        })
-        .then(function(langIso){
-            archetypePropertyEditorResource.getLocale(langIso)
-                .then(function(locale){
-                    $scope.locales.locale = locale;  
-                });
-    });
-
-    $scope.getLocales = function(){
-        if($scope.locales){
-
-            if(!$scope.locales.locale)
-                $scope.locales.locale = $scope.locales.defaultLocale;
-
-            return $scope.locales;
-        }
-    }
-
     //iconPicker
     $scope.selectIcon = function(fieldset){
         var dialog = dialogService.iconPicker({
@@ -53,7 +26,6 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
                 fieldset.icon = data;
             }
         });
-
     }
 
     //config for the sorting
