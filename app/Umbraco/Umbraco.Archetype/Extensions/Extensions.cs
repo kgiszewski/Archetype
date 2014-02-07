@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Umbraco.Core;
+using Archetype.Umbraco.Models;
 
 namespace Archetype.Umbraco.Extensions
 {
@@ -14,6 +11,11 @@ namespace Archetype.Umbraco.Extensions
             input = input.Trim();
             return input.StartsWith("{") && input.EndsWith("}")
                    || input.StartsWith("[") && input.EndsWith("]");
+        }
+
+        public static bool IsArchetype(this Property prop)
+        {
+            return prop.PropertyEditorAlias.InvariantEquals("Imulus.Archetype");
         }
     }
 }

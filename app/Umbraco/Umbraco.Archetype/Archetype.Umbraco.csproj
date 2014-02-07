@@ -186,6 +186,9 @@
   <ItemGroup>
     <Compile Include="Extensions\Extensions.cs" />
     <Compile Include="Models\Archetype.cs" />
+    <Compile Include="Models\ArchetypePreValue.cs" />
+    <Compile Include="Models\ArchetypePreValueFieldset.cs" />
+    <Compile Include="Models\ArchetypePreValueProperty.cs" />
     <Compile Include="Models\Fieldset.cs" />
     <Compile Include="Models\Property.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

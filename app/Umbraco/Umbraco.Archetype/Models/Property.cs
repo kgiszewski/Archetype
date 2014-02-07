@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Archetype.Umbraco.Models
+﻿namespace Archetype.Umbraco.Models
 {
-    public class Property
+	public class Property
     {
-        public string Alias { get; set; }
-        public string Value { get; set; }
+		public string Alias { get; internal set; }
+		public object Value { get; internal set; }
+        public string PropertyEditorAlias { get; internal set; }
+		internal int DataTypeId { get; set; }
     }
 }
