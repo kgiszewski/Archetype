@@ -1,4 +1,7 @@
-﻿namespace Archetype.Umbraco.Extensions
+﻿using Umbraco.Core;
+using Archetype.Umbraco.Models;
+
+namespace Archetype.Umbraco.Extensions
 {
     public static class Extensions
     {
@@ -8,6 +11,11 @@
             input = input.Trim();
             return input.StartsWith("{") && input.EndsWith("}")
                    || input.StartsWith("[") && input.EndsWith("]");
+        }
+
+        public static bool IsArchetype(this Property prop)
+        {
+            return prop.PropertyEditorAlias.InvariantEquals("Imulus.Archetype");
         }
     }
 }

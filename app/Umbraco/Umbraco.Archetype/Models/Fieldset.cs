@@ -11,7 +11,7 @@ namespace Archetype.Umbraco.Models
     {
         public string Alias { get; set; }
 
-		internal IEnumerable<Property> Properties;
+		public IEnumerable<Property> Properties;
 
         public Fieldset()
         {
