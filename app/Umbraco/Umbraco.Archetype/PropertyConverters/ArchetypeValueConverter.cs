@@ -45,28 +45,34 @@ namespace Archetype.Umbraco.PropertyConverters
             {
                 try
                 {
-					// Deserialize value to archetype model
-					var archetype = JsonConvert.DeserializeObject<Models.Archetype>(sourceString, _jsonSettings);
+                    // Deserialize value to archetype model
+                    var archetype = JsonConvert.DeserializeObject<Models.Archetype>(sourceString, _jsonSettings);
 
-					// Get list of configured properties and their types 
-					// and map them to the deserialized archetype model
-					var preValue = GetArchetypePreValueFromDataTypeId(propertyType.DataTypeId);
-	                foreach (var fieldset in preValue.Fieldsets)
-	                {
-		                var fieldsetAlias = fieldset.Alias;
-						foreach (var fieldsetInst in archetype.Fieldsets.Where(x => x.Alias == fieldsetAlias))
-		                {
-							foreach (var property in fieldset.Properties)
-							{
-								var propertyAlias = property.Alias;
-								foreach (var propertyInst in fieldsetInst.Properties.Where(x => x.Alias == propertyAlias))
-								{
-									propertyInst.DataTypeId = property.DataTypeId;
-									propertyInst.PropertyEditorAlias = property.PropertyEditorAlias;
-								}
-							}
-		                }
-	                }
+                    try
+                    {
+                        // Get list of configured properties and their types 
+                        // and map them to the deserialized archetype model
+                        var preValue = GetArchetypePreValueFromDataTypeId(propertyType.DataTypeId);
+                        foreach (var fieldset in preValue.Fieldsets)
+                        {
+                            var fieldsetAlias = fieldset.Alias;
+                            foreach (var fieldsetInst in archetype.Fieldsets.Where(x => x.Alias == fieldsetAlias))
+                            {
+                                foreach (var property in fieldset.Properties)
+                                {
+                                    var propertyAlias = property.Alias;
+                                    foreach (var propertyInst in fieldsetInst.Properties.Where(x => x.Alias == propertyAlias))
+                                    {
+                                        propertyInst.DataTypeId = property.DataTypeId;
+                                        propertyInst.PropertyEditorAlias = property.PropertyEditorAlias;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                    }
 
                     return archetype;
                 }
