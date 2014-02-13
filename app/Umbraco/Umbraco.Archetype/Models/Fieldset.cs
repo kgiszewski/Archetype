@@ -1,14 +1,17 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json;
 using Umbraco.Core;
 
 namespace Archetype.Umbraco.Models
 {
     public class Fieldset
     {
+        [JsonProperty("alias")]
         public string Alias { get; set; }
 
-		public IEnumerable<Property> Properties;
+        [JsonProperty("properties")]
+        public IEnumerable<Property> Properties;
 
         public Fieldset()
         {

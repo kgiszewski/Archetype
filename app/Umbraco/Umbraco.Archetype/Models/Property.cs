@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Newtonsoft.Json;
 using Umbraco.Core;
 using Umbraco.Core.Models;
 using Umbraco.Core.Models.PublishedContent;
@@ -8,10 +9,16 @@ namespace Archetype.Umbraco.Models
 {
 	public class Property
     {
-		public string Alias { get; internal set; }
-		public object Value { get; set; }
+        [JsonProperty("alias")]
+        public string Alias { get; internal set; }
+
+        [JsonProperty("value")]
+        public object Value { get; set; }
+
+        [JsonProperty("propertyEditorAlias")]
         public string PropertyEditorAlias { get; internal set; }
 
+        [JsonProperty("dataTypeId")]
         public int DataTypeId { get; internal set; }
 
 		public T GetValue<T>()
