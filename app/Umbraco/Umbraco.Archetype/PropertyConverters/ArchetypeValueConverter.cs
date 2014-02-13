@@ -90,7 +90,7 @@ namespace Archetype.Umbraco.PropertyConverters
 			var preValues = Services.DataTypeService.GetPreValuesCollectionByDataTypeId(dataTypeId);
 
 			var configJson = preValues.IsDictionaryBased
-				? preValues.PreValuesAsDictionary["archetypeConfig"].Value
+				? preValues.PreValuesAsDictionary[Constants.PreValueAlias].Value
 				: preValues.PreValuesAsArray.First().Value;
 
 			var config = JsonConvert.DeserializeObject<Models.ArchetypePreValue>(configJson, _jsonSettings);
