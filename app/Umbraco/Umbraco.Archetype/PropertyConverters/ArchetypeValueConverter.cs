@@ -32,7 +32,7 @@ namespace Archetype.Umbraco.PropertyConverters
 
         public override bool IsConverter(PublishedPropertyType propertyType)
         {
-            return propertyType.PropertyEditorAlias.Equals("Imulus.Archetype");
+            return propertyType.PropertyEditorAlias.Equals(Constants.PropertyEditorAlias);
         }
 
         public override object ConvertDataToSource(PublishedPropertyType propertyType, object source, bool preview)
