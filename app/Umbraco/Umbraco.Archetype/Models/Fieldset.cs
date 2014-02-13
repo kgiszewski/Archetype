@@ -18,9 +18,9 @@ namespace Archetype.Umbraco.Models
             Properties = new List<Property>();
         }
 
-		#region Helper Methods
+        #region Helper Methods
 
-		public string GetValue(string propertyAlias)
+        public string GetValue(string propertyAlias)
         {
             return GetValue<string>(propertyAlias);
         }
@@ -29,18 +29,18 @@ namespace Archetype.Umbraco.Models
         {
             var property = GetProperty(propertyAlias);
 
-			if (property == null || string.IsNullOrEmpty(property.Value.ToString()))
-				return default(T);
+            if (property == null || string.IsNullOrEmpty(property.Value.ToString()))
+                return default(T);
 
-	        return property.GetValue<T>();
+            return property.GetValue<T>();
         }
 
         private Property GetProperty(string propertyAlias)
         {
             return Properties.FirstOrDefault(p => p.Alias.InvariantEquals(propertyAlias));
-		}
+        }
 
-		#endregion
+        #endregion
 
     }
 }
