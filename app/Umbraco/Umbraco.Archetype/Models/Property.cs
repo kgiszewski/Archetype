@@ -12,7 +12,7 @@ namespace Archetype.Umbraco.Models
 		public object Value { get; set; }
         public string PropertyEditorAlias { get; internal set; }
 
-		internal int DataTypeId { get; set; }
+        public int DataTypeId { get; internal set; }
 
 		public T GetValue<T>()
 		{
