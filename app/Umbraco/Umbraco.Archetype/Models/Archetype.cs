@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace Archetype.Umbraco.Models
 {
     public class Archetype
     {
-	    public IEnumerable<Fieldset> Fieldsets { get; set; }
+        [JsonProperty("fieldsets")]
+        public IEnumerable<Fieldset> Fieldsets { get; set; }
 
         public Archetype()
         {

@@ -15,7 +15,7 @@ namespace Archetype.Umbraco.Extensions
 
         public static bool IsArchetype(this Property prop)
         {
-            return prop.PropertyEditorAlias.InvariantEquals("Imulus.Archetype");
+            return prop.PropertyEditorAlias.InvariantEquals(Constants.PropertyEditorAlias);
         }
     }
 }
