@@ -30,7 +30,7 @@
                 <div class="archetypeCollapser animate-hide" ng-hide="fieldset.collapse">
                     <form class="form-inline">
                         <div ng-class="{archetypePropertyError: getPropertyValidity($parent.$index, property.alias) === false}" class="archetypeProperty control-group" ng-repeat="property in fieldsetConfigModel.properties">
-                            <label ng-hide="archetypeConfig.hidePropertyLabels == '1'" class="control-label" for="archetype-property-{{$parent.$index}}-{{$index}}">
+                            <label ng-hide="archetypeConfig.hidePropertyLabels == '1'" class="control-label" for="archetype-property-{{model.alias}}-{{$parent.$index}}-{{$index}}">
                                 <span>{{property.label}}</span>
                                 <div class="archetypeFieldsetHelpText" ng-show="property.helpText">
                                     <em>{{property.helpText}}</em>
@@ -38,7 +38,7 @@
                             </label>
 
                             <div class="controls">
-                                <archetype-property class="archetypeEditor ng-class:property.alias" property="property" fieldset-index="$parent.$index" fieldset="fieldset" archetype-config="model.config" property-config-index="$index" archetype-render-model="archetypeRenderModel"></archetype-property>
+                                <archetype-property class="archetypeEditor ng-class:property.alias" property="property" fieldset-index="$parent.$index" fieldset="fieldset" archetype-config="model.config" property-config-index="$index" archetype-render-model="archetypeRenderModel" umbraco-property-alias="model.alias"></archetype-property>
                             </div>
                         </div>
                     </form>
