@@ -55,6 +55,7 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
         var config = null;
         var alias = configFieldsetModel.properties[scope.propertyConfigIndex].alias;
         var defaultValue = configFieldsetModel.properties[scope.propertyConfigIndex].value;
+        var umbracoPropertyAlias = scope.umbracoPropertyAlias;
 
         //try to convert the defaultValue to a JS object
         defaultValue = jsonOrString(defaultValue, scope.archetypeConfig.developerMode, "defaultValue");
@@ -81,7 +82,7 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
                 }
                 var mergedConfig = _.extend(defaultConfigObj, config);
 
-                loadView(pathToView, mergedConfig, defaultValue, alias, scope, element, ngModelCtrl);
+                loadView(pathToView, mergedConfig, defaultValue, alias, umbracoPropertyAlias, scope, element, ngModelCtrl);
             });
         });
 
@@ -111,7 +112,7 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
         }
     }
 
-    function loadView(view, config, defaultValue, alias, scope, element, ngModelCtrl) {
+    function loadView(view, config, defaultValue, alias, umbracoPropertyAlias, scope, element, ngModelCtrl) {
         if (view)
         {
             $http.get(view).success(function (data) {
@@ -139,7 +140,7 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
                     scope.model.config = config;
 
                     //some items need an alias
-                    scope.model.alias = "archetype-property-" + scope.fieldsetIndex + "-" + scope.propertyConfigIndex;
+                    scope.model.alias = "archetype-property-" + umbracoPropertyAlias + "-" + scope.fieldsetIndex + "-" + scope.propertyConfigIndex;
 
                     //watch for changes since there is no two-way binding with the local model.value
                     scope.$watch('model.value', function (newValue, oldValue) {
@@ -167,7 +168,8 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
             archetypeConfig: '=',
             fieldset: '=',
             fieldsetIndex: '=',
-            archetypeRenderModel: '='
+            archetypeRenderModel: '=',
+            umbracoPropertyAlias: '='
         }
     }
 });
