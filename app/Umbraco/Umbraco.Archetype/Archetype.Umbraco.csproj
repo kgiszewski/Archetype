@@ -184,6 +184,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Api\ArchetypeDataTypeController.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Extensions\Extensions.cs" />
     <Compile Include="Models\Archetype.cs" />
