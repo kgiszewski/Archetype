@@ -228,6 +228,7 @@
     <Compile Include="Models\Fieldset.cs" />
     <Compile Include="Models\Property.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\VersionInfo.cs" />
     <Compile Include="PropertyConverters\ArchetypeValueConverter.cs" />
   </ItemGroup>
   <ItemGroup>

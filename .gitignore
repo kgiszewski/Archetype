@@ -23,6 +23,7 @@ pkg/*.zip
 [Bb]in/
 [Oo]bj/
 [Pp]ackages/
+VersionInfo.cs
 
 *.aps
 *.bak
