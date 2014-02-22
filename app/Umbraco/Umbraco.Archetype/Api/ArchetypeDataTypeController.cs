@@ -16,14 +16,15 @@ namespace Archetype.Umbraco.Api
     public class ArchetypeDataTypeController : UmbracoAuthorizedJsonController
     {
         //pulled from the Core
-        public DataTypeDisplay GetById(int id)
+        public object GetById(int id)
         {
             var dataType = Services.DataTypeService.GetDataTypeDefinitionById(id);
             if (dataType == null)
             {
                 throw new HttpResponseException(HttpStatusCode.NotFound);
             }
-            return Mapper.Map<IDataTypeDefinition, DataTypeDisplay>(dataType);
+            var dataTypeDisplay = Mapper.Map<IDataTypeDefinition, DataTypeDisplay>(dataType);
+            return new { selectedEditor = dataTypeDisplay.SelectedEditor, preValues = dataTypeDisplay.PreValues };
         }
     } 
 }
