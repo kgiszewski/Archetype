@@ -25,7 +25,7 @@ module.exports = function(grunt) {
       },
 
       dev: {
-        files: ['app/**'],
+        files: ['app/**', '!app/Umbraco/**', 'app/Umbraco/**/*.dll'],
         tasks: ['deploy'],
         options: {
           spawn: false
@@ -109,25 +109,25 @@ module.exports = function(grunt) {
         {expand: true, cwd: 'app/views/', src: ['archetype.html', 'archetype.config.html'], dest: '<%= dest %>/views', flatten: true},
         {expand: true, cwd: 'app/config/', src: ['propertyEditors.views.js'], dest: '<%= dest %>/js', flatten: true},
         {expand: true, cwd: 'app/langs/', src: ['**'], dest: '<%= dest %>/langs', flatten: true},
-        {expand: true, cwd: 'app/Umbraco/Umbraco.Archetype/bin/Debug/', src: ['Archetype.dll'], dest: '<%= dest %>/bin', flatten: true} 
+        {expand: true, cwd: 'app/Umbraco/Umbraco.Archetype/bin/Debug/', src: ['Archetype.dll', 'Archetype.pdb'], dest: '<%= dest %>/bin', flatten: true} 
         ]
       },
       deploy: {
         files: [
-          {expand: true, cwd: '<%= dest %>/', src: ['**/*', '!bin/*'], dest: '<%= grunt.option("target") %>\\App_Plugins\\Archetype', flatten: false},
-          {expand: true, cwd: '<%= dest %>/', src: ['bin/*'], dest: '<%= grunt.option("target") %>\\bin', flatten: false},
+          {expand: true, cwd: '<%= dest %>/', src: ['**/*', "!bin", "!bin/**/*"], dest: '<%= grunt.option("target") %>\\App_Plugins\\Archetype', flatten: false},
+          {expand: true, cwd: '<%= dest %>/', src: ['bin/**/*'], dest: '<%= grunt.option("target") %>', flatten: false},
         ]
       },
       nuget_prepare: {
         files: [
-          {expand: true, cwd: '<%= dest %>/', src: ['**/*', '!bin/*'], dest: '<%= package_temp_dir %>/nuget/content/', flatten: false},
-          {expand: true, cwd: '<%= dest %>/', src: ['bin/*'], dest: '<%= package_temp_dir %>/nuget/lib/net40/', flatten: false}
+          {expand: true, cwd: '<%= dest %>/', src: ['**/*', '!bin', '!bin/*'], dest: '<%= package_temp_dir %>/nuget/content/', flatten: false},
+          {expand: true, cwd: '<%= dest %>/', src: ['bin/**/*.dll'], dest: '<%= package_temp_dir %>/nuget/lib/net40/', flatten: true}
         ]
       },
       umbracopackage: {
         files: [
-          {expand: true, cwd: '<%= dest %>/', src: ['**/*', "!bin/*"], dest: 'pkg/tmp/umbraco/App_Plugins/Archetype', flatten: false},
-          {expand: true, cwd: '<%= dest %>/', src: ['bin/*'], dest: 'pkg/tmp/umbraco', flatten: false}
+          {expand: true, cwd: '<%= dest %>/', src: ['**/*', '!bin', "!bin/*"], dest: 'pkg/tmp/umbraco/App_Plugins/Archetype', flatten: false},
+          {expand: true, cwd: '<%= dest %>/', src: ['bin/**/*.dll'], dest: 'pkg/tmp/umbraco', flatten: false}
         ]
       }
     },
