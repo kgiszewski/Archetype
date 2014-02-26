@@ -106,7 +106,7 @@
 
     //helper, ini the render model from the server (model.value)
     function initArchetypeRenderModel() {
-        $scope.archetypeRenderModel = $scope.model.value;
+        $scope.archetypeRenderModel = removeNulls($scope.model.value);
 
         _.each($scope.archetypeRenderModel.fieldsets, function (fieldset)
         {
@@ -201,7 +201,7 @@
         _.each($scope.archetypeRenderModel.fieldsets, function(fieldset){
             var cleanedFieldset =  cleanFieldset(fieldset);
 
-            if(cleanFieldset){
+            if(cleanedFieldset){
                 $scope.model.value.fieldsets.push(cleanedFieldset);
             }
         });
@@ -246,6 +246,20 @@
     function getEmptyRenderFieldset (fieldsetModel)
     {
         return JSON.parse('{"alias": "' + fieldsetModel.alias + '", "remove": false, "isValid": true, "properties": []}');
+    }
+
+    //helper to ensure no nulls make it into the model
+    function removeNulls(model){
+        if(model.fieldsets){
+            _.each(model.fieldsets, function(fieldset, index){
+                if(!fieldset){
+                    model.fieldsets.splice(index, 1);
+                    removeNulls(model);
+                }
+            });
+            
+            return model;
+        }
     }
 
     //helper to lookup validity when given a fieldsetIndex and property alias
