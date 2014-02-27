@@ -5,6 +5,7 @@ module.exports = function(grunt) {
     dest: 'dist',
     package_dir: 'pkg',
     package_temp_dir: '<%= package_dir %>/tmp/',
+    csProj: 'app/Umbraco/Umbraco.Archetype/Archetype.Umbraco.csproj',
 
 
     watch: {
@@ -161,16 +162,28 @@ module.exports = function(grunt) {
       package_artifacts: ['pkg/*.zip', 'pkg/*.nupkg'],
     },
 
+    assemblyinfo: {
+        options: {
+            files: ['<%= csProj %>'],
+            filename: 'VersionInfo.cs',
+            info: {
+                version: '<%= (pkgMeta.version.indexOf("-") ? pkgMeta.version.substring(0, pkgMeta.version.indexOf("-")) : pkgMeta.version) %>', 
+                fileVersion: '<%= pkgMeta.version %>'
+            }
+        }
+    },
+
     msbuild: {
         dev: {
-            src: ['app/Umbraco/Umbraco.Archetype/Archetype.Umbraco.csproj'],
+            src: ["<%= csProj %>"],
             options: {
                 projectConfiguration: 'Debug',
                 targets: ['Clean', 'Rebuild'],
                 stdout: true,
                 maxCpuCount: 4,
                 buildParameters: {
-                    WarningLevel: 2
+                    WarningLevel: 2,
+                    NoWarn: 1607,
                 },
                 verbosity: 'quiet'
             }
@@ -190,6 +203,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-template');
   grunt.loadNpmTasks('grunt-touch');
   grunt.loadNpmTasks('grunt-msbuild');
+  grunt.loadNpmTasks('grunt-dotnet-assembly-info');
   grunt.loadTasks('tasks');
 
 
@@ -200,6 +214,7 @@ module.exports = function(grunt) {
   grunt.registerTask('deploy', ['default', 'copy:deploy', 'touchwebconfigifenabled']);
   grunt.registerTask('css:build', ['less']);
   grunt.registerTask('js:build', ['concat']);
-  grunt.registerTask('default', ['clean', 'css:build', 'js:build', 'copy:build', 'msbuild:dev']);
+  grunt.registerTask('cs:build', ['assemblyinfo', 'msbuild:dev']);
+  grunt.registerTask('default', ['clean', 'css:build', 'js:build', 'copy:build', 'cs:build']);
 };
 
