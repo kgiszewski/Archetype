@@ -12,9 +12,4 @@
                 <iconUrl>http://github.com/imulus/archetype/raw/master/assets/logo.png</iconUrl>
                 <licenseUrl><%= licenseUrl %></licenseUrl>
         </metadata>
-        <files>
-                <% files.forEach(function(file) { %>
-                        <file src="<%- file.path %>" target="<%= file.target %>" /> 
-                <% }); %>
-        </files>
 </package>
