@@ -90,7 +90,7 @@ module.exports = function(grunt) {
             author: '<%= pkgMeta.author %>',
             authorUrl: '<%= pkgMeta.authorUrl %>',
 
-    				files: [{ path: '..\\..\\..\\<%= dest %>\\**', target: 'content\\App_Plugins\\Archetype'}]
+    				files: [{ path: '..\\..\\..\\<%= package_temp_dir %>\\nuget\\**', target: 'content\\App_Plugins\\Archetype'}]
 	    		}
     		},
     		'files': { 
@@ -121,7 +121,7 @@ module.exports = function(grunt) {
       },
       nuget_prepare: {
         files: [
-          {expand: true, cwd: '<%= dest %>/', src: ['**/*', '!bin', '!bin/*'], dest: '<%= package_temp_dir %>/nuget/content/', flatten: false},
+          {expand: true, cwd: '<%= dest %>/', src: ['**/*', '!bin', '!bin/*'], dest: '<%= package_temp_dir %>/nuget/content/App_Plugins/Archetype', flatten: false},
           {expand: true, cwd: '<%= dest %>/', src: ['bin/**/*.dll'], dest: '<%= package_temp_dir %>/nuget/lib/net40/', flatten: true}
         ]
       },
