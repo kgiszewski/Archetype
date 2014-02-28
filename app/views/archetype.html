@@ -13,17 +13,19 @@
         <li ng-repeat="fieldset in archetypeRenderModel.fieldsets" ng-hide="fieldset.remove">
             <fieldset ng-class="{archetypeFieldsetError: !fieldset.isValid}" ng-init="fieldsetConfigModel = getConfigFieldsetByAlias(fieldset.alias)">
                 <div class="archetypeFieldsetLabel">
-                    <span class="caret" ng-hide="fieldset.collapse"></span>
-                    <span class="caret caret-right" ng-show="fieldset.collapse"></span>
+                    <div ng-click="focusFieldset(fieldset)" class="label-sub module-label">
+                        <span class="caret" ng-hide="fieldset.collapse"></span>
+                        <span class="caret caret-right" ng-show="fieldset.collapse"></span>
 
-                    <label ng-click="focusFieldset(fieldset)">
-                        <i class="fieldsetIcon icon ng-class:fieldsetConfigModel.icon"></i>
-                        <span ng-bind="getFieldsetTitle(fieldsetConfigModel, $index)"></span>
-                    </label>
+                        <label>
+                            <i class="fieldsetIcon icon ng-class:fieldsetConfigModel.icon"></i>
+                            <span ng-bind="getFieldsetTitle(fieldsetConfigModel, $index)"></span>
+                        </label>
+                    </div>
 
-                    <div class="archetypeEditorControls" ng-hide="model.config.hideFieldsetControls || model.config.maxFieldsets == '1'">
+                    <div class="archetypeEditorControls label-sub" ng-hide="model.config.hideFieldsetControls || model.config.maxFieldsets == '1'">
                         <i class="icon icon-add" ng-click="addRow(fieldset.alias, $index)" ng-show="canAdd()"></i>
-                        <i class="icon icon-delete" ng-click="removeRow($index)" ng-show="canRemove()"></i>
+                        <i class="icon icon-remove" ng-click="removeRow($index)" ng-show="canRemove()"></i>
                         <i class="icon icon-navigation handle" ng-show="canSort()"></i>
                     </div>
                 </div>
