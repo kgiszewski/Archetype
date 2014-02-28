@@ -56,15 +56,20 @@
     }
 }
 
+
 .archetypeEditor .archetypeCollapser{
     clear: both;
-    height: 100%;
-    padding-top: 12px;
     background-color: #fff;
     border-top: 1px solid silver;
     border-radius: 0 0 0 5px;
+    -webkit-transition: all 1s 0 ease;
+    max-height: 0px;
+    overflow-y: hidden;
 }
 
+.archetypeEditor .fieldsetExpanded .archetypeCollapser{
+    max-height: 99999px;
+}
 .archetypeEditor .multiPropertyTextbox{
     margin-bottom: 3px;
 }
