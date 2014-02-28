@@ -11,7 +11,7 @@
 
     <ul ui-sortable="sortableOptions" ng-model="archetypeRenderModel.fieldsets">
         <li ng-repeat="fieldset in archetypeRenderModel.fieldsets" ng-hide="fieldset.remove">
-            <fieldset ng-class="{archetypeFieldsetError: !fieldset.isValid}" ng-init="fieldsetConfigModel = getConfigFieldsetByAlias(fieldset.alias)">
+            <fieldset ng-class="{archetypeFieldsetError: !fieldset.isValid, fieldsetExpanded: !fieldset.collapse}" ng-init="fieldsetConfigModel = getConfigFieldsetByAlias(fieldset.alias)">
                 <div class="archetypeFieldsetLabel">
                     <div ng-click="focusFieldset(fieldset)" class="label-sub module-label">
                         <span class="caret" ng-hide="fieldset.collapse"></span>
@@ -29,7 +29,7 @@
                         <i class="icon icon-navigation handle" ng-show="canSort()"></i>
                     </div>
                 </div>
-                <div class="archetypeCollapser animate-hide" ng-hide="fieldset.collapse">
+                <div class="archetypeCollapser animate-hide">
                     <form class="form-inline">
                         <div ng-class="{archetypePropertyError: getPropertyValidity($parent.$index, property.alias) === false}" class="archetypeProperty control-group" ng-repeat="property in fieldsetConfigModel.properties">
                             <label ng-hide="archetypeConfig.hidePropertyLabels == '1'" class="control-label" for="archetype-property-{{model.alias}}-{{$parent.$index}}-{{$index}}">
