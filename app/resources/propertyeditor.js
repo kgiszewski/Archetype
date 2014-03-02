@@ -12,7 +12,7 @@ angular.module('umbraco.resources').factory('archetypePropertyEditorResource', f
         },
         getDataType: function(id) {
         	return umbRequestHelper.resourcePromise(
-        		$http.get("/umbraco/backoffice/UmbracoApi/DataType/GetById?id=" + id), 'Failed to retrieve datatype'
+        		$http.get("/umbraco/backoffice/ArchetypeApi/ArchetypeDataType/GetById?id=" + id), 'Failed to retrieve datatype'
     		);
         },
         getPropertyEditorMapping: function(alias) {
