@@ -12,7 +12,7 @@
     <ul ui-sortable="sortableOptions" ng-model="archetypeRenderModel.fieldsets">
         <li ng-repeat="fieldset in archetypeRenderModel.fieldsets" ng-hide="fieldset.remove">
             <fieldset ng-class="{archetypeFieldsetError: !fieldset.isValid}" ng-init="fieldsetConfigModel = getConfigFieldsetByAlias(fieldset.alias)">
-                <div class="archetypeFieldsetLabel">
+                <div class="archetypeFieldsetLabel" ng-class="{enableCollapsing: model.config.enableCollapsing}">
                     <span class="caret" ng-hide="fieldset.collapse"></span>
                     <span class="caret caret-right" ng-show="fieldset.collapse"></span>
 
