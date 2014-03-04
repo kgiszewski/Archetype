@@ -20,7 +20,8 @@
     "grunt-template": "~0.2.2",
     "grunt-touch": "~0.1.0",
     "fs-extra": "~0.8.1",
-    "grunt-msbuild": "~0.1.9"
+    "grunt-msbuild": "~0.1.9",
+    "grunt-dotnet-assembly-info": "~1.0.9"
   },
   "repository": {
     "type": "git",

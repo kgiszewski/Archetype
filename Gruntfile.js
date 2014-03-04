@@ -5,6 +5,7 @@ module.exports = function(grunt) {
     dest: 'dist',
     package_dir: 'pkg',
     package_temp_dir: '<%= package_dir %>/tmp/',
+    csProj: 'app/Umbraco/Umbraco.Archetype/Archetype.Umbraco.csproj',
 
 
     watch: {
@@ -25,7 +26,7 @@ module.exports = function(grunt) {
       },
 
       dev: {
-        files: ['app/**'],
+        files: ['app/**', '!app/Umbraco/**', 'app/Umbraco/**/*.dll'],
         tasks: ['deploy'],
         options: {
           spawn: false
@@ -89,7 +90,7 @@ module.exports = function(grunt) {
             author: '<%= pkgMeta.author %>',
             authorUrl: '<%= pkgMeta.authorUrl %>',
 
-    				files: [{ path: '..\\..\\..\\<%= dest %>\\**', target: 'content\\App_Plugins\\Archetype'}]
+    				files: [{ path: '..\\..\\..\\<%= package_temp_dir %>\\nuget\\**', target: 'content\\App_Plugins\\Archetype'}]
 	    		}
     		},
     		'files': { 
@@ -109,25 +110,25 @@ module.exports = function(grunt) {
         {expand: true, cwd: 'app/views/', src: ['archetype.html', 'archetype.config.html'], dest: '<%= dest %>/views', flatten: true},
         {expand: true, cwd: 'app/config/', src: ['propertyEditors.views.js'], dest: '<%= dest %>/js', flatten: true},
         {expand: true, cwd: 'app/langs/', src: ['**'], dest: '<%= dest %>/langs', flatten: true},
-        {expand: true, cwd: 'app/Umbraco/Umbraco.Archetype/bin/Debug/', src: ['Archetype.dll'], dest: '<%= dest %>/bin', flatten: true} 
+        {expand: true, cwd: 'app/Umbraco/Umbraco.Archetype/bin/Debug/', src: ['Archetype.dll', 'Archetype.pdb'], dest: '<%= dest %>/bin', flatten: true} 
         ]
       },
       deploy: {
         files: [
-          {expand: true, cwd: '<%= dest %>/', src: ['**/*', '!bin/*'], dest: '<%= grunt.option("target") %>\\App_Plugins\\Archetype', flatten: false},
-          {expand: true, cwd: '<%= dest %>/', src: ['bin/*'], dest: '<%= grunt.option("target") %>\\bin', flatten: false},
+          {expand: true, cwd: '<%= dest %>/', src: ['**/*', "!bin", "!bin/**/*"], dest: '<%= grunt.option("target") %>\\App_Plugins\\Archetype', flatten: false},
+          {expand: true, cwd: '<%= dest %>/', src: ['bin/**/*'], dest: '<%= grunt.option("target") %>', flatten: false},
         ]
       },
       nuget_prepare: {
         files: [
-          {expand: true, cwd: '<%= dest %>/', src: ['**/*', '!bin/*'], dest: '<%= package_temp_dir %>/nuget/content/', flatten: false},
-          {expand: true, cwd: '<%= dest %>/', src: ['bin/*'], dest: '<%= package_temp_dir %>/nuget/lib/net40/', flatten: false}
+          {expand: true, cwd: '<%= dest %>/', src: ['**/*', '!bin', '!bin/*'], dest: '<%= package_temp_dir %>/nuget/content/App_Plugins/Archetype', flatten: false},
+          {expand: true, cwd: '<%= dest %>/', src: ['bin/**/*.dll'], dest: '<%= package_temp_dir %>/nuget/lib/net40/', flatten: true}
         ]
       },
       umbracopackage: {
         files: [
-          {expand: true, cwd: '<%= dest %>/', src: ['**/*', "!bin/*"], dest: 'pkg/tmp/umbraco/App_Plugins/Archetype', flatten: false},
-          {expand: true, cwd: '<%= dest %>/', src: ['bin/*'], dest: 'pkg/tmp/umbraco', flatten: false}
+          {expand: true, cwd: '<%= dest %>/', src: ['**/*', '!bin', "!bin/*"], dest: 'pkg/tmp/umbraco/App_Plugins/Archetype', flatten: false},
+          {expand: true, cwd: '<%= dest %>/', src: ['bin/**/*.dll'], dest: 'pkg/tmp/umbraco', flatten: false}
         ]
       }
     },
@@ -161,16 +162,28 @@ module.exports = function(grunt) {
       package_artifacts: ['pkg/*.zip', 'pkg/*.nupkg'],
     },
 
+    assemblyinfo: {
+        options: {
+            files: ['<%= csProj %>'],
+            filename: 'VersionInfo.cs',
+            info: {
+                version: '<%= (pkgMeta.version.indexOf("-") ? pkgMeta.version.substring(0, pkgMeta.version.indexOf("-")) : pkgMeta.version) %>', 
+                fileVersion: '<%= pkgMeta.version %>'
+            }
+        }
+    },
+
     msbuild: {
         dev: {
-            src: ['app/Umbraco/Umbraco.Archetype/Archetype.Umbraco.csproj'],
+            src: ["<%= csProj %>"],
             options: {
                 projectConfiguration: 'Debug',
                 targets: ['Clean', 'Rebuild'],
                 stdout: true,
                 maxCpuCount: 4,
                 buildParameters: {
-                    WarningLevel: 2
+                    WarningLevel: 2,
+                    NoWarn: 1607,
                 },
                 verbosity: 'quiet'
             }
@@ -190,6 +203,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-template');
   grunt.loadNpmTasks('grunt-touch');
   grunt.loadNpmTasks('grunt-msbuild');
+  grunt.loadNpmTasks('grunt-dotnet-assembly-info');
   grunt.loadTasks('tasks');
 
 
@@ -200,6 +214,7 @@ module.exports = function(grunt) {
   grunt.registerTask('deploy', ['default', 'copy:deploy', 'touchwebconfigifenabled']);
   grunt.registerTask('css:build', ['less']);
   grunt.registerTask('js:build', ['concat']);
-  grunt.registerTask('default', ['clean', 'css:build', 'js:build', 'copy:build', 'msbuild:dev']);
+  grunt.registerTask('cs:build', ['assemblyinfo', 'msbuild:dev']);
+  grunt.registerTask('default', ['clean', 'css:build', 'js:build', 'copy:build', 'cs:build']);
 };
 
