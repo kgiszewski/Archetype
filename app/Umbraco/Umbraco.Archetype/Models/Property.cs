@@ -13,16 +13,16 @@ namespace Archetype.Umbraco.Models
         public string Alias { get; internal set; }
 
         [JsonProperty("value")]
-        public object Value { get; set; }
+        public object Value { get; internal set; }
 
         [JsonProperty("propertyEditorAlias")]
         public string PropertyEditorAlias { get; internal set; }
 
         [JsonProperty("dataTypeId")]
-        public int DataTypeId { get; set; }
+        public int DataTypeId { get; internal set; }
 
         [JsonProperty("dataTypeGuid")]
-        public string DataTypeGuid { get; set; }
+        internal string DataTypeGuid { get; set; }
 
         public T GetValue<T>()
         {
