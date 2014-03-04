@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 [assembly: AssemblyTitle("Archetype")]
@@ -12,3 +13,6 @@ using System.Runtime.InteropServices;
 
 [assembly: ComVisible(false)]
 [assembly: Guid("E37E94F9-C7BA-4B54-B7E1-64419B3DBA0B")]
+
+[assembly: InternalsVisibleTo("Archetype.Courier")]
+[assembly: InternalsVisibleTo("Archetype.Tests")]
