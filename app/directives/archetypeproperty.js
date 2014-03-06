@@ -1,4 +1,4 @@
-angular.module("umbraco.directives").directive('archetypeProperty', function ($compile, $http, archetypePropertyEditorResource, umbPropEditorHelper) {
+angular.module("umbraco.directives").directive('archetypeProperty', function ($compile, $http, archetypePropertyEditorResource, umbPropEditorHelper, $timeout, $rootScope, $q) {
     
     function getFieldsetByAlias(fieldsets, alias)
     {
@@ -152,6 +152,12 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
 
                     element.html(data).show();
                     $compile(element.contents())(scope);
+
+                    $timeout(function() {
+                        var def = $q.defer();
+                        def.resolve(true);
+                        $rootScope.$apply();
+                    }, 500)
                 }
             });
         }
