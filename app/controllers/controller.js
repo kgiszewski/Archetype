@@ -134,6 +134,10 @@
     //helper for expanding/collapsing fieldsets
     $scope.focusFieldset = function(fieldset){
         fixDisableSelection();
+
+        if (!$scope.model.config.enableCollapsing) {
+            return;
+        }
         
         var iniState;
         

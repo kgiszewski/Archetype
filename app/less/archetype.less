@@ -27,11 +27,20 @@
         font-weight: bold;
     }
 
-    &:hover {
+    label:hover {
+        cursor: default;
+    }
+
+    &.enableCollapsing:hover {
         cursor: pointer;
 
-        label span {
-            text-decoration: underline;
+        label  {
+            span { 
+                text-decoration: underline;
+            }
+            &:hover {
+                cursor: pointer;
+            }
         }
     }
 
