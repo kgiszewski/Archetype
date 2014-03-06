@@ -67,7 +67,8 @@
                     $scope.archetypeRenderModel.fieldsets.push(newFieldset);
                 }
             }
-            newFieldset.collapse = true;
+
+            newFieldset.collapse = $scope.model.config.enableCollapsing ? true : false;
             $scope.focusFieldset(newFieldset);
         }
     }
