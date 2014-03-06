@@ -133,6 +133,11 @@
     
     //helper for expanding/collapsing fieldsets
     $scope.focusFieldset = function(fieldset){
+        fixDisableSelection();
+
+        if (!$scope.model.config.enableCollapsing) {
+            return;
+        }
         
         var iniState;
         
@@ -260,6 +265,16 @@
             
             return model;
         }
+    }
+
+    // Hack for U4-4281 / #61
+    function fixDisableSelection() {
+        $timeout(function() {
+            $('.archetypeEditor .controls')
+                .bind('mousedown.ui-disableSelection selectstart.ui-disableSelection', function(e) { 
+                    e.stopImmediatePropagation();
+                }); 
+        }, 1000);
     }
 
     //helper to lookup validity when given a fieldsetIndex and property alias

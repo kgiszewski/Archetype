@@ -6,7 +6,7 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
     //define empty items
     var newPropertyModel = '{"alias": "", "remove": false, "collapse": false, "label": "", "helpText": "", "dataTypeId": "-88", "value": ""}';
     var newFieldsetModel = '{"alias": "", "remove": false, "collapse": false, "labelTemplate": "", "icon": "", "label": "", "properties": [' + newPropertyModel + ']}';
-    var defaultFieldsetConfigModel = JSON.parse('{"showAdvancedOptions": false, "hideFieldsetToolbar": false, "enableMultipleFieldsets": false, "hideFieldsetControls": false, "hidePropertyLabel": false, "maxFieldsets": null, "fieldsets": [' + newFieldsetModel + ']}');
+    var defaultFieldsetConfigModel = JSON.parse('{"showAdvancedOptions": false, "hideFieldsetToolbar": false, "enableMultipleFieldsets": false, "hideFieldsetControls": false, "hidePropertyLabel": false, "maxFieldsets": null, "enableCollapsing": true, "fieldsets": [' + newFieldsetModel + ']}');
 
     //ini the model
     $scope.model.value = $scope.model.value || defaultFieldsetConfigModel;
@@ -124,6 +124,24 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
         }
     });
     
+    $scope.autoPopulateAlias = function(s) {
+        var modelType = s.hasOwnProperty('fieldset') ? 'fieldset' : 'property';
+        var modelProperty = s[modelType];
+
+        if (!modelProperty.aliasIsDirty) {
+            modelProperty.alias = modelProperty.label.toUmbracoAlias();
+        }
+    }
+
+    $scope.markAliasDirty = function(s) {
+        var modelType = s.hasOwnProperty('fieldset') ? 'fieldset' : 'property';
+        var modelProperty = s[modelType];
+
+        if (!modelProperty.aliasIsDirty) {
+            modelProperty.aliasIsDirty = true;;
+        }
+    }
+
     //helper that returns if an item can be removed
     $scope.canRemoveFieldset = function ()
     {   
@@ -224,6 +242,8 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
         _.each($scope.archetypeConfigRenderModel.fieldsets, function(fieldset){
 
             fieldset.remove = false;
+            if (fieldset.alias.length > 0)
+                fieldset.aliasIsDirty = true;
 
             if(fieldset.label)
             {
@@ -232,6 +252,8 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
 
             _.each(fieldset.properties, function(fieldset){
                 fieldset.remove = false;
+                if (fieldset.alias.length > 0)
+                    fieldset.aliasIsDirty = true;
             });
         });
     }
