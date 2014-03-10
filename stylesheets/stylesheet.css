@@ -291,6 +291,7 @@ Full-Width Styles
   background: -ms-linear-gradient(top, #373737, #212121);
   background: -o-linear-gradient(top, #373737, #212121);
   background: linear-gradient(top, #373737, #212121);
+  height: 170px;
 }
 
 #header_wrap .inner {
@@ -360,10 +361,19 @@ Full-Width Styles
 
 #main_content {
   padding-top: 40px;
+  clear:both;
 }
 
 #footer_wrap {
   background: #212121;
+}
+
+.logo{
+    float: left;
+    border: none;
+    box-shadow: none;
+    -webkit-box-shadow: none;
+    margin-right: 10px;
 }
 
 
