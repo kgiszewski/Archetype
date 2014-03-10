@@ -1,5 +1,6 @@
 Archetype
 =========
+![alt tag](http://imulus.github.io/Archetype/images/logo.png)
 
 ## Installation
 Install the selected <a href='https://github.com/imulus/Archetype/releases'>release</a> through the Umbraco package installer or via <a href='http://www.nuget.org/packages/Archetype/'>NuGet</a>.
