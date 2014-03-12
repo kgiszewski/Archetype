@@ -78,6 +78,10 @@
         if ($scope.canRemove()) {
             if (confirm('Are you sure you want to remove this?')) {
                 $scope.archetypeRenderModel.fieldsets[$index].remove = true;
+                /*
+                    Touches the model.  Not sure why this is needed but without it the Digest doesn't run on a remove row.
+                */
+                $scope.archetypeRenderModel = JSON.parse(JSON.stringify($scope.archetypeRenderModel));
             }
         }
     }
