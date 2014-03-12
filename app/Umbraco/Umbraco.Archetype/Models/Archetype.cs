@@ -1,16 +1,28 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace Archetype.Umbraco.Models
 {
-    public class Archetype
+    [JsonObject]
+    public class Archetype : IEnumerable<Fieldset>
     {
         [JsonProperty("fieldsets")]
-        public IEnumerable<Fieldset> Fieldsets { get; set; }
+        internal IEnumerable<Fieldset> Fieldsets { get; set; }
 
         public Archetype()
         {
             Fieldsets = new List<Fieldset>();
+        }
+
+        public IEnumerator<Fieldset> GetEnumerator()
+        {
+            return this.Fieldsets.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return this.GetEnumerator();
         }
     }
 }
