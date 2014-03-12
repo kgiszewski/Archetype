@@ -91,15 +91,17 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
 
         function validate(renderModel){
             var valid = true;
+            var activeFieldsets = renderModel.filter(function(fieldset) {
+                return !fieldset.remove;
+            });
 
-            _.each(renderModel, function(fieldset){
+            _.each(activeFieldsets, function(fieldset){
                 fieldset.isValid = true;
                 _.each(fieldset.properties, function(property){
                     property.isValid = true;
 
                     var propertyConfig = getPropertyByAlias(configFieldsetModel, property.alias);
-
-                    if(propertyConfig && !fieldset.remove && propertyConfig.required && !property.value){
+                    if(propertyConfig && propertyConfig.required && property.value == ""){
                         fieldset.isValid = false;
                         property.isValid = false;
                         valid = false;
