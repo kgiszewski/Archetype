@@ -101,7 +101,7 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
                     property.isValid = true;
 
                     var propertyConfig = getPropertyByAlias(configFieldsetModel, property.alias);
-                    if(propertyConfig && propertyConfig.required && property.value == ""){
+                    if(propertyConfig && propertyConfig.required && (property.value == null || property.value === "")){
                         fieldset.isValid = false;
                         property.isValid = false;
                         valid = false;
