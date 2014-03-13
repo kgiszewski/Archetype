@@ -1,4 +1,6 @@
-﻿using System.Net;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Net;
 using System.Web.Http;
 using AutoMapper;
 using Umbraco.Core.Models;
@@ -11,6 +13,13 @@ namespace Archetype.Umbraco.Api
     [PluginController("ArchetypeApi")]
     public class ArchetypeDataTypeController : UmbracoAuthorizedJsonController
     {
+        public IEnumerable<object> GetAllPropertyEditors()
+        {
+            return
+                global::Umbraco.Core.PropertyEditors.PropertyEditorResolver.Current.PropertyEditors
+                    .Select(x => new {defaultPreValues = x.DefaultPreValues, alias = x.Alias, view = x.ValueEditor.View});
+        }
+
         public object GetById(int id)
         {
             var dataType = Services.DataTypeService.GetDataTypeDefinitionById(id);

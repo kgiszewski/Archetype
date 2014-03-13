@@ -17,10 +17,10 @@ angular.module('umbraco.resources').factory('archetypePropertyEditorResource', f
         },
         getPropertyEditorMapping: function(alias) {
             return umbRequestHelper.resourcePromise(
-                $http.get("/App_plugins/Archetype/js/propertyEditors.views.js"), 'Failed to retrieve datatype mappings'
+                $http.get("/umbraco/backoffice/ArchetypeApi/ArchetypeDataType/GetAllPropertyEditors"), 'Failed to retrieve datatype mappings'
             ).then(function (data) {
                 var result = _.find(data, function(d) {
-                    return d.propertyEditorAlias === alias;
+                    return d.alias === alias;
                 });
 
                 if (result != null) 
