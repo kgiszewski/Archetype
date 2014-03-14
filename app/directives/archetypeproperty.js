@@ -47,6 +47,22 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
         return value;
     }
 
+    function shouldValidate(renderModel) {
+        if (renderModel == undefined || renderModel == true) {
+            return false;
+        }
+        if (renderModel.length == 1)
+        {
+            var nonEmptyProps = _.filter(renderModel[0].properties, function(p) {
+                return p.value.length > 0;
+            });
+
+            return nonEmptyProps.length > 0;
+        }
+
+        return true;
+    }
+
     var linker = function (scope, element, attrs, ngModelCtrl) {
         var configFieldsetModel = getFieldsetByAlias(scope.archetypeConfig.fieldsets, scope.fieldset.alias);
         var view = "";
@@ -94,6 +110,7 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
             var activeFieldsets = renderModel.filter(function(fieldset) {
                 return !fieldset.remove;
             });
+            var shouldPerformValidation = shouldValidate(activeFieldsets);
 
             _.each(activeFieldsets, function(fieldset){
                 fieldset.isValid = true;
@@ -101,7 +118,7 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
                     property.isValid = true;
 
                     var propertyConfig = getPropertyByAlias(configFieldsetModel, property.alias);
-                    if(propertyConfig && propertyConfig.required && (property.value == null || property.value === "")){
+                    if(shouldPerformValidation && propertyConfig && propertyConfig.required && (property.value == null || property.value === "")){
                         fieldset.isValid = false;
                         property.isValid = false;
                         valid = false;
