@@ -1,6 +1,7 @@
 ﻿angular.module("umbraco").controller("Imulus.ArchetypeController", function ($scope, $http, assetsService, angularHelper, notificationsService, $timeout) {
  
     //$scope.model.value = "";
+    $scope.model.hideLabel = $scope.model.config.hideLabel == 1;
 
     //get a reference to the current form
     var form = angularHelper.getCurrentForm($scope);
