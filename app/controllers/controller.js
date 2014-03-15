@@ -152,16 +152,16 @@
         }
     
         _.each($scope.archetypeRenderModel.fieldsets, function(fieldset){
-            if($scope.archetypeRenderModel.fieldsets.length == 1 && fieldset.remove == false)
-            {
-                fieldset.collapse = false;
-                return;
-            }
-        
             fieldset.collapse = true;
         });
         
-        if(iniState)
+        if(!fieldset && $scope.archetypeRenderModel.fieldsets.length == 1 && $scope.archetypeRenderModel.fieldsets[0].remove == false)
+        {
+            $scope.archetypeRenderModel.fieldsets[0].collapse = false;
+            return;
+        }
+        
+        if(iniState && fieldset)
         {
             fieldset.collapse = !iniState;
         }
