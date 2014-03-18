@@ -37,8 +37,10 @@ namespace Archetype.Umbraco.PropertyConverters
 
         public override object ConvertDataToSource(PublishedPropertyType propertyType, object source, bool preview)
         {
+            var defaultValue = new Models.Archetype();
+
             if (source == null)
-                return null;
+                return defaultValue;
 
             var sourceString = source.ToString();
 
@@ -79,11 +81,11 @@ namespace Archetype.Umbraco.PropertyConverters
                 }
                 catch (Exception ex)
                 {
-                    return null;
+                    return defaultValue;
                 }
             }
 
-            return sourceString;
+            return defaultValue;
         }
 
         internal ArchetypePreValue GetArchetypePreValueFromDataTypeId(int dataTypeId)
