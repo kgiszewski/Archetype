@@ -14,6 +14,9 @@ namespace Archetype.Umbraco.Models
         [JsonProperty("enableMultipleFieldsets")]
         public bool EnableMultipleFieldsets { get; set; }
 
+        [JsonProperty("enableCollapsing")]
+        public bool EnableCollapsing { get; set; }
+
         [JsonProperty("hideFieldsetControls")]
         public bool HideFieldsetControls { get; set; }
 
