@@ -4,36 +4,186 @@ module.exports = function(grunt) {
 
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
-    pkgMeta: grunt.file.readJSON('pkg/meta.json'),
-    dest: (grunt.option('target') || 'dist') + '/App_Plugins/Archetype',
-    package_dir: 'pkg',
-    package_temp_dir: '<%= package_dir %>/tmp/',
-    csProj: 'app/Umbraco/Umbraco.Archetype/Archetype.Umbraco.csproj',
-
+    pkgMeta: grunt.file.readJSON('config/meta.json'),
+    dest: grunt.option('target') || 'dist',
+    basePath: path.join('<%= dest %>', 'App_Plugins', '<%= pkgMeta.name %>'),
 
     watch: {
       options: {
-        spawn: false
+        spawn: false,
+        atBegin: true
       },
 
       less: {
-        files: ['app/less/*.less', 'lib/**/*.less'],
-        tasks: ['less:dist'],
+        files: ['app/**/*.less'],
+        tasks: ['less:dist']
       },
 
       js: {
-        files: ['app/**/*.js', 'lib/**/*.js'],
-        tasks: ['concat', 'jshint'],
+        files: ['app/**/*.js'],
+        tasks: ['concat:dist']
       },
 
-      views: {
-        files: ['/app/views/**/*'],
-        tasks: ['copy:views']
+      html: {
+        files: ['app/**/*.html'],
+        tasks: ['copy:html']
+      },
+
+      config: {
+        files: ['config/package.manifest'],
+        tasks: ['copy:config']
       },
 
       dll: {
         files: ['app/Umbraco/**/*.dll'],
-        tasks: ['copy:dll'],
+        tasks: ['copy:dll']
+      }
+    },
+
+    less: {
+      dist: {
+        options: {
+          paths: ["app/less", "lib/less", "vendor"],
+        },
+        files: {
+          '<%= basePath %>/css/archetype.css': 'app/less/archetype.less',
+        }
+      }
+    },
+
+    concat: {
+      options: {
+        stripBanners: false
+      },
+      dist: {
+        src: [
+          'app/controllers/controller.js',
+          'app/controllers/config.controller.js',
+          'app/directives/archetypeproperty.js',
+          'app/directives/localize.js',
+          'app/services/localization.js',
+          'app/resources/propertyeditor.js'
+        ],
+        dest: '<%= basePath %>/js/archetype.js'
+      }
+    },
+
+    copy: {
+      html: {
+        cwd: 'app/views/',
+        src: ['archetype.html', 'archetype.config.html'],
+        dest: '<%= basePath %>/views',
+        expand: true
+      },
+      dll: {
+        cwd: 'app/Umbraco/Umbraco.Archetype/bin/Debug/',
+        src: '*.*',
+        dest: '<%= dest %>/bin/',
+        expand: true
+      },
+      config: {
+        files: [
+          {
+            cwd: 'config/',
+            src: ['package.manifest'],
+            dest: '<%= basePath %>',
+            expand: true
+          },
+          {
+            cwd: 'app/config/',
+            src: ['propertyEditors.views.js'],
+            dest: '<%= basePath %>/js',
+            expand: true
+          },
+          {
+            cwd: 'app/langs/',
+            src: ['**'],
+            dest: '<%= basePath %>/langs',
+            expand: true
+          }
+        ]
+      },
+      nuget: {
+        files: [
+          {
+            cwd: '<%= dest %>',
+            src: ['**/*', '!bin', '!bin/*'],
+            dest: 'tmp/nuget/content',
+            expand: true
+          },
+          {
+            cwd: '<%= dest %>/bin',
+            src: ['*.dll'],
+            dest: 'tmp/nuget/lib/net40',
+            expand: true
+          }
+        ]
+      },
+      umbraco: {
+        cwd: '<%= dest %>',
+        src: '**/*',
+        dest: 'tmp/umbraco',
+        expand: true
+      }
+    },
+
+    nugetpack: {
+    	dist: {
+    		src: 'tmp/nuget/package.nuspec',
+    		dest: 'pkg'
+    	}
+    },
+
+    template: {
+    	'nuspec': {
+			'options': {
+    			'data': { 
+            name: '<%= pkgMeta.name %>',
+    				version: '<%= pkgMeta.version %>',
+            url: '<%= pkgMeta.url %>',
+            license: '<%= pkgMeta.license %>',
+            licenseUrl: '<%= pkgMeta.licenseUrl %>',
+            author: '<%= pkgMeta.author %>',
+            authorUrl: '<%= pkgMeta.authorUrl %>',
+
+    				files: [{ path: 'tmp/nuget/**', target: 'content/App_Plugins/Archetype'}]
+	    		}
+    		},
+    		'files': { 
+    			'tmp/nuget/package.nuspec': ['config/package.nuspec']
+    		}
+    	}
+    },
+
+    umbracoPackage: {
+      options: {
+        name: "<%= pkgMeta.name %>",
+        version: '<%= pkgMeta.version %>',
+        url: '<%= pkgMeta.url %>',
+        license: '<%= pkgMeta.license %>',
+        licenseUrl: '<%= pkgMeta.licenseUrl %>',
+        author: '<%= pkgMeta.author %>',
+        authorUrl: '<%= pkgMeta.authorUrl %>',
+        manifest: 'config/package.xml',
+        readme: 'config/readme.txt',
+        sourceDir: 'tmp/umbraco',
+        outputDir: 'pkg',
+      }
+    },
+
+    clean: {
+      build: '<%= grunt.config("basePath").substring(0, 4) == "dist" ? "dist/**/*" : "null" %>',
+      tmp: ['pkg/tmp']
+    },
+
+    assemblyinfo: {
+      options: {
+        files: ['app/Umbraco/Umbraco.Archetype/Archetype.Umbraco.csproj'],
+        filename: 'VersionInfo.cs',
+        info: {
+          version: '<%= (pkgMeta.version.indexOf("-") ? pkgMeta.version.substring(0, pkgMeta.version.indexOf("-")) : pkgMeta.version) %>', 
+          fileVersion: '<%= pkgMeta.version %>'
+        }
       }
     },
 
@@ -52,148 +202,29 @@ module.exports = function(grunt) {
       }
     },
 
-    less: {
-      dist: {
-        options: {
-          paths: ["app/less", "lib/less", "vendor"],
-        },
-        files: {
-          '<%= dest %>/css/archetype.css': 'app/less/archetype.less',
-        }
-      }
-    },
-
-    concat: {
-      options: {
-        stripBanners: false
-      },
-      dist: {
-        src: [
-          'app/controllers/controller.js',
-          'app/controllers/config.controller.js',
-          'app/directives/archetypeproperty.js',
-          'app/directives/localize.js',
-          'app/services/localization.js',
-          'app/resources/propertyeditor.js'
-        ],
-        dest: '<%= dest %>/js/archetype.js'
-      }
-    },
-
-    nugetpack: {
-    	dist: {
-    		src: '<%= package_temp_dir %>/nuget/package.nuspec',
-    		dest: '<%= package_dir %>'
-    	}
-    },
-
-    template: {
-    	'nuspec': {
-			'options': {
-    			'data': { 
-            name: '<%= pkgMeta.name %>',
-    				version: '<%= pkgMeta.version %>',
-            url: '<%= pkgMeta.url %>',
-            license: '<%= pkgMeta.license %>',
-            licenseUrl: '<%= pkgMeta.licenseUrl %>',
-            author: '<%= pkgMeta.author %>',
-            authorUrl: '<%= pkgMeta.authorUrl %>',
-
-    				files: [{ path: '..\\..\\..\\<%= package_temp_dir %>\\nuget\\**', target: 'content\\App_Plugins\\Archetype'}]
-	    		}
-    		},
-    		'files': { 
-    			'<%= package_temp_dir %>/nuget/package.nuspec': ['<%= package_dir %>/nuget/package.nuspec']
-    		}
-    	}
-    },
-
-    clean: {
-  		build: ['<%= dest %>']
-    },
-
-    copy: {
-      views: {
-        files: [
-          {expand: true, cwd: 'app/views/', src: ['archetype.html', 'archetype.config.html'], dest: '<%= dest %>/views', flatten: true}
-        ]
-      },
-      config: {
-        files: [
-          {expand: true, cwd: 'app/', src: ['package.manifest'], dest: '<%= dest %>', flatten: true},
-          {expand: true, cwd: 'app/config/', src: ['propertyEditors.views.js'], dest: '<%= dest %>/config', flatten: true},
-          {expand: true, cwd: 'app/langs/', src: ['**'], dest: '<%= dest %>/langs', flatten: true}
-        ]
-      },
-      nuget: {
-        files: [
-          {expand: true, cwd: '<%= dest %>', src: ['**/*', '!bin', '!bin/*'], dest: '<%= package_temp_dir %>/nuget/content', flatten: false},
-          {expand: true, cwd: '<%= dest %>/bin', src: ['*.dll'], dest: '<%= package_temp_dir %>/nuget/lib/net40', flatten: true}
-        ]
-      },
-      umbraco: {
-        files: [
-          {expand: true, cwd: '<%= dest %>', src: ['**/*'], dest: 'pkg/tmp/umbraco', flatten: false}
-        ]
-      }
-    },
-
-    umbracoPackage: {
-      options: {
-        name: "<%= pkgMeta.name %>",
-        version: '<%= pkgMeta.version %>',
-        url: '<%= pkgMeta.url %>',
-        license: '<%= pkgMeta.license %>',
-        licenseUrl: '<%= pkgMeta.licenseUrl %>',
-        author: '<%= pkgMeta.author %>',
-        authorUrl: '<%= pkgMeta.authorUrl %>',
-        manifest: 'pkg/umbraco/package.xml',
-        readme: 'pkg/umbraco/readme.txt',
-        sourceDir: 'pkg/tmp/umbraco',
-        outputDir: 'pkg',
-      }
-    },
-
-    clean: {
-      build: ['<%= dest %>'],
-      package_temp: ['pkg/tmp'],
-      package_artifacts: ['pkg/*.zip', 'pkg/*.nupkg'],
-    },
-
-    assemblyinfo: {
-        options: {
-            files: ['<%= csProj %>'],
-            filename: 'VersionInfo.cs',
-            info: {
-                version: '<%= (pkgMeta.version.indexOf("-") ? pkgMeta.version.substring(0, pkgMeta.version.indexOf("-")) : pkgMeta.version) %>', 
-                fileVersion: '<%= pkgMeta.version %>'
-            }
-        }
-    },
-
     msbuild: {
-        dist: {
-            src: ["<%= csProj %>"],
-            options: {
-                projectConfiguration: 'Debug',
-                targets: ['Clean', 'Rebuild'],
-                stdout: true,
-                maxCpuCount: 4,
-                buildParameters: {
-                    WarningLevel: 2,
-                    NoWarn: 1607,
-                    OutputPath: path.resolve("<%= dest %>") + "/../../bin"
-                },
-                verbosity: 'quiet'
-            }
+      options: {
+        stdout: true,
+        verbosity: 'quiet',
+        maxCpuCount: 4,
+        buildParameters: {
+          WarningLevel: 2,
+          NoWarn: 1607
         }
+      },
+      dist: {
+        src: ['app/Umbraco/Umbraco.Archetype/Archetype.Umbraco.csproj'],
+        options: {
+          projectConfiguration: 'Release',
+          targets: ['Clean', 'Rebuild'],
+        }
+      }
     }
 
   });
 
-  grunt.registerTask('default', ['clean', 'less', 'concat', 'cs:build', 'copy:config', 'copy:views']);
-  grunt.registerTask('cs:build', ['assemblyinfo', 'msbuild:dist']);
-  grunt.registerTask('nuget', ['copy:nuget', 'template:nuspec', 'nugetpack', 'clean:package_temp']);
-  grunt.registerTask('umbraco', ['copy:umbraco', 'umbracoPackage', 'clean:package_temp']);
-};
+  grunt.registerTask('default', ['clean', 'less', 'concat', 'assemblyinfo', 'msbuild:dist', 'copy:dll', 'copy:config', 'copy:html']);
 
+  grunt.registerTask('nuget', ['clean:tmp', 'default', 'copy:nuget', 'template:nuspec', 'nugetpack', 'clean:tmp']);
+  grunt.registerTask('umbraco', ['clean:tmp', 'default', 'copy:umbraco', 'umbracoPackage', 'clean:tmp']);
+};
