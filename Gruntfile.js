@@ -1,36 +1,45 @@
 module.exports = function(grunt) {
+  require('load-grunt-tasks')(grunt);
+  var path = require('path')
+
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     pkgMeta: grunt.file.readJSON('pkg/meta.json'),
-    dest: 'dist',
+    dest: (grunt.option('target') || 'dist') + '/App_Plugins/Archetype',
     package_dir: 'pkg',
     package_temp_dir: '<%= package_dir %>/tmp/',
     csProj: 'app/Umbraco/Umbraco.Archetype/Archetype.Umbraco.csproj',
 
 
     watch: {
+      options: {
+        spawn: false
+      },
+
       less: {
         files: ['app/less/*.less', 'lib/**/*.less'],
-        tasks: ['less:build'],
-        options: {
-          spawn: false
-        }
+        tasks: ['less:dist'],
       },
 
       js: {
         files: ['app/**/*.js', 'lib/**/*.js'],
         tasks: ['concat', 'jshint'],
-        options: {
-          spawn: false
-        }
       },
 
-      dev: {
-        files: ['app/**', '!app/Umbraco/**', 'app/Umbraco/**/*.dll'],
-        tasks: ['deploy'],
-        options: {
-          spawn: false
-        }
+      views: {
+        files: ['/app/views/**/*'],
+        tasks: ['copy:views']
+      },
+
+      dll: {
+        files: ['app/Umbraco/**/*.dll'],
+        tasks: ['copy:dll'],
+      }
+    },
+
+    touch: {
+      webconfig: {
+        src: ['<%= grunt.option("target") %>\\Web.config']
       }
     },
 
@@ -44,7 +53,7 @@ module.exports = function(grunt) {
     },
 
     less: {
-      build: {
+      dist: {
         options: {
           paths: ["app/less", "lib/less", "vendor"],
         },
@@ -58,7 +67,7 @@ module.exports = function(grunt) {
       options: {
         stripBanners: false
       },
-      application: {
+      dist: {
         src: [
           'app/controllers/controller.js',
           'app/controllers/config.controller.js',
@@ -79,7 +88,7 @@ module.exports = function(grunt) {
     },
 
     template: {
-    	'nuget_manifest': {
+    	'nuspec': {
 			'options': {
     			'data': { 
             name: '<%= pkgMeta.name %>',
@@ -104,39 +113,28 @@ module.exports = function(grunt) {
     },
 
     copy: {
-      build: {
-       files: [
-        {expand: true, cwd: 'app/', src: ['package.manifest'], dest: '<%= dest %>', flatten: true},
-        {expand: true, cwd: 'app/views/', src: ['archetype.html', 'archetype.config.html'], dest: '<%= dest %>/views', flatten: true},
-        {expand: true, cwd: 'app/config/', src: ['propertyEditors.views.js'], dest: '<%= dest %>/js', flatten: true},
-        {expand: true, cwd: 'app/langs/', src: ['**'], dest: '<%= dest %>/langs', flatten: true},
-        {expand: true, cwd: 'app/Umbraco/Umbraco.Archetype/bin/Debug/', src: ['Archetype.dll', 'Archetype.pdb'], dest: '<%= dest %>/bin', flatten: true} 
+      views: {
+        files: [
+          {expand: true, cwd: 'app/views/', src: ['archetype.html', 'archetype.config.html'], dest: '<%= dest %>/views', flatten: true}
         ]
       },
-      deploy: {
+      config: {
         files: [
-          {expand: true, cwd: '<%= dest %>/', src: ['**/*', "!bin", "!bin/**/*"], dest: '<%= grunt.option("target") %>\\App_Plugins\\Archetype', flatten: false},
-          {expand: true, cwd: '<%= dest %>/', src: ['bin/**/*'], dest: '<%= grunt.option("target") %>', flatten: false},
+          {expand: true, cwd: 'app/', src: ['package.manifest'], dest: '<%= dest %>', flatten: true},
+          {expand: true, cwd: 'app/config/', src: ['propertyEditors.views.js'], dest: '<%= dest %>/config', flatten: true},
+          {expand: true, cwd: 'app/langs/', src: ['**'], dest: '<%= dest %>/langs', flatten: true}
         ]
       },
-      nuget_prepare: {
+      nuget: {
         files: [
-          {expand: true, cwd: '<%= dest %>/', src: ['**/*', '!bin', '!bin/*'], dest: '<%= package_temp_dir %>/nuget/content/App_Plugins/Archetype', flatten: false},
-          {expand: true, cwd: '<%= dest %>/', src: ['bin/**/*.dll'], dest: '<%= package_temp_dir %>/nuget/lib/net40/', flatten: true}
+          {expand: true, cwd: '<%= dest %>', src: ['**/*', '!bin', '!bin/*'], dest: '<%= package_temp_dir %>/nuget/content', flatten: false},
+          {expand: true, cwd: '<%= dest %>/bin', src: ['*.dll'], dest: '<%= package_temp_dir %>/nuget/lib/net40', flatten: true}
         ]
       },
-      umbracopackage: {
+      umbraco: {
         files: [
-          {expand: true, cwd: '<%= dest %>/', src: ['**/*', '!bin', "!bin/*"], dest: 'pkg/tmp/umbraco/App_Plugins/Archetype', flatten: false},
-          {expand: true, cwd: '<%= dest %>/', src: ['bin/**/*.dll'], dest: 'pkg/tmp/umbraco', flatten: false}
+          {expand: true, cwd: '<%= dest %>', src: ['**/*'], dest: 'pkg/tmp/umbraco', flatten: false}
         ]
-      }
-    },
-
-    touch: {
-      options: {},
-      webconfig: {
-        src: ['<%= grunt.option("target") %>\\Web.config']
       }
     },
 
@@ -174,7 +172,7 @@ module.exports = function(grunt) {
     },
 
     msbuild: {
-        dev: {
+        dist: {
             src: ["<%= csProj %>"],
             options: {
                 projectConfiguration: 'Debug',
@@ -184,6 +182,7 @@ module.exports = function(grunt) {
                 buildParameters: {
                     WarningLevel: 2,
                     NoWarn: 1607,
+                    OutputPath: path.resolve("<%= dest %>") + "/../../bin"
                 },
                 verbosity: 'quiet'
             }
@@ -192,29 +191,9 @@ module.exports = function(grunt) {
 
   });
 
-  grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-contrib-less');
-  grunt.loadNpmTasks('grunt-contrib-clean');
-  grunt.loadNpmTasks('grunt-contrib-concat');
-  grunt.loadNpmTasks('grunt-contrib-copy');
-  grunt.loadNpmTasks('grunt-contrib-uglify');
-  grunt.loadNpmTasks('grunt-contrib-jshint');
-  grunt.loadNpmTasks('grunt-nuget');
-  grunt.loadNpmTasks('grunt-template');
-  grunt.loadNpmTasks('grunt-touch');
-  grunt.loadNpmTasks('grunt-msbuild');
-  grunt.loadNpmTasks('grunt-dotnet-assembly-info');
-  grunt.loadTasks('tasks');
-
-
-  grunt.registerTask('package', ['clean:package_artifacts', 'default', 'package:nuget', 'package:umbraco']);
-  grunt.registerTask('package:nuget', ['copy:nuget_prepare', 'template:nuget_manifest', 'nugetpack', 'clean:package_temp']);
-  grunt.registerTask('package:umbraco', ['copy:umbracopackage', 'umbracoPackage', 'clean:package_temp']);
-  grunt.registerTask('touchwebconfigifenabled', function() { if (grunt.option("touch")) grunt.task.run("touch:webconfig") });
-  grunt.registerTask('deploy', ['default', 'copy:deploy', 'touchwebconfigifenabled']);
-  grunt.registerTask('css:build', ['less']);
-  grunt.registerTask('js:build', ['concat']);
-  grunt.registerTask('cs:build', ['assemblyinfo', 'msbuild:dev']);
-  grunt.registerTask('default', ['clean', 'css:build', 'js:build', 'copy:build', 'cs:build']);
+  grunt.registerTask('default', ['clean', 'less', 'concat', 'cs:build', 'copy:config', 'copy:views']);
+  grunt.registerTask('cs:build', ['assemblyinfo', 'msbuild:dist']);
+  grunt.registerTask('nuget', ['copy:nuget', 'template:nuspec', 'nugetpack', 'clean:package_temp']);
+  grunt.registerTask('umbraco', ['copy:umbraco', 'umbracoPackage', 'clean:package_temp']);
 };
 

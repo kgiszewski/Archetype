@@ -20,12 +20,10 @@ Want to contribute to Archetype?  You'll want to use Grunt (our task runner) to 
     npm install
 
 ### Build ###
-    grunt
+    grunt # Compiles to `/dist/`
+    grunt --target="D:\path\to\umbraco\site"
 
-
-### Deploy ###
-    grunt deploy --target=C:\\path\\to\\umbraco\\site
-    grunt watch:dev --target=C:\\path\to\\umbraco\\site
+    grunt watch
+    grunt watch --target="D:\path\to\umbraco\site"
 
 Add `--touch` to either command to automatically touch the web.config on a deploy
-
