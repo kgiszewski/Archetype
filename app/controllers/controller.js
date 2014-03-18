@@ -1,6 +1,7 @@
 ﻿angular.module("umbraco").controller("Imulus.ArchetypeController", function ($scope, $http, assetsService, angularHelper, notificationsService, $timeout) {
  
     //$scope.model.value = "";
+    $scope.model.hideLabel = $scope.model.config.hideLabel == 1;
 
     //get a reference to the current form
     var form = angularHelper.getCurrentForm($scope);
@@ -152,16 +153,16 @@
         }
     
         _.each($scope.archetypeRenderModel.fieldsets, function(fieldset){
-            if($scope.archetypeRenderModel.fieldsets.length == 1 && fieldset.remove == false)
-            {
-                fieldset.collapse = false;
-                return;
-            }
-        
             fieldset.collapse = true;
         });
         
-        if(iniState)
+        if(!fieldset && $scope.archetypeRenderModel.fieldsets.length == 1 && $scope.archetypeRenderModel.fieldsets[0].remove == false)
+        {
+            $scope.archetypeRenderModel.fieldsets[0].collapse = false;
+            return;
+        }
+        
+        if(iniState && fieldset)
         {
             fieldset.collapse = !iniState;
         }
