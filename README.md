@@ -20,10 +20,16 @@ Want to contribute to Archetype?  You'll want to use Grunt (our task runner) to 
     npm install
 
 ### Build ###
-    grunt # Compiles to `/dist/`
-    grunt --target="D:\path\to\umbraco\site"
+    grunt
+
+   Builds the project to `/dist/`.  These files can be dropped into an Umbraco 7 site, or you can build directly to a site using:
+
+    grunt --target="D:\inetpub\mysite"
+
+You can also watch for changes using:
 
     grunt watch
-    grunt watch --target="D:\path\to\umbraco\site"
+    grunt watch --target="D:\inetpub\mysite"
+
 
 Add `--touch` to either command to automatically touch the web.config on a deploy
