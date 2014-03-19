@@ -1,7 +1,7 @@
 {
   "name": "archetype",
   "version": "0.0.0",
-  "devDependencies": {
+  "dependencies": {
     "grunt": "~0.4.2",
     "bower": "~1.2.8",
     "grunt-contrib-copy": "~0.5.0",
@@ -18,10 +18,11 @@
     "rimraf": "~2.2.5",
     "grunt-nuget": "~0.1.1",
     "grunt-template": "~0.2.2",
-    "grunt-touch": "~0.1.0",
     "fs-extra": "~0.8.1",
     "grunt-msbuild": "~0.1.9",
-    "grunt-dotnet-assembly-info": "~1.0.9"
+    "grunt-dotnet-assembly-info": "~1.0.9",
+    "load-grunt-tasks": "~0.4.0",
+    "grunt-umbraco-package": "0.0.5"
   },
   "repository": {
     "type": "git",

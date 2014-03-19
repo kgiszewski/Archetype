@@ -13,7 +13,7 @@ $RECYCLE.BIN/
 app/less/*.css
 dist/
 node_modules/
-pkg/tmp/
+tmp/
 pkg/*.nupkg
 pkg/*.zip
 
