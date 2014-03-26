@@ -90,30 +90,30 @@ namespace Archetype.Umbraco.PropertyConverters
 
         internal ArchetypePreValue GetArchetypePreValueFromDataTypeId(int dataTypeId)
         {
-            var preValues = Services.DataTypeService.GetPreValuesCollectionByDataTypeId(dataTypeId);
+	        return ApplicationContext.Current.ApplicationCache.RuntimeCache.GetCacheItem(
+		        "Archetype_GetArchetypePreValueFromDataTypeId_" + dataTypeId,
+		        () =>
+		        {
+					var preValues = Services.DataTypeService.GetPreValuesCollectionByDataTypeId(dataTypeId);
 
-            var configJson = preValues.IsDictionaryBased
-                ? preValues.PreValuesAsDictionary[Constants.PreValueAlias].Value
-                : preValues.PreValuesAsArray.First().Value;
+					var configJson = preValues.IsDictionaryBased
+						? preValues.PreValuesAsDictionary[Constants.PreValueAlias].Value
+						: preValues.PreValuesAsArray.First().Value;
 
-            var config = JsonConvert.DeserializeObject<Models.ArchetypePreValue>(configJson, _jsonSettings);
+					var config = JsonConvert.DeserializeObject<Models.ArchetypePreValue>(configJson, _jsonSettings);
 
-            foreach (var fieldset in config.Fieldsets)
-            {
-                foreach (var property in fieldset.Properties)
-                {
-                    // Lookup the properties property editor alias
-                    // (See if we've already looked it up first though to save a database hit)
-                    var propertyWithSameDataType = config.Fieldsets.SelectMany(x => x.Properties)
-                        .FirstOrDefault(x => x.DataTypeId == property.DataTypeId && !string.IsNullOrWhiteSpace(x.PropertyEditorAlias));
+					foreach (var fieldset in config.Fieldsets)
+					{
+						foreach (var property in fieldset.Properties)
+						{
+							property.PropertyEditorAlias = ApplicationContext.Current.ApplicationCache.RuntimeCache.GetCacheItem(
+								"Archetype_GetArchetypePreValueFromDataTypeId_GetPropertyEditorAlias_" + property.DataTypeId,
+								() => Services.DataTypeService.GetDataTypeDefinitionById(property.DataTypeId).PropertyEditorAlias).ToString();
+						}
+					}
 
-                    property.PropertyEditorAlias = propertyWithSameDataType != null
-                        ? propertyWithSameDataType.PropertyEditorAlias
-                        : Services.DataTypeService.GetDataTypeDefinitionById(property.DataTypeId).PropertyEditorAlias;
-                }
-            }
-
-            return config;
+					return config;
+				}) as ArchetypePreValue;
         }
     }
 }
