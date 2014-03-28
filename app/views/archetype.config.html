@@ -37,7 +37,7 @@
                                     <i class="icon icon-navigation handle" ng-show="canSortProperty(fieldset)"></i>
                                 </div>
                                 <div class="archetypePropertyTitle" ng-click="focusProperty(fieldset.properties, property)">
-                                    {{property.label}} ({{property.alias}}) - <span>{{getDataTypeNameById(property.dataTypeId)}}</span>
+                                    {{property.label}} ({{property.alias}}) - <span>{{getDataTypeNameByGuid(property.dataTypeGuid)}}</span>
                                 </div>
                                 <div class="archetypePropertyCollapser" ng-hide="property.collapse && property.label">
                                     <div>
@@ -54,7 +54,7 @@
                                     </div>
                                     <div>
                                         <label for="archetypePropertyDataType_{{$parent.$index}}_{{$index}}"><archetype-localize key="dataType">Datatype</archetype-localize></label>
-                                        <select id="archetypePropertyDataType_{{$parent.$index}}_{{$index}}" ng-model="property.dataTypeId" ng-options="datatype.id as datatype.name for datatype in availableDataTypes"></select>
+                                        <select id="archetypePropertyDataType_{{$parent.$index}}_{{$index}}" ng-model="property.dataTypeGuid" ng-options="datatype.guid as datatype.name for datatype in availableDataTypes | orderBy:'name'"></select>
                                     </div>
                                     <div>
                                         <label for="archetypePropertyDefaultValue_{{$parent.$index}}_{{$index}}"><archetype-localize key="defaultValue">Default Value</archetype-localize></label>

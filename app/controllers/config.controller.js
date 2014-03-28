@@ -4,7 +4,7 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
     //console.log($scope.model.value); 
 
     //define empty items
-    var newPropertyModel = '{"alias": "", "remove": false, "collapse": false, "label": "", "helpText": "", "dataTypeId": "-88", "value": ""}';
+    var newPropertyModel = '{"alias": "", "remove": false, "collapse": false, "label": "", "helpText": "", "dataTypeGuid": "0CC0EBA1-9960-42C9-BF9B-60E150B429AE", "value": ""}';
     var newFieldsetModel = '{"alias": "", "remove": false, "collapse": false, "labelTemplate": "", "icon": "", "label": "", "properties": [' + newPropertyModel + ']}';
     var defaultFieldsetConfigModel = JSON.parse('{"showAdvancedOptions": false, "hideFieldsetToolbar": false, "enableMultipleFieldsets": false, "hideFieldsetControls": false, "hidePropertyLabel": false, "maxFieldsets": null, "enableCollapsing": true, "fieldsets": [' + newFieldsetModel + ']}');
 
@@ -166,12 +166,12 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
         return countVisibleProperty(fieldset) > 1;
     }
 
-    $scope.getDataTypeNameById = function (id) {
+    $scope.getDataTypeNameByGuid = function (guid) {
         if ($scope.availableDataTypes == null) // Might not be initialized yet?
             return "";
-
+        
         var dataType = _.find($scope.availableDataTypes, function(d) {
-            return d.id == id;
+            return d.guid == guid;
         });
 
         return dataType == null ? "" : dataType.name;
