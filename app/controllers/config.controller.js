@@ -1,19 +1,19 @@
 angular.module("umbraco").controller("Imulus.ArchetypeConfigController", function ($scope, $http, assetsService, dialogService, archetypePropertyEditorResource) {
-    
-    //$scope.model.value = ""; 
-    //console.log($scope.model.value); 
+
+    //$scope.model.value = "";
+    //console.log($scope.model.value);
 
     //define empty items
     var newPropertyModel = '{"alias": "", "remove": false, "collapse": false, "label": "", "helpText": "", "dataTypeId": "-88", "value": ""}';
     var newFieldsetModel = '{"alias": "", "remove": false, "collapse": false, "labelTemplate": "", "icon": "", "label": "", "properties": [' + newPropertyModel + ']}';
-    var defaultFieldsetConfigModel = JSON.parse('{"showAdvancedOptions": false, "hideFieldsetToolbar": false, "enableMultipleFieldsets": false, "hideFieldsetControls": false, "hidePropertyLabel": false, "maxFieldsets": null, "enableCollapsing": true, "fieldsets": [' + newFieldsetModel + ']}');
+    var defaultFieldsetConfigModel = JSON.parse('{"showAdvancedOptions": false, "startWithAddButton": false, "hideFieldsetToolbar": false, "enableMultipleFieldsets": false, "hideFieldsetControls": false, "hidePropertyLabel": false, "maxFieldsets": null, "enableCollapsing": true, "fieldsets": [' + newFieldsetModel + ']}');
 
     //ini the model
     $scope.model.value = $scope.model.value || defaultFieldsetConfigModel;
-    
+
     //ini the render model
     initConfigRenderModel();
- 
+
     //get the available datatypes
     archetypePropertyEditorResource.getAllDataTypes().then(function(data) {
         $scope.availableDataTypes = data;
@@ -40,16 +40,16 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
 
         }
     };
-    
+
     //function that determines how to manage expanding/collapsing fieldsets
     $scope.focusFieldset = function(fieldset){
         var iniState;
-        
+
         if(fieldset)
         {
             iniState = fieldset.collapse;
         }
-        
+
         _.each($scope.archetypeConfigRenderModel.fieldsets, function(fieldset){
             if($scope.archetypeConfigRenderModel.fieldsets.length == 1 && fieldset.remove == false)
             {
@@ -66,7 +66,7 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
                 fieldset.collapse = false;
             }
         });
-        
+
         if(iniState)
         {
             fieldset.collapse = !iniState;
@@ -79,7 +79,7 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
     //function that determines how to manage expanding/collapsing properties
     $scope.focusProperty = function(properties, property){
         var iniState;
-        
+
         if(property)
         {
             iniState = property.collapse;
@@ -95,7 +95,7 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
                 property.collapse = false;
             }
         });
-        
+
         if(iniState)
         {
             property.collapse = !iniState;
@@ -106,24 +106,24 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
     _.each($scope.archetypeConfigRenderModel.fieldsets, function(fieldset){
             $scope.focusProperty(fieldset.properties);
     });
-    
+
     //setup JSON.stringify helpers
     $scope.archetypeConfigRenderModel.toString = stringify;
-    
+
     //encapsulate stringify (should be built into browsers, not sure of IE support)
     function stringify() {
         return JSON.stringify(this);
     }
-    
+
     //watch for changes
     $scope.$watch('archetypeConfigRenderModel', function (v) {
         //console.log(v);
-        if (typeof v === 'string') {     
+        if (typeof v === 'string') {
             $scope.archetypeConfigRenderModel = JSON.parse(v);
             $scope.archetypeConfigRenderModel.toString = stringify;
         }
     });
-    
+
     $scope.autoPopulateAlias = function(s) {
         var modelType = s.hasOwnProperty('fieldset') ? 'fieldset' : 'property';
         var modelProperty = s[modelType];
@@ -144,7 +144,7 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
 
     //helper that returns if an item can be removed
     $scope.canRemoveFieldset = function ()
-    {   
+    {
         return countVisibleFieldset() > 1;
     }
 
@@ -153,10 +153,10 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
     {
         return countVisibleFieldset() > 1;
     }
-    
+
     //helper that returns if an item can be removed
     $scope.canRemoveProperty = function (fieldset)
-    {   
+    {
         return countVisibleProperty(fieldset) > 1;
     }
 
@@ -176,7 +176,7 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
 
         return dataType == null ? "" : dataType.name;
     }
-    
+
     //helper to count what is visible
     function countVisibleFieldset()
     {
@@ -190,7 +190,7 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
 
         return count;
     }
-    
+
     //determines how many properties are visible
     function countVisibleProperty(fieldset)
     {
@@ -204,13 +204,13 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
 
         return count;
     }
-   
+
     //handles a fieldset add
     $scope.addFieldsetRow = function ($index, $event) {
         $scope.archetypeConfigRenderModel.fieldsets.splice($index + 1, 0, JSON.parse(newFieldsetModel));
         $scope.focusFieldset();
     }
-    
+
     //rather than splice the archetypeConfigRenderModel, we're hiding this and cleaning onFormSubmitting
     $scope.removeFieldsetRow = function ($index) {
         if ($scope.canRemoveFieldset()) {
@@ -219,12 +219,12 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
             }
         }
     }
-    
+
     //handles a property add
     $scope.addPropertyRow = function (fieldset, $index) {
         fieldset.properties.splice($index + 1, 0, JSON.parse(newPropertyModel));
     }
-    
+
     //rather than splice the archetypeConfigRenderModel, we're hiding this and cleaning onFormSubmitting
     $scope.removePropertyRow = function (fieldset, $index) {
         if ($scope.canRemoveProperty(fieldset)) {
@@ -233,7 +233,7 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
             }
         }
     }
-    
+
     //helper to ini the render model
     function initConfigRenderModel()
     {
@@ -257,38 +257,38 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
             });
         });
     }
-    
+
     //sync things up on save
     $scope.$on("formSubmitting", function (ev, args) {
         syncModelToRenderModel();
     });
-    
+
     //helper to sync the model to the renderModel
     function syncModelToRenderModel()
     {
         $scope.model.value = $scope.archetypeConfigRenderModel;
         var fieldsets = [];
-        
+
         _.each($scope.archetypeConfigRenderModel.fieldsets, function(fieldset){
             //check fieldsets
             if (!fieldset.remove) {
                 fieldsets.push(fieldset);
-                
+
                 var properties = [];
 
                 _.each(fieldset.properties, function(property){
                    if (!property.remove) {
                         properties.push(property);
-                    } 
+                    }
                 });
 
                 fieldset.properties = properties;
             }
         });
-        
+
         $scope.model.value.fieldsets = fieldsets;
     }
-    
+
     //archetype css
     assetsService.loadCss("/App_Plugins/Archetype/css/archetype.css");
 });
