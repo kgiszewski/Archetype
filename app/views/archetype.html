@@ -9,7 +9,7 @@
         </ul>
     </div>
 
-    <ul ui-sortable="sortableOptions" ng-model="archetypeRenderModel.fieldsets">
+    <ul ui-sortable="sortableOptions" ng-model="archetypeRenderModel.fieldsets" ng-show="!showAddButton()">
         <li ng-repeat="fieldset in archetypeRenderModel.fieldsets" ng-hide="fieldset.remove">
             <fieldset ng-class="{archetypeFieldsetError: !fieldset.isValid}" ng-init="fieldsetConfigModel = getConfigFieldsetByAlias(fieldset.alias)">
 
@@ -49,4 +49,11 @@
             </fieldset>
         </li>
     </ul>
+
+    <div ng-show="showAddButton()">
+        <a class="archetypeAddButton" href="#" ng-click="addRow(model.config.fieldsets[0].alias, 0)" prevent-default="">
+            <i class="icon icon-add"></i>
+            <localize key="general_add" class="archetypeAddButtonText">Add</localize>
+        </a>
+    </div>
 </div>
