@@ -24,7 +24,7 @@
                         </label>
                     </div>
 
-                    <div class="archetypeEditorControls label-sub" ng-hide="model.config.hideFieldsetControls || model.config.maxFieldsets == '1'">
+                    <div class="archetypeEditorControls label-sub" ng-hide="model.config.hideFieldsetControls">
                         <i class="icon icon-add" ng-click="addRow(fieldset.alias, $index)" ng-show="canAdd()"></i>
                         <i class="icon icon-remove" ng-click="removeRow($index)" ng-show="canRemove()"></i>
                         <i class="icon icon-navigation handle" ng-show="canSort()"></i>
