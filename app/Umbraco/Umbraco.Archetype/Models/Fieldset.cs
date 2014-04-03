@@ -35,6 +35,20 @@ namespace Archetype.Umbraco.Models
             return property.GetValue<T>();
         }
 
+        public bool HasProperty(string propertyAlias)
+        {
+            return GetProperty(propertyAlias) != null;
+        }
+
+        public bool HasValue(string propertyAlias)
+        {
+            var property = GetProperty(propertyAlias);
+            if (property == null)
+                return false;
+
+            return !string.IsNullOrEmpty(property.Value.ToString());
+        }
+
         private Property GetProperty(string propertyAlias)
         {
             return Properties.FirstOrDefault(p => p.Alias.InvariantEquals(propertyAlias));

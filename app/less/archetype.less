@@ -13,14 +13,14 @@
 }
 
 .archetypeEditor .archetypeFieldsetLabel {
-    padding-left: 3px;
-    width: 98%;
+    position: relative;
+    width: 100%%;
 
     .label-sub {
         padding: 8px 0;
         display: inline-block;
         &.module-label {
-            width: 89%;
+            width: 100%;
         }
     }
 
@@ -36,7 +36,7 @@
         cursor: pointer;
 
         label  {
-            span { 
+            span {
                 text-decoration: underline;
             }
             &:hover {
@@ -46,7 +46,8 @@
     }
 
     .caret {
-        margin: 8px 1px 0 7px;
+        margin: 8px 1px 0 15px;
+
         &.caret-right {
             border-bottom: 4px solid transparent;
             border-top: 4px solid transparent;
@@ -84,8 +85,11 @@
     margin-left: 0;
 }
 
-.archetypeEditor, .archetypeConfig{
-    .archetypeEditorControls{
+.archetypeEditor,
+.archetypeConfig {
+    .archetypeEditorControls {
+        float: right;
+
         i {
             cursor: pointer;
             &.handle {
@@ -95,7 +99,16 @@
     }
 }
 
-.archetypeConfig .archetypeEditorControls { float: right; }
+.archetypeEditor .archetypeEditorControls {
+    float: none;
+    position: absolute;
+    right: 15px;
+    top: 0;
+}
+
+.archetypeConfig .archetypeEditorControls {
+    float: right;
+}
 
 .archetypeEditor form {
     margin-left:20px;
@@ -281,6 +294,14 @@
             color: #b94a48;
             font-weight: bold;
         }
+    }
+}
+
+.archetypeEditor .archetypeAddButton:hover {
+    text-decoration: none;
+
+    .archetypeAddButtonText {
+        text-decoration: underline;
     }
 }
 

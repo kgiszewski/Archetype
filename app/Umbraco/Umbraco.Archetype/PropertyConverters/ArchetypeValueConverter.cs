@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Archetype.Umbraco.Extensions;
 using Archetype.Umbraco.Models;
 using Newtonsoft.Json;
 using Umbraco.Core;
+using Umbraco.Core.Models;
 using Umbraco.Core.Models.PublishedContent;
 using Umbraco.Core.PropertyEditors;
 using Umbraco.Core.Services;
@@ -37,8 +39,10 @@ namespace Archetype.Umbraco.PropertyConverters
 
         public override object ConvertDataToSource(PublishedPropertyType propertyType, object source, bool preview)
         {
+            var defaultValue = new Models.Archetype();
+
             if (source == null)
-                return null;
+                return defaultValue;
 
             var sourceString = source.ToString();
 
@@ -53,7 +57,8 @@ namespace Archetype.Umbraco.PropertyConverters
                     {
                         // Get list of configured properties and their types 
                         // and map them to the deserialized archetype model
-                        var preValue = GetArchetypePreValueFromDataTypeId(propertyType.DataTypeId);
+                        var dataTypeCache = new Dictionary<Guid, IDataTypeDefinition>();
+                        var preValue = GetArchetypePreValueFromDataTypeId(propertyType.DataTypeId, dataTypeCache);
                         foreach (var fieldset in preValue.Fieldsets)
                         {
                             var fieldsetAlias = fieldset.Alias;
@@ -64,7 +69,7 @@ namespace Archetype.Umbraco.PropertyConverters
                                     var propertyAlias = property.Alias;
                                     foreach (var propertyInst in fieldsetInst.Properties.Where(x => x.Alias == propertyAlias))
                                     {
-                                        propertyInst.DataTypeId = property.DataTypeId;
+                                        propertyInst.DataTypeId = GetDataTypeByGuid(property.DataTypeGuid, dataTypeCache).Id;
                                         propertyInst.PropertyEditorAlias = property.PropertyEditorAlias;
                                     }
                                 }
@@ -79,14 +84,14 @@ namespace Archetype.Umbraco.PropertyConverters
                 }
                 catch (Exception ex)
                 {
-                    return null;
+                    return defaultValue;
                 }
             }
 
-            return sourceString;
+            return defaultValue;
         }
 
-        internal ArchetypePreValue GetArchetypePreValueFromDataTypeId(int dataTypeId)
+        private ArchetypePreValue GetArchetypePreValueFromDataTypeId(int dataTypeId, IDictionary<Guid, IDataTypeDefinition> dataTypeCache)
         {
             var preValues = Services.DataTypeService.GetPreValuesCollectionByDataTypeId(dataTypeId);
 
@@ -100,18 +105,22 @@ namespace Archetype.Umbraco.PropertyConverters
             {
                 foreach (var property in fieldset.Properties)
                 {
-                    // Lookup the properties property editor alias
-                    // (See if we've already looked it up first though to save a database hit)
-                    var propertyWithSameDataType = config.Fieldsets.SelectMany(x => x.Properties)
-                        .FirstOrDefault(x => x.DataTypeId == property.DataTypeId && !string.IsNullOrWhiteSpace(x.PropertyEditorAlias));
-
-                    property.PropertyEditorAlias = propertyWithSameDataType != null
-                        ? propertyWithSameDataType.PropertyEditorAlias
-                        : Services.DataTypeService.GetDataTypeDefinitionById(property.DataTypeId).PropertyEditorAlias;
+                    property.PropertyEditorAlias = GetDataTypeByGuid(property.DataTypeGuid, dataTypeCache).PropertyEditorAlias;
                 }
             }
 
             return config;
+        }
+
+        private IDataTypeDefinition GetDataTypeByGuid(Guid guid, IDictionary<Guid, IDataTypeDefinition> cache)
+        {
+            IDataTypeDefinition dataType;
+            if (cache.TryGetValue(guid, out dataType))
+                return dataType;
+
+            dataType = Services.DataTypeService.GetDataTypeDefinitionById(guid);
+            cache[guid] = dataType;
+            return dataType;
         }
     }
 }

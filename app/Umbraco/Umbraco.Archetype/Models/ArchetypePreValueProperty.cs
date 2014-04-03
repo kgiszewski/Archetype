@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+using Newtonsoft.Json;
 
 namespace Archetype.Umbraco.Models
 {
@@ -18,12 +19,9 @@ namespace Archetype.Umbraco.Models
 
         [JsonProperty("helpText")]
         public string HelpText { get; set; }
-
-        [JsonProperty("dataTypeId")]
-        public int DataTypeId { get; set; }
-
+        
         [JsonProperty("dataTypeGuid")]
-        public string DataTypeGuid { get; set; }
+        public Guid DataTypeGuid { get; set; }
 
         [JsonProperty("propertyEditorAlias")]
         public string PropertyEditorAlias { get; set; }

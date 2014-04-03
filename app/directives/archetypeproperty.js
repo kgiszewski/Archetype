@@ -51,7 +51,7 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
         var configFieldsetModel = getFieldsetByAlias(scope.archetypeConfig.fieldsets, scope.fieldset.alias);
         var view = "";
         var label = configFieldsetModel.properties[scope.propertyConfigIndex].label;
-        var dataTypeId = configFieldsetModel.properties[scope.propertyConfigIndex].dataTypeId;
+        var dataTypeGuid = configFieldsetModel.properties[scope.propertyConfigIndex].dataTypeGuid;
         var config = null;
         var alias = configFieldsetModel.properties[scope.propertyConfigIndex].alias;
         var defaultValue = configFieldsetModel.properties[scope.propertyConfigIndex].value;
@@ -61,7 +61,7 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
         defaultValue = jsonOrString(defaultValue, scope.archetypeConfig.developerMode, "defaultValue");
 
         //grab info for the selected datatype, prepare for view
-        archetypePropertyEditorResource.getDataType(dataTypeId).then(function (data) {
+        archetypePropertyEditorResource.getDataType(dataTypeGuid).then(function (data) {
             //transform preValues array into object expected by propertyeditor views
             var configObj = {};
             _.each(data.preValues, function(p) {
