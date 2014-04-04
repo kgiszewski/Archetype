@@ -94,23 +94,29 @@ namespace Archetype.Umbraco.PropertyConverters
 
         private ArchetypePreValue GetArchetypePreValueFromDataTypeId(int dataTypeId, IDictionary<Guid, IDataTypeDefinition> dataTypeCache)
         {
-            var preValues = Services.DataTypeService.GetPreValuesCollectionByDataTypeId(dataTypeId);
-
-            var configJson = preValues.IsDictionaryBased
-                ? preValues.PreValuesAsDictionary[Constants.PreValueAlias].Value
-                : preValues.PreValuesAsArray.First().Value;
-
-            var config = JsonConvert.DeserializeObject<Models.ArchetypePreValue>(configJson, _jsonSettings);
-
-            foreach (var fieldset in config.Fieldsets)
-            {
-                foreach (var property in fieldset.Properties)
+            return ApplicationContext.Current.ApplicationCache.RuntimeCache.GetCacheItem(
+                "Archetype_GetArchetypePreValueFromDataTypeId_" + dataTypeId,
+                () =>
                 {
-                    property.PropertyEditorAlias = GetDataTypeByGuid(property.DataTypeGuid).PropertyEditorAlias;
-                }
-            }
+                    var preValues = Services.DataTypeService.GetPreValuesCollectionByDataTypeId(dataTypeId);
 
-            return config;
+                    var configJson = preValues.IsDictionaryBased
+                        ? preValues.PreValuesAsDictionary[Constants.PreValueAlias].Value
+                        : preValues.PreValuesAsArray.First().Value;
+
+                    var config = JsonConvert.DeserializeObject<Models.ArchetypePreValue>(configJson, _jsonSettings);
+
+                    foreach (var fieldset in config.Fieldsets)
+                    {
+                        foreach (var property in fieldset.Properties)
+                        {
+                            property.PropertyEditorAlias = GetDataTypeByGuid(property.DataTypeGuid).PropertyEditorAlias;
+                        }
+                    }
+
+                    return config;
+
+                }) as ArchetypePreValue;
         }    
         
         private IDataTypeDefinition GetDataTypeByGuid(Guid guid)
