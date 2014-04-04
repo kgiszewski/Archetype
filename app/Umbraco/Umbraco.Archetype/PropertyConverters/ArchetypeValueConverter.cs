@@ -69,7 +69,9 @@ namespace Archetype.Umbraco.PropertyConverters
                                     var propertyAlias = property.Alias;
                                     foreach (var propertyInst in fieldsetInst.Properties.Where(x => x.Alias == propertyAlias))
                                     {
-                                        propertyInst.DataTypeId = GetDataTypeByGuid(property.DataTypeGuid, dataTypeCache).Id;
+                                        propertyInst.DataTypeId = (int)ApplicationContext.Current.ApplicationCache.RuntimeCache.GetCacheItem(
+                                           "Archetype_ConvertDataToSource_GetDataTypeDefinitionByGuid_" + property.DataTypeGuid,
+                                           () => Services.DataTypeService.GetDataTypeDefinitionById(property.DataTypeGuid));
                                         propertyInst.PropertyEditorAlias = property.PropertyEditorAlias;
                                     }
                                 }
@@ -105,22 +107,13 @@ namespace Archetype.Umbraco.PropertyConverters
             {
                 foreach (var property in fieldset.Properties)
                 {
-                    property.PropertyEditorAlias = GetDataTypeByGuid(property.DataTypeGuid, dataTypeCache).PropertyEditorAlias;
+                    property.PropertyEditorAlias = ApplicationContext.Current.ApplicationCache.RuntimeCache.GetCacheItem(
+                                "Archetype_GetArchetypePreValueFromDataTypeId_GetPropertyEditorAlias_" + property.DataTypeGuid,
+                                () => Services.DataTypeService.GetDataTypeDefinitionById(property.DataTypeGuid).PropertyEditorAlias).ToString(); 
                 }
             }
 
             return config;
-        }
-
-        private IDataTypeDefinition GetDataTypeByGuid(Guid guid, IDictionary<Guid, IDataTypeDefinition> cache)
-        {
-            IDataTypeDefinition dataType;
-            if (cache.TryGetValue(guid, out dataType))
-                return dataType;
-
-            dataType = Services.DataTypeService.GetDataTypeDefinitionById(guid);
-            cache[guid] = dataType;
-            return dataType;
         }
     }
 }
