@@ -1,12 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Archetype.Umbraco.Extensions;
 using Archetype.Umbraco.Models;
 using Newtonsoft.Json;
 using Umbraco.Core;
+using Umbraco.Core.Models;
 using Umbraco.Core.Models.PublishedContent;
 using Umbraco.Core.PropertyEditors;
 using Umbraco.Core.Services;
+using umbraco.interfaces;
 
 namespace Archetype.Umbraco.PropertyConverters
 {
@@ -55,7 +58,8 @@ namespace Archetype.Umbraco.PropertyConverters
                     {
                         // Get list of configured properties and their types 
                         // and map them to the deserialized archetype model
-                        var preValue = GetArchetypePreValueFromDataTypeId(propertyType.DataTypeId);
+                        var dataTypeCache = new Dictionary<Guid, IDataTypeDefinition>();
+                        var preValue = GetArchetypePreValueFromDataTypeId(propertyType.DataTypeId, dataTypeCache);
                         foreach (var fieldset in preValue.Fieldsets)
                         {
                             var fieldsetAlias = fieldset.Alias;
@@ -66,7 +70,7 @@ namespace Archetype.Umbraco.PropertyConverters
                                     var propertyAlias = property.Alias;
                                     foreach (var propertyInst in fieldsetInst.Properties.Where(x => x.Alias == propertyAlias))
                                     {
-                                        propertyInst.DataTypeId = property.DataTypeId;
+                                        propertyInst.DataTypeId = GetDataTypeByGuid(property.DataTypeGuid).Id;
                                         propertyInst.PropertyEditorAlias = property.PropertyEditorAlias;
                                     }
                                 }
@@ -88,32 +92,38 @@ namespace Archetype.Umbraco.PropertyConverters
             return defaultValue;
         }
 
-        internal ArchetypePreValue GetArchetypePreValueFromDataTypeId(int dataTypeId)
+        private ArchetypePreValue GetArchetypePreValueFromDataTypeId(int dataTypeId, IDictionary<Guid, IDataTypeDefinition> dataTypeCache)
         {
-	        return ApplicationContext.Current.ApplicationCache.RuntimeCache.GetCacheItem(
-		        "Archetype_GetArchetypePreValueFromDataTypeId_" + dataTypeId,
-		        () =>
-		        {
-					var preValues = Services.DataTypeService.GetPreValuesCollectionByDataTypeId(dataTypeId);
+            return ApplicationContext.Current.ApplicationCache.RuntimeCache.GetCacheItem(
+                "Archetype_GetArchetypePreValueFromDataTypeId_" + dataTypeId,
+                () =>
+                {
+                    var preValues = Services.DataTypeService.GetPreValuesCollectionByDataTypeId(dataTypeId);
 
-					var configJson = preValues.IsDictionaryBased
-						? preValues.PreValuesAsDictionary[Constants.PreValueAlias].Value
-						: preValues.PreValuesAsArray.First().Value;
+                    var configJson = preValues.IsDictionaryBased
+                        ? preValues.PreValuesAsDictionary[Constants.PreValueAlias].Value
+                        : preValues.PreValuesAsArray.First().Value;
 
-					var config = JsonConvert.DeserializeObject<Models.ArchetypePreValue>(configJson, _jsonSettings);
+                    var config = JsonConvert.DeserializeObject<Models.ArchetypePreValue>(configJson, _jsonSettings);
 
-					foreach (var fieldset in config.Fieldsets)
-					{
-						foreach (var property in fieldset.Properties)
-						{
-							property.PropertyEditorAlias = ApplicationContext.Current.ApplicationCache.RuntimeCache.GetCacheItem(
-								"Archetype_GetArchetypePreValueFromDataTypeId_GetPropertyEditorAlias_" + property.DataTypeId,
-								() => Services.DataTypeService.GetDataTypeDefinitionById(property.DataTypeId).PropertyEditorAlias).ToString();
-						}
-					}
+                    foreach (var fieldset in config.Fieldsets)
+                    {
+                        foreach (var property in fieldset.Properties)
+                        {
+                            property.PropertyEditorAlias = GetDataTypeByGuid(property.DataTypeGuid).PropertyEditorAlias;
+                        }
+                    }
 
-					return config;
-				}) as ArchetypePreValue;
+                    return config;
+
+                }) as ArchetypePreValue;
+        }    
+        
+        private IDataTypeDefinition GetDataTypeByGuid(Guid guid)
+        {
+            return (IDataTypeDefinition) ApplicationContext.Current.ApplicationCache.RuntimeCache.GetCacheItem(
+                "Archetype_GetDataTypeDefinitionById_" + guid,
+                () => Services.DataTypeService.GetDataTypeDefinitionById(guid));
         }
     }
 }

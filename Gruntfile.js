@@ -90,12 +90,6 @@ module.exports = function(grunt) {
             expand: true
           },
           {
-            cwd: 'app/config/',
-            src: ['propertyEditors.views.js'],
-            dest: '<%= basePath %>/js',
-            expand: true
-          },
-          {
             cwd: 'app/langs/',
             src: ['**'],
             dest: '<%= basePath %>/langs',
