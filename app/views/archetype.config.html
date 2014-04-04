@@ -27,7 +27,7 @@
                     </div>
                     <div class="archetypeFieldsetOption">
                         <label><archetype-localize key="properties">Properties</archetype-localize></label>
-                    </div> 
+                    </div>
                     <div class="archetypePropertiesWrapper">
                         <ul ui-sortable="sortableOptions" ng-model="fieldset.properties">
                             <li ng-repeat="property in fieldset.properties" ng-hide="property.remove">
@@ -37,7 +37,7 @@
                                     <i class="icon icon-navigation handle" ng-show="canSortProperty(fieldset)"></i>
                                 </div>
                                 <div class="archetypePropertyTitle" ng-click="focusProperty(fieldset.properties, property)">
-                                    {{property.label}} ({{property.alias}}) - <span>{{getDataTypeNameById(property.dataTypeId)}}</span>
+                                    {{property.label}} ({{property.alias}}) - <span>{{getDataTypeNameByGuid(property.dataTypeGuid)}}</span>
                                 </div>
                                 <div class="archetypePropertyCollapser" ng-hide="property.collapse && property.label">
                                     <div>
@@ -54,7 +54,7 @@
                                     </div>
                                     <div>
                                         <label for="archetypePropertyDataType_{{$parent.$index}}_{{$index}}"><archetype-localize key="dataType">Datatype</archetype-localize></label>
-                                        <select id="archetypePropertyDataType_{{$parent.$index}}_{{$index}}" ng-model="property.dataTypeId" ng-options="datatype.id as datatype.name for datatype in availableDataTypes"></select>
+                                        <select id="archetypePropertyDataType_{{$parent.$index}}_{{$index}}" ng-model="property.dataTypeGuid" ng-options="datatype.guid as datatype.name for datatype in availableDataTypes | orderBy:'name'"></select>
                                     </div>
                                     <div>
                                         <label for="archetypePropertyDefaultValue_{{$parent.$index}}_{{$index}}"><archetype-localize key="defaultValue">Default Value</archetype-localize></label>
@@ -82,6 +82,10 @@
 
     <div class="archetypeAdvancedOptions" ng-show="archetypeConfigRenderModel.showAdvancedOptions">
         <div>
+            <label for="archetypeAdvancedOptionsStartWithAddButton"><archetype-localize key="startWithAddButton">Start With Add Button?</archetype-localize><small><archetype-localize key="startWithAddButtonDescription">Empty property shows an add button instead of providing a default fieldset.</archetype-localize></small></label>
+            <input type="checkbox" id="archetypeAdvancedOptionsStartWithAddButton" ng-model="archetypeConfigRenderModel.startWithAddButton"/>
+        </div>
+        <div>
             <label for="archetypeAdvancedOptionsHideControls"><archetype-localize key="hideFieldsetControls">Hide Fieldset Controls?</archetype-localize><small><archetype-localize key="hideFieldsetControlsDescription">Hides the fieldset add/remove/sort controls.</archetype-localize></small></label>
             <input type="checkbox" id="archetypeAdvancedOptionsHideControls" ng-model="archetypeConfigRenderModel.hideFieldsetControls"/>
         </div>
@@ -96,11 +100,11 @@
         <div>
             <label for="archetypeAdvancedOptionsMultipleFieldsets"><archetype-localize key="enableMultipleFieldsets">Enable Multiple Fieldsets?</archetype-localize><small><archetype-localize key="enableMultipleFieldsetsDescription">Allows multiple types of fieldsets within this archetype.</archetype-localize></small></label>
             <input type="checkbox" id="archetypeAdvancedOptionsMultipleFieldsets" ng-model="archetypeConfigRenderModel.enableMultipleFieldsets"/>
-        </div> 
+        </div>
         <div>
             <label for="archetypeAdvancedOptionsCollapsing"><archetype-localize key="enableCollapsing">Enable Collapsing?</archetype-localize><small><archetype-localize key="enableCollapsingDescription">Allows multiple types of fieldsets within this archetype.</archetype-localize></small></label>
             <input type="checkbox" id="archetypeAdvancedOptionsCollapsing" ng-model="archetypeConfigRenderModel.enableCollapsing"/>
-        </div> 
+        </div>
         <div>
             <label for="archetypeAdvancedOptionsFieldsetToolbar"><archetype-localize key="hideFieldsetToolbar">Hide Fieldset Toolbar?</archetype-localize><small><archetype-localize key="hideFieldsetToolbarDescription">Hides the fieldset toolbar that appears when more than one fieldset model appears.</archetype-localize></small></label>
             <input type="checkbox" id="archetypeAdvancedOptionsFieldsetToolbar" ng-model="archetypeConfigRenderModel.hideFieldsetToolbar"/>

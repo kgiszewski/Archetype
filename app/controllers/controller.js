@@ -1,5 +1,5 @@
 ﻿angular.module("umbraco").controller("Imulus.ArchetypeController", function ($scope, $http, assetsService, angularHelper, notificationsService, $timeout) {
- 
+
     //$scope.model.value = "";
     $scope.model.hideLabel = $scope.model.config.hideLabel == 1;
 
@@ -8,14 +8,14 @@
 
     //set the config equal to our prevalue config
     $scope.model.config = $scope.model.config.archetypeConfig;
-   
+
     //ini the model
-    $scope.model.value = $scope.model.value || { fieldsets: [getEmptyRenderFieldset($scope.model.config.fieldsets[0])] };
+    $scope.model.value = $scope.model.value || getDefaultModel($scope.model.config);
 
     //ini the render model
     $scope.archetypeRenderModel = {};
     initArchetypeRenderModel();
-     
+
     //helper to get $eval the labelTemplate
     $scope.getFieldsetTitle = function(fieldsetConfigModel, fieldsetIndex) {
         var fieldset = $scope.archetypeRenderModel.fieldsets[fieldsetIndex];
@@ -100,14 +100,21 @@
 
     //helper that returns if an item can be removed
     $scope.canRemove = function ()
-    {   
-        return countVisible() > 1;
+    {
+        return countVisible() > 1
+            || $scope.model.config.startWithAddButton;
     }
 
     //helper that returns if an item can be sorted
     $scope.canSort = function ()
     {
         return countVisible() > 1;
+    }
+
+    //helpers for determining if the add button should be shown
+    $scope.showAddButton = function () {
+        return $scope.model.config.startWithAddButton
+            && countVisible() === 0;
     }
 
     //helper, ini the render model from the server (model.value)
@@ -119,7 +126,7 @@
             fieldset.remove = false;
             fieldset.collapse = false;
             fieldset.isValid = true;
-        });      
+        });
     }
 
     //helper to get the correct fieldset from config
@@ -136,7 +143,7 @@
         });
         return (typeof property !== 'undefined') ? property.value : '';
     };
-    
+
     //helper for expanding/collapsing fieldsets
     $scope.focusFieldset = function(fieldset){
         fixDisableSelection();
@@ -144,30 +151,30 @@
         if (!$scope.model.config.enableCollapsing) {
             return;
         }
-        
+
         var iniState;
-        
+
         if(fieldset)
         {
             iniState = fieldset.collapse;
         }
-    
+
         _.each($scope.archetypeRenderModel.fieldsets, function(fieldset){
             fieldset.collapse = true;
         });
-        
+
         if(!fieldset && $scope.archetypeRenderModel.fieldsets.length == 1 && $scope.archetypeRenderModel.fieldsets[0].remove == false)
         {
             $scope.archetypeRenderModel.fieldsets[0].collapse = false;
             return;
         }
-        
+
         if(iniState && fieldset)
         {
             fieldset.collapse = !iniState;
         }
     }
-    
+
     //ini the fieldset expand/collapse
     $scope.focusFieldset();
 
@@ -241,7 +248,7 @@
                 if(propertyConfig){
                     delete property.isValid;
                 }
-                else 
+                else
                 {
                     //need to remove the whole property
                     tempFieldset.properties.splice(index, 1);
@@ -253,10 +260,17 @@
         }
     }
 
+    // helper to get initial model if none was provided
+    function getDefaultModel(config) {
+        if (config.startWithAddButton)
+            return { fieldsets: [] };
+
+        return { fieldsets: [getEmptyRenderFieldset(config.fieldsets[0])] };
+    }
+
     //helper to add an empty fieldset to the render model
-    function getEmptyRenderFieldset (fieldsetModel)
-    {
-        return JSON.parse('{"alias": "' + fieldsetModel.alias + '", "remove": false, "isValid": true, "properties": []}');
+    function getEmptyRenderFieldset (fieldsetModel) {
+        return {alias: fieldsetModel.alias, remove: false, isValid: true, properties: []};
     }
 
     //helper to ensure no nulls make it into the model
@@ -268,7 +282,7 @@
                     removeNulls(model);
                 }
             });
-            
+
             return model;
         }
     }
@@ -277,9 +291,9 @@
     function fixDisableSelection() {
         $timeout(function() {
             $('.archetypeEditor .controls')
-                .bind('mousedown.ui-disableSelection selectstart.ui-disableSelection', function(e) { 
+                .bind('mousedown.ui-disableSelection selectstart.ui-disableSelection', function(e) {
                     e.stopImmediatePropagation();
-                }); 
+                });
         }, 1000);
     }
 
@@ -307,7 +321,7 @@
         {
             notificationsService.warning("Cannot Save Document", "The document could not be saved because of missing required fields.")
         }
-        else 
+        else
         {
             syncModelToRenderModel();
         }
@@ -316,7 +330,7 @@
     //custom js
     if ($scope.model.config.customJsPath) {
         assetsService.loadJs($scope.model.config.customJsPath);
-    } 
+    }
 
     //archetype css
     assetsService.loadCss("/App_Plugins/Archetype/css/archetype.css");
