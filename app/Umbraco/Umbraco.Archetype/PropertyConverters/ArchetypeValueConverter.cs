@@ -95,7 +95,7 @@ namespace Archetype.Umbraco.PropertyConverters
         private ArchetypePreValue GetArchetypePreValueFromDataTypeId(int dataTypeId, IDictionary<Guid, IDataTypeDefinition> dataTypeCache)
         {
             return ApplicationContext.Current.ApplicationCache.RuntimeCache.GetCacheItem(
-                "Archetype_GetArchetypePreValueFromDataTypeId_" + dataTypeId,
+                Constants.CacheKey_PreValueFromDataTypeId + dataTypeId,
                 () =>
                 {
                     var preValues = Services.DataTypeService.GetPreValuesCollectionByDataTypeId(dataTypeId);
@@ -122,7 +122,7 @@ namespace Archetype.Umbraco.PropertyConverters
         private IDataTypeDefinition GetDataTypeByGuid(Guid guid)
         {
             return (IDataTypeDefinition) ApplicationContext.Current.ApplicationCache.RuntimeCache.GetCacheItem(
-                "Archetype_GetDataTypeDefinitionById_" + guid,
+                Constants.CacheKey_DataTypeByGuid + guid,
                 () => Services.DataTypeService.GetDataTypeDefinitionById(guid));
         }
     }

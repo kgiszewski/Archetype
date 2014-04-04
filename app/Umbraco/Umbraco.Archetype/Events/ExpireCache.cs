@@ -22,8 +22,11 @@ namespace Archetype.Umbraco.Events
 
         void ExpirePreValueCache(IDataTypeService sender, global::Umbraco.Core.Events.SaveEventArgs<IDataTypeDefinition> e)
         {
-            ApplicationContext.Current.ApplicationCache.RuntimeCache.ClearCacheItem("Archetype_GetArchetypePreValueFromDataTypeId_" + e.SavedEntities.First().Id);
-            ApplicationContext.Current.ApplicationCache.RuntimeCache.ClearCacheItem("Archetype_GetArchetypePreValueFromDataTypeId_GetPropertyEditorAlias_"+ e.SavedEntities.First().Id);
+            foreach (var dataType in e.SavedEntities)
+            {
+                ApplicationContext.Current.ApplicationCache.RuntimeCache.ClearCacheItem(Constants.CacheKey_PreValueFromDataTypeId + dataType.Id);
+                ApplicationContext.Current.ApplicationCache.RuntimeCache.ClearCacheItem(Constants.CacheKey_DataTypeByGuid + dataType.Key);
+            }
         }
     }
 }
