@@ -9,6 +9,7 @@ using Umbraco.Core.Models;
 using Umbraco.Core.Models.PublishedContent;
 using Umbraco.Core.PropertyEditors;
 using Umbraco.Core.Services;
+using umbraco.interfaces;
 
 namespace Archetype.Umbraco.PropertyConverters
 {
@@ -69,7 +70,7 @@ namespace Archetype.Umbraco.PropertyConverters
                                     var propertyAlias = property.Alias;
                                     foreach (var propertyInst in fieldsetInst.Properties.Where(x => x.Alias == propertyAlias))
                                     {
-                                        propertyInst.DataTypeId = GetDataTypeByGuid(property.DataTypeGuid, dataTypeCache).Id;
+                                        propertyInst.DataTypeId = GetDataTypeByGuid(property.DataTypeGuid).Id;
                                         propertyInst.PropertyEditorAlias = property.PropertyEditorAlias;
                                     }
                                 }
@@ -93,34 +94,36 @@ namespace Archetype.Umbraco.PropertyConverters
 
         private ArchetypePreValue GetArchetypePreValueFromDataTypeId(int dataTypeId, IDictionary<Guid, IDataTypeDefinition> dataTypeCache)
         {
-            var preValues = Services.DataTypeService.GetPreValuesCollectionByDataTypeId(dataTypeId);
-
-            var configJson = preValues.IsDictionaryBased
-                ? preValues.PreValuesAsDictionary[Constants.PreValueAlias].Value
-                : preValues.PreValuesAsArray.First().Value;
-
-            var config = JsonConvert.DeserializeObject<Models.ArchetypePreValue>(configJson, _jsonSettings);
-
-            foreach (var fieldset in config.Fieldsets)
-            {
-                foreach (var property in fieldset.Properties)
+            return ApplicationContext.Current.ApplicationCache.RuntimeCache.GetCacheItem(
+                "Archetype_GetArchetypePreValueFromDataTypeId_" + dataTypeId,
+                () =>
                 {
-                    property.PropertyEditorAlias = GetDataTypeByGuid(property.DataTypeGuid, dataTypeCache).PropertyEditorAlias;
-                }
-            }
+                    var preValues = Services.DataTypeService.GetPreValuesCollectionByDataTypeId(dataTypeId);
 
-            return config;
-        }
+                    var configJson = preValues.IsDictionaryBased
+                        ? preValues.PreValuesAsDictionary[Constants.PreValueAlias].Value
+                        : preValues.PreValuesAsArray.First().Value;
 
-        private IDataTypeDefinition GetDataTypeByGuid(Guid guid, IDictionary<Guid, IDataTypeDefinition> cache)
+                    var config = JsonConvert.DeserializeObject<Models.ArchetypePreValue>(configJson, _jsonSettings);
+
+                    foreach (var fieldset in config.Fieldsets)
+                    {
+                        foreach (var property in fieldset.Properties)
+                        {
+                            property.PropertyEditorAlias = GetDataTypeByGuid(property.DataTypeGuid).PropertyEditorAlias;
+                        }
+                    }
+
+                    return config;
+
+                }) as ArchetypePreValue;
+        }    
+        
+        private IDataTypeDefinition GetDataTypeByGuid(Guid guid)
         {
-            IDataTypeDefinition dataType;
-            if (cache.TryGetValue(guid, out dataType))
-                return dataType;
-
-            dataType = Services.DataTypeService.GetDataTypeDefinitionById(guid);
-            cache[guid] = dataType;
-            return dataType;
+            return (IDataTypeDefinition) ApplicationContext.Current.ApplicationCache.RuntimeCache.GetCacheItem(
+                "Archetype_GetDataTypeDefinitionById_" + guid,
+                () => Services.DataTypeService.GetDataTypeDefinitionById(guid));
         }
     }
 }
