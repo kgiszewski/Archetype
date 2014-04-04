@@ -9,6 +9,7 @@ using Umbraco.Core.Models;
 using Umbraco.Core.Models.PublishedContent;
 using Umbraco.Core.PropertyEditors;
 using Umbraco.Core.Services;
+using umbraco.interfaces;
 
 namespace Archetype.Umbraco.PropertyConverters
 {
@@ -69,9 +70,7 @@ namespace Archetype.Umbraco.PropertyConverters
                                     var propertyAlias = property.Alias;
                                     foreach (var propertyInst in fieldsetInst.Properties.Where(x => x.Alias == propertyAlias))
                                     {
-                                        propertyInst.DataTypeId = (int)ApplicationContext.Current.ApplicationCache.RuntimeCache.GetCacheItem(
-                                           "Archetype_ConvertDataToSource_GetDataTypeDefinitionByGuid_" + property.DataTypeGuid,
-                                           () => Services.DataTypeService.GetDataTypeDefinitionById(property.DataTypeGuid));
+                                        propertyInst.DataTypeId = GetDataTypeByGuid(property.DataTypeGuid).Id;
                                         propertyInst.PropertyEditorAlias = property.PropertyEditorAlias;
                                     }
                                 }
@@ -107,13 +106,18 @@ namespace Archetype.Umbraco.PropertyConverters
             {
                 foreach (var property in fieldset.Properties)
                 {
-                    property.PropertyEditorAlias = ApplicationContext.Current.ApplicationCache.RuntimeCache.GetCacheItem(
-                                "Archetype_GetArchetypePreValueFromDataTypeId_GetPropertyEditorAlias_" + property.DataTypeGuid,
-                                () => Services.DataTypeService.GetDataTypeDefinitionById(property.DataTypeGuid).PropertyEditorAlias).ToString(); 
+                    property.PropertyEditorAlias = GetDataTypeByGuid(property.DataTypeGuid).PropertyEditorAlias;
                 }
             }
 
             return config;
+        }    
+        
+        private IDataTypeDefinition GetDataTypeByGuid(Guid guid)
+        {
+            return (IDataTypeDefinition) ApplicationContext.Current.ApplicationCache.RuntimeCache.GetCacheItem(
+                "Archetype_GetDataTypeDefinitionById_" + guid,
+                () => Services.DataTypeService.GetDataTypeDefinitionById(guid));
         }
     }
 }
