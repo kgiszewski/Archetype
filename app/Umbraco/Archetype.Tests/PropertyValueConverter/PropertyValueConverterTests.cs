@@ -24,32 +24,30 @@ namespace Archetype.Tests.PropertyValueConverter
         }
 
         [Test]
-        public void Returns_Null_When_Data_Is_Null()
+        [TestCase(null)]
+        [TestCase("")]
+        public void Returns_Empty_Archetype_When_Data_Is_Null_Or_Empty(object data)
         {
-            var converter = new ArchetypeValueConverter();
-            var result = converter.ConvertDataToSource(null, null, false);
-
-            Assert.IsNull(result);
-        }
-
-        [Test]
-        public void Returns_Empty_String_When_Data_Is_Empty_String()
-        {
-            var data = "";
             var converter = new ArchetypeValueConverter();
             var result = converter.ConvertDataToSource(null, data, false);
 
-            Assert.AreEqual("", result);
+            Assert.AreEqual(result.GetType(), typeof (Archetype.Umbraco.Models.Archetype));
+
+            var fieldsets = (Archetype.Umbraco.Models.Archetype) result;
+            Assert.IsTrue(fieldsets.Count() == 0);
         }
 
         [Test]
-        public void Returns_Original_String_When_Data_Is_Invalid_Json()
+        public void Returns_Empty_Archetype_When_Data_Is_Invalid_Json()
         {
             var data = "{ invalid";
             var converter = new ArchetypeValueConverter();
             var result = converter.ConvertDataToSource(null, data, false);
             
-            Assert.AreEqual(data, result);
+            Assert.AreEqual(result.GetType(), typeof (Archetype.Umbraco.Models.Archetype));
+
+            var fieldsets = (Archetype.Umbraco.Models.Archetype) result;
+            Assert.IsTrue(fieldsets.Count() == 0);
         }
 
         [Test]
