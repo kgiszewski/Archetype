@@ -207,6 +207,7 @@
   <ItemGroup>
     <Compile Include="Api\ArchetypeDataTypeController.cs" />
     <Compile Include="Constants.cs" />
+    <Compile Include="Events\ExpireCache.cs" />
     <Compile Include="Extensions\Extensions.cs" />
     <Compile Include="Models\Archetype.cs" />
     <Compile Include="Models\ArchetypePreValue.cs" />
