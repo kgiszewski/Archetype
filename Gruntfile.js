@@ -167,7 +167,7 @@ module.exports = function(grunt) {
 
     clean: {
       build: '<%= grunt.config("basePath").substring(0, 4) == "dist" ? "dist/**/*" : "null" %>',
-      tmp: ['pkg/tmp']
+      tmp: ['tmp']
     },
 
     assemblyinfo: {
