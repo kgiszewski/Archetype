@@ -29,11 +29,6 @@ module.exports = function(grunt) {
         tasks: ['copy:html']
       },
 
-      config: {
-        files: ['config/package.manifest'],
-        tasks: ['copy:config']
-      },
-
       dll: {
         files: ['app/Umbraco/**/*.dll'],
         tasks: ['copy:dll']
