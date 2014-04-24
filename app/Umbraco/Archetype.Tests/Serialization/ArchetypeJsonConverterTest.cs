@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using Archetype.Umbraco.PropertyConverters;
 using Newtonsoft.Json;
 using NUnit.Framework;
@@ -9,196 +8,10 @@ namespace Archetype.Tests.Serialization
     [TestFixture]
     public class ArchetypeJsonConverterTest
     {
-        private const string _ANNUAL_STATEMENT_JSON =
-@"{
-  ""fieldsets"": [
-    {
-      ""alias"": ""annualStatement"",
-      ""properties"": [
-        {
-          ""alias"": ""FiscalYearStart"",
-          ""value"": ""01/09/2013 00:00:00""
-        },
-        {
-          ""alias"": ""FiscalYearEnd"",
-          ""value"": ""31/08/2014 00:00:00""
-        },
-        {
-          ""alias"": ""DividendPaymentDate"",
-          ""value"": """"
-        },
-        {
-          ""alias"": ""TotalShares"",
-          ""value"": ""345678""
-        },
-        {
-          ""alias"": ""Sales"",
-          ""value"": ""123456700.89""
-        },
-        {
-          ""alias"": ""Profit"",
-          ""value"": ""1123456.78""
-        }
-      ]
-    }
-  ]
-}";
-
-        private const string _CONTACT_DETAILS_JSON =
-@"{
-  ""fieldsets"": [
-    {
-      ""alias"": ""contactDetails"",
-      ""properties"": [
-        {
-          ""alias"": ""name"",
-          ""value"": ""Test""
-        },
-        {
-          ""alias"": ""address"",
-          ""value"": ""Test Address""
-        },
-        {
-          ""alias"": ""telephone"",
-          ""value"": ""111""
-        },
-        {
-          ""alias"": ""mobile"",
-          ""value"": ""000""
-        },
-        {
-          ""alias"": ""fax"",
-          ""value"": ""000""
-        },
-        {
-          ""alias"": ""email"",
-          ""value"": ""test@test.com""
-        },
-        {
-          ""alias"": ""webSite"",
-          ""value"": {
-            ""fieldsets"": [
-              {
-                ""alias"": ""urlPicker"",
-                ""properties"": [
-                  {
-                    ""alias"": ""title"",
-                    ""value"": ""The Test Company""
-                  },
-                  {
-                    ""alias"": ""url"",
-                    ""value"": ""http://test.com""
-                  },
-                  {
-                    ""alias"": ""content"",
-                    ""value"": """"
-                  },
-                  {
-                    ""alias"": ""media"",
-                    ""value"": """"
-                  },
-                  {
-                    ""alias"": ""openInNewWindow"",
-                    ""value"": ""1""
-                  }
-                ]
-              }
-            ]
-          }
-        }
-      ]
-    }
-  ]
-}";
-
-        private const string _COMPANY_DETAILS_JSON =
-@"{
-  ""fieldsets"": [
-    {
-      ""alias"": ""companyDetails"",
-      ""properties"": [
-        {
-          ""alias"": ""region"",
-          ""value"": ""Test Region""
-        },
-        {
-          ""alias"": ""contactDetails"",
-          ""value"": {
-            ""fieldsets"": [
-              {
-                ""alias"": ""contactDetails"",
-                ""properties"": [
-                  {
-                    ""alias"": ""name"",
-                    ""value"": ""Test""
-                  },
-                  {
-                    ""alias"": ""address"",
-                    ""value"": ""Test Address""
-                  },
-                  {
-                    ""alias"": ""telephone"",
-                    ""value"": ""111""
-                  },
-                  {
-                    ""alias"": ""mobile"",
-                    ""value"": ""000""
-                  },
-                  {
-                    ""alias"": ""fax"",
-                    ""value"": ""000""
-                  },
-                  {
-                    ""alias"": ""email"",
-                    ""value"": ""test@test.com""
-                  },
-                  {
-                    ""alias"": ""webSite"",
-                    ""value"": {
-                      ""fieldsets"": [
-                        {
-                          ""alias"": ""urlPicker"",
-                          ""properties"": [
-                            {
-                              ""alias"": ""title"",
-                              ""value"": ""The Test Company""
-                            },
-                            {
-                              ""alias"": ""url"",
-                              ""value"": ""http://test.com""
-                            },
-                            {
-                              ""alias"": ""content"",
-                              ""value"": """"
-                            },
-                            {
-                              ""alias"": ""media"",
-                              ""value"": """"
-                            },
-                            {
-                              ""alias"": ""openInNewWindow"",
-                              ""value"": ""1""
-                            }
-                          ]
-                        }
-                      ]
-                    }
-                  }
-                ]
-              }
-            ]
-          }
-        }
-      ]
-    }
-  ]
-}";
-
-        private const string _NULL_VALUES_JSON = @"{""fieldsets"":[{""alias"":""contactDetails"",""properties"":[{""alias"":""name"",""value"":""""},{""alias"":""address"",""value"":""""},{""alias"":""telephone"",""value"":""""},{""alias"":""mobile"",""value"":""""},{""alias"":""fax"",""value"":""""},{""alias"":""email"",""value"":""""},{""alias"":""webSite"",""value"":""""}]}]}";
-
         private ContactDetails _contactDetails;
         private CompanyDetails _companyDetails;
         private AnnualStatement _annualStatement;
+        private MergerDetails _mergerDetails;
         private UrlPicker _webSite;
 
         [SetUp]
@@ -210,7 +23,13 @@ namespace Archetype.Tests.Serialization
                 Title = "The Test Company",
                 OpenInNewWindow = true
             };
-            
+
+            _mergerDetails = new MergerDetails
+            {
+                MergerDate = new DateTime(2014,6,7,8,9,10),
+                MergerValue = 12345676890.12m
+            };
+
             _contactDetails = new ContactDetails
             {
                 Address = "Test Address",
@@ -241,10 +60,17 @@ namespace Archetype.Tests.Serialization
         #region serialization tests
 
         [Test]
+        public void MergerDetailsModel_Serializes_To_Archetype_Property()
+        {
+            var result = JsonConvert.SerializeObject(_mergerDetails, Formatting.Indented);
+            Assert.AreEqual(JsonTestStrings._MERGER_DETAILS_JSON, result);
+        }        
+        
+        [Test]
         public void ContactDetailsModel_Serializes_To_Archetype_Property()
         {
             var result = JsonConvert.SerializeObject(_contactDetails, Formatting.Indented);
-            Assert.AreEqual(_CONTACT_DETAILS_JSON, result);
+            Assert.AreEqual(JsonTestStrings._CONTACT_DETAILS_JSON, result);
         }
 
         [Test]
@@ -252,7 +78,7 @@ namespace Archetype.Tests.Serialization
         {
             var result = JsonConvert.SerializeObject(_companyDetails, Formatting.Indented);
 
-            Assert.AreEqual(_COMPANY_DETAILS_JSON, result);
+            Assert.AreEqual(JsonTestStrings._COMPANY_DETAILS_JSON, result);
 
         }
 
@@ -261,7 +87,7 @@ namespace Archetype.Tests.Serialization
         {
             var result = JsonConvert.SerializeObject(_annualStatement, Formatting.Indented);
 
-            Assert.AreEqual(_ANNUAL_STATEMENT_JSON, result);
+            Assert.AreEqual(JsonTestStrings._ANNUAL_STATEMENT_JSON, result);
 
         }
 
@@ -270,7 +96,7 @@ namespace Archetype.Tests.Serialization
         {
             var result = JsonConvert.SerializeObject(new ContactDetails());
 
-            Assert.AreEqual(_NULL_VALUES_JSON, result);
+            Assert.AreEqual(JsonTestStrings._NULL_VALUES_JSON, result);
 
         }
 
@@ -383,7 +209,7 @@ namespace Archetype.Tests.Serialization
         [Test]
         public void DeserializeModelFromArchetype()
         {
-            var result = JsonConvert.DeserializeObject<ContactDetails>(_CONTACT_DETAILS_JSON);
+            var result = JsonConvert.DeserializeObject<ContactDetails>(JsonTestStrings._CONTACT_DETAILS_JSON);
 
             Assert.NotNull(result);
             Assert.IsInstanceOf<ContactDetails>(result);
@@ -404,7 +230,7 @@ namespace Archetype.Tests.Serialization
         [Test]
         public void DeserializeNumericAndDateModelFromArchetype()
         {
-            var result = JsonConvert.DeserializeObject<AnnualStatement>(_ANNUAL_STATEMENT_JSON);
+            var result = JsonConvert.DeserializeObject<AnnualStatement>(JsonTestStrings._ANNUAL_STATEMENT_JSON);
 
             Assert.NotNull(result);
             Assert.IsInstanceOf<AnnualStatement>(result);

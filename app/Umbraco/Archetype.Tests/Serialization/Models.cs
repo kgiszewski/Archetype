@@ -80,5 +80,14 @@ namespace Archetype.Tests.Serialization
         public Decimal Profit { get; set; }
     }
 
+    [ArchetypeDatatype("mergerDetails")]
+    [JsonConverter(typeof(ArchetypeJsonConverter<MergerDetails>))]
+    public class MergerDetails
+    {
+        public DateTime MergerDate { get; set; }
+        [JsonIgnore]
+        public decimal MergerValue { get; set; }
+    }
+
     #endregion
 }

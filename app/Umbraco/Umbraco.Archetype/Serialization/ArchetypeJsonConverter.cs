@@ -15,16 +15,16 @@ namespace Archetype.Umbraco.Serialization
     {
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
-            var fieldsets = (value as IList) ?? new List<T> { value as T };
+            var models = (value as IList) ?? new List<T> { value as T };
 
-            if (fieldsets.Count == 1 && fieldsets[0] == null) 
+            if (models.Count == 1 && models[0] == null) 
                 return;
 
             var jObj = new JObject
             {
                 {
                     "fieldsets", 
-                     new JArray( new JRaw(SerializeFieldsets(fieldsets)))
+                     new JArray( new JRaw(SerializeModels(models)))
                 }
             };
 
@@ -96,19 +96,19 @@ namespace Archetype.Umbraco.Serialization
             return JToken.Parse(json).ToString(formatting);
         }
 
-        private IEnumerable SerializeFieldsets(IEnumerable fieldSets)
+        private IEnumerable SerializeModels(IEnumerable models)
         {
-            var fieldsetJson = (from object fs in fieldSets where null != fs select SerializeObject(fs)).ToList();
+            var fieldsetJson = (from object model in models where null != model select SerializeModel(model)).ToList();
 
             return String.Join(",", fieldsetJson);
         }
 
-        private string SerializeObject(object value)
+        private string SerializeModel(object value)
         {
             if (value == null)
                 return null;
 
-            var jObj = GetFieldsetJObject(value);
+            var jObj = GetJObject(value);
 
             var fieldsetJson = new StringBuilder();
             var fieldsetWriter = new StringWriter(fieldsetJson);
@@ -121,7 +121,7 @@ namespace Archetype.Umbraco.Serialization
             return fieldsetJson.ToString();
         }
 
-        private JObject GetFieldsetJObject(object obj)
+        private JObject GetJObject(object obj)
         {
             var jObj = new JObject
                 {
@@ -132,7 +132,8 @@ namespace Archetype.Umbraco.Serialization
                 };
 
             var properties = obj.GetType()
-                                .GetProperties(BindingFlags.Instance | BindingFlags.Public);
+                                .GetProperties(BindingFlags.Instance | BindingFlags.Public)
+                                .Where(prop => !Attribute.IsDefined(prop, typeof(JsonIgnoreAttribute)));
 
             var fsProperties = new List<JObject>();
 
