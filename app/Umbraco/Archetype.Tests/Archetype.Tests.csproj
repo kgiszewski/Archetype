@@ -204,7 +204,7 @@
     <Compile Include="PropertyValueConverter\PropertyValueConverterTests.cs" />
     <Compile Include="Serialization\ArchetypeJsonConverterTest.cs" />
     <Compile Include="Serialization\JsonTestStrings.cs" />
-    <Compile Include="Serialization\Models.cs" />
+    <Compile Include="Serialization\JsonTestModels.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
