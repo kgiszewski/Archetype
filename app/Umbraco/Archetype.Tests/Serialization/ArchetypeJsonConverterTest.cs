@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Archetype.Umbraco.PropertyConverters;
 using Newtonsoft.Json;
 using NUnit.Framework;
@@ -8,6 +9,41 @@ namespace Archetype.Tests.Serialization
     [TestFixture]
     public class ArchetypeJsonConverterTest
     {
+        private const string _ANNUAL_STATEMENT_JSON =
+@"{
+  ""fieldsets"": [
+    {
+      ""alias"": ""annualStatement"",
+      ""properties"": [
+        {
+          ""alias"": ""FiscalYearStart"",
+          ""value"": ""01/09/2013 00:00:00""
+        },
+        {
+          ""alias"": ""FiscalYearEnd"",
+          ""value"": ""31/08/2014 00:00:00""
+        },
+        {
+          ""alias"": ""DividendPaymentDate"",
+          ""value"": """"
+        },
+        {
+          ""alias"": ""TotalShares"",
+          ""value"": ""345678""
+        },
+        {
+          ""alias"": ""Sales"",
+          ""value"": ""123456700.89""
+        },
+        {
+          ""alias"": ""Profit"",
+          ""value"": ""1123456.78""
+        }
+      ]
+    }
+  ]
+}";
+
         private const string _CONTACT_DETAILS_JSON =
 @"{
   ""fieldsets"": [
@@ -162,10 +198,19 @@ namespace Archetype.Tests.Serialization
 
         private ContactDetails _contactDetails;
         private CompanyDetails _companyDetails;
+        private AnnualStatement _annualStatement;
+        private UrlPicker _webSite;
 
         [SetUp]
         public void SetUp()
         {
+            _webSite = new UrlPicker
+            {
+                Url = "http://test.com",
+                Title = "The Test Company",
+                OpenInNewWindow = true
+            };
+            
             _contactDetails = new ContactDetails
             {
                 Address = "Test Address",
@@ -174,18 +219,22 @@ namespace Archetype.Tests.Serialization
                 Mobile = "000",
                 Name = "Test",
                 Telephone = "111",
-                WebSite = new UrlPicker
-                {
-                    Url = "http://test.com",
-                    Title = "The Test Company",
-                    OpenInNewWindow = true
-                }
+                WebSite = _webSite
             };
 
             _companyDetails = new CompanyDetails
             {
                 Region = "Test Region",
                 ContactDetails = _contactDetails
+            };
+
+            _annualStatement = new AnnualStatement
+            {
+                FiscalYearStart = new DateTime(2013, 9, 1),
+                FiscalYearEnd = new DateTime(2014, 8, 31),
+                TotalShares = 345678,
+                Sales = 123456700.89,
+                Profit = 1123456.78m
             };
         }
 
@@ -199,11 +248,20 @@ namespace Archetype.Tests.Serialization
         }
 
         [Test]
-        public void RegionalModel_Fieldset_Serializes_As_Expected()
+        public void CompanyDetailsModel_Fieldset_Serializes_As_Expected()
         {
             var result = JsonConvert.SerializeObject(_companyDetails, Formatting.Indented);
 
             Assert.AreEqual(_COMPANY_DETAILS_JSON, result);
+
+        }
+
+        [Test]
+        public void AnnualStatementModel_Fieldset_Serializes_As_Expected()
+        {
+            var result = JsonConvert.SerializeObject(_annualStatement, Formatting.Indented);
+
+            Assert.AreEqual(_ANNUAL_STATEMENT_JSON, result);
 
         }
 
@@ -227,6 +285,16 @@ namespace Archetype.Tests.Serialization
 
             var converter = new ArchetypeValueConverter();
             var json = JsonConvert.SerializeObject(model);
+            var archetype = (Archetype.Umbraco.Models.Archetype)converter.ConvertDataToSource(null, json, false);
+
+            Assert.NotNull(archetype);
+        }
+
+        [Test]
+        public void ConvertNumericAndDateModelToArchetype()
+        {
+            var converter = new ArchetypeValueConverter();
+            var json = JsonConvert.SerializeObject(_annualStatement);
             var archetype = (Archetype.Umbraco.Models.Archetype)converter.ConvertDataToSource(null, json, false);
 
             Assert.NotNull(archetype);
@@ -313,7 +381,7 @@ namespace Archetype.Tests.Serialization
         #region deserialization tests
 
         [Test]
-        public void ConvertArchetypeToModel()
+        public void DeserializeModelFromArchetype()
         {
             var result = JsonConvert.DeserializeObject<ContactDetails>(_CONTACT_DETAILS_JSON);
 
@@ -326,7 +394,54 @@ namespace Archetype.Tests.Serialization
             Assert.AreEqual("000", result.Mobile);
             Assert.AreEqual("Test", result.Name);
             Assert.AreEqual("111", result.Telephone);
-            Assert.AreEqual("http://test.com", result.WebSite);
+            Assert.AreEqual(_webSite.Content, result.WebSite.Content);
+            Assert.AreEqual(_webSite.Media, result.WebSite.Media);
+            Assert.AreEqual(_webSite.OpenInNewWindow, result.WebSite.OpenInNewWindow);
+            Assert.AreEqual(_webSite.Title, result.WebSite.Title);
+            Assert.AreEqual(_webSite.Url, result.WebSite.Url);
+        }
+
+        [Test]
+        public void DeserializeNumericAndDateModelFromArchetype()
+        {
+            var result = JsonConvert.DeserializeObject<AnnualStatement>(_ANNUAL_STATEMENT_JSON);
+
+            Assert.NotNull(result);
+            Assert.IsInstanceOf<AnnualStatement>(result);
+
+            Assert.AreEqual(new DateTime(2013, 9, 1), result.FiscalYearStart);
+            Assert.AreEqual(new DateTime(2014, 8, 31), result.FiscalYearEnd);
+            Assert.IsNull(result.DividendPaymentDate);
+            Assert.AreEqual(345678, result.TotalShares);
+            Assert.AreEqual(123456700.89, result.Sales);
+            Assert.AreEqual(1123456.78m, result.Profit);
+        }
+
+        [Test]
+        public void DeserializeNumericAndDateModel_NullableDate_HasValue_FromArchetype()
+        {
+            var annualStatement = new AnnualStatement
+            {
+                FiscalYearStart = new DateTime(2013, 9, 1),
+                FiscalYearEnd = new DateTime(2014, 8, 31),
+                DividendPaymentDate = new DateTime(2014,9,15,10,15,30),
+                TotalShares = 345678,
+                Sales = 123456700.89,
+                Profit = 1123456.78m
+            };
+
+            var json = JsonConvert.SerializeObject(annualStatement);
+            var result = JsonConvert.DeserializeObject<AnnualStatement>(json);
+
+            Assert.NotNull(result);
+            Assert.IsInstanceOf<AnnualStatement>(result);
+
+            Assert.AreEqual(annualStatement.FiscalYearStart, result.FiscalYearStart);
+            Assert.AreEqual(annualStatement.FiscalYearEnd, result.FiscalYearEnd);
+            Assert.AreEqual(annualStatement.DividendPaymentDate, result.DividendPaymentDate);
+            Assert.AreEqual(annualStatement.TotalShares, result.TotalShares);
+            Assert.AreEqual(annualStatement.Sales, result.Sales);
+            Assert.AreEqual(annualStatement.Profit, result.Profit);
         }
 
         [Test]

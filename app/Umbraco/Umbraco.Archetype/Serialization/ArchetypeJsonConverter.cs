@@ -69,10 +69,14 @@ namespace Archetype.Umbraco.Serialization
             foreach (var propertyInfo in properties)
             {
                 var propAlias = GetJsonPropertyName(propertyInfo);
-                var propJToken = jToken.Single(p => p.SelectToken("alias").ToString().Equals(propAlias));
+                var propJToken = jToken.SingleOrDefault(p => p.SelectToken("alias").ToString().Equals(propAlias));
+
+                if (propJToken == null)
+                    continue;
+
                 var propValue = IsValueArchetypeDatatype(propertyInfo.PropertyType)
                     ? JsonConvert.DeserializeObject(propJToken["value"].ToString(), propertyInfo.PropertyType, GetArchetypeDatatypeConverter(propertyInfo.PropertyType))
-                    : propJToken["value"].ToObject(propertyInfo.PropertyType);
+                    : GetDeserializedPropertyValue(propJToken["value"], propertyInfo.PropertyType);
 
                 propertyInfo.SetValue(obj, propValue);
             }
@@ -145,7 +149,7 @@ namespace Archetype.Umbraco.Serialization
                                   IsValueArchetypeDatatype(propValue)
                                       ? new JRaw(JsonConvert.SerializeObject(propValue,
                                                                              GetArchetypeDatatypeConverter(propValue)))
-                                      : new JValue(GetPropertyValue(propValue))));
+                                      : new JValue(GetSerializedPropertyValue(propValue))));
 
                 fsProperties.Add(fsProperty);
             }
@@ -196,15 +200,35 @@ namespace Archetype.Umbraco.Serialization
             return (JsonConverter)Activator.CreateInstance(genericType);
         }
 
-        private string GetPropertyValue(object propValue)
+        private string GetSerializedPropertyValue(object propValue)
         {
             if (propValue == null)
                 return String.Empty;
 
             if (propValue is bool)
-                return (bool)propValue ? GetPropertyValue(1) : GetPropertyValue(0);
+                return (bool)propValue ? GetSerializedPropertyValue(1) : GetSerializedPropertyValue(0);
 
             return String.Format("{0}", propValue);
+        }
+
+        private object GetDeserializedPropertyValue(JToken jToken, Type type)
+        {            
+            if (String.IsNullOrEmpty(jToken.ToString()))
+                return GetDefault(type);
+
+            var localType = Nullable.GetUnderlyingType(type) ?? type;
+
+            if (localType == typeof(bool))
+                return jToken.ToString() == "1";
+
+            return localType == typeof(DateTime) 
+                ? Convert.ToDateTime(jToken.ToString())
+                : jToken.ToObject(localType);
+        }
+
+        private object GetDefault(Type type)
+        {
+            return type.IsValueType ? Activator.CreateInstance(type) : null;
         }
 
         #endregion

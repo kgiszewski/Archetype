@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Archetype.Umbraco.Serialization;
 using Newtonsoft.Json;
 
@@ -65,6 +66,18 @@ namespace Archetype.Tests.Serialization
     [JsonConverter(typeof(ArchetypeJsonConverter<ContactDetailsList>))]
     public class ContactDetailsList : List<ContactDetails>
     {
+    }
+
+    [ArchetypeDatatype("annualStatement")]
+    [JsonConverter(typeof(ArchetypeJsonConverter<AnnualStatement>))]
+    public class AnnualStatement
+    {
+        public DateTime FiscalYearStart { get; set; }
+        public DateTime FiscalYearEnd { get; set; }
+        public DateTime? DividendPaymentDate { get; set; }
+        public Int32 TotalShares { get; set; }
+        public Double Sales { get; set; }
+        public Decimal Profit { get; set; }
     }
 
     #endregion
