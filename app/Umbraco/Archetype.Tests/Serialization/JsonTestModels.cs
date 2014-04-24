@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 
 namespace Archetype.Tests.Serialization
 {
-    #region test Models
+    #region json test Models
 
     [ArchetypeDatatype("urlPicker")]
     [JsonConverter(typeof(ArchetypeJsonConverter<UrlPicker>))]
