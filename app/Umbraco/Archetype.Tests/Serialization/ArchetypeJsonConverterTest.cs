@@ -40,18 +40,46 @@ namespace Archetype.Tests.Serialization
         },
         {
           ""alias"": ""webSite"",
-          ""value"": ""http://test.com""
+          ""value"": {
+            ""fieldsets"": [
+              {
+                ""alias"": ""urlPicker"",
+                ""properties"": [
+                  {
+                    ""alias"": ""title"",
+                    ""value"": ""The Test Company""
+                  },
+                  {
+                    ""alias"": ""url"",
+                    ""value"": ""http://test.com""
+                  },
+                  {
+                    ""alias"": ""content"",
+                    ""value"": """"
+                  },
+                  {
+                    ""alias"": ""media"",
+                    ""value"": """"
+                  },
+                  {
+                    ""alias"": ""openInNewWindow"",
+                    ""value"": ""1""
+                  }
+                ]
+              }
+            ]
+          }
         }
       ]
     }
   ]
 }";
 
-        private const string _HUB_DETAILS_JSON =
+        private const string _COMPANY_DETAILS_JSON =
 @"{
   ""fieldsets"": [
     {
-      ""alias"": ""regionalHub"",
+      ""alias"": ""companyDetails"",
       ""properties"": [
         {
           ""alias"": ""region"",
@@ -90,7 +118,35 @@ namespace Archetype.Tests.Serialization
                   },
                   {
                     ""alias"": ""webSite"",
-                    ""value"": ""http://test.com""
+                    ""value"": {
+                      ""fieldsets"": [
+                        {
+                          ""alias"": ""urlPicker"",
+                          ""properties"": [
+                            {
+                              ""alias"": ""title"",
+                              ""value"": ""The Test Company""
+                            },
+                            {
+                              ""alias"": ""url"",
+                              ""value"": ""http://test.com""
+                            },
+                            {
+                              ""alias"": ""content"",
+                              ""value"": """"
+                            },
+                            {
+                              ""alias"": ""media"",
+                              ""value"": """"
+                            },
+                            {
+                              ""alias"": ""openInNewWindow"",
+                              ""value"": ""1""
+                            }
+                          ]
+                        }
+                      ]
+                    }
                   }
                 ]
               }
@@ -147,7 +203,7 @@ namespace Archetype.Tests.Serialization
         {
             var result = JsonConvert.SerializeObject(_companyDetails, Formatting.Indented);
 
-            Assert.AreEqual(_HUB_DETAILS_JSON, result);
+            Assert.AreEqual(_COMPANY_DETAILS_JSON, result);
 
         }
 
