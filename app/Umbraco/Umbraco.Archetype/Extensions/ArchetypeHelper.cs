@@ -19,7 +19,7 @@ namespace Archetype.Umbraco.Extensions
         protected JsonSerializerSettings _jsonSettings;
         protected ApplicationContext _app; 
 
-        public ArchetypeHelper()
+        internal ArchetypeHelper()
         {
             var dcr = new Newtonsoft.Json.Serialization.DefaultContractResolver();
             dcr.DefaultMembersSearchFlags |= System.Reflection.BindingFlags.NonPublic;
@@ -28,7 +28,7 @@ namespace Archetype.Umbraco.Extensions
             _app = ApplicationContext.Current;
         }
 
-        public Models.Archetype DeserializeJsonToArchetype(string sourceJson, int dataTypeId)
+        internal Models.Archetype DeserializeJsonToArchetype(string sourceJson, int dataTypeId)
         {
             try
             {
@@ -38,23 +38,7 @@ namespace Archetype.Umbraco.Extensions
                 {
                     // Get list of configured properties and their types and map them to the deserialized archetype model
                     var preValue = GetArchetypePreValueFromDataTypeId(dataTypeId);
-                    foreach (var fieldset in preValue.Fieldsets)
-                    {
-                        var fieldsetAlias = fieldset.Alias;
-                        foreach (var fieldsetInst in archetype.Fieldsets.Where(x => x.Alias == fieldsetAlias))
-                        {
-                            foreach (var property in fieldset.Properties)
-                            {
-                                var propertyAlias = property.Alias;
-                                foreach (
-                                    var propertyInst in fieldsetInst.Properties.Where(x => x.Alias == propertyAlias))
-                                {
-                                    propertyInst.DataTypeId = GetDataTypeByGuid(property.DataTypeGuid).Id;
-                                    propertyInst.PropertyEditorAlias = property.PropertyEditorAlias;
-                                }
-                            }
-                        }
-                    }
+                    RetrieveAdditionalProperties(ref archetype, preValue);
                 }
                 catch (Exception ex)
                 {
@@ -81,14 +65,7 @@ namespace Archetype.Umbraco.Extensions
                         : preValues.PreValuesAsArray.First().Value;
 
                     var config = JsonConvert.DeserializeObject<ArchetypePreValue>(configJson, _jsonSettings);
-
-                    foreach (var fieldset in config.Fieldsets)
-                    {
-                        foreach (var property in fieldset.Properties)
-                        {
-                            property.PropertyEditorAlias = GetDataTypeByGuid(property.DataTypeGuid).PropertyEditorAlias;
-                        }
-                    }
+                    RetrieveAdditionalProperties(ref config);
 
                     return config;
 
@@ -100,6 +77,47 @@ namespace Archetype.Umbraco.Extensions
             return (IDataTypeDefinition) ApplicationContext.Current.ApplicationCache.RuntimeCache.GetCacheItem(
                 Constants.CacheKey_DataTypeByGuid + guid,
                 () => _app.Services.DataTypeService.GetDataTypeDefinitionById(guid));
+        }
+
+        /// <summary>
+        /// Retrieves additional metadata that isn't available on the stored model of an Archetype
+        /// </summary>
+        /// <param name="archetype">The Archetype to add the additional metadata to</param>
+        /// <param name="preValue">The configuration of the Archetype</param>
+        private void RetrieveAdditionalProperties(ref Models.Archetype archetype, ArchetypePreValue preValue)
+        {
+            foreach (var fieldset in preValue.Fieldsets)
+            {
+                var fieldsetAlias = fieldset.Alias;
+                foreach (var fieldsetInst in archetype.Fieldsets.Where(x => x.Alias == fieldsetAlias))
+                {
+                    foreach (var property in fieldset.Properties)
+                    {
+                        var propertyAlias = property.Alias;
+                        foreach ( var propertyInst in fieldsetInst.Properties.Where(x => x.Alias == propertyAlias))
+                        {
+                            propertyInst.DataTypeId = GetDataTypeByGuid(property.DataTypeGuid).Id;
+                            propertyInst.PropertyEditorAlias = property.PropertyEditorAlias;
+                        }
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Retrieves additional metadata that isn't available on the stored model of an ArchetypePreValue
+        /// </summary>
+        /// <param name="archetype">The Archetype to add the additional metadata to</param>
+        /// <param name="preValue">The configuration of the Archetype</param>
+        private void RetrieveAdditionalProperties(ref Models.ArchetypePreValue preValue)
+        {
+            foreach (var fieldset in preValue.Fieldsets)
+            {
+                foreach (var property in fieldset.Properties)
+                {
+                    property.PropertyEditorAlias = GetDataTypeByGuid(property.DataTypeGuid).PropertyEditorAlias;
+                }
+            }
         }
 
     }
