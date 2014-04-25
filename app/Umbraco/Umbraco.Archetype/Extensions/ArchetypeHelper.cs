@@ -19,7 +19,7 @@ namespace Archetype.Umbraco.Extensions
         protected JsonSerializerSettings _jsonSettings;
         protected ApplicationContext _app; 
 
-        public ArchetypeHelper()
+        internal ArchetypeHelper()
         {
             var dcr = new Newtonsoft.Json.Serialization.DefaultContractResolver();
             dcr.DefaultMembersSearchFlags |= System.Reflection.BindingFlags.NonPublic;
@@ -28,7 +28,7 @@ namespace Archetype.Umbraco.Extensions
             _app = ApplicationContext.Current;
         }
 
-        public Models.Archetype DeserializeJsonToArchetype(string sourceJson, int dataTypeId)
+        internal Models.Archetype DeserializeJsonToArchetype(string sourceJson, int dataTypeId)
         {
             try
             {
