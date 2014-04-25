@@ -202,6 +202,7 @@
     <Compile Include="Models\FieldsetTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PropertyValueConverter\PropertyValueConverterTests.cs" />
+    <Compile Include="Serialization\ArchetypeJsonConverterComplexModelTest.cs" />
     <Compile Include="Serialization\ArchetypeJsonConverterTest.cs" />
     <Compile Include="Serialization\JsonTestStrings.cs" />
     <Compile Include="Serialization\JsonTestModels.cs" />

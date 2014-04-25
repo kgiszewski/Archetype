@@ -243,6 +243,7 @@
     <Compile Include="PropertyConverters\ArchetypeValueConverter.cs" />
     <Compile Include="Serialization\ArchetypeDatatypeAttribute.cs" />
     <Compile Include="Serialization\ArchetypeJsonConverter.cs" />
+    <Compile Include="Serialization\SerializationExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

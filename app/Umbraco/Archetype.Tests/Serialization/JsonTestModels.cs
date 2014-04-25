@@ -90,4 +90,40 @@ namespace Archetype.Tests.Serialization
     }
 
     #endregion
+
+    #region complex nested model
+
+    [ArchetypeDatatype("pages")]
+    [JsonConverter(typeof(ArchetypeJsonConverter<PageDetails>))]
+    public class PageDetails
+    {
+        [JsonProperty("pages")]
+        public string Pages { get; set; }
+        [JsonProperty("captions")]
+        public Captions Captions { get; set; }
+    }
+
+    [ArchetypeDatatype("captions")]
+    [JsonConverter(typeof(ArchetypeJsonConverter<Captions>))]
+    public class Captions
+    {
+        [JsonProperty("captions")]
+        public TextList TextStringArray { get; set; }
+    }
+
+    [ArchetypeDatatype("textstringArray")]
+    [JsonConverter(typeof(ArchetypeJsonConverter<TextList>))]
+    public class TextList : List<TextItem>
+    {
+    }
+
+    [ArchetypeDatatype("textstringArray")]
+    [JsonConverter(typeof(ArchetypeJsonConverter<TextItem>))]
+    public class TextItem
+    {
+        [JsonProperty("textstring")]
+        public string TextString { get; set; }
+    }
+
+    #endregion
 }

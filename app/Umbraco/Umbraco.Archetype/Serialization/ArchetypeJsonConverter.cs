@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -15,7 +16,10 @@ namespace Archetype.Umbraco.Serialization
     {
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
-            var models = (value as IList) ?? new List<T> { value as T };
+            var models = GenerateModels(value);
+
+            if (models.Count < 1)
+                return;
 
             if (models.Count == 1 && models[0] == null) 
                 return;
@@ -96,6 +100,30 @@ namespace Archetype.Umbraco.Serialization
             return JToken.Parse(json).ToString(formatting);
         }
 
+        private IList GenerateModels(object value)
+        {
+            var models = value as IList;
+
+            if (null != models)
+                return models;
+
+            models = GetPropertiesToSerialize(value)
+                        .Select(pInfo =>
+                        {
+                            if (pInfo.PropertyType.IsPrimitive || pInfo.PropertyType.IsValueType
+                                    || pInfo.PropertyType.Name.Equals(typeof(String).Name))
+                            {
+                                var dynamicModel = new ExpandoObject() as IDictionary<string, object>;
+                                dynamicModel.Add(GetJsonPropertyName(pInfo), pInfo.GetValue(value));
+                                return dynamicModel;
+                            }
+
+                            return pInfo.GetValue(value);
+                        }).ToList();
+
+            return models;
+        }
+
         private IEnumerable SerializeModels(IEnumerable models)
         {
             var fieldsetJson = (from object model in models where null != model select SerializeModel(model)).ToList();
@@ -108,7 +136,7 @@ namespace Archetype.Umbraco.Serialization
             if (value == null)
                 return null;
 
-            var jObj = GetJObject(value);
+            var jObj = IsExpandoObject(value) ? GetJObjectFromExpandoObject(value as IDictionary<string, object>) : GetJObject(value);
 
             var fieldsetJson = new StringBuilder();
             var fieldsetWriter = new StringWriter(fieldsetJson);
@@ -121,6 +149,34 @@ namespace Archetype.Umbraco.Serialization
             return fieldsetJson.ToString();
         }
 
+        private bool IsExpandoObject(object value)
+        {
+            return value.GetType().Name.Equals(typeof (ExpandoObject).Name);
+        }
+
+        private JObject GetJObjectFromExpandoObject(IEnumerable<KeyValuePair<string, object>> obj)
+        {
+            var property = obj.ElementAt(0);
+            var alias = property.Key;
+            var value = property.Value;
+
+            var jObj = new JObject
+                {
+                    {
+                        "alias",
+                        new JValue(alias)
+                    }
+                };
+
+            var fsProperties = new List<JObject>
+            {
+                new JObject {new JProperty("alias", alias), new JProperty("value", value)}
+            };
+            jObj.Add("properties", new JRaw(JsonConvert.SerializeObject(fsProperties)));
+
+            return jObj;
+        }
+
         private JObject GetJObject(object obj)
         {
             var jObj = new JObject
@@ -131,9 +187,7 @@ namespace Archetype.Umbraco.Serialization
                     }
                 };
 
-            var properties = obj.GetType()
-                                .GetProperties(BindingFlags.Instance | BindingFlags.Public)
-                                .Where(prop => !Attribute.IsDefined(prop, typeof(JsonIgnoreAttribute)));
+            var properties = GetPropertiesToSerialize(obj);
 
             var fsProperties = new List<JObject>();
 
@@ -158,6 +212,13 @@ namespace Archetype.Umbraco.Serialization
             jObj.Add("properties", new JRaw(JsonConvert.SerializeObject(fsProperties)));
 
             return jObj;
+        }
+
+        private IEnumerable<PropertyInfo> GetPropertiesToSerialize(object obj)
+        {
+            return obj.GetType()
+                .GetProperties(BindingFlags.Instance | BindingFlags.Public)
+                .Where(prop => !Attribute.IsDefined(prop, typeof(JsonIgnoreAttribute)));
         }
 
         private string GetJsonPropertyName(PropertyInfo property)
