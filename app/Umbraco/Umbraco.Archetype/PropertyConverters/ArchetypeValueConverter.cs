@@ -9,12 +9,10 @@ using Umbraco.Core.Models;
 using Umbraco.Core.Models.PublishedContent;
 using Umbraco.Core.PropertyEditors;
 using Umbraco.Core.Services;
-using umbraco.interfaces;
 
 namespace Archetype.Umbraco.PropertyConverters
 {
-    /* based on the Tim Geyssens sample at:  https://github.com/TimGeyssens/MatrixPropEditor/blob/master/SamplePropertyValueConverter/SamplePropertyValueConverter/MatrixValueConverter.cs */
-    [PropertyValueType(typeof(Archetype.Umbraco.Models.Archetype))]
+    [PropertyValueType(typeof(Models.Archetype))]
     [PropertyValueCache(PropertyCacheValue.All, PropertyCacheLevel.Content)]
     public class ArchetypeValueConverter : PropertyValueConverterBase
     {
@@ -47,52 +45,49 @@ namespace Archetype.Umbraco.PropertyConverters
 
             var sourceString = source.ToString();
 
-            if (sourceString.DetectIsJson())
+            if (!sourceString.DetectIsJson())
+                return defaultValue;
+
+            try
             {
+                // Deserialize value to archetype model
+                var archetype = JsonConvert.DeserializeObject<Models.Archetype>(sourceString, _jsonSettings);
+
                 try
                 {
-                    // Deserialize value to archetype model
-                    var archetype = JsonConvert.DeserializeObject<Models.Archetype>(sourceString, _jsonSettings);
-
-                    try
+                    // Get list of configured properties and their types and map them to the deserialized archetype model
+                    var preValue = GetArchetypePreValueFromDataTypeId(propertyType.DataTypeId);
+                    foreach (var fieldset in preValue.Fieldsets)
                     {
-                        // Get list of configured properties and their types 
-                        // and map them to the deserialized archetype model
-                        var dataTypeCache = new Dictionary<Guid, IDataTypeDefinition>();
-                        var preValue = GetArchetypePreValueFromDataTypeId(propertyType.DataTypeId, dataTypeCache);
-                        foreach (var fieldset in preValue.Fieldsets)
+                        var fieldsetAlias = fieldset.Alias;
+                        foreach (var fieldsetInst in archetype.Fieldsets.Where(x => x.Alias == fieldsetAlias))
                         {
-                            var fieldsetAlias = fieldset.Alias;
-                            foreach (var fieldsetInst in archetype.Fieldsets.Where(x => x.Alias == fieldsetAlias))
+                            foreach (var property in fieldset.Properties)
                             {
-                                foreach (var property in fieldset.Properties)
+                                var propertyAlias = property.Alias;
+                                foreach (var propertyInst in fieldsetInst.Properties.Where(x => x.Alias == propertyAlias))
                                 {
-                                    var propertyAlias = property.Alias;
-                                    foreach (var propertyInst in fieldsetInst.Properties.Where(x => x.Alias == propertyAlias))
-                                    {
-                                        propertyInst.DataTypeId = GetDataTypeByGuid(property.DataTypeGuid).Id;
-                                        propertyInst.PropertyEditorAlias = property.PropertyEditorAlias;
-                                    }
+                                    propertyInst.DataTypeId = GetDataTypeByGuid(property.DataTypeGuid).Id;
+                                    propertyInst.PropertyEditorAlias = property.PropertyEditorAlias;
                                 }
                             }
                         }
                     }
-                    catch (Exception ex)
-                    {
-                    }
-
-                    return archetype;
                 }
                 catch (Exception ex)
                 {
-                    return defaultValue;
                 }
+
+                return archetype;
+            }
+            catch (Exception ex)
+            {
             }
 
             return defaultValue;
         }
 
-        private ArchetypePreValue GetArchetypePreValueFromDataTypeId(int dataTypeId, IDictionary<Guid, IDataTypeDefinition> dataTypeCache)
+        private ArchetypePreValue GetArchetypePreValueFromDataTypeId(int dataTypeId)
         {
             return ApplicationContext.Current.ApplicationCache.RuntimeCache.GetCacheItem(
                 Constants.CacheKey_PreValueFromDataTypeId + dataTypeId,
@@ -104,7 +99,7 @@ namespace Archetype.Umbraco.PropertyConverters
                         ? preValues.PreValuesAsDictionary[Constants.PreValueAlias].Value
                         : preValues.PreValuesAsArray.First().Value;
 
-                    var config = JsonConvert.DeserializeObject<Models.ArchetypePreValue>(configJson, _jsonSettings);
+                    var config = JsonConvert.DeserializeObject<ArchetypePreValue>(configJson, _jsonSettings);
 
                     foreach (var fieldset in config.Fieldsets)
                     {
