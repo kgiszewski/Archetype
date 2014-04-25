@@ -39,7 +39,8 @@ namespace Archetype.Umbraco.PropertyConverters
             if (!sourceString.DetectIsJson())
                 return defaultValue;
 
-            var archetype = new ArchetypeHelper().DeserializeJsonToArchetype(source.ToString(), propertyType.DataTypeId);
+            var archetype = new ArchetypeHelper().DeserializeJsonToArchetype(source.ToString(),
+                (propertyType != null ? propertyType.DataTypeId : -1));
 
             return archetype;
         }
