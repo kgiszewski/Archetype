@@ -16,15 +16,6 @@ namespace Archetype.Umbraco.PropertyConverters
     [PropertyValueCache(PropertyCacheValue.All, PropertyCacheLevel.Content)]
     public class ArchetypeValueConverter : PropertyValueConverterBase
     {
-        protected JsonSerializerSettings _jsonSettings;
-
-        public ArchetypeValueConverter()
-        {
-            var dcr = new Newtonsoft.Json.Serialization.DefaultContractResolver();
-            dcr.DefaultMembersSearchFlags |= System.Reflection.BindingFlags.NonPublic;
-
-            _jsonSettings = new JsonSerializerSettings { ContractResolver = dcr };
-        }
 
         public ServiceContext Services
         {
@@ -48,77 +39,11 @@ namespace Archetype.Umbraco.PropertyConverters
             if (!sourceString.DetectIsJson())
                 return defaultValue;
 
-            try
-            {
-                // Deserialize value to archetype model
-                var archetype = JsonConvert.DeserializeObject<Models.Archetype>(sourceString, _jsonSettings);
+            var archetype = new ArchetypeHelper().DeserializeJsonToArchetype(source.ToString(),
+                (propertyType != null ? propertyType.DataTypeId : -1));
 
-                try
-                {
-                    // Get list of configured properties and their types and map them to the deserialized archetype model
-                    var preValue = GetArchetypePreValueFromDataTypeId(propertyType.DataTypeId);
-                    foreach (var fieldset in preValue.Fieldsets)
-                    {
-                        var fieldsetAlias = fieldset.Alias;
-                        foreach (var fieldsetInst in archetype.Fieldsets.Where(x => x.Alias == fieldsetAlias))
-                        {
-                            foreach (var property in fieldset.Properties)
-                            {
-                                var propertyAlias = property.Alias;
-                                foreach (var propertyInst in fieldsetInst.Properties.Where(x => x.Alias == propertyAlias))
-                                {
-                                    propertyInst.DataTypeId = GetDataTypeByGuid(property.DataTypeGuid).Id;
-                                    propertyInst.PropertyEditorAlias = property.PropertyEditorAlias;
-                                }
-                            }
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                }
-
-                return archetype;
-            }
-            catch (Exception ex)
-            {
-            }
-
-            return defaultValue;
+            return archetype;
         }
 
-        private ArchetypePreValue GetArchetypePreValueFromDataTypeId(int dataTypeId)
-        {
-            return ApplicationContext.Current.ApplicationCache.RuntimeCache.GetCacheItem(
-                Constants.CacheKey_PreValueFromDataTypeId + dataTypeId,
-                () =>
-                {
-                    var preValues = Services.DataTypeService.GetPreValuesCollectionByDataTypeId(dataTypeId);
-
-                    var configJson = preValues.IsDictionaryBased
-                        ? preValues.PreValuesAsDictionary[Constants.PreValueAlias].Value
-                        : preValues.PreValuesAsArray.First().Value;
-
-                    var config = JsonConvert.DeserializeObject<ArchetypePreValue>(configJson, _jsonSettings);
-
-                    foreach (var fieldset in config.Fieldsets)
-                    {
-                        foreach (var property in fieldset.Properties)
-                        {
-                            property.PropertyEditorAlias = GetDataTypeByGuid(property.DataTypeGuid).PropertyEditorAlias;
-                        }
-                    }
-
-                    return config;
-
-                }) as ArchetypePreValue;
-        }    
-        
-        private IDataTypeDefinition GetDataTypeByGuid(Guid guid)
-        {
-            return (IDataTypeDefinition) ApplicationContext.Current.ApplicationCache.RuntimeCache.GetCacheItem(
-                Constants.CacheKey_DataTypeByGuid + guid,
-                () => Services.DataTypeService.GetDataTypeDefinitionById(guid));
-        }
     }
 }
