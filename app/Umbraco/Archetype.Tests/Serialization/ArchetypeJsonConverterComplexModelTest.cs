@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Archetype.Umbraco.PropertyConverters;
 using Newtonsoft.Json;
 using NUnit.Framework;
 
@@ -42,8 +43,48 @@ namespace Archetype.Tests.Serialization
         {
             var result = JsonConvert.SerializeObject(_pageDetails, Formatting.Indented);
             Assert.AreEqual(JsonTestStrings._PAGE_DETAILS_JSON, result);
-        }  
+        }
 
+        [Test]
+        public void ConvertComplexModelToArchetype()
+        {
+            var converter = new ArchetypeValueConverter();
+            var json = JsonConvert.SerializeObject(_pageDetails, Formatting.Indented);
+            var archetype = (Archetype.Umbraco.Models.Archetype)converter.ConvertDataToSource(null, json, false);
+
+            Assert.NotNull(archetype);
+        }
+
+        [Test]
+        public void DeserializeComplexModelFromArchetype()
+        {
+            var result = JsonConvert.DeserializeObject<PageDetails>(JsonTestStrings._PAGE_DETAILS_JSON);
+
+            Assert.NotNull(result);
+            Assert.IsInstanceOf<PageDetails>(result);
+
+            Assert.AreEqual("2439,2440,2441,2442,2443,2444,2445,2446,2447,2448,2449,2450,2451,2452,2453", result.Pages);
+            Assert.AreEqual("First Page", result.Captions.TextStringArray.ElementAt(0));
+            Assert.AreEqual("Second Page", result.Captions.TextStringArray.ElementAt(1));
+            Assert.AreEqual("Third Page", result.Captions.TextStringArray.ElementAt(2));
+            Assert.AreEqual("Fourth Page", result.Captions.TextStringArray.ElementAt(3));
+        }
+
+        [Test]
+        public void SerializeThenDeserializeComplexModelFromArchetype()
+        {
+            var json = JsonConvert.SerializeObject(_pageDetails);
+            var result = JsonConvert.DeserializeObject<PageDetails>(json);
+
+            Assert.NotNull(result);
+            Assert.IsInstanceOf<PageDetails>(result);
+
+            Assert.AreEqual(_pageDetails.Pages, result.Pages);
+            Assert.AreEqual(_pageDetails.Captions.TextStringArray.ElementAt(0), result.Captions.TextStringArray.ElementAt(0));
+            Assert.AreEqual(_pageDetails.Captions.TextStringArray.ElementAt(1), result.Captions.TextStringArray.ElementAt(1));
+            Assert.AreEqual(_pageDetails.Captions.TextStringArray.ElementAt(2), result.Captions.TextStringArray.ElementAt(2));
+            Assert.AreEqual(_pageDetails.Captions.TextStringArray.ElementAt(3), result.Captions.TextStringArray.ElementAt(3));
+        }
         #endregion
 
     }

@@ -2,11 +2,11 @@
 
 namespace Archetype.Umbraco.Serialization
 {
-    public class ArchetypeDatatypeAttribute : Attribute
+    public class AsArchetypeAttribute : Attribute
     {
         public string FieldsetName { get; set; }
 
-        public ArchetypeDatatypeAttribute(string fieldsetname)
+        public AsArchetypeAttribute(string fieldsetname)
         {
             FieldsetName = fieldsetname;
         }

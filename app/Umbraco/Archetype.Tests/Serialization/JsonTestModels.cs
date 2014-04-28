@@ -7,7 +7,7 @@ namespace Archetype.Tests.Serialization
 {
     #region json test Models
 
-    [ArchetypeDatatype("urlPicker")]
+    [AsArchetype("urlPicker")]
     [JsonConverter(typeof(ArchetypeJsonConverter<UrlPicker>))]
     public class UrlPicker
     {
@@ -23,7 +23,7 @@ namespace Archetype.Tests.Serialization
         public bool OpenInNewWindow { get; set; }
     }
 
-    [ArchetypeDatatype("contactDetails")]
+    [AsArchetype("contactDetails")]
     [JsonConverter(typeof(ArchetypeJsonConverter<ContactDetails>))]
     public class ContactDetails
     {
@@ -43,7 +43,7 @@ namespace Archetype.Tests.Serialization
         public UrlPicker WebSite { get; set; }
     }
 
-    [ArchetypeDatatype("companyDetails")]
+    [AsArchetype("companyDetails")]
     [JsonConverter(typeof(ArchetypeJsonConverter<CompanyDetails>))]
     public class CompanyDetails
     {
@@ -53,7 +53,7 @@ namespace Archetype.Tests.Serialization
         public ContactDetails ContactDetails { get; set; }
     }
 
-    [ArchetypeDatatype("allContactDetails")]
+    [AsArchetype("allContactDetails")]
     [JsonConverter(typeof(ArchetypeJsonConverter<AllContactDetails>))]
     public class AllContactDetails
     {
@@ -62,13 +62,13 @@ namespace Archetype.Tests.Serialization
 
     }
 
-    [ArchetypeDatatype("contactDetailsList")]
+    [AsArchetype("contactDetailsList")]
     [JsonConverter(typeof(ArchetypeJsonConverter<ContactDetailsList>))]
     public class ContactDetailsList : List<ContactDetails>
     {
     }
 
-    [ArchetypeDatatype("annualStatement")]
+    [AsArchetype("annualStatement")]
     [JsonConverter(typeof(ArchetypeJsonConverter<AnnualStatement>))]
     public class AnnualStatement
     {
@@ -80,7 +80,7 @@ namespace Archetype.Tests.Serialization
         public Decimal Profit { get; set; }
     }
 
-    [ArchetypeDatatype("mergerDetails")]
+    [AsArchetype("mergerDetails")]
     [JsonConverter(typeof(ArchetypeJsonConverter<MergerDetails>))]
     public class MergerDetails
     {
@@ -93,17 +93,18 @@ namespace Archetype.Tests.Serialization
 
     #region complex nested model
 
-    [ArchetypeDatatype("pages")]
+    [AsArchetype("pages")]
     [JsonConverter(typeof(ArchetypeJsonConverter<PageDetails>))]
     public class PageDetails
     {
         [JsonProperty("pages")]
         public string Pages { get; set; }
+        [AsFieldset]
         [JsonProperty("captions")]
         public Captions Captions { get; set; }
     }
 
-    [ArchetypeDatatype("captions")]
+    [AsArchetype("captions")]
     [JsonConverter(typeof(ArchetypeJsonConverter<Captions>))]
     public class Captions
     {
@@ -111,13 +112,13 @@ namespace Archetype.Tests.Serialization
         public TextList TextStringArray { get; set; }
     }
 
-    [ArchetypeDatatype("textstringArray")]
+    [AsArchetype("textstringArray")]
     [JsonConverter(typeof(ArchetypeJsonConverter<TextList>))]
     public class TextList : List<TextItem>
     {
     }
 
-    [ArchetypeDatatype("textstringArray")]
+    [AsArchetype("textstringArray")]
     [JsonConverter(typeof(ArchetypeJsonConverter<TextItem>))]
     public class TextItem
     {

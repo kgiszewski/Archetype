@@ -107,21 +107,40 @@ namespace Archetype.Umbraco.Serialization
             if (null != models)
                 return models;
 
-            models = GetPropertiesToSerialize(value)
-                        .Select(pInfo =>
-                        {
-                            if (pInfo.PropertyType.IsPrimitive || pInfo.PropertyType.IsValueType
-                                    || pInfo.PropertyType.Name.Equals(typeof(String).Name))
-                            {
-                                var dynamicModel = new ExpandoObject() as IDictionary<string, object>;
-                                dynamicModel.Add(GetJsonPropertyName(pInfo), pInfo.GetValue(value));
-                                return dynamicModel;
-                            }
+            var properties = GetPropertiesToSerialize(value).ToList();
 
-                            return pInfo.GetValue(value);
-                        }).ToList();
+            if (!PropertyLayoutHasFieldsets(properties))
+                return new List<object>() { value };
+
+            var dynamicModel = new ExpandoObject() as IDictionary<string, object>;
+
+            foreach (var pInfo in properties.Where(pInfo => !HasAsFieldsetAttribute(pInfo)))
+            {
+                dynamicModel.Add(GetJsonPropertyName(pInfo), pInfo.GetValue(value));
+            }
+
+            var fieldsetModels = properties.Where(HasAsFieldsetAttribute)
+                .Select(pInfo => pInfo.GetValue(value));
+
+            models = new List<object>
+            {
+                dynamicModel,                
+            };
+
+            models = ((IEnumerable<object>)models).Concat(fieldsetModels).ToList();
 
             return models;
+        }
+
+        private bool PropertyLayoutHasFieldsets(IEnumerable<PropertyInfo> properties)
+        {
+            return properties.Any(HasAsFieldsetAttribute);
+        }
+
+        private static bool HasAsFieldsetAttribute(PropertyInfo pInfo)
+        {
+            return pInfo
+                .GetCustomAttributes(typeof(AsFieldsetAttribute), true).Length > 0;
         }
 
         private IEnumerable SerializeModels(IEnumerable models)
@@ -136,7 +155,9 @@ namespace Archetype.Umbraco.Serialization
             if (value == null)
                 return null;
 
-            var jObj = IsExpandoObject(value) ? GetJObjectFromExpandoObject(value as IDictionary<string, object>) : GetJObject(value);
+            var jObj = IsExpandoObject(value) 
+                ? GetJObjectFromExpandoObject(value as IDictionary<string, object>) 
+                : GetJObject(value);
 
             var fieldsetJson = new StringBuilder();
             var fieldsetWriter = new StringWriter(fieldsetJson);
@@ -232,7 +253,7 @@ namespace Archetype.Umbraco.Serialization
         private string GetFieldsetName(Type type)
         {
             var attributes = type.GetCustomAttributes(true);
-            var archetypeDatatypeAttribute = (ArchetypeDatatypeAttribute)attributes.FirstOrDefault(attr => attr is ArchetypeDatatypeAttribute);
+            var archetypeDatatypeAttribute = (AsArchetypeAttribute)attributes.FirstOrDefault(attr => attr is AsArchetypeAttribute);
 
             return archetypeDatatypeAttribute != null ? archetypeDatatypeAttribute.FieldsetName : type.Name;
         }
@@ -245,7 +266,7 @@ namespace Archetype.Umbraco.Serialization
 
         private bool IsValueArchetypeDatatype(Type type)
         {
-            return type.GetCustomAttributes(typeof(ArchetypeDatatypeAttribute), true).Length > 0;
+            return type.GetCustomAttributes(typeof(AsArchetypeAttribute), true).Length > 0;
         }
 
         private JsonConverter GetArchetypeDatatypeConverter(object value)
