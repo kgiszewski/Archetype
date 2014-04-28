@@ -44,14 +44,13 @@ namespace Archetype.Umbraco.Serialization
 
             var obj = Activator.CreateInstance(objectType);
 
-            if (null != obj as IEnumerable<object> 
+            if (null != obj as IEnumerable<object>
                 && jToken["fieldsets"] != null && jToken["fieldsets"].Any())
             {
                 var model = obj as IEnumerable<object>;
-                var fieldsets = jToken["fieldsets"];
 
                 var itemType = model.GetType().BaseType.GetGenericArguments().First();
-                foreach (var fs in fieldsets.Where(fs => fs["alias"].ToString().Equals(GetFieldsetName(itemType))))
+                foreach (var fs in jToken["fieldsets"].Where(fs => fs["alias"].ToString().Equals(GetFieldsetName(itemType))))
                 {
                     var item = JsonConvert.DeserializeObject(
                         fs["properties"].ToString(), itemType, GetArchetypeDatatypeConverter(itemType));
@@ -64,15 +63,16 @@ namespace Archetype.Umbraco.Serialization
 
             if (null == jToken as JArray)
             {
-                jToken = jToken.SelectToken("fieldsets[0].properties");
+                var objAlias = GetFieldsetName(objectType);
+                jToken = jToken["fieldsets"].Single(p => p.SelectToken("alias").ToString().Equals(objAlias)).SelectToken("properties");                
             }
 
-            var properties = obj.GetType()
-                .GetProperties(BindingFlags.Instance | BindingFlags.Public);
+            var properties = GetSerialiazableProperties(obj);
 
             foreach (var propertyInfo in properties)
             {
                 var propAlias = GetJsonPropertyName(propertyInfo);
+
                 var propJToken = jToken.SingleOrDefault(p => p.SelectToken("alias").ToString().Equals(propAlias));
 
                 if (propJToken == null)
@@ -107,7 +107,7 @@ namespace Archetype.Umbraco.Serialization
             if (null != models)
                 return models;
 
-            var properties = GetPropertiesToSerialize(value).ToList();
+            var properties = GetSerialiazableProperties(value).ToList();
 
             if (!PropertyLayoutHasFieldsets(properties))
                 return new List<object>() { value };
@@ -208,7 +208,7 @@ namespace Archetype.Umbraco.Serialization
                     }
                 };
 
-            var properties = GetPropertiesToSerialize(obj);
+            var properties = GetSerialiazableProperties(obj);
 
             var fsProperties = new List<JObject>();
 
@@ -235,7 +235,7 @@ namespace Archetype.Umbraco.Serialization
             return jObj;
         }
 
-        private IEnumerable<PropertyInfo> GetPropertiesToSerialize(object obj)
+        private IEnumerable<PropertyInfo> GetSerialiazableProperties(object obj)
         {
             return obj.GetType()
                 .GetProperties(BindingFlags.Instance | BindingFlags.Public)

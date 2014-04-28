@@ -325,7 +325,6 @@ namespace Archetype.Tests.Serialization
             };
 
             var json = JsonConvert.SerializeObject(model, Formatting.Indented);
-
             var result = JsonConvert.DeserializeObject<ContactDetailsList>(json);
 
             Assert.NotNull(result);
