@@ -47,26 +47,40 @@ namespace Archetype.Umbraco.Serialization
             if (null != obj as IEnumerable<object>
                 && jToken["fieldsets"] != null && jToken["fieldsets"].Any())
             {
-                var model = obj as IEnumerable<object>;
-
-                var itemType = model.GetType().BaseType.GetGenericArguments().First();
-                foreach (var fs in jToken["fieldsets"].Where(fs => fs["alias"].ToString().Equals(GetFieldsetName(itemType))))
-                {
-                    var item = JsonConvert.DeserializeObject(
-                        fs["properties"].ToString(), itemType, GetArchetypeDatatypeConverter(itemType));
-
-                    obj.GetType().GetMethod("Add").Invoke(obj, new [] {item});
-                }
-
-                return obj;
+                return DeserializeEnumerableObject(obj, jToken);
             }
 
-            if (null == jToken as JArray)
+            return null == jToken as JArray 
+                        ? DeserializeObject(obj, jToken) 
+                        : PopulateProperties(obj, jToken);
+        }
+
+        private object DeserializeEnumerableObject(object obj, JToken jToken)
+        {
+            var model = obj as IEnumerable<object>;
+
+            var itemType = model.GetType().BaseType.GetGenericArguments().First();
+            foreach (var fs in jToken["fieldsets"].Where(fs => fs["alias"].ToString().Equals(GetFieldsetName(itemType))))
             {
-                var objAlias = GetFieldsetName(objectType);
-                jToken = jToken["fieldsets"].Single(p => p.SelectToken("alias").ToString().Equals(objAlias)).SelectToken("properties");                
+                var item = JsonConvert.DeserializeObject(
+                    fs["properties"].ToString(), itemType, GetArchetypeDatatypeConverter(itemType));
+
+                obj.GetType().GetMethod("Add").Invoke(obj, new[] {item});
             }
 
+            return obj;
+        }
+
+        private object DeserializeObject(object obj, JToken jToken)
+        {
+            var objAlias = GetFieldsetName(obj.GetType());
+            jToken = jToken["fieldsets"].Single(p => p.SelectToken("alias").ToString().Equals(objAlias)).SelectToken("properties");
+
+            return PopulateProperties(obj, jToken);
+        }
+
+        private object PopulateProperties(object obj, JToken jToken)
+        {
             var properties = GetSerialiazableProperties(obj);
 
             foreach (var propertyInfo in properties)
@@ -79,7 +93,8 @@ namespace Archetype.Umbraco.Serialization
                     continue;
 
                 var propValue = IsValueArchetypeDatatype(propertyInfo.PropertyType)
-                    ? JsonConvert.DeserializeObject(propJToken["value"].ToString(), propertyInfo.PropertyType, GetArchetypeDatatypeConverter(propertyInfo.PropertyType))
+                    ? JsonConvert.DeserializeObject(propJToken["value"].ToString(), propertyInfo.PropertyType,
+                        GetArchetypeDatatypeConverter(propertyInfo.PropertyType))
                     : GetDeserializedPropertyValue(propJToken["value"], propertyInfo.PropertyType);
 
                 propertyInfo.SetValue(obj, propValue);
