@@ -8,7 +8,7 @@ namespace Archetype.Tests.Serialization
     #region json test Models
 
     [AsArchetype("urlPicker")]
-    [JsonConverter(typeof(ArchetypeJsonConverter<UrlPicker>))]
+    [JsonConverter(typeof(ArchetypeJsonConverter))]
     public class UrlPicker
     {
         [JsonProperty("title")]
@@ -24,7 +24,7 @@ namespace Archetype.Tests.Serialization
     }
 
     [AsArchetype("contactDetails")]
-    [JsonConverter(typeof(ArchetypeJsonConverter<ContactDetails>))]
+    [JsonConverter(typeof(ArchetypeJsonConverter))]
     public class ContactDetails
     {
         [JsonProperty("name")]
@@ -44,7 +44,7 @@ namespace Archetype.Tests.Serialization
     }
 
     [AsArchetype("companyDetails")]
-    [JsonConverter(typeof(ArchetypeJsonConverter<CompanyDetails>))]
+    [JsonConverter(typeof(ArchetypeJsonConverter))]
     public class CompanyDetails
     {
         [JsonProperty("region")]
@@ -54,7 +54,7 @@ namespace Archetype.Tests.Serialization
     }
 
     [AsArchetype("allContactDetails")]
-    [JsonConverter(typeof(ArchetypeJsonConverter<AllContactDetails>))]
+    [JsonConverter(typeof(ArchetypeJsonConverter))]
     public class AllContactDetails
     {
         public ContactDetails UserDetails { get; set; }
@@ -63,13 +63,13 @@ namespace Archetype.Tests.Serialization
     }
 
     [AsArchetype("contactDetailsList")]
-    [JsonConverter(typeof(ArchetypeJsonConverter<ContactDetailsList>))]
+    [JsonConverter(typeof(ArchetypeJsonConverter))]
     public class ContactDetailsList : List<ContactDetails>
     {
     }
 
     [AsArchetype("annualStatement")]
-    [JsonConverter(typeof(ArchetypeJsonConverter<AnnualStatement>))]
+    [JsonConverter(typeof(ArchetypeJsonConverter))]
     public class AnnualStatement
     {
         public DateTime FiscalYearStart { get; set; }
@@ -81,7 +81,7 @@ namespace Archetype.Tests.Serialization
     }
 
     [AsArchetype("mergerDetails")]
-    [JsonConverter(typeof(ArchetypeJsonConverter<MergerDetails>))]
+    [JsonConverter(typeof(ArchetypeJsonConverter))]
     public class MergerDetails
     {
         public DateTime MergerDate { get; set; }
@@ -94,7 +94,7 @@ namespace Archetype.Tests.Serialization
     #region complex nested model
 
     [AsArchetype("pages")]
-    [JsonConverter(typeof(ArchetypeJsonConverter<PageDetails>))]
+    [JsonConverter(typeof(ArchetypeJsonConverter))]
     public class PageDetails
     {
         [JsonProperty("pages")]
@@ -105,7 +105,7 @@ namespace Archetype.Tests.Serialization
     }
 
     [AsArchetype("captions")]
-    [JsonConverter(typeof(ArchetypeJsonConverter<Captions>))]
+    [JsonConverter(typeof(ArchetypeJsonConverter))]
     public class Captions
     {
         [JsonProperty("captions")]
@@ -113,13 +113,13 @@ namespace Archetype.Tests.Serialization
     }
 
     [AsArchetype("textstringArray")]
-    [JsonConverter(typeof(ArchetypeJsonConverter<TextList>))]
+    [JsonConverter(typeof(ArchetypeJsonConverter))]
     public class TextList : List<TextItem>
     {
     }
 
     [AsArchetype("textstringArray")]
-    [JsonConverter(typeof(ArchetypeJsonConverter<TextItem>))]
+    [JsonConverter(typeof(ArchetypeJsonConverter))]
     public class TextItem
     {
         [JsonProperty("textstring")]
@@ -137,14 +137,14 @@ namespace Archetype.Tests.Serialization
     }
 
     [AsArchetype("slideShow")]
-    [JsonConverter(typeof(ArchetypeJsonConverter<SlideShow>))]
+    [JsonConverter(typeof(ArchetypeJsonConverter))]
     public class SlideShow
     {
         public string Slides { get; set; }
     }
 
     [AsArchetype("seo")]
-    [JsonConverter(typeof(ArchetypeJsonConverter<Seo>))]
+    [JsonConverter(typeof(ArchetypeJsonConverter))]
     public class Seo
     {
         public string MetaTitle { get; set; }
@@ -152,7 +152,7 @@ namespace Archetype.Tests.Serialization
     }
 
     [AsArchetype("TextPage")]
-    [JsonConverter(typeof(ArchetypeJsonConverter<TextPage>))]
+    [JsonConverter(typeof(ArchetypeJsonConverter))]
     public class TextPage : PageBase
     {
         [AsFieldset]
@@ -163,16 +163,15 @@ namespace Archetype.Tests.Serialization
     }
 
     [AsArchetype("TextPageList")]
-    [JsonConverter(typeof(ArchetypeJsonConverter<TextPageList>))]
+    [JsonConverter(typeof(ArchetypeJsonConverter))]
     public class TextPageList : List<TextPage>
     {
     }
 
     [AsArchetype("Pages")]
-    [JsonConverter(typeof(ArchetypeJsonConverter<PageList>))]
+    [JsonConverter(typeof(ArchetypeJsonConverter))]
     public class PageList
     {
-        [AsArchetype("Pages")]
         public TextPageList Pages { get; set; }
     }
 

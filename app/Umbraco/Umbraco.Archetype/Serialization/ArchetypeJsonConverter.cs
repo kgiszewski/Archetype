@@ -11,8 +11,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Archetype.Umbraco.Serialization
 {
-    public class ArchetypeJsonConverter<T> : JsonConverter
-        where T : class, new()
+    public class ArchetypeJsonConverter : JsonConverter
     {
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
@@ -107,7 +106,7 @@ namespace Archetype.Umbraco.Serialization
             foreach (var fs in jToken["fieldsets"].Where(fs => fs["alias"].ToString().Equals(GetFieldsetName(itemType))))
             {
                 var item = JsonConvert.DeserializeObject(
-                    fs["properties"].ToString(), itemType, GetArchetypeDatatypeConverter(itemType));
+                    fs["properties"].ToString(), itemType, GetArchetypeDatatypeConverter());
 
                 obj.GetType().GetMethod("Add").Invoke(obj, new[] { item });
             }
@@ -132,7 +131,7 @@ namespace Archetype.Umbraco.Serialization
 
                 var propValue = IsValueArchetypeDatatype(propInfo.PropertyType)
                 ? JsonConvert.DeserializeObject(fsJToken.ToString(), propInfo.PropertyType,
-                    GetArchetypeDatatypeConverter(propInfo.PropertyType))
+                    GetArchetypeDatatypeConverter())
                 : GetDeserializedPropertyValue(fsJToken, propInfo.PropertyType); ;
 
                 propInfo.SetValue(obj, propValue);
@@ -173,7 +172,7 @@ namespace Archetype.Umbraco.Serialization
         {
             return IsValueArchetypeDatatype(propertyInfo.PropertyType)
                 ? JsonConvert.DeserializeObject(propJToken["value"].ToString(), propertyInfo.PropertyType,
-                    GetArchetypeDatatypeConverter(propertyInfo.PropertyType))
+                    GetArchetypeDatatypeConverter())
                 : GetDeserializedPropertyValue(propJToken["value"], propertyInfo.PropertyType);
         }
 
@@ -269,7 +268,7 @@ namespace Archetype.Umbraco.Serialization
                     new JProperty("value",
                                   IsValueArchetypeDatatype(propValue)
                                       ? new JRaw(JsonConvert.SerializeObject(propValue,
-                                                                             GetArchetypeDatatypeConverter(propValue)))
+                                                                             GetArchetypeDatatypeConverter()))
                                       : new JValue(GetSerializedPropertyValue(propValue))));
 
                 fsProperties.Add(fsProperty);
@@ -314,18 +313,9 @@ namespace Archetype.Umbraco.Serialization
             return type.GetCustomAttributes(typeof(AsArchetypeAttribute), true).Length > 0;
         }
 
-        private JsonConverter GetArchetypeDatatypeConverter(object value)
+        private JsonConverter GetArchetypeDatatypeConverter()
         {
-            return GetArchetypeDatatypeConverter(value.GetType());
-        }
-
-        private JsonConverter GetArchetypeDatatypeConverter(Type type)
-        {
-            var converterType = typeof(ArchetypeJsonConverter<>);
-            Type[] typeArgs = { type };
-            var genericType = converterType.MakeGenericType(typeArgs);
-
-            return (JsonConverter)Activator.CreateInstance(genericType);
+            return (JsonConverter)Activator.CreateInstance(GetType());
         }
 
         private string GetSerializedPropertyValue(object propValue)
