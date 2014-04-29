@@ -1,16 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Net.Mime;
-using System.Text;
-using System.Threading.Tasks;
-using System.Web.Http.ModelBinding;
 using Archetype.Umbraco.Models;
-using AutoMapper;
 using Newtonsoft.Json;
 using Umbraco.Core;
 using Umbraco.Core.Models;
-using Umbraco.Core.Models.PublishedContent;
 
 namespace Archetype.Umbraco.Extensions
 {
@@ -36,7 +29,6 @@ namespace Archetype.Umbraco.Extensions
             {
                 var archetype = JsonConvert.DeserializeObject<Models.Archetype>(sourceJson, _jsonSettings);
 
-                //archetype.Fieldsets.First().Properties.First().DataTypeId
                 try
                 {
                     // Get list of configured properties and their types and map them to the deserialized archetype model
@@ -62,7 +54,6 @@ namespace Archetype.Umbraco.Extensions
             {
                 var archetype = JsonConvert.DeserializeObject<Models.Archetype>(sourceJson, _jsonSettings);
 
-                //archetype.Fieldsets.First().Properties.First().DataTypeId
                 try
                 {
                     // Get list of configured properties and their types and map them to the deserialized archetype model
