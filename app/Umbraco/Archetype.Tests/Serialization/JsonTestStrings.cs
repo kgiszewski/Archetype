@@ -265,6 +265,171 @@
   ]
 }";
 
+        public const string _PAGES_JSON =
+            @"{
+  ""fieldsets"": [
+    {
+      ""alias"": ""Pages"",
+      ""properties"": [
+        {
+          ""alias"": ""Pages"",
+          ""value"": {
+            ""fieldsets"": [
+              {
+                ""alias"": ""TextPage"",
+                ""properties"": [
+                  {
+                    ""alias"": ""Media"",
+                    ""value"": {
+                      ""fieldsets"": [
+                        {
+                          ""alias"": ""slideShow"",
+                          ""properties"": [
+                            {
+                              ""alias"": ""Slides"",
+                              ""value"": ""1,2,3,4,5,6,7,8""
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    ""alias"": ""Seo"",
+                    ""value"": {
+                      ""fieldsets"": [
+                        {
+                          ""alias"": ""seo"",
+                          ""properties"": [
+                            {
+                              ""alias"": ""MetaTitle"",
+                              ""value"": ""Test Meta Title""
+                            },
+                            {
+                              ""alias"": ""MetaDescription"",
+                              ""value"": ""Test Meta Description""
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    ""alias"": ""PageTitle"",
+                    ""value"": ""Home Page""
+                  },
+                  {
+                    ""alias"": ""BodyText"",
+                    ""value"": ""Home Page Body""
+                  }
+                ]
+              },
+              {
+                ""alias"": ""TextPage"",
+                ""properties"": [
+                  {
+                    ""alias"": ""Media"",
+                    ""value"": {
+                      ""fieldsets"": [
+                        {
+                          ""alias"": ""slideShow"",
+                          ""properties"": [
+                            {
+                              ""alias"": ""Slides"",
+                              ""value"": ""1,2,3,4,5,6,7,8""
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    ""alias"": ""Seo"",
+                    ""value"": {
+                      ""fieldsets"": [
+                        {
+                          ""alias"": ""seo"",
+                          ""properties"": [
+                            {
+                              ""alias"": ""MetaTitle"",
+                              ""value"": ""Test Meta Title""
+                            },
+                            {
+                              ""alias"": ""MetaDescription"",
+                              ""value"": ""Test Meta Description""
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    ""alias"": ""PageTitle"",
+                    ""value"": ""About us Page""
+                  },
+                  {
+                    ""alias"": ""BodyText"",
+                    ""value"": ""About us Page Body""
+                  }
+                ]
+              },
+              {
+                ""alias"": ""TextPage"",
+                ""properties"": [
+                  {
+                    ""alias"": ""Media"",
+                    ""value"": {
+                      ""fieldsets"": [
+                        {
+                          ""alias"": ""slideShow"",
+                          ""properties"": [
+                            {
+                              ""alias"": ""Slides"",
+                              ""value"": ""1,2,3,4,5,6,7,8""
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    ""alias"": ""Seo"",
+                    ""value"": {
+                      ""fieldsets"": [
+                        {
+                          ""alias"": ""seo"",
+                          ""properties"": [
+                            {
+                              ""alias"": ""MetaTitle"",
+                              ""value"": ""Test Meta Title""
+                            },
+                            {
+                              ""alias"": ""MetaDescription"",
+                              ""value"": ""Test Meta Description""
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    ""alias"": ""PageTitle"",
+                    ""value"": ""Contact us Page""
+                  },
+                  {
+                    ""alias"": ""BodyText"",
+                    ""value"": ""Contact us Page Body""
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}";
+
         public const string _NULL_VALUES_JSON = @"{""fieldsets"":[{""alias"":""contactDetails"",""properties"":[{""alias"":""name"",""value"":""""},{""alias"":""address"",""value"":""""},{""alias"":""telephone"",""value"":""""},{""alias"":""mobile"",""value"":""""},{""alias"":""fax"",""value"":""""},{""alias"":""email"",""value"":""""},{""alias"":""webSite"",""value"":""""}]}]}";
     }
 }

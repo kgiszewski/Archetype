@@ -127,4 +127,54 @@ namespace Archetype.Tests.Serialization
     }
 
     #endregion
+
+    #region complex nested tree model
+
+    public abstract class PageBase
+    {
+        public string PageTitle { get; set; }
+        public string BodyText { get; set; }
+    }
+
+    [AsArchetype("slideShow")]
+    [JsonConverter(typeof(ArchetypeJsonConverter<SlideShow>))]
+    public class SlideShow
+    {
+        public string Slides { get; set; }
+    }
+
+    [AsArchetype("seo")]
+    [JsonConverter(typeof(ArchetypeJsonConverter<Seo>))]
+    public class Seo
+    {
+        public string MetaTitle { get; set; }
+        public string MetaDescription { get; set; }
+    }
+
+    [AsArchetype("TextPage")]
+    [JsonConverter(typeof(ArchetypeJsonConverter<TextPage>))]
+    public class TextPage : PageBase
+    {
+        [AsFieldset]
+        public SlideShow Media { get; set; }
+
+        [AsFieldset]
+        public Seo Seo { get; set; }
+    }
+
+    [AsArchetype("TextPageList")]
+    [JsonConverter(typeof(ArchetypeJsonConverter<TextPageList>))]
+    public class TextPageList : List<TextPage>
+    {
+    }
+
+    [AsArchetype("Pages")]
+    [JsonConverter(typeof(ArchetypeJsonConverter<PageList>))]
+    public class PageList
+    {
+        [AsArchetype("Pages")]
+        public TextPageList Pages { get; set; }
+    }
+
+    #endregion
 }
