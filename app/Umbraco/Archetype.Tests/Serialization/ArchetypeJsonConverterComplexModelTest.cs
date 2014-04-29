@@ -64,10 +64,10 @@ namespace Archetype.Tests.Serialization
             Assert.IsInstanceOf<PageDetails>(result);
 
             Assert.AreEqual("2439,2440,2441,2442,2443,2444,2445,2446,2447,2448,2449,2450,2451,2452,2453", result.Pages);
-            Assert.AreEqual("First Page", result.Captions.TextStringArray.ElementAt(0));
-            Assert.AreEqual("Second Page", result.Captions.TextStringArray.ElementAt(1));
-            Assert.AreEqual("Third Page", result.Captions.TextStringArray.ElementAt(2));
-            Assert.AreEqual("Fourth Page", result.Captions.TextStringArray.ElementAt(3));
+            Assert.AreEqual("First Page", result.Captions.TextStringArray.ElementAt(0).TextString);
+            Assert.AreEqual("Second Page", result.Captions.TextStringArray.ElementAt(1).TextString);
+            Assert.AreEqual("Third Page", result.Captions.TextStringArray.ElementAt(2).TextString);
+            Assert.AreEqual("Fourth Page", result.Captions.TextStringArray.ElementAt(3).TextString);
         }
 
         [Test]
@@ -80,10 +80,10 @@ namespace Archetype.Tests.Serialization
             Assert.IsInstanceOf<PageDetails>(result);
 
             Assert.AreEqual(_pageDetails.Pages, result.Pages);
-            Assert.AreEqual(_pageDetails.Captions.TextStringArray.ElementAt(0), result.Captions.TextStringArray.ElementAt(0));
-            Assert.AreEqual(_pageDetails.Captions.TextStringArray.ElementAt(1), result.Captions.TextStringArray.ElementAt(1));
-            Assert.AreEqual(_pageDetails.Captions.TextStringArray.ElementAt(2), result.Captions.TextStringArray.ElementAt(2));
-            Assert.AreEqual(_pageDetails.Captions.TextStringArray.ElementAt(3), result.Captions.TextStringArray.ElementAt(3));
+            Assert.AreEqual(_pageDetails.Captions.TextStringArray.ElementAt(0).TextString, result.Captions.TextStringArray.ElementAt(0).TextString);
+            Assert.AreEqual(_pageDetails.Captions.TextStringArray.ElementAt(1).TextString, result.Captions.TextStringArray.ElementAt(1).TextString);
+            Assert.AreEqual(_pageDetails.Captions.TextStringArray.ElementAt(2).TextString, result.Captions.TextStringArray.ElementAt(2).TextString);
+            Assert.AreEqual(_pageDetails.Captions.TextStringArray.ElementAt(3).TextString, result.Captions.TextStringArray.ElementAt(3).TextString);
         }
         #endregion
 
