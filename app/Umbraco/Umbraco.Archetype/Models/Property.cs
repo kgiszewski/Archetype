@@ -28,9 +28,6 @@ namespace Archetype.Umbraco.Models
 
         public T GetValue<T>()
         {
-            // If the value is of type T, just return it
-            if (Value is T)
-                return (T)Value;
 
             // Try Umbraco's PropertyValueConverters
             var converters = UmbracoContext.Current != null ? PropertyValueConvertersResolver.Current.Converters : Enumerable.Empty<IPropertyValueConverter>();
@@ -40,6 +37,10 @@ namespace Archetype.Umbraco.Models
                 if (convertedAttempt.Success)
                     return convertedAttempt.Result;
             }
+
+            // If the value is of type T, just return it
+            if (Value is T)
+                return (T)Value;
 
             // No PropertyValueConverters matched, so try a regular type conversion
             var convertAttempt2 = Value.TryConvertTo<T>();
