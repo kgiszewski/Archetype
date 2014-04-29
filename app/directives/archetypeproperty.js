@@ -141,6 +141,14 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
                     //set the config from the prevalues
                     scope.model.config = config;
 
+                    //hack for MNTP 'multipicker'
+                    if(typeof scope.model.config.maxNumber != 'undefined') {
+                        if(parseInt(scope.model.config.maxNumber, 10) !== 1) {
+                            scope.model.config.multiPicker = true;
+                        }
+                    }
+                    console.log(scope.model.config);
+
                     //some items need an alias
                     scope.model.alias = "archetype-property-" + umbracoPropertyAlias + "-" + scope.fieldsetIndex + "-" + scope.propertyConfigIndex;
 
