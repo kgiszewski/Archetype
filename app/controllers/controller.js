@@ -41,7 +41,7 @@
         cursor: "move",
         handle: ".handle",
         update: function (ev, ui) {
-            
+
         },
         stop: function (ev, ui) {
 
@@ -106,7 +106,8 @@
     //helpers for determining if the add button should be shown
     $scope.showAddButton = function () {
         return $scope.model.config.startWithAddButton
-            && countVisible() === 0;
+            && countVisible() === 0
+            && !$scope.model.config.enableMultipleFieldsets;
     }
 
     //helper, ini the render model from the server (model.value)
