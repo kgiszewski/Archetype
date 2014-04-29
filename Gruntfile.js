@@ -79,12 +79,6 @@ module.exports = function(grunt) {
       config: {
         files: [
           {
-            cwd: 'config/',
-            src: ['package.manifest'],
-            dest: '<%= basePath %>',
-            expand: true
-          },
-          {
             cwd: 'app/langs/',
             src: ['**'],
             dest: '<%= basePath %>/langs',
