@@ -55,6 +55,50 @@ namespace Archetype.Umbraco.Serialization
                         : PopulateProperties(obj, jToken);
         }
 
+        public override bool CanConvert(Type objectType)
+        {
+            return IsValueArchetypeDatatype(objectType);
+        }
+
+        #region private methods
+
+        private string ApplyFormatting(string json, Formatting formatting)
+        {
+            return JToken.Parse(json).ToString(formatting);
+        }
+
+        private IList GenerateModels(object value)
+        {
+            var models = value as IList;
+
+            if (null != models)
+                return models;
+
+            var properties = GetSerialiazableProperties(value).ToList();
+
+            if (!PropertyLayoutHasFieldsets(properties))
+                return new List<object>() { value };
+
+            var dynamicModel = new ExpandoObject() as IDictionary<string, object>;
+
+            foreach (var pInfo in properties.Where(pInfo => !HasAsFieldsetAttribute(pInfo)))
+            {
+                dynamicModel.Add(GetJsonPropertyName(pInfo), pInfo.GetValue(value));
+            }
+
+            var fieldsetModels = properties.Where(HasAsFieldsetAttribute)
+                .Select(pInfo => pInfo.GetValue(value));
+
+            models = new List<object>
+            {
+                dynamicModel,                
+            };
+
+            models = ((IEnumerable<object>)models).Concat(fieldsetModels).ToList();
+
+            return models;
+        }
+
         private object DeserializeEnumerableObject(object obj, JToken jToken)
         {
             var model = obj as IEnumerable<object>;
@@ -65,7 +109,7 @@ namespace Archetype.Umbraco.Serialization
                 var item = JsonConvert.DeserializeObject(
                     fs["properties"].ToString(), itemType, GetArchetypeDatatypeConverter(itemType));
 
-                obj.GetType().GetMethod("Add").Invoke(obj, new[] {item});
+                obj.GetType().GetMethod("Add").Invoke(obj, new[] { item });
             }
 
             return obj;
@@ -131,50 +175,6 @@ namespace Archetype.Umbraco.Serialization
                 ? JsonConvert.DeserializeObject(propJToken["value"].ToString(), propertyInfo.PropertyType,
                     GetArchetypeDatatypeConverter(propertyInfo.PropertyType))
                 : GetDeserializedPropertyValue(propJToken["value"], propertyInfo.PropertyType);
-        }
-
-        public override bool CanConvert(Type objectType)
-        {
-            return IsValueArchetypeDatatype(objectType);
-        }
-
-        #region private methods
-
-        private string ApplyFormatting(string json, Formatting formatting)
-        {
-            return JToken.Parse(json).ToString(formatting);
-        }
-
-        private IList GenerateModels(object value)
-        {
-            var models = value as IList;
-
-            if (null != models)
-                return models;
-
-            var properties = GetSerialiazableProperties(value).ToList();
-
-            if (!PropertyLayoutHasFieldsets(properties))
-                return new List<object>() { value };
-
-            var dynamicModel = new ExpandoObject() as IDictionary<string, object>;
-
-            foreach (var pInfo in properties.Where(pInfo => !HasAsFieldsetAttribute(pInfo)))
-            {
-                dynamicModel.Add(GetJsonPropertyName(pInfo), pInfo.GetValue(value));
-            }
-
-            var fieldsetModels = properties.Where(HasAsFieldsetAttribute)
-                .Select(pInfo => pInfo.GetValue(value));
-
-            models = new List<object>
-            {
-                dynamicModel,                
-            };
-
-            models = ((IEnumerable<object>)models).Concat(fieldsetModels).ToList();
-
-            return models;
         }
 
         private bool PropertyLayoutHasFieldsets(IEnumerable<PropertyInfo> properties)
