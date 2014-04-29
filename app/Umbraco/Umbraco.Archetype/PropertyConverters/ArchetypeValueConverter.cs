@@ -44,6 +44,5 @@ namespace Archetype.Umbraco.PropertyConverters
 
             return archetype;
         }
-
     }
 }

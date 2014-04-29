@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Archetype.Umbraco.Extensions;
 using ClientDependency.Core;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Umbraco.Core;
 using Umbraco.Core.Models;
 using Umbraco.Core.Models.Editors;
@@ -53,7 +55,7 @@ namespace Archetype.Umbraco.PropertyEditors
 
 			public override string ConvertDbToString(Property property, PropertyType propertyType, IDataTypeService dataTypeService)
 			{
-				if (property.Value == null)
+				if (property.Value == null || property.Value.ToString() == "")
 					return string.Empty;
 
 			    var archetype = new ArchetypeHelper().DeserializeJsonToArchetype(property.Value.ToString(), propertyType.DataTypeDefinitionId);
@@ -70,17 +72,23 @@ namespace Archetype.Umbraco.PropertyEditors
 					}
 				}
 
-				property.Value = JsonConvert.SerializeObject(archetype);
+                var json = JObject.Parse(JsonConvert.SerializeObject(archetype));
+                var propertiesToRemove = new String[] { "propertyEditorAlias", "dataTypeId", "dataTypeGuid" };
 
-				return base.ConvertDbToString(property, propertyType, dataTypeService);
+                json.Descendants().OfType<JProperty>()
+                  .Where(p => propertiesToRemove.Contains(p.Name))
+                  .ToList()
+                  .ForEach(x => x.Remove());
+
+                return json.ToString();
 			}
 
 			public override object ConvertDbToEditor(Property property, PropertyType propertyType, IDataTypeService dataTypeService)
 			{
-				if (property.Value == null)
+				if (property.Value == null || property.Value.ToString() == "")
 					return string.Empty;
 
-				var archetype = JsonConvert.DeserializeObject<Models.Archetype>(property.Value.ToString(), _jsonSettings);
+                var archetype = JsonConvert.DeserializeObject<Models.Archetype>(property.Value.ToString(), _jsonSettings);
 
 				foreach (var fieldset in archetype.Fieldsets)
 				{
@@ -98,7 +106,7 @@ namespace Archetype.Umbraco.PropertyEditors
 			}
             public override object ConvertEditorToDb(ContentPropertyData editorValue, object currentValue)
 			{
-				if (editorValue.Value == null)
+				if (editorValue.Value == null || editorValue.Value.ToString() == "")
 					return string.Empty;
 
 				var archetype = new ArchetypeHelper().DeserializeJsonToArchetype(editorValue.Value.ToString(), editorValue.PreValues);
@@ -115,7 +123,7 @@ namespace Archetype.Umbraco.PropertyEditors
 					}
 				}
 
-				return JsonConvert.SerializeObject(archetype);
+                return JsonConvert.SerializeObject(archetype);
 			}
 		}
 
