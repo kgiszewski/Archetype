@@ -22,7 +22,6 @@ namespace Archetype.Umbraco.Extensions
             _app = ApplicationContext.Current;
         }
 
-
         internal Models.Archetype DeserializeJsonToArchetype(string sourceJson, PreValueCollection dataTypePreValues)
         {
             try
@@ -44,8 +43,7 @@ namespace Archetype.Umbraco.Extensions
             catch
             {
                 return new Models.Archetype();
-            }
-            
+            }         
         }
 
         internal Models.Archetype DeserializeJsonToArchetype(string sourceJson, int dataTypeId)
