@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Archetype.Umbraco.Extensions;
 using ClientDependency.Core;
 using Newtonsoft.Json;
 using Umbraco.Core;
@@ -48,20 +49,14 @@ namespace Archetype.Umbraco.PropertyEditors
 			protected JsonSerializerSettings _jsonSettings;
 
 			public ArchetypePropertyValueEditor(PropertyValueEditor wrapped)
-				: base(wrapped)
-			{
-				var dcr = new Newtonsoft.Json.Serialization.DefaultContractResolver();
-				dcr.DefaultMembersSearchFlags |= System.Reflection.BindingFlags.NonPublic;
-
-				_jsonSettings = new JsonSerializerSettings { ContractResolver = dcr };
-			}
+				: base(wrapped) { }
 
 			public override string ConvertDbToString(Property property, PropertyType propertyType, IDataTypeService dataTypeService)
 			{
 				if (property.Value == null)
 					return string.Empty;
 
-				var archetype = JsonConvert.DeserializeObject<Models.Archetype>(property.Value.ToString(), _jsonSettings);
+			    var archetype = new ArchetypeHelper().DeserializeJsonToArchetype(property.Value.ToString(), propertyType.DataTypeDefinitionId);
 
 				foreach (var fieldset in archetype.Fieldsets)
 				{
@@ -101,13 +96,12 @@ namespace Archetype.Umbraco.PropertyEditors
 
 				return archetype;
 			}
-
-			public override object ConvertEditorToDb(ContentPropertyData editorValue, object currentValue)
+            public override object ConvertEditorToDb(ContentPropertyData editorValue, object currentValue)
 			{
 				if (editorValue.Value == null)
 					return string.Empty;
 
-				var archetype = JsonConvert.DeserializeObject<Models.Archetype>(editorValue.Value.ToString(), _jsonSettings);
+				var archetype = new ArchetypeHelper().DeserializeJsonToArchetype(editorValue.Value.ToString(), editorValue.PreValues);
 
 				foreach (var fieldset in archetype.Fieldsets)
 				{

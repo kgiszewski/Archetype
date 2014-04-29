@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web.Http.ModelBinding;
 using Archetype.Umbraco.Models;
+using AutoMapper;
 using Newtonsoft.Json;
 using Umbraco.Core;
 using Umbraco.Core.Models;
@@ -28,12 +29,40 @@ namespace Archetype.Umbraco.Extensions
             _app = ApplicationContext.Current;
         }
 
+
+        internal Models.Archetype DeserializeJsonToArchetype(string sourceJson, PreValueCollection dataTypePreValues)
+        {
+            try
+            {
+                var archetype = JsonConvert.DeserializeObject<Models.Archetype>(sourceJson, _jsonSettings);
+
+                //archetype.Fieldsets.First().Properties.First().DataTypeId
+                try
+                {
+                    // Get list of configured properties and their types and map them to the deserialized archetype model
+                    var preValue = GetArchetypePreValueFromPreValuesCollection(dataTypePreValues);
+                    RetrieveAdditionalProperties(ref archetype, preValue);
+                }
+                catch (Exception ex)
+                {
+                }
+
+                return archetype;
+            }
+            catch
+            {
+                return new Models.Archetype();
+            }
+            
+        }
+
         internal Models.Archetype DeserializeJsonToArchetype(string sourceJson, int dataTypeId)
         {
             try
             {
                 var archetype = JsonConvert.DeserializeObject<Models.Archetype>(sourceJson, _jsonSettings);
 
+                //archetype.Fieldsets.First().Properties.First().DataTypeId
                 try
                 {
                     // Get list of configured properties and their types and map them to the deserialized archetype model
@@ -72,6 +101,14 @@ namespace Archetype.Umbraco.Extensions
                 }) as ArchetypePreValue;
         }  
 
+        private ArchetypePreValue GetArchetypePreValueFromPreValuesCollection(PreValueCollection dataTypePreValues)
+        {
+            var preValueAsString = dataTypePreValues.PreValuesAsDictionary.First().Value.Value;
+            var preValue = JsonConvert.DeserializeObject<ArchetypePreValue>(preValueAsString, _jsonSettings);
+            return preValue;
+        }
+
+
         private IDataTypeDefinition GetDataTypeByGuid(Guid guid)
         {
             return (IDataTypeDefinition) ApplicationContext.Current.ApplicationCache.RuntimeCache.GetCacheItem(
@@ -96,6 +133,7 @@ namespace Archetype.Umbraco.Extensions
                         var propertyAlias = property.Alias;
                         foreach ( var propertyInst in fieldsetInst.Properties.Where(x => x.Alias == propertyAlias))
                         {
+                            propertyInst.DataTypeGuid = property.DataTypeGuid.ToString();
                             propertyInst.DataTypeId = GetDataTypeByGuid(property.DataTypeGuid).Id;
                             propertyInst.PropertyEditorAlias = property.PropertyEditorAlias;
                         }
