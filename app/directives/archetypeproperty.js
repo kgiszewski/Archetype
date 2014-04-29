@@ -147,7 +147,6 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
                             scope.model.config.multiPicker = true;
                         }
                     }
-                    console.log(scope.model.config);
 
                     //some items need an alias
                     scope.model.alias = "archetype-property-" + umbracoPropertyAlias + "-" + scope.fieldsetIndex + "-" + scope.propertyConfigIndex;
