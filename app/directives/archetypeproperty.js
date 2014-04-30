@@ -75,11 +75,10 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
 
                 //load in the DefaultPreValues for the PropertyEditor, if any
                 var defaultConfigObj =  {};
-                if (propertyEditor.hasOwnProperty('defaultPreValues') && propertyEditor.defaultPreValues != null && propertyEditor.defaultPreValues.length > 0) {
-                    _.each(propertyEditor.defaultPreValues, function(p) {
-                        _.extend(defaultConfigObj, p)
-                    });
+                if (propertyEditor.hasOwnProperty('defaultPreValues') && propertyEditor.defaultPreValues != null) {
+                    _.extend(defaultConfigObj, propertyEditor.defaultPreValues);
                 }
+
                 var mergedConfig = _.extend(defaultConfigObj, config);
 
                 loadView(pathToView, mergedConfig, defaultValue, alias, umbracoPropertyAlias, scope, element, ngModelCtrl);
