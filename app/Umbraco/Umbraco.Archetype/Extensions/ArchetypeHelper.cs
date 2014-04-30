@@ -4,6 +4,7 @@ using Archetype.Umbraco.Models;
 using Newtonsoft.Json;
 using Umbraco.Core;
 using Umbraco.Core.Models;
+using Archetype.Umbraco.Database;
 
 namespace Archetype.Umbraco.Extensions
 {
@@ -82,7 +83,7 @@ namespace Archetype.Umbraco.Extensions
                         ? preValues.PreValuesAsDictionary[Constants.PreValueAlias].Value
                         : preValues.PreValuesAsArray.First().Value;
 
-                    var config = JsonConvert.DeserializeObject<ArchetypePreValue>(configJson, _jsonSettings);
+                    var config = DeserializeArchetypePreValue(configJson);
                     RetrieveAdditionalProperties(ref config);
 
                     return config;
@@ -93,10 +94,26 @@ namespace Archetype.Umbraco.Extensions
         private ArchetypePreValue GetArchetypePreValueFromPreValuesCollection(PreValueCollection dataTypePreValues)
         {
             var preValueAsString = dataTypePreValues.PreValuesAsDictionary.First().Value.Value;
-            var preValue = JsonConvert.DeserializeObject<ArchetypePreValue>(preValueAsString, _jsonSettings);
+            var preValue = DeserializeArchetypePreValue(preValueAsString);
             return preValue;
         }
 
+        private ArchetypePreValue DeserializeArchetypePreValue(string preValueAsString)
+        {
+            // if the prevalue is a GUID, fetch the configuration from DB and deserialize that 
+            Guid configurationId;
+            if(Guid.TryParse(preValueAsString, out configurationId))
+            {
+                var configuration = DatabaseHelper.Get(configurationId);
+                if(configuration == null)
+                {
+                    throw new ArgumentException(string.Format("Could not find Archetype configuration for ID {0}", configurationId));
+                }
+                preValueAsString = configuration.Configuration;
+            }
+            var preValue = JsonConvert.DeserializeObject<ArchetypePreValue>(preValueAsString, _jsonSettings);
+            return preValue;
+        }
 
         private IDataTypeDefinition GetDataTypeByGuid(Guid guid)
         {
