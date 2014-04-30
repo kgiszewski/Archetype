@@ -4,6 +4,7 @@ using Archetype.Umbraco.Models;
 using Newtonsoft.Json;
 using Umbraco.Core;
 using Umbraco.Core.Models;
+using Archetype.Umbraco.PropertyEditors;
 
 namespace Archetype.Umbraco.Extensions
 {
@@ -78,11 +79,7 @@ namespace Archetype.Umbraco.Extensions
                 {
                     var preValues = _app.Services.DataTypeService.GetPreValuesCollectionByDataTypeId(dataTypeId);
 
-                    var configJson = preValues.IsDictionaryBased
-                        ? preValues.PreValuesAsDictionary[Constants.PreValueAlias].Value
-                        : preValues.PreValuesAsArray.First().Value;
-
-                    var config = JsonConvert.DeserializeObject<ArchetypePreValue>(configJson, _jsonSettings);
+                    var config = GetArchetypePreValueFromPreValuesCollection(preValues);
                     RetrieveAdditionalProperties(ref config);
 
                     return config;
@@ -92,7 +89,7 @@ namespace Archetype.Umbraco.Extensions
 
         private ArchetypePreValue GetArchetypePreValueFromPreValuesCollection(PreValueCollection dataTypePreValues)
         {
-            var preValueAsString = dataTypePreValues.PreValuesAsDictionary.First().Value.Value;
+            var preValueAsString = ArchetypePropertyEditor.ArchetypePreValueEditor.UnChunkify(dataTypePreValues);
             var preValue = JsonConvert.DeserializeObject<ArchetypePreValue>(preValueAsString, _jsonSettings);
             return preValue;
         }
