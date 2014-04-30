@@ -108,7 +108,7 @@
     $scope.showAddButton = function () {
         return $scope.model.config.startWithAddButton
             && countVisible() === 0
-            && !$scope.model.config.enableMultipleFieldsets;
+            && $scope.model.config.fieldsets.length == 1;
     }
 
     //helper, ini the render model from the server (model.value)
