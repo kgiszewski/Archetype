@@ -93,7 +93,8 @@
     //helper that returns if an item can be removed
     $scope.canRemove = function ()
     {
-        return countVisible() > 1
+        return countVisible() > 1 
+            || ($scope.model.config.maxFieldsets == 1 && $scope.model.config.fieldsets.length > 1)
             || $scope.model.config.startWithAddButton;
     }
 
