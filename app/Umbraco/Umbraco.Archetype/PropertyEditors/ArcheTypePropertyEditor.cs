@@ -72,15 +72,7 @@ namespace Archetype.Umbraco.PropertyEditors
 					}
 				}
 
-                var json = JObject.Parse(JsonConvert.SerializeObject(archetype));
-                var propertiesToRemove = new String[] { "propertyEditorAlias", "dataTypeId", "dataTypeGuid" };
-
-                json.Descendants().OfType<JProperty>()
-                  .Where(p => propertiesToRemove.Contains(p.Name))
-                  .ToList()
-                  .ForEach(x => x.Remove());
-
-                return json.ToString();
+                return archetype.SerializeForPersistence();
 			}
 
 			public override object ConvertDbToEditor(Property property, PropertyType propertyType, IDataTypeService dataTypeService)
@@ -88,7 +80,7 @@ namespace Archetype.Umbraco.PropertyEditors
 				if (property.Value == null || property.Value.ToString() == "")
 					return string.Empty;
 
-                var archetype = JsonConvert.DeserializeObject<Models.Archetype>(property.Value.ToString(), _jsonSettings);
+			    var archetype = new ArchetypeHelper().DeserializeJsonToArchetype(property.Value.ToString(), propertyType.DataTypeDefinitionId);
 
 				foreach (var fieldset in archetype.Fieldsets)
 				{
@@ -123,7 +115,7 @@ namespace Archetype.Umbraco.PropertyEditors
 					}
 				}
 
-                return JsonConvert.SerializeObject(archetype);
+                return archetype.SerializeForPersistence();
 			}
 		}
 
