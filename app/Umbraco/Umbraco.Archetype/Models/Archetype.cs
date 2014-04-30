@@ -38,7 +38,7 @@ namespace Archetype.Umbraco.Models
               .ToList()
               .ForEach(x => x.Remove());
 
-            return json.ToString();
+            return json.ToString(Formatting.None);
         }
     }
 }
