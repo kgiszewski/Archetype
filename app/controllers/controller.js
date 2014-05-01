@@ -11,14 +11,11 @@
 
     //ini the model
     $scope.model.value = $scope.model.value || getDefaultModel($scope.model.config);
-
-    //ini the render model
-    $scope.archetypeRenderModel = {};
-    initArchetypeRenderModel();
+    init();
 
     //helper to get $eval the labelTemplate
     $scope.getFieldsetTitle = function(fieldsetConfigModel, fieldsetIndex) {
-        var fieldset = $scope.archetypeRenderModel.fieldsets[fieldsetIndex];
+        var fieldset = $scope.model.value.fieldsets[fieldsetIndex];
         var fieldsetConfig = $scope.getConfigFieldsetByAlias(fieldset.alias);
         var template = fieldsetConfigModel.labelTemplate;
 
@@ -61,11 +58,11 @@
 
                 if (typeof $index != 'undefined')
                 {
-                    $scope.archetypeRenderModel.fieldsets.splice($index + 1, 0, newFieldset);
+                    $scope.model.value.fieldsets.splice($index + 1, 0, newFieldset);
                 }
                 else
                 {
-                    $scope.archetypeRenderModel.fieldsets.push(newFieldset);
+                    $scope.model.value.fieldsets.push(newFieldset);
                 }
             }
 
@@ -74,15 +71,10 @@
         }
     }
 
-    //rather than splice the archetypeRenderModel, we're hiding this and cleaning onFormSubmitting
     $scope.removeRow = function ($index) {
         if ($scope.canRemove()) {
             if (confirm('Are you sure you want to remove this?')) {
-                $scope.archetypeRenderModel.fieldsets[$index].remove = true;
-                /*
-                    Touches the model.  Not sure why this is needed but without it the Digest doesn't run on a remove row.
-                */
-                $scope.archetypeRenderModel = JSON.parse(JSON.stringify($scope.archetypeRenderModel));
+                $scope.model.value.fieldsets.splice($index, 1);
             }
         }
     }
@@ -101,7 +93,8 @@
     //helper that returns if an item can be removed
     $scope.canRemove = function ()
     {
-        return countVisible() > 1
+        return countVisible() > 1 
+            || ($scope.model.config.maxFieldsets == 1 && $scope.model.config.fieldsets.length > 1)
             || $scope.model.config.startWithAddButton;
     }
 
@@ -114,16 +107,20 @@
     //helpers for determining if the add button should be shown
     $scope.showAddButton = function () {
         return $scope.model.config.startWithAddButton
-            && countVisible() === 0;
+            && countVisible() === 0
+            && $scope.model.config.fieldsets.length == 1;
     }
 
     //helper, ini the render model from the server (model.value)
-    function initArchetypeRenderModel() {
-        $scope.archetypeRenderModel = removeNulls($scope.model.value);
+    function init() {
+        $scope.model.value = removeNulls($scope.model.value);
+        addDefaultProperties($scope.model.value.fieldsets);
+    }
 
-        _.each($scope.archetypeRenderModel.fieldsets, function (fieldset)
+    function addDefaultProperties(fieldsets)
+    {
+        _.each(fieldsets, function (fieldset)
         {
-            fieldset.remove = false;
             fieldset.collapse = false;
             fieldset.isValid = true;
         });
@@ -144,6 +141,15 @@
         return (typeof property !== 'undefined') ? property.value : '';
     };
 
+    $scope.isCollapsed = function(fieldset)
+    {
+        if(typeof fieldset.collapse === "undefined")
+        {
+            fieldset.collapse = true;
+        }
+        return fieldset.collapse;
+    }
+
     //helper for expanding/collapsing fieldsets
     $scope.focusFieldset = function(fieldset){
         fixDisableSelection();
@@ -159,13 +165,13 @@
             iniState = fieldset.collapse;
         }
 
-        _.each($scope.archetypeRenderModel.fieldsets, function(fieldset){
+        _.each($scope.model.value.fieldsets, function(fieldset){
             fieldset.collapse = true;
         });
 
-        if(!fieldset && $scope.archetypeRenderModel.fieldsets.length == 1 && $scope.archetypeRenderModel.fieldsets[0].remove == false)
+        if(!fieldset && $scope.model.value.fieldsets.length == 1)
         {
-            $scope.archetypeRenderModel.fieldsets[0].collapse = false;
+            $scope.model.value.fieldsets[0].collapse = false;
             return;
         }
 
@@ -179,7 +185,7 @@
     $scope.focusFieldset();
 
     //developerMode helpers
-    $scope.archetypeRenderModel.toString = stringify;
+    $scope.model.value.toString = stringify;
 
     //encapsulate stringify (should be built into browsers, not sure of IE support)
     function stringify() {
@@ -187,12 +193,12 @@
     }
 
     //watch for changes
-    $scope.$watch('archetypeRenderModel', function (v) {
+    $scope.$watch('model.value', function (v) {
         if ($scope.model.config.developerMode) {
             console.log(v);
             if (typeof v === 'string') {
-                $scope.archetypeRenderModel = JSON.parse(v);
-                $scope.archetypeRenderModel.toString = stringify;
+                $scope.model.value = JSON.parse(v);
+                $scope.model.value.toString = stringify;
             }
         }
     });
@@ -200,64 +206,7 @@
     //helper to count what is visible
     function countVisible()
     {
-        var count = 0;
-
-        _.each($scope.archetypeRenderModel.fieldsets, function(fieldset){
-            if (fieldset.remove == false) {
-                count++;
-            }
-        });
-
-        return count;
-    }
-
-    //helper to sync the model to the renderModel
-    function syncModelToRenderModel()
-    {
-        $scope.model.value = { fieldsets: [] };
-
-        _.each($scope.archetypeRenderModel.fieldsets, function(fieldset){
-            var cleanedFieldset =  cleanFieldset(fieldset);
-
-            if(cleanedFieldset){
-                $scope.model.value.fieldsets.push(cleanedFieldset);
-            }
-        });
-    }
-
-    //helper to remove properties only used during editing that we don't want in the saved data
-    //also removes properties that are no longer in the config
-    function cleanFieldset(fieldset)
-    {
-        if (typeof fieldset != 'function' && !fieldset.remove){
-
-            var fieldsetConfig = $scope.getConfigFieldsetByAlias(fieldset.alias);
-
-            //clone and clean
-            var tempFieldset = JSON.parse(JSON.stringify(fieldset));
-            delete tempFieldset.remove;
-            delete tempFieldset.isValid;
-            delete tempFieldset.collapse;
-
-            _.each(tempFieldset.properties, function(property, index){
-                var propertyConfig = _.find(fieldsetConfig.properties, function(p){
-                    return property.alias == p.alias;
-                });
-
-                //just prune the property
-                if(propertyConfig){
-                    delete property.isValid;
-                }
-                else
-                {
-                    //need to remove the whole property
-                    tempFieldset.properties.splice(index, 1);
-                }
-
-            });
-
-            return tempFieldset;
-        }
+        return $scope.model.value.fieldsets.length;
     }
 
     // helper to get initial model if none was provided
@@ -270,7 +219,7 @@
 
     //helper to add an empty fieldset to the render model
     function getEmptyRenderFieldset (fieldsetModel) {
-        return {alias: fieldsetModel.alias, remove: false, isValid: true, properties: []};
+        return {alias: fieldsetModel.alias, collapse: false, isValid: true, properties: []};
     }
 
     //helper to ensure no nulls make it into the model
@@ -300,32 +249,15 @@
     //helper to lookup validity when given a fieldsetIndex and property alias
     $scope.getPropertyValidity = function(fieldsetIndex, alias)
     {
-        if($scope.archetypeRenderModel.fieldsets[fieldsetIndex])
+        if($scope.model.value.fieldsets[fieldsetIndex])
         {
-            var property = _.find($scope.archetypeRenderModel.fieldsets[fieldsetIndex].properties, function(property){
+            var property = _.find($scope.model.value.fieldsets[fieldsetIndex].properties, function(property){
                 return property.alias == alias;
             });
         }
 
         return (typeof property == 'undefined') ? true : property.isValid;
     }
-
-    //sync things up on save
-    $scope.$on("formSubmitting", function (ev, args) {
-
-        //test for form; may have to do this differently for nested archetypes
-        if(!form)
-            return;
-
-        if(form.$invalid)
-        {
-            notificationsService.warning("Cannot Save Document", "The document could not be saved because of missing required fields.")
-        }
-        else
-        {
-            syncModelToRenderModel();
-        }
-    });
 
     //custom js
     if ($scope.model.config.customJsPath) {
