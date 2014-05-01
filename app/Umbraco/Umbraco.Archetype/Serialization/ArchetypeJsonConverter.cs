@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using Archetype.Umbraco.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -173,7 +174,7 @@ namespace Archetype.Umbraco.Serialization
             return IsValueArchetypeDatatype(propertyInfo.PropertyType)
                 ? JsonConvert.DeserializeObject(propJToken["value"].ToString(), propertyInfo.PropertyType,
                     GetArchetypeDatatypeConverter())
-                : GetDeserializedPropertyValue(propJToken["value"], propertyInfo.PropertyType);
+                : GetDeserializedPropertyValue(propJToken, propertyInfo.PropertyType);
         }
 
         private bool PropertyLayoutHasFieldsets(IEnumerable<PropertyInfo> properties)
@@ -330,18 +331,20 @@ namespace Archetype.Umbraco.Serialization
         }
 
         private object GetDeserializedPropertyValue(JToken jToken, Type type)
-        {            
-            if (String.IsNullOrEmpty(jToken.ToString()))
-                return GetDefault(type);
+        {
+            return String.IsNullOrEmpty(jToken.ToString()) 
+                        ? GetDefault(type) 
+                        : GetTypedValue(jToken, type);
+        }
 
-            var localType = Nullable.GetUnderlyingType(type) ?? type;
+        private object GetTypedValue(JToken jToken, Type type)
+        {
+            var property = JsonConvert.DeserializeObject<Property>(jToken.ToString());
+            
+            var method = typeof(Property).GetMethod("GetValue");
+            var getValue = method.MakeGenericMethod(type);
 
-            if (localType == typeof(bool))
-                return jToken.ToString() == "1";
-
-            return localType == typeof(DateTime) 
-                ? Convert.ToDateTime(jToken.ToString())
-                : jToken.ToObject(localType);
+            return getValue.Invoke(property, null);            
         }
 
         private object GetDefault(Type type)
