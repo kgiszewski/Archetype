@@ -208,6 +208,7 @@ module.exports = function(grunt) {
 
   grunt.registerTask('default', ['clean', 'less', 'concat', 'assemblyinfo', 'msbuild:dist', 'copy:dll', 'copy:config', 'copy:html']);
 
-  grunt.registerTask('nuget', ['clean:tmp', 'default', 'copy:nuget', 'template:nuspec', 'nugetpack', 'clean:tmp']);
+  grunt.registerTask('nuget',   ['clean:tmp', 'default', 'copy:nuget', 'template:nuspec', 'nugetpack', 'clean:tmp']);
   grunt.registerTask('umbraco', ['clean:tmp', 'default', 'copy:umbraco', 'umbracoPackage', 'clean:tmp']);
+  grunt.registerTask('package', ['clean:tmp', 'default', 'copy:nuget', 'template:nuspec', 'nugetpack', 'copy:umbraco', 'umbracoPackage', 'clean:tmp']);
 };
