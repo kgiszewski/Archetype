@@ -1,9 +1,11 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Newtonsoft.Json;
 using Umbraco.Core;
 using Umbraco.Core.Models;
 using Umbraco.Core.Models.PublishedContent;
 using Umbraco.Core.PropertyEditors;
+using Umbraco.Web;
 
 namespace Archetype.Umbraco.Models
 {
@@ -26,18 +28,31 @@ namespace Archetype.Umbraco.Models
 
         public T GetValue<T>()
         {
+
+            // Try Umbraco's PropertyValueConverters
+            var converters = UmbracoContext.Current != null ? PropertyValueConvertersResolver.Current.Converters : Enumerable.Empty<IPropertyValueConverter>();
+            if (converters.Any())
+            {
+                var convertedAttempt = TryConvertWithPropertyValueConverters<T>(Value, converters);
+                if (convertedAttempt.Success)
+                    return convertedAttempt.Result;
+            }
+
             // If the value is of type T, just return it
             if (Value is T)
                 return (T)Value;
 
-            // Umbraco has the concept of a IPropertyEditorValueConverter which it 
-            // also queries for property resolvers. However I'm not sure what these
-            // are for, nor can I find any implementations in core, so am currently
-            // just ignoring these when looking up converters.
-            // NB: IPropertyEditorValueConverter not to be confused with
-            // IPropertyValueConverter which are the ones most people are creating
+            // No PropertyValueConverters matched, so try a regular type conversion
+            var convertAttempt2 = Value.TryConvertTo<T>();
+            if (convertAttempt2.Success)
+                return convertAttempt2.Result;
+
+            return default(T);
+        }
+
+        private Attempt<T> TryConvertWithPropertyValueConverters<T>(object value, IEnumerable<IPropertyValueConverter> converters)
+        {
             var properyType = CreateDummyPropertyType(DataTypeId, PropertyEditorAlias);
-            var converters = PropertyValueConvertersResolver.Current.Converters.ToArray();
 
             // In umbraco, there are default value converters that try to convert the 
             // value if all else fails. The problem is, they are also in the list of
@@ -49,24 +64,19 @@ namespace Archetype.Umbraco.Models
             foreach (var converter in converters.Where(x => x.IsConverter(properyType)))
             {
                 // Convert the type using a found value converter
-                var value2 = converter.ConvertDataToSource(properyType, Value, false);
+                var value2 = converter.ConvertDataToSource(properyType, value, false);
 
                 // If the value is of type T, just return it
                 if (value2 is T)
-                    return (T)value2;
+                    return Attempt<T>.Succeed((T)value2);
 
                 // Value is not final value type, so try a regular type conversion aswell
                 var convertAttempt = value2.TryConvertTo<T>();
                 if (convertAttempt.Success)
-                    return convertAttempt.Result;
+                    return Attempt<T>.Succeed(convertAttempt.Result);
             }
 
-            // Value is not final value type, so try a regular type conversion
-            var convertAttempt2 = Value.TryConvertTo<T>();
-            if (convertAttempt2.Success)
-                return convertAttempt2.Result;
-
-            return default(T);
+            return Attempt<T>.Fail();
         }
 
         private PublishedPropertyType CreateDummyPropertyType(int dataTypeId, string propertyEditorAlias)

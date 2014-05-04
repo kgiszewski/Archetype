@@ -29,11 +29,6 @@ module.exports = function(grunt) {
         tasks: ['copy:html']
       },
 
-      config: {
-        files: ['config/package.manifest'],
-        tasks: ['copy:config']
-      },
-
       dll: {
         files: ['app/Umbraco/**/*.dll'],
         tasks: ['copy:dll']
@@ -76,25 +71,13 @@ module.exports = function(grunt) {
         expand: true
       },
       dll: {
-        cwd: 'app/Umbraco/Umbraco.Archetype/bin/Debug/',
+        cwd: 'app/Umbraco/Umbraco.Archetype/bin/Release/',
         src: '*.*',
         dest: '<%= dest %>/bin/',
         expand: true
       },
       config: {
         files: [
-          {
-            cwd: 'config/',
-            src: ['package.manifest'],
-            dest: '<%= basePath %>',
-            expand: true
-          },
-          {
-            cwd: 'app/config/',
-            src: ['propertyEditors.views.js'],
-            dest: '<%= basePath %>/js',
-            expand: true
-          },
           {
             cwd: 'app/langs/',
             src: ['**'],
@@ -173,7 +156,7 @@ module.exports = function(grunt) {
 
     clean: {
       build: '<%= grunt.config("basePath").substring(0, 4) == "dist" ? "dist/**/*" : "null" %>',
-      tmp: ['pkg/tmp']
+      tmp: ['tmp']
     },
 
     assemblyinfo: {
@@ -225,6 +208,7 @@ module.exports = function(grunt) {
 
   grunt.registerTask('default', ['clean', 'less', 'concat', 'assemblyinfo', 'msbuild:dist', 'copy:dll', 'copy:config', 'copy:html']);
 
-  grunt.registerTask('nuget', ['clean:tmp', 'default', 'copy:nuget', 'template:nuspec', 'nugetpack', 'clean:tmp']);
+  grunt.registerTask('nuget',   ['clean:tmp', 'default', 'copy:nuget', 'template:nuspec', 'nugetpack', 'clean:tmp']);
   grunt.registerTask('umbraco', ['clean:tmp', 'default', 'copy:umbraco', 'umbracoPackage', 'clean:tmp']);
+  grunt.registerTask('package', ['clean:tmp', 'default', 'copy:nuget', 'template:nuspec', 'nugetpack', 'copy:umbraco', 'umbracoPackage', 'clean:tmp']);
 };

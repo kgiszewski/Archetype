@@ -9,6 +9,8 @@ Install the selected <a href='https://github.com/imulus/Archetype/releases'>rele
 ## Official Docs ##
 http://imulus.github.io/Archetype
 
+Follow us on Twitter https://twitter.com/ArchetypeKit
+
 ## Contribute ##
 
 Want to contribute to Archetype?  You'll want to use Grunt (our task runner) to help you integrate with a local copy of Umbraco.

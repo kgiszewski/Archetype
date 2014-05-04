@@ -8,6 +8,9 @@ namespace Archetype.Umbraco.Models
         [JsonProperty("showAdvancedOptions")]
         public bool ShowAdvancedOptions { get; set; }
 
+        [JsonProperty("startWithAddButton")]
+        public bool StartWithAddButton { get; set; }
+
         [JsonProperty("hideFieldsetToolbar")]
         public bool HideFieldsetToolbar { get; set; }
 
