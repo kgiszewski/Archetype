@@ -21,7 +21,7 @@
                         </label>
                     </div>
                     <div class="archetypeEditorControls label-sub" ng-hide="model.config.hideFieldsetControls">
-                        <i class="icon icon-add dropdown-toggle" ng-show="canAdd()" data-toggle="dropdown"></i>
+                        <i class="icon icon-add dropdown-toggle" ng-show="canAdd()" data-toggle="{{ model.config.fieldsets.length > 1 ? 'dropdown' : ''}}" ng-click="model.config.fieldsets.length == 1 ? addRow(fieldset.alias, $index) : return"></i>
                         <ul class="dropdown-menu umb-actions">
                             <li ng-repeat="fieldsetModel in model.config.fieldsets" ng-click="addRow(fieldsetModel.alias, $index)">
                                 <a>
