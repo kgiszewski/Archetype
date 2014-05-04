@@ -23,8 +23,8 @@
                     <div class="archetypeEditorControls label-sub" ng-hide="model.config.hideFieldsetControls">
                         <i class="icon icon-add dropdown-toggle" ng-show="canAdd()" data-toggle="dropdown"></i>
                         <ul class="dropdown-menu" style="margin-left: -100px;">
-                            <li ng-repeat="fieldsetModel in model.config.fieldsets" ng-click="addRow(fieldsetModel.alias)">
-                                <a href="#">
+                            <li ng-repeat="fieldsetModel in model.config.fieldsets" ng-click="addRow(fieldsetModel.alias, $index)">
+                                <a>
                                     <i class="fieldsetIcon icon ng-class:fieldsetModel.icon"></i>
                                     <span>{{fieldsetModel.label}}</span>
                                 </a>
