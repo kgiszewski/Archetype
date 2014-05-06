@@ -14,6 +14,8 @@ namespace Archetype.Umbraco.Serialization
 {
     public class ArchetypeJsonConverter : JsonConverter
     {
+        #region public methods
+
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
             var models = GenerateModels(value);
@@ -24,21 +26,9 @@ namespace Archetype.Umbraco.Serialization
             if (models.Count == 1 && models[0] == null) 
                 return;
 
-            var jObj = GetModelAsFieldset(models);
+            var jObj = SerializeModelToFieldset(models);
 
             writer.WriteRaw(ApplyFormatting(jObj.ToString(), writer.Formatting));
-        }
-
-        private JObject GetModelAsFieldset(IList models)
-        {
-            var jObj = new JObject
-            {
-                {
-                    "fieldsets",
-                    new JArray(new JRaw(SerializeModels(models)))
-                }
-            };
-            return jObj;
         }
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
@@ -63,10 +53,97 @@ namespace Archetype.Umbraco.Serialization
 
         public override bool CanConvert(Type objectType)
         {
-            return IsValueArchetypeDatatype(objectType);
+            return IsTypeArchetypeDatatype(objectType);
         }
 
-        #region private methods
+        #endregion
+
+        #region private methods - deserialization
+
+        private object DeserializeEnumerableObject(object obj, JToken jToken)
+        {
+            var model = obj as IEnumerable<object>;
+
+            var itemType = model.GetType().BaseType.GetGenericArguments().First();
+            foreach (var fs in jToken["fieldsets"].Where(fs => fs["alias"].ToString().Equals(GetFieldsetName(itemType))))
+            {
+                var item = JsonConvert.DeserializeObject(
+                    fs["properties"].ToString(), itemType, this);
+
+                obj.GetType().GetMethod("Add").Invoke(obj, new[] { item });
+            }
+
+            return obj;
+        }
+
+        private object DeserializeObject(object obj, JToken jToken)
+        {
+            var properties = GetSerialiazableProperties(obj).ToList();
+            var asFieldset = properties.Where(HasAsFieldsetAttribute).ToList();
+
+            foreach (var propInfo in asFieldset)
+            {
+                var propAlias = GetJsonPropertyName(propInfo);
+                var fsJToken = GetProperties(propInfo.PropertyType, jToken);
+                var propJToken =
+                    fsJToken.Single(p => p.SelectToken("alias").ToString().Equals(propAlias));
+
+                if (propJToken == null)
+                    continue;
+
+                var propValue = GetPropertyValue(propInfo, propJToken);
+
+                propInfo.SetValue(obj, propValue);
+            }
+
+            return PopulateProperties(obj, GetProperties(obj.GetType(), jToken));
+        }
+
+        private JToken GetProperties(Type objType, JToken jToken)
+        {
+            var objAlias = GetFieldsetName(objType);
+
+            if (jToken["fieldsets"] != null)
+                return jToken["fieldsets"].Single(p => p.SelectToken("alias").ToString().Equals(objAlias)).SelectToken("properties");
+
+            return jToken["alias"].ToString().Equals(objAlias) ? jToken.SelectToken("properties") : null;
+        }
+
+        private object PopulateProperties(object obj, JToken jToken)
+        {
+            var properties = GetSerialiazableProperties(obj);
+
+            foreach (var propertyInfo in properties)
+            {
+                var propAlias = GetJsonPropertyName(propertyInfo);
+
+                var propJToken = jToken.SingleOrDefault(p => p.SelectToken("alias").ToString().Equals(propAlias));
+
+                if (propJToken == null)
+                    continue;
+
+                var propValue = GetPropertyValue(propertyInfo, propJToken);
+
+                propertyInfo.SetValue(obj, propValue);
+            }
+
+            return obj;
+        }
+
+        private object GetPropertyValue(PropertyInfo propertyInfo, JToken propJToken)
+        {
+            return IsTypeArchetypeDatatype(propertyInfo.PropertyType)
+                ? JsonConvert.DeserializeObject(propJToken["value"].ToString(), propertyInfo.PropertyType,
+                    this)
+                    : IsTypeIEnumerableArchetypeDatatype(propertyInfo.PropertyType)
+                    ? JsonConvert.DeserializeObject(propJToken["value"].SelectToken("fieldsets").ToString(), propertyInfo.PropertyType,
+                    this)
+                : GetDeserializedPropertyValue(propJToken, propertyInfo.PropertyType);
+        }
+
+        #endregion
+
+        #region private methods - serialization
 
         private string ApplyFormatting(string json, Formatting formatting)
         {
@@ -105,93 +182,16 @@ namespace Archetype.Umbraco.Serialization
             return models;
         }
 
-        private object DeserializeEnumerableObject(object obj, JToken jToken)
+        private JObject SerializeModelToFieldset(IEnumerable models)
         {
-            var model = obj as IEnumerable<object>;
-
-            var itemType = model.GetType().BaseType.GetGenericArguments().First();
-            foreach (var fs in jToken["fieldsets"].Where(fs => fs["alias"].ToString().Equals(GetFieldsetName(itemType))))
+            var jObj = new JObject
             {
-                var item = JsonConvert.DeserializeObject(
-                    fs["properties"].ToString(), itemType, GetArchetypeDatatypeConverter());
-
-                obj.GetType().GetMethod("Add").Invoke(obj, new[] { item });
-            }
-
-            return obj;
-        }
-
-        private object DeserializeObject(object obj, JToken jToken)
-        {
-            var properties = GetSerialiazableProperties(obj).ToList();
-            var asFieldset = properties.Where(HasAsFieldsetAttribute).ToList();
-
-            foreach (var propInfo in asFieldset)
-            {
-                var propAlias = GetJsonPropertyName(propInfo);
-                var fsJToken = GetFieldsetProperties(propInfo.PropertyType, jToken);
-                var propJToken =
-                    fsJToken.Single(p => p.SelectToken("alias").ToString().Equals(propAlias));
-
-                if (propJToken == null)
-                    continue;
-
-                var propValue = IsValueArchetypeDatatype(propInfo.PropertyType)
-                ? JsonConvert.DeserializeObject(fsJToken.ToString(), propInfo.PropertyType,
-                    GetArchetypeDatatypeConverter())
-                : GetDeserializedPropertyValue(fsJToken, propInfo.PropertyType); ;
-
-                propInfo.SetValue(obj, propValue);
-            }
-
-            return PopulateProperties(obj, GetFieldsetProperties(obj.GetType(), jToken));
-        }
-
-        private JToken GetFieldsetProperties(Type objType, JToken jToken)
-        {
-            var objAlias = GetFieldsetName(objType);
-            return
-                jToken["fieldsets"].Single(p => p.SelectToken("alias").ToString().Equals(objAlias)).SelectToken("properties");
-        }
-
-        private object PopulateProperties(object obj, JToken jToken)
-        {
-            var properties = GetSerialiazableProperties(obj);
-
-            foreach (var propertyInfo in properties)
-            {
-                var propAlias = GetJsonPropertyName(propertyInfo);
-
-                var propJToken = jToken.SingleOrDefault(p => p.SelectToken("alias").ToString().Equals(propAlias));
-
-                if (propJToken == null)
-                    continue;
-
-                var propValue = GetPropertyValue(propertyInfo, propJToken);
-
-                propertyInfo.SetValue(obj, propValue);
-            }
-
-            return obj;
-        }
-
-        private object GetPropertyValue(PropertyInfo propertyInfo, JToken propJToken)
-        {
-            return IsValueArchetypeDatatype(propertyInfo.PropertyType)
-                ? JsonConvert.DeserializeObject(propJToken["value"].ToString(), propertyInfo.PropertyType,
-                    GetArchetypeDatatypeConverter())
-                : GetDeserializedPropertyValue(propJToken, propertyInfo.PropertyType);
-        }
-
-        private bool PropertyLayoutHasFieldsets(IEnumerable<PropertyInfo> properties)
-        {
-            return properties.Any(HasAsFieldsetAttribute);
-        }
-
-        private static bool HasAsFieldsetAttribute(PropertyInfo pInfo)
-        {
-            return pInfo
-                .GetCustomAttributes(typeof(AsFieldsetAttribute), true).Length > 0;
+                {
+                    "fieldsets",
+                    new JArray(new JRaw(SerializeModels(models)))
+                }
+            };
+            return jObj;
         }
 
         private IEnumerable SerializeModels(IEnumerable models)
@@ -219,6 +219,17 @@ namespace Archetype.Umbraco.Serialization
             }
 
             return fieldsetJson.ToString();
+        }
+
+        private bool PropertyLayoutHasFieldsets(IEnumerable<PropertyInfo> properties)
+        {
+            return properties.Any(HasAsFieldsetAttribute);
+        }
+
+        private static bool HasAsFieldsetAttribute(PropertyInfo pInfo)
+        {
+            return pInfo
+                .GetCustomAttributes(typeof(AsFieldsetAttribute), true).Length > 0;
         }
 
         private bool IsExpandoObject(object value)
@@ -276,7 +287,7 @@ namespace Archetype.Umbraco.Serialization
                                   IsValueArchetypeDatatype(propValue)
                                     ? new JRaw(JsonConvert.SerializeObject(propValue))
                                     : IsValueIEnumerableArchetypeDatatype(propValue)
-                                        ? new JRaw(GetModelAsFieldset(propValue as IList))
+                                        ? new JRaw(SerializeModelToFieldset(propValue as IEnumerable))
                                         : new JValue(GetSerializedPropertyValue(propValue))));
 
                 fsProperties.Add(fsProperty);
@@ -310,30 +321,6 @@ namespace Archetype.Umbraco.Serialization
             return archetypeDatatypeAttribute != null ? archetypeDatatypeAttribute.FieldsetName : type.Name;
         }
 
-        private bool IsValueIEnumerableArchetypeDatatype(object value)
-        {
-            if (value as IEnumerable != null && value.GetType().IsGenericType)
-                return IsValueArchetypeDatatype(value.GetType().GetGenericArguments()[0]);
-
-            return false;
-        }
-
-        private bool IsValueArchetypeDatatype(object value)
-        {
-            return value != null &&
-                IsValueArchetypeDatatype(value.GetType());
-        }
-
-        private bool IsValueArchetypeDatatype(Type type)
-        {
-            return type.GetCustomAttributes(typeof(AsArchetypeAttribute), true).Length > 0;
-        }
-
-        private JsonConverter GetArchetypeDatatypeConverter()
-        {
-            return (JsonConverter)Activator.CreateInstance(GetType());
-        }
-
         private string GetSerializedPropertyValue(object propValue)
         {
             if (propValue == null)
@@ -365,6 +352,37 @@ namespace Archetype.Umbraco.Serialization
         private object GetDefault(Type type)
         {
             return type.IsValueType ? Activator.CreateInstance(type) : null;
+        }
+
+        #endregion
+
+        #region private methods - common
+
+        private bool IsValueIEnumerableArchetypeDatatype(object value)
+        {
+            if (value as IEnumerable != null && value.GetType().IsGenericType)
+                return IsTypeArchetypeDatatype(value.GetType().GetGenericArguments()[0]);
+
+            return false;
+        }
+
+        private bool IsTypeIEnumerableArchetypeDatatype(Type type)
+        {
+            if (typeof(IEnumerable).IsAssignableFrom(type) && type.IsGenericType)
+                return IsTypeArchetypeDatatype(type.GetGenericArguments()[0]);
+
+            return false;
+        }
+
+        private bool IsValueArchetypeDatatype(object value)
+        {
+            return value != null &&
+                IsTypeArchetypeDatatype(value.GetType());
+        }
+
+        private bool IsTypeArchetypeDatatype(Type type)
+        {
+            return type.GetCustomAttributes(typeof(AsArchetypeAttribute), true).Length > 0;
         }
 
         #endregion
