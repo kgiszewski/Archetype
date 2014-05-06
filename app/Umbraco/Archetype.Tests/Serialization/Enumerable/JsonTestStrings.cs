@@ -207,40 +207,30 @@
             @"{
   ""fieldsets"": [
     {
+      ""alias"": ""feedback"",
+      ""properties"": [
         {
-          ""alias"": ""feedback"",
-          ""value"": {
-			  ""fieldsets"": [
-				{
-				  ""alias"": ""testimonials"",
-				  ""properties"": [
-					{
-					  ""alias"": ""String"",
-					  ""value"": ""Testimonial 1""
-					}
-				  ]
-				},
-				{
-				  ""alias"": ""testimonials"",
-				  ""properties"": [
-					{
-					  ""alias"": ""String"",
-					  ""value"": ""Testimonial 2""
-					}
-				  ]
-				},
-								{
-				  ""alias"": ""testimonials"",
-				  ""properties"": [
-					{
-					  ""alias"": ""String"",
-					  ""value"": ""Testimonial 3""
-					}
-				  ]
-				}
-			  ]
-			}
-        }		
+          ""alias"": ""testimonial"",
+          ""value"": ""Testimonial 1""
+        }
+      ]
+    },
+    {
+      ""alias"": ""feedback"",
+      ""properties"": [
+        {
+          ""alias"": ""testimonial"",
+          ""value"": ""Testimonial 2""
+        }
+      ]
+    },
+    {
+      ""alias"": ""feedback"",
+      ""properties"": [
+        {
+          ""alias"": ""testimonial"",
+          ""value"": ""Testimonial 3""
+        }
       ]
     }
   ]
