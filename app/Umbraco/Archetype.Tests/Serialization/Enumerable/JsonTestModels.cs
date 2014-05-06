@@ -5,15 +5,15 @@ using Newtonsoft.Json;
 
 namespace Archetype.Tests.Serialization.Enumerable
 {
-    #region Feedback - a simple list based model
+    #region Feedback - single fieldset with multiple items
 
-    [AsArchetype("feedback")]
+    [AsArchetype("feedback")] /* Must have same archetype alias as below */
     [JsonConverter(typeof(ArchetypeJsonConverter))]
     public class Feedbacks : List<Feedback>
     {
     }
 
-    [AsArchetype("feedback")]
+    [AsArchetype("feedback")] /* Must have same archetype alias as list class */
     [JsonConverter(typeof(ArchetypeJsonConverter))]
     public class Feedback
     {
@@ -21,8 +21,29 @@ namespace Archetype.Tests.Serialization.Enumerable
         public String Testimonial { get; set; }
     }
 
-    #endregion    
-    
+    #endregion   
+ 
+    #region Captions - a root fieldset which contains another fieldset list
+
+    [AsArchetype("captions")]
+    [JsonConverter(typeof(ArchetypeJsonConverter))]
+    public class Captions
+    {
+        [JsonProperty("captions")]
+        public List<Text> TextArray { get; set; }
+    }
+
+    [AsArchetype("textArray")]
+    [JsonConverter(typeof(ArchetypeJsonConverter))]
+    public class Text
+    {
+        [JsonProperty("textstring")]
+        public String TextString { get; set; }
+    }
+
+    #endregion
+
+
     [AsArchetype("aboutUs")]
     [JsonConverter(typeof(ArchetypeJsonConverter))]
     public class AboutUs

@@ -24,15 +24,21 @@ namespace Archetype.Umbraco.Serialization
             if (models.Count == 1 && models[0] == null) 
                 return;
 
+            var jObj = GetModelAsFieldset(models);
+
+            writer.WriteRaw(ApplyFormatting(jObj.ToString(), writer.Formatting));
+        }
+
+        private JObject GetModelAsFieldset(IList models)
+        {
             var jObj = new JObject
             {
                 {
-                    "fieldsets", 
-                     new JArray( new JRaw(SerializeModels(models)))
+                    "fieldsets",
+                    new JArray(new JRaw(SerializeModels(models)))
                 }
             };
-
-            writer.WriteRaw(ApplyFormatting(jObj.ToString(), writer.Formatting));
+            return jObj;
         }
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
@@ -268,9 +274,10 @@ namespace Archetype.Umbraco.Serialization
                 fsProperty.Add(
                     new JProperty("value",
                                   IsValueArchetypeDatatype(propValue)
-                                      ? new JRaw(JsonConvert.SerializeObject(propValue,
-                                                                             GetArchetypeDatatypeConverter()))
-                                      : new JValue(GetSerializedPropertyValue(propValue))));
+                                    ? new JRaw(JsonConvert.SerializeObject(propValue))
+                                    : IsValueIEnumerableArchetypeDatatype(propValue)
+                                        ? new JRaw(GetModelAsFieldset(propValue as IList))
+                                        : new JValue(GetSerializedPropertyValue(propValue))));
 
                 fsProperties.Add(fsProperty);
             }
@@ -301,6 +308,14 @@ namespace Archetype.Umbraco.Serialization
             var archetypeDatatypeAttribute = (AsArchetypeAttribute)attributes.FirstOrDefault(attr => attr is AsArchetypeAttribute);
 
             return archetypeDatatypeAttribute != null ? archetypeDatatypeAttribute.FieldsetName : type.Name;
+        }
+
+        private bool IsValueIEnumerableArchetypeDatatype(object value)
+        {
+            if (value as IEnumerable != null && value.GetType().IsGenericType)
+                return IsValueArchetypeDatatype(value.GetType().GetGenericArguments()[0]);
+
+            return false;
         }
 
         private bool IsValueArchetypeDatatype(object value)
