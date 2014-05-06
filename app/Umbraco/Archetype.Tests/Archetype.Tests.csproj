@@ -222,6 +222,10 @@
     <Compile Include="PropertyValueConverter\PropertyValueConverterTests.cs" />
     <Compile Include="Serialization\ArchetypeJsonConverterComplexModelTest.cs" />
     <Compile Include="Serialization\ArchetypeJsonConverterTest.cs" />
+    <Compile Include="Serialization\Base\ArchetypeJsonConverterTestBase.cs" />
+    <Compile Include="Serialization\Enumerable\ArchetypeJsonConverterTest.cs" />
+    <Compile Include="Serialization\Enumerable\JsonTestModels.cs" />
+    <Compile Include="Serialization\Enumerable\JsonTestStrings.cs" />
     <Compile Include="Serialization\JsonTestStrings.cs" />
     <Compile Include="Serialization\JsonTestModels.cs" />
   </ItemGroup>
@@ -245,7 +249,7 @@
     </PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent>xcopy  $(ProjectDir)SupportingFiles\config\* $(TargetDir)config /I /O /X /E /K /D</PostBuildEvent>
+    <PostBuildEvent>xcopy  $(ProjectDir)SupportingFiles\config\* $(TargetDir)config /I /O /X /E /K /D /Y</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
