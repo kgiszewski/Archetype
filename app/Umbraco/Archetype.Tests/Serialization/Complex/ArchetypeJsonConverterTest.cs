@@ -3,10 +3,10 @@ using Archetype.Tests.Serialization.Base;
 using Newtonsoft.Json;
 using NUnit.Framework;
 
-namespace Archetype.Tests.Serialization
+namespace Archetype.Tests.Serialization.Complex
 {
     [TestFixture]
-    public class ArchetypeJsonConverterComplexModelTest : ArchetypeJsonConverterTestBase
+    public class ArchetypeJsonConverterTest : ArchetypeJsonConverterTestBase
     {
         private TextList _textList;
         private Captions _captions;

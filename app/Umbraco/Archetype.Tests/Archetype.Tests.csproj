@@ -220,9 +220,11 @@
     <Compile Include="Models\FieldsetTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PropertyValueConverter\PropertyValueConverterTests.cs" />
-    <Compile Include="Serialization\ArchetypeJsonConverterComplexModelTest.cs" />
     <Compile Include="Serialization\ArchetypeJsonConverterTest.cs" />
     <Compile Include="Serialization\Base\ArchetypeJsonConverterTestBase.cs" />
+    <Compile Include="Serialization\Complex\ArchetypeJsonConverterTest.cs" />
+    <Compile Include="Serialization\Complex\JsonTestModels.cs" />
+    <Compile Include="Serialization\Complex\JsonTestStrings.cs" />
     <Compile Include="Serialization\Enumerable\ArchetypeJsonConverterTest.cs" />
     <Compile Include="Serialization\Enumerable\JsonTestModels.cs" />
     <Compile Include="Serialization\Enumerable\JsonTestStrings.cs" />
