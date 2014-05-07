@@ -15,6 +15,8 @@
 
     //helper to get $eval the labelTemplate
     $scope.getFieldsetTitle = function(fieldsetConfigModel, fieldsetIndex) {
+        if(!fieldsetConfigModel)
+            return "";
         var fieldset = $scope.model.value.fieldsets[fieldsetIndex];
         var fieldsetConfig = $scope.getConfigFieldsetByAlias(fieldset.alias);
         var template = fieldsetConfigModel.labelTemplate;
