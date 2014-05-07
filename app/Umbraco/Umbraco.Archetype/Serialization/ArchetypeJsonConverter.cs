@@ -226,10 +226,10 @@ namespace Archetype.Umbraco.Serialization
             var fieldsetModels = properties.Where(HasAsFieldsetAttribute)
                 .Select(pInfo => pInfo.GetValue(value));
 
-            models = new List<object>
-            {
-                dynamicModel,                
-            };
+            models = new List<object>();
+
+            if (dynamicModel.Any())
+                models.Add(dynamicModel);
 
             models = ((IEnumerable<object>)models).Concat(fieldsetModels).ToList();
 

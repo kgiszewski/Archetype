@@ -230,6 +230,10 @@
     <Compile Include="Serialization\Enumerable\JsonTestStrings.cs" />
     <Compile Include="Serialization\JsonTestStrings.cs" />
     <Compile Include="Serialization\JsonTestModels.cs" />
+    <Compile Include="Serialization\Regression\ArchetypeJsonConverterTest.cs" />
+    <Compile Include="Serialization\Regression\SerializationTestHelper.cs" />
+    <Compile Include="Serialization\Regression\JsonTestModels.cs" />
+    <Compile Include="Serialization\Regression\JsonTestStrings.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
