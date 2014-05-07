@@ -63,17 +63,6 @@ namespace Archetype.Umbraco.Serialization
 
         #region private methods - deserialization
 
-        private bool TryParseJTokenAsEnumerable(JToken jToken, out JToken resultToken)
-        {
-            resultToken = null;
-            var jTokenEnumerable = jToken != null && jToken["fieldsets"] != null && jToken["fieldsets"].Any();
-
-            if (jTokenEnumerable)
-                resultToken = jToken;
-
-            return jTokenEnumerable;
-        }
-
         private object DeserializeEnumerableObject(object obj, JToken jToken)
         {
             var model = obj as IEnumerable<object>;
@@ -120,19 +109,16 @@ namespace Archetype.Umbraco.Serialization
         private JToken GetPropertyToken(Type objType, JToken jToken)
         {
             var objAlias = GetFieldsetName(objType);
+            JToken propJToken;
 
-            if (jToken["fieldsets"] != null)
-                return jToken["fieldsets"].Single(p => p.SelectToken("alias").ToString().Equals(objAlias));
+            if (TryParseJTokenFromFieldset(jToken, out propJToken))
+                return propJToken.Single(p => p.SelectToken("alias").ToString().Equals(objAlias));
 
-            if (jToken["value"] != null && jToken["value"].HasValues && jToken["value"]["fieldsets"] != null)
-            {
-                var fsJToken = jToken["value"]["fieldsets"].SingleOrDefault(p => p.SelectToken("alias").ToString().Equals(objAlias));
-                if (fsJToken != null)
-                    return fsJToken;
-            }
-                 
+            if (!TryParseJTokenFromObject(jToken, out propJToken)) 
+                return ParseJTokenFromItem(jToken, objAlias);
 
-            return jToken["alias"].ToString().Equals(objAlias) ? jToken : null;
+            return propJToken.SingleOrDefault(p => p.SelectToken("alias").ToString().Equals(objAlias)) 
+                        ?? ParseJTokenFromItem(jToken, objAlias);
         }
 
         private object PopulateProperties(object obj, JToken jToken)
@@ -165,6 +151,48 @@ namespace Archetype.Umbraco.Serialization
                     ? JsonConvert.DeserializeObject(propJToken["value"].SelectToken("fieldsets").ToString(), propertyInfo.PropertyType,
                     this)
                 : GetDeserializedPropertyValue(propJToken, propertyInfo.PropertyType);
+        }
+
+
+        private JToken ParseJTokenFromItem(JToken jToken, string itemAlias)
+        {
+            return (jToken["alias"] != null && jToken["alias"].ToString().Equals(itemAlias))
+                    ? jToken
+                    : null;
+        }
+
+        private bool TryParseJTokenFromFieldset(JToken jToken, out JToken resultToken)
+        {
+            resultToken = null;
+            var isJTokenFieldset = (jToken["fieldsets"] != null);
+
+            if (isJTokenFieldset)
+                resultToken = jToken["fieldsets"];
+
+            return isJTokenFieldset;
+        }
+
+        private bool TryParseJTokenFromObject(JToken jToken, out JToken resultToken)
+        {
+            resultToken = null;
+            var isJTokenObject = (jToken["value"] != null && jToken["value"].HasValues
+                                    && jToken["value"]["fieldsets"] != null);
+
+            if (isJTokenObject)
+                resultToken = jToken["value"]["fieldsets"];
+
+            return isJTokenObject;
+        }
+
+        private bool TryParseJTokenAsEnumerable(JToken jToken, out JToken resultToken)
+        {
+            resultToken = null;
+            var jTokenEnumerable = jToken != null && jToken["fieldsets"] != null && jToken["fieldsets"].Any();
+
+            if (jTokenEnumerable)
+                resultToken = jToken;
+
+            return jTokenEnumerable;
         }
 
         #endregion
