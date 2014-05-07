@@ -60,21 +60,21 @@ namespace Archetype.Tests.Serialization
         #region serialization tests
 
         [Test]
-        public void MergerDetailsModel_Serializes_To_Archetype_Property()
+        public void Convert_MergerDetailsModel_To_ArchetypeJson()
         {
             var result = ConvertModelToArchetypeJson(_mergerDetails, Formatting.Indented);
             Assert.AreEqual(JsonTestStrings._MERGER_DETAILS_JSON, result);
         }        
         
         [Test]
-        public void ContactDetailsModel_Serializes_To_Archetype_Property()
+        public void Convert_ContactDetailsModel_To_ArchetypeJson()
         {
             var result = ConvertModelToArchetypeJson(_contactDetails, Formatting.Indented);
             Assert.AreEqual(JsonTestStrings._CONTACT_DETAILS_JSON, result);
         }
 
         [Test]
-        public void CompanyDetailsModel_Fieldset_Serializes_As_Expected()
+        public void Convert_CompanyDetailsModel_To_ArchetypeJson()
         {
             var result = ConvertModelToArchetypeJson(_companyDetails, Formatting.Indented);
 
@@ -83,7 +83,7 @@ namespace Archetype.Tests.Serialization
         }
 
         [Test]
-        public void AnnualStatementModel_Fieldset_Serializes_As_Expected()
+        public void Convert_AnnualStatementModel_To_ArchetypeJson()
         {
             var result = ConvertModelToArchetypeJson(_annualStatement, Formatting.Indented);
 
@@ -101,7 +101,7 @@ namespace Archetype.Tests.Serialization
         }
 
         [Test]
-        public void ConvertContactDetailsModelToArchetype()
+        public void Convert_ContactDetailsModel_To_Archetype()
         {
             var model = new ContactDetails
             {
@@ -113,13 +113,13 @@ namespace Archetype.Tests.Serialization
         }
 
         [Test]
-        public void ConvertNumericAndDateModelToArchetype()
+        public void Convert_AnnualStatementModel_To_Archetype()
         {
             Assert.NotNull(ConvertModelToArchetype(_annualStatement));
         }
 
         [Test]
-        public void ConvertCompoundModelToArchetype()
+        public void Convert_AllContactDetailsModel_To_Archetype()
         {
             var item1 = new ContactDetails
             {
@@ -143,7 +143,7 @@ namespace Archetype.Tests.Serialization
         }
 
         [Test]
-        public void ConvertEnumerableModelToArchetype()
+        public void Convert_ContactDetailsListModel_To_Archetype()
         {
             var item1 = new ContactDetails
             {
@@ -167,7 +167,7 @@ namespace Archetype.Tests.Serialization
         }
 
         [Test]
-        public void ConvertNestedModelToArchetype()
+        public void Convert_CompanyDetailsModel_To_Archetype()
         {
             var model = new CompanyDetails
             {
@@ -187,7 +187,7 @@ namespace Archetype.Tests.Serialization
         #region deserialization tests
 
         [Test]
-        public void DeserializeModelFromArchetype()
+        public void Convert_ArchetypeJson_To_ContactDetailsModel()
         {
             var result = ConvertArchetypeJsonToModel<ContactDetails>(JsonTestStrings._CONTACT_DETAILS_JSON);
 
@@ -208,7 +208,7 @@ namespace Archetype.Tests.Serialization
         }
 
         [Test]
-        public void DeserializeNumericAndDateModelFromArchetype()
+        public void Convert_ArchetypeJson_To_AnnualStatementModel()
         {
             var result = ConvertArchetypeJsonToModel<AnnualStatement>(JsonTestStrings._ANNUAL_STATEMENT_JSON);
 
@@ -224,7 +224,7 @@ namespace Archetype.Tests.Serialization
         }
 
         [Test]
-        public void DeserializeNumericAndDateModel_NullableDate_HasValue_FromArchetype()
+        public void Convert_ArchetypeJson_To_AnnualStatementModel_NullableDate_HasValue()
         {
             var annualStatement = new AnnualStatement
             {
@@ -250,7 +250,7 @@ namespace Archetype.Tests.Serialization
         }
 
         [Test]
-        public void DeserializeCompoundModelFromArchetype()
+        public void Convert_ArchetypeJson_To_AllContactDetailsModel()
         {
             var item1 = new ContactDetails
             {
@@ -282,7 +282,7 @@ namespace Archetype.Tests.Serialization
         }
 
         [Test]
-        public void DeserializeEnumerableModelFromArchetype()
+        public void Convert_ArchetypeJson_To_ContactDetailsListModel()
         {
             var item1 = new ContactDetails
             {
@@ -315,7 +315,7 @@ namespace Archetype.Tests.Serialization
         }
 
         [Test]
-        public void DeserializeNestedModelFromArchetype()
+        public void Convert_ArchetypeJson_To_CompanyDetailsModel()
         {
             var model = new CompanyDetails
             {

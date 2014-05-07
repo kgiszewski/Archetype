@@ -27,20 +27,20 @@ namespace Archetype.Tests.Serialization
         #region complex nested model tests
 
         [Test]
-        public void PageDetailsModel_Serializes_To_Archetype_Property()
+        public void Convert_PageDetailsModel_To_ArchetypeJson()
         {
             var result = ConvertModelToArchetypeJson(_pageDetails, Formatting.Indented);
             Assert.AreEqual(JsonTestStrings._PAGE_DETAILS_JSON, result);
         }
 
         [Test]
-        public void ConvertComplexModelToArchetype()
+        public void Convert_PageDetailsModel_To_Archetype()
         {
             Assert.NotNull(ConvertModelToArchetype(_pageDetails));
         }
 
         [Test]
-        public void DeserializeComplexModelFromArchetype()
+        public void Convert_ArchetypeJson_To_PageDetailsModel()
         {
             var result = ConvertArchetypeJsonToModel<PageDetails>(JsonTestStrings._PAGE_DETAILS_JSON);
 
@@ -55,7 +55,7 @@ namespace Archetype.Tests.Serialization
         }
 
         [Test]
-        public void SerializeThenDeserializeComplexModelFromArchetype()
+        public void Convert_PageDetailsModel_To_Archetype_AndBack()
         {
             var result = ConvertModelToArchetypeAndBack(_pageDetails);
 
@@ -73,20 +73,20 @@ namespace Archetype.Tests.Serialization
         #region complex nested tree model tests
 
         [Test]
-        public void ConvertComplexNestedModelToArchetype()
+        public void Convert_PagesModel_To_Archetype()
         {
             Assert.NotNull(ConvertModelToArchetype(_pages));
         }
 
         [Test]
-        public void PagesModel_Serializes_To_Archetype_Property()
+        public void Convert_PagesModel_To_ArchetypeJson()
         {
             var result = ConvertModelToArchetypeJson(_pages, Formatting.Indented);
             Assert.AreEqual(JsonTestStrings._PAGES_JSON, result);
         }
 
         [Test]
-        public void DeserializeComplexTreeModelFromArchetype()
+        public void Convert_ArchetypeJson_To_PagesModel()
         {
             var result = ConvertArchetypeJsonToModel<PageList>(JsonTestStrings._PAGES_JSON);
 
@@ -115,7 +115,7 @@ namespace Archetype.Tests.Serialization
         }
 
         [Test]
-        public void SerializeThenDeserializeComplexTreeModelFromArchetype()
+        public void Convert_PagesModel_To_Archetype_AndBack()
         {
             var result = ConvertModelToArchetypeAndBack(_pages);
 

@@ -54,17 +54,6 @@ namespace Archetype.Umbraco.Serialization
                         : PopulateProperties(obj, jToken);
         }
 
-        private bool TryParseJTokenAsEnumerable(JToken jToken, out JToken resultToken)
-        {
-            resultToken = null;
-            var jTokenEnumerable = jToken != null && jToken["fieldsets"] != null && jToken["fieldsets"].Any();
-
-            if (jTokenEnumerable)
-                resultToken = jToken;
-            
-            return jTokenEnumerable;
-        }
-
         public override bool CanConvert(Type objectType)
         {
             return IsTypeArchetypeDatatype(objectType);
@@ -73,6 +62,17 @@ namespace Archetype.Umbraco.Serialization
         #endregion
 
         #region private methods - deserialization
+
+        private bool TryParseJTokenAsEnumerable(JToken jToken, out JToken resultToken)
+        {
+            resultToken = null;
+            var jTokenEnumerable = jToken != null && jToken["fieldsets"] != null && jToken["fieldsets"].Any();
+
+            if (jTokenEnumerable)
+                resultToken = jToken;
+
+            return jTokenEnumerable;
+        }
 
         private object DeserializeEnumerableObject(object obj, JToken jToken)
         {
