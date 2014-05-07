@@ -111,6 +111,30 @@ namespace Archetype.Tests.Serialization.Enumerable
             var result = ConvertArchetypeJsonToModel<Captions>(JsonTestStrings._CAPTIONS_JSON);
             Assert.NotNull(result);
             Assert.NotNull(result.TextArray);
+
+            Assert.AreEqual(3, result.TextArray.Count);
+
+            foreach (var caption in result.TextArray)
+            {
+                Assert.AreEqual(String.Format("Caption {0}", result.TextArray.IndexOf(caption) + 1),
+                    caption.TextString);
+            }
+        }
+
+        [Test]
+        public void Convert_CaptionsModel_To_Archetype_AndBack()
+        {
+            var result = ConvertModelToArchetypeAndBack(_captions);
+            Assert.NotNull(result);
+            Assert.NotNull(result.TextArray);
+
+            Assert.AreEqual(3, result.TextArray.Count);
+
+            foreach (var caption in result.TextArray)
+            {
+                var index = result.TextArray.IndexOf(caption);
+                Assert.AreEqual(_captions.TextArray.ElementAt(index).TextString, caption.TextString);
+            }
         }
 
         #endregion
