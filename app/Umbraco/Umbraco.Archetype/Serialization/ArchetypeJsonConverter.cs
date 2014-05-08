@@ -87,7 +87,10 @@ namespace Archetype.Umbraco.Serialization
             foreach (var propInfo in asFieldset)
             {
                 var propAlias = GetJsonPropertyName(propInfo);
-                var fsJToken = GetPropertyToken(propInfo.PropertyType, jToken);
+                var fsJToken = propInfo.PropertyType.Namespace.Equals("System") 
+                                ? GetFieldsetJTokenByAlias(propAlias, jToken) 
+                                : GetFieldsetJTokenByTypeAlias(propInfo.PropertyType, jToken);
+
                 var propJToken =
                     fsJToken["properties"].Single(p => p.SelectToken("alias").ToString().Equals(propAlias));
 
@@ -99,25 +102,54 @@ namespace Archetype.Umbraco.Serialization
                 propInfo.SetValue(obj, propValue);
             }
 
-            var propToken = GetPropertyToken(obj.GetType(), jToken);
+            if (properties.All(HasAsFieldsetAttribute))
+                return obj;
 
-            return propToken == null 
-                    ? obj 
-                    : PopulateProperties(obj, propToken["properties"] ?? new JArray(propToken));
+            var objToken = GetFieldsetJTokenByTypeAlias(obj.GetType(), jToken);
+
+            return objToken == null
+                          ? obj
+                          : PopulateProperties(obj, objToken["properties"] ?? new JArray(objToken));
+
+            //if (objToken == null)
+            //    return obj;
+
+            //if (objToken.SelectToken("properties") != null)
+            //    return PopulateProperties(obj, objToken["properties"]);
+
+            //PopulateProperties(obj, new JArray(objToken));
+
+            //var defaultFsProperties = properties.Where(pInfo =>  !HasAsFieldsetAttribute(pInfo)).ToList();
+
+            //foreach (var property in defaultFsProperties)
+            //{
+            //    var propJToken = ParseJTokenFromItems(objToken, GetJsonPropertyName(property));
+            //    PopulateProperty(obj, propJToken["properties"], property);
+            //}
+
+            //return PopulateProperties(obj, new JArray(objToken));
         }
 
-        private JToken GetPropertyToken(Type objType, JToken jToken)
+        private JToken GetFieldsetJTokenByTypeAlias(Type objType, JToken jToken)
         {
             var objAlias = GetFieldsetName(objType);
+            return GetFieldsetJTokenByAlias(objAlias, jToken);
+        }
+
+        private JToken GetFieldsetJTokenByAlias(string objAlias, JToken jToken)
+        {
             JToken propJToken;
 
-            if (TryParseJTokenFromFieldset(jToken, out propJToken))
-                return propJToken.Single(p => p.SelectToken("alias").ToString().Equals(objAlias));
+            if (TryParseJTokenFromNamedFieldset(jToken, objAlias, out propJToken))
+                return propJToken;
 
-            if (!TryParseJTokenFromObject(jToken, out propJToken)) 
-                return ParseJTokenFromItem(jToken, objAlias);
+            if (TryParseJTokenFromNestedFieldset(jToken, objAlias, out propJToken))
+                return propJToken;
 
-            return propJToken.SingleOrDefault(p => p.SelectToken("alias").ToString().Equals(objAlias)) 
+            if (TryParseJTokenFromDefaultFieldset(jToken, out propJToken))
+                return propJToken;
+
+            return propJToken
                         ?? ParseJTokenFromItem(jToken, objAlias);
         }
 
@@ -127,19 +159,27 @@ namespace Archetype.Umbraco.Serialization
 
             foreach (var propertyInfo in properties)
             {
-                var propAlias = GetJsonPropertyName(propertyInfo);
-
-                var propJToken = jToken.SingleOrDefault(p => p.SelectToken("alias").ToString().Equals(propAlias));
-
-                if (propJToken == null)
-                    continue;
-
-                var propValue = GetPropertyValue(propertyInfo, propJToken);
-
-                propertyInfo.SetValue(obj, propValue);
+                PopulateProperty(obj, jToken, propertyInfo);
             }
 
             return obj;
+        }
+
+        private void PopulateProperty(object obj, JToken jToken, PropertyInfo propertyInfo)
+        {
+            var propAlias = GetJsonPropertyName(propertyInfo);
+            var propJToken = GetPropertyJToken(propAlias, jToken);
+
+            if (propJToken == null)
+                return;
+
+            var propValue = GetPropertyValue(propertyInfo, propJToken);
+            propertyInfo.SetValue(obj, propValue);
+        }
+
+        private JToken GetPropertyJToken(string propAlias, JToken jToken)
+        {
+            return jToken.SingleOrDefault(p => p.SelectToken("alias").ToString().Equals(propAlias));
         }
 
         private object GetPropertyValue(PropertyInfo propertyInfo, JToken propJToken)
@@ -156,32 +196,46 @@ namespace Archetype.Umbraco.Serialization
 
         private JToken ParseJTokenFromItem(JToken jToken, string itemAlias)
         {
-            return (jToken["alias"] != null && jToken["alias"].ToString().Equals(itemAlias))
+            return (jToken.SelectToken("alias") != null && jToken["alias"].ToString().Equals(itemAlias))
                     ? jToken
                     : null;
         }
 
-        private bool TryParseJTokenFromFieldset(JToken jToken, out JToken resultToken)
+        private JToken ParseJTokenFromItems(JToken jToken, string itemAlias)
         {
-            resultToken = null;
-            var isJTokenFieldset = (jToken["fieldsets"] != null);
-
-            if (isJTokenFieldset)
-                resultToken = jToken["fieldsets"];
-
-            return isJTokenFieldset;
+            return jToken.SingleOrDefault(jT => ParseJTokenFromItem(jT, itemAlias) != null);
         }
 
-        private bool TryParseJTokenFromObject(JToken jToken, out JToken resultToken)
+        private bool TryParseJTokenFromNamedFieldset(JToken jToken, string objAlias, out JToken resultToken)
         {
             resultToken = null;
-            var isJTokenObject = (jToken["value"] != null && jToken["value"].HasValues
-                                    && jToken["value"]["fieldsets"] != null);
 
-            if (isJTokenObject)
-                resultToken = jToken["value"]["fieldsets"];
+            if (jToken.SelectToken("fieldsets") == null)
+                return false;
 
-            return isJTokenObject;
+            resultToken = jToken["fieldsets"].SingleOrDefault(p => p.SelectToken("alias").ToString().Equals(objAlias));
+
+            return resultToken != null;
+        }
+
+        private bool TryParseJTokenFromNestedFieldset(JToken jToken, string objAlias, out JToken resultToken)
+        {
+            resultToken = null;
+
+            if (jToken.SelectToken("value") == null || !jToken["value"].HasValues
+                                    || jToken["value"]["fieldsets"] == null)
+                return false;
+
+            resultToken = jToken["value"]["fieldsets"].SingleOrDefault(p => p.SelectToken("alias").ToString().Equals(objAlias));
+
+            return resultToken != null;
+        }
+
+        private bool TryParseJTokenFromDefaultFieldset(JToken jToken, out JToken resultToken)
+        {
+            resultToken = jToken.SelectToken("fieldsets");
+
+            return resultToken != null;
         }
 
         private bool TryParseJTokenAsEnumerable(JToken jToken, out JToken resultToken)
@@ -224,7 +278,12 @@ namespace Archetype.Umbraco.Serialization
             }
 
             var fieldsetModels = properties.Where(HasAsFieldsetAttribute)
-                .Select(pInfo => pInfo.GetValue(value));
+                .Select(pInfo =>
+                {
+                    var fsModel = new ExpandoObject() as IDictionary<string, object>;
+                    fsModel.Add(GetJsonPropertyName(pInfo), pInfo.GetValue(value));
+                    return fsModel;
+                });
 
             models = new List<object>();
 
@@ -307,8 +366,10 @@ namespace Archetype.Umbraco.Serialization
 
             var fsProperties = new List<JObject>
             {
-                new JObject {new JProperty("alias", alias), new JProperty("value", value)}
+                new JObject {new JProperty("alias", alias), 
+                    new JProperty("value", value != null ? JToken.FromObject(value) : value)}
             };
+
             jObj.Add("properties", new JRaw(JsonConvert.SerializeObject(fsProperties)));
 
             return jObj;
@@ -324,7 +385,7 @@ namespace Archetype.Umbraco.Serialization
                     }
                 };
 
-            var properties = GetSerialiazableProperties(obj);
+            var properties = GetProperties(obj);
 
             var fsProperties = new List<JObject>();
 
@@ -334,15 +395,12 @@ namespace Archetype.Umbraco.Serialization
                 var jProperty = new JProperty("alias", GetJsonPropertyName(propertyInfo));
                 fsProperty.Add(jProperty);
 
-                var propValue = propertyInfo.GetValue(obj, null);
+                var propValue = propertyInfo.GetIndexParameters().Length == 0 
+                                    ? propertyInfo.GetValue(obj, null)
+                                    : obj as string;
 
                 fsProperty.Add(
-                    new JProperty("value",
-                                  IsValueArchetypeDatatype(propValue)
-                                    ? new JRaw(JsonConvert.SerializeObject(propValue))
-                                    : IsValueIEnumerableArchetypeDatatype(propValue)
-                                        ? new JRaw(SerializeModelToFieldset(propValue as IEnumerable))
-                                        : new JValue(GetSerializedPropertyValue(propValue))));
+                    new JProperty("value", GetJPropertyValue(propValue)));
 
                 fsProperties.Add(fsProperty);
             }
@@ -352,11 +410,31 @@ namespace Archetype.Umbraco.Serialization
             return jObj;
         }
 
+        private object GetJPropertyValue(object value)
+        {
+            return IsValueArchetypeDatatype(value)
+                ? new JRaw(JsonConvert.SerializeObject(value))
+                : IsValueIEnumerableArchetypeDatatype(value)
+                    ? new JRaw(SerializeModelToFieldset(value as IEnumerable))
+                    : new JValue(GetSerializedPropertyValue(value));
+        }
+
+        private IEnumerable<PropertyInfo> GetProperties(object obj)
+        {
+            if (obj.GetType() !=  typeof(string))
+                return GetSerialiazableProperties(obj);
+
+            var indexer = ((DefaultMemberAttribute)obj.GetType()
+                .GetCustomAttributes(typeof(DefaultMemberAttribute), true)[0]).MemberName;
+
+            return new List<PropertyInfo> { obj.GetType().GetProperty(indexer) };
+        }
+
         private IEnumerable<PropertyInfo> GetSerialiazableProperties(object obj)
         {
             return obj.GetType()
                 .GetProperties(BindingFlags.Instance | BindingFlags.Public)
-                .Where(prop => !Attribute.IsDefined(prop, typeof(JsonIgnoreAttribute)));
+                .Where(prop => !Attribute.IsDefined(prop, typeof (JsonIgnoreAttribute)));
         }
 
         private string GetJsonPropertyName(PropertyInfo property)
