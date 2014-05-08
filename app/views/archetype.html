@@ -46,9 +46,17 @@
         </li>
     </ul>
     <div ng-show="showAddButton()">
-        <a class="archetypeAddButton" href="#" ng-click="addRow(model.config.fieldsets[0].alias, 0)" prevent-default="">
-            <i class="icon icon-add"></i>
+        <a data-toggle="{{ model.config.fieldsets.length > 1 ? 'dropdown' : ''}}" ng-click="model.config.fieldsets.length == 1 ? addRow(fieldset.alias, 0) : return" prevent-default>
+            <i class="icon icon-add dropdown-toggle"></i>
             <localize key="general_add" class="archetypeAddButtonText">Add</localize>
         </a>
+        <ul class="dropdown-menu umb-actions">
+            <li ng-repeat="fieldsetModel in model.config.fieldsets" ng-click="addRow(fieldsetModel.alias, 0)">
+                <a>
+                    <i class="fieldsetIcon icon ng-class:fieldsetModel.icon"></i>
+                    <span class="menu-label">{{fieldsetModel.label}}</span>
+                </a>
+            </li>
+        </ul>
     </div>
 </div>
