@@ -7,7 +7,7 @@ namespace Archetype.Tests.Serialization.Enumerable
 {
     #region Feedback - single fieldset with multiple items
 
-    [AsArchetype("feedback")] /* Must have same archetype alias as below */
+    [AsArchetype("feedbacks")] /* Note: when inheriting from a list, archetype alias is not used */
     [JsonConverter(typeof(ArchetypeJsonConverter))]
     public class Feedbacks : List<Feedback>
     {

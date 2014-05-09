@@ -1,20 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Archetype.Umbraco.Serialization;
 using Newtonsoft.Json;
 
 namespace Archetype.Tests.Serialization.Regression
 {
-
     [AsArchetype("simpleModel")]
     [JsonConverter(typeof(ArchetypeJsonConverter))]
     public class SimpleModel
     {
         [JsonProperty("text")]        
-        public string Text { get; set; }
+        public String Text { get; set; }
         [JsonProperty("integer")]
         public int Id { get; set; }
         [JsonProperty("nullableInteger")]
@@ -78,4 +74,11 @@ namespace Archetype.Tests.Serialization.Regression
         public DateTime DateOne { get; set; }
         public DateTime? DateTwo { get; set; }
     }
+
+    [AsArchetype("simpleModels")]
+    [JsonConverter(typeof(ArchetypeJsonConverter))]
+    public class SimpleModels : List<SimpleModel>
+    {
+    }
+
 }

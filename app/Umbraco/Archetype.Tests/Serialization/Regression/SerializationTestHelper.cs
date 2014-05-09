@@ -1,13 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Archetype.Tests.Serialization.Regression
-{
+{       
     public class SerializationTestHelper
     {
+        public T GetModel<T>()
+        {
+            try
+            {
+                return (T)GetType().GetMethod("Get" + typeof(T).Name).Invoke(this, null);
+            }
+            catch
+            {
+                return default(T);                
+            }
+        }        
+        
         public SimpleModel GetSimpleModel()
         {
             return new SimpleModel
@@ -22,7 +30,7 @@ namespace Archetype.Tests.Serialization.Regression
             };
         }
 
-        public SimpleModelWithFieldsets GetSimpleModellWithFieldsets()
+        public SimpleModelWithFieldsets GetSimpleModelWithFieldsets()
         {
             return new SimpleModelWithFieldsets
             {
@@ -36,7 +44,7 @@ namespace Archetype.Tests.Serialization.Regression
             };
         }
 
-        public SimpleModelWithMixedFieldsets GetSimpleModellWithMixedFieldsets()
+        public SimpleModelWithMixedFieldsets GetSimpleModelWithMixedFieldsets()
         {
             return new SimpleModelWithMixedFieldsets
             {
@@ -47,6 +55,16 @@ namespace Archetype.Tests.Serialization.Regression
                 Id = 123,
                 NullableId = null,
                 Text = "Test Text"
+            };
+        }
+
+        public SimpleModels GetSimpleModels()
+        {
+            return new SimpleModels
+            {
+                GetSimpleModel(),
+                GetSimpleModel(),
+                GetSimpleModel()
             };
         }
     }

@@ -222,6 +222,7 @@
     <Compile Include="PropertyValueConverter\PropertyValueConverterTests.cs" />
     <Compile Include="Serialization\ArchetypeJsonConverterTest.cs" />
     <Compile Include="Serialization\Base\ArchetypeJsonConverterTestBase.cs" />
+    <Compile Include="Serialization\Base\RegressionTestBase.cs" />
     <Compile Include="Serialization\Complex\ArchetypeJsonConverterTest.cs" />
     <Compile Include="Serialization\Complex\JsonTestModels.cs" />
     <Compile Include="Serialization\Complex\JsonTestStrings.cs" />

@@ -389,7 +389,7 @@ namespace Archetype.Umbraco.Serialization
 
             var fsProperties = new List<JObject>();
 
-            foreach (var item in expandoObj.Skip(1))
+            foreach (var item in expandoObj.SkipWhile(i => i.Key.Equals(_ROOT_FS_ALIAS)))
             {
                 var property = item;
                 var alias = property.Key;
@@ -463,9 +463,7 @@ namespace Archetype.Umbraco.Serialization
 
         private IEnumerable<PropertyInfo> GetSerialiazableProperties(object obj)
         {
-            return obj.GetType()
-                .GetProperties(BindingFlags.Instance | BindingFlags.Public)
-                .Where(prop => !Attribute.IsDefined(prop, typeof (JsonIgnoreAttribute)));
+            return obj.GetSerialiazableProperties();
         }
 
         private string GetJsonPropertyName(PropertyInfo property)
