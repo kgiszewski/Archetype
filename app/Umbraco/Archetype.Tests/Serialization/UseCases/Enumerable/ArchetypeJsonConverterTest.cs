@@ -6,7 +6,7 @@ using Archetype.Umbraco.PropertyConverters;
 using Newtonsoft.Json;
 using NUnit.Framework;
 
-namespace Archetype.Tests.Serialization.Enumerable
+namespace Archetype.Tests.Serialization.UseCases.Enumerable
 {
     [TestFixture]
     public class ArchetypeJsonConverterTest : ArchetypeJsonConverterTestBase

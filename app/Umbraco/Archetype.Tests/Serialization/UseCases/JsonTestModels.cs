@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Archetype.Umbraco.Serialization;
 using Newtonsoft.Json;
 
-namespace Archetype.Tests.Serialization
+namespace Archetype.Tests.Serialization.UseCases
 {
     #region json test Models
 

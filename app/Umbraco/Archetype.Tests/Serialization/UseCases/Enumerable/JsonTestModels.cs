@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Archetype.Umbraco.Serialization;
 using Newtonsoft.Json;
 
-namespace Archetype.Tests.Serialization.Enumerable
+namespace Archetype.Tests.Serialization.UseCases.Enumerable
 {
     #region Feedback - single fieldset with multiple items
 

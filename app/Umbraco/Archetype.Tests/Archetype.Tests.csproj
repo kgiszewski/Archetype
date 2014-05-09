@@ -220,21 +220,21 @@
     <Compile Include="Models\FieldsetTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PropertyValueConverter\PropertyValueConverterTests.cs" />
-    <Compile Include="Serialization\ArchetypeJsonConverterTest.cs" />
     <Compile Include="Serialization\Base\ArchetypeJsonConverterTestBase.cs" />
     <Compile Include="Serialization\Base\RegressionTestBase.cs" />
-    <Compile Include="Serialization\Complex\ArchetypeJsonConverterTest.cs" />
-    <Compile Include="Serialization\Complex\JsonTestModels.cs" />
-    <Compile Include="Serialization\Complex\JsonTestStrings.cs" />
-    <Compile Include="Serialization\Enumerable\ArchetypeJsonConverterTest.cs" />
-    <Compile Include="Serialization\Enumerable\JsonTestModels.cs" />
-    <Compile Include="Serialization\Enumerable\JsonTestStrings.cs" />
-    <Compile Include="Serialization\JsonTestStrings.cs" />
-    <Compile Include="Serialization\JsonTestModels.cs" />
     <Compile Include="Serialization\Regression\ArchetypeJsonConverterTest.cs" />
     <Compile Include="Serialization\Regression\SerializationTestHelper.cs" />
     <Compile Include="Serialization\Regression\JsonTestModels.cs" />
     <Compile Include="Serialization\Regression\JsonTestStrings.cs" />
+    <Compile Include="Serialization\UseCases\ArchetypeJsonConverterTest.cs" />
+    <Compile Include="Serialization\UseCases\Complex\ArchetypeJsonConverterTest.cs" />
+    <Compile Include="Serialization\UseCases\Complex\JsonTestModels.cs" />
+    <Compile Include="Serialization\UseCases\Complex\JsonTestStrings.cs" />
+    <Compile Include="Serialization\UseCases\Enumerable\ArchetypeJsonConverterTest.cs" />
+    <Compile Include="Serialization\UseCases\Enumerable\JsonTestModels.cs" />
+    <Compile Include="Serialization\UseCases\Enumerable\JsonTestStrings.cs" />
+    <Compile Include="Serialization\UseCases\JsonTestModels.cs" />
+    <Compile Include="Serialization\UseCases\JsonTestStrings.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

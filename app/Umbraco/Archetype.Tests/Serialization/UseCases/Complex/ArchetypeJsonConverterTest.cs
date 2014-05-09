@@ -3,7 +3,7 @@ using Archetype.Tests.Serialization.Base;
 using Newtonsoft.Json;
 using NUnit.Framework;
 
-namespace Archetype.Tests.Serialization.Complex
+namespace Archetype.Tests.Serialization.UseCases.Complex
 {
     [TestFixture]
     public class ArchetypeJsonConverterTest : ArchetypeJsonConverterTestBase

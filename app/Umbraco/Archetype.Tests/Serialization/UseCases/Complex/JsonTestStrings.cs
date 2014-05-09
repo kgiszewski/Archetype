@@ -1,4 +1,4 @@
-﻿namespace Archetype.Tests.Serialization.Complex
+﻿namespace Archetype.Tests.Serialization.UseCases.Complex
 {
     public class JsonTestStrings
     {
