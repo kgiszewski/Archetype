@@ -113,5 +113,26 @@ namespace Archetype.Tests.Serialization.Regression
             var compoundModelWithList = _testHelper.GetModel<CompoundModelWithFieldsetWithList>();
             CompoundModel_Regression_Battery(compoundModelWithList);
         }
+
+        [Test]
+        public void NestedModel_Regression_Battery()
+        {
+            var nestedModel = _testHelper.GetModel<NestedModel>();
+            NestedModel_Regression_Battery(nestedModel);
+        }
+
+        [Test]
+        public void NestedModelWithMixedFieldset_Regression_Battery()
+        {
+            var nestedModel = _testHelper.GetModel<NestedModelWithMixedFieldset>();
+            NestedModel_Regression_Battery(nestedModel);
+        }
+
+        [Test]
+        public void NestedModelWithFieldset_Regression_Battery()
+        {
+            var nestedModel = _testHelper.GetModel<NestedModelWithFieldset>();
+            NestedModel_Regression_Battery(nestedModel);
+        }
     }
 }

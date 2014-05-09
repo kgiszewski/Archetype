@@ -186,4 +186,52 @@ namespace Archetype.Tests.Serialization.Regression
         [JsonProperty("integer")]
         public int Id { get; set; }
     }
+
+    [AsArchetype("nestedModel")]
+    [JsonConverter(typeof(ArchetypeJsonConverter))]
+    public class NestedModel
+    {
+        [JsonProperty("compoundModel")]
+        public CompoundModel CompoundModel { get; set; }
+        [JsonProperty("simpleModel")]
+        public SimpleModel SimpleModel { get; set; }
+        [JsonProperty("text")]
+        public String Text { get; set; }
+        [JsonProperty("integer")]
+        public int Id { get; set; }
+    }
+
+    [AsArchetype("nestedModel")]
+    [JsonConverter(typeof(ArchetypeJsonConverter))]
+    public class NestedModelWithMixedFieldset
+    {
+        [JsonProperty("compoundModel")]
+        public CompoundModel CompoundModel { get; set; }
+        [AsFieldset]
+        [JsonProperty("simpleModel")]
+        public SimpleModel SimpleModel { get; set; }
+        [JsonProperty("text")]
+        public String Text { get; set; }
+        [AsFieldset]
+        [JsonProperty("integer")]
+        public int Id { get; set; }
+    }
+
+    [AsArchetype("nestedModel")]
+    [JsonConverter(typeof(ArchetypeJsonConverter))]
+    public class NestedModelWithFieldset
+    {
+        [AsFieldset]
+        [JsonProperty("compoundModel")]
+        public CompoundModel CompoundModel { get; set; }
+        [AsFieldset]
+        [JsonProperty("simpleModel")]
+        public SimpleModel SimpleModel { get; set; }
+        [AsFieldset]
+        [JsonProperty("text")]
+        public String Text { get; set; }
+        [AsFieldset]
+        [JsonProperty("integer")]
+        public int Id { get; set; }
+    }
 }

@@ -133,7 +133,7 @@ namespace Archetype.Tests.Serialization.Regression
             return new CompoundModelWithList
             {
                 Id = 10,
-                SimpleModelList = GetSimpleModels(),
+                SimpleModelList = GetModel<SimpleModels>(),
                 Text = typeof(CompoundModelWithList).Name
             };
         }
@@ -143,7 +143,7 @@ namespace Archetype.Tests.Serialization.Regression
             return new CompoundModelWithMixedFieldsetWithList
             {
                 Id = 11,
-                SimpleModelList = GetSimpleModels(),
+                SimpleModelList = GetModel<SimpleModels>(),
                 Text = typeof(CompoundModelWithMixedFieldsetWithList).Name
             };
         }
@@ -153,8 +153,41 @@ namespace Archetype.Tests.Serialization.Regression
             return new CompoundModelWithFieldsetWithList
             {
                 Id = 12,
-                SimpleModelList = GetSimpleModels(),
+                SimpleModelList = GetModel<SimpleModels>(),
                 Text = typeof(CompoundModelWithFieldsetWithList).Name
+            };
+        }
+
+        public NestedModel GetNestedModel()
+        {
+            return new NestedModel
+            {
+                CompoundModel = GetModel<CompoundModel>(),
+                Id = 53,
+                SimpleModel = GetModel<SimpleModel>(),
+                Text = typeof(NestedModel).Name
+            };
+        }
+
+        public NestedModelWithMixedFieldset GetNestedModelWithMixedFieldset()
+        {
+            return new NestedModelWithMixedFieldset
+            {
+                CompoundModel = GetModel<CompoundModel>(),
+                Id = 53,
+                SimpleModel = GetModel<SimpleModel>(),
+                Text = typeof(NestedModel).Name
+            };
+        }
+
+        public NestedModelWithFieldset GetNestedModelWithFieldset()
+        {
+            return new NestedModelWithFieldset
+            {
+                CompoundModel = GetModel<CompoundModel>(),
+                Id = 53,
+                SimpleModel = GetModel<SimpleModel>(),
+                Text = typeof(NestedModel).Name
             };
         }
     }
