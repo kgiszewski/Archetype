@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Archetype.Tests.Serialization.Regression
 {       
@@ -174,9 +175,9 @@ namespace Archetype.Tests.Serialization.Regression
             return new NestedModelWithMixedFieldset
             {
                 CompoundModel = GetModel<CompoundModel>(),
-                Id = 53,
+                Id = 54,
                 SimpleModel = GetModel<SimpleModel>(),
-                Text = typeof(NestedModel).Name
+                Text = typeof(NestedModelWithMixedFieldset).Name
             };
         }
 
@@ -185,9 +186,32 @@ namespace Archetype.Tests.Serialization.Regression
             return new NestedModelWithFieldset
             {
                 CompoundModel = GetModel<CompoundModel>(),
-                Id = 53,
+                Id = 55,
                 SimpleModel = GetModel<SimpleModel>(),
-                Text = typeof(NestedModel).Name
+                Text = typeof(NestedModelWithFieldset).Name
+            };
+        }
+
+        public CompoundModelWrapper GetCompoundModelWrapper()
+        {
+            return new CompoundModelWrapper
+            {
+                CompoundModels = new List<CompoundModel>
+                {
+                    GetModel<CompoundModel>(),
+                    GetModel<CompoundModel>(),
+                    GetModel<CompoundModel>()
+                },
+                Text = typeof(CompoundModelWrapper).Name
+            };
+        }
+
+        public ComplexModel GetComplexModel()
+        {
+            return new ComplexModel
+            {
+                CompoundModelWrapper = GetModel<CompoundModelWrapper>(),
+                Text = typeof(ComplexModel).Name
             };
         }
     }

@@ -6,15 +6,6 @@
             @"{
   ""fieldsets"": [
     {
-      ""alias"": ""pages"",
-      ""properties"": [
-        {
-          ""alias"": ""pages"",
-          ""value"": ""2439,2440,2441,2442,2443,2444,2445,2446,2447,2448,2449,2450,2451,2452,2453""
-        }
-      ]
-    },
-    {
       ""alias"": ""captions"",
       ""properties"": [
         {
@@ -22,43 +13,64 @@
           ""value"": {
             ""fieldsets"": [
               {
-                ""alias"": ""textstringArray"",
+                ""alias"": ""captions"",
                 ""properties"": [
                   {
-                    ""alias"": ""textstring"",
-                    ""value"": ""First Page""
-                  }
-                ]
-              },
-              {
-                ""alias"": ""textstringArray"",
-                ""properties"": [
-                  {
-                    ""alias"": ""textstring"",
-                    ""value"": ""Second Page""
-                  }
-                ]
-              },
-              {
-                ""alias"": ""textstringArray"",
-                ""properties"": [
-                  {
-                    ""alias"": ""textstring"",
-                    ""value"": ""Third Page""
-                  }
-                ]
-              },
-              {
-                ""alias"": ""textstringArray"",
-                ""properties"": [
-                  {
-                    ""alias"": ""textstring"",
-                    ""value"": ""Fourth Page""
+                    ""alias"": ""captions"",
+                    ""value"": {
+                      ""fieldsets"": [
+                        {
+                          ""alias"": ""textstringArray"",
+                          ""properties"": [
+                            {
+                              ""alias"": ""textstring"",
+                              ""value"": ""First Page""
+                            }
+                          ]
+                        },
+                        {
+                          ""alias"": ""textstringArray"",
+                          ""properties"": [
+                            {
+                              ""alias"": ""textstring"",
+                              ""value"": ""Second Page""
+                            }
+                          ]
+                        },
+                        {
+                          ""alias"": ""textstringArray"",
+                          ""properties"": [
+                            {
+                              ""alias"": ""textstring"",
+                              ""value"": ""Third Page""
+                            }
+                          ]
+                        },
+                        {
+                          ""alias"": ""textstringArray"",
+                          ""properties"": [
+                            {
+                              ""alias"": ""textstring"",
+                              ""value"": ""Fourth Page""
+                            }
+                          ]
+                        }
+                      ]
+                    }
                   }
                 ]
               }
             ]
           }
+        }
+      ]
+    },
+    {
+      ""alias"": ""pages"",
+      ""properties"": [
+        {
+          ""alias"": ""pages"",
+          ""value"": ""2439,2440,2441,2442,2443,2444,2445,2446,2447,2448,2449,2450,2451,2452,2453""
         }
       ]
     }

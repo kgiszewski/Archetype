@@ -61,6 +61,11 @@ namespace Archetype.Tests.Serialization.Base
             CompoundModel_Regression_Battery(model);
         }
 
+        protected void ComplexModel_Regression_Battery<T>(T model)
+        {
+            CompoundModel_Regression_Battery(model);
+        }
+
         private static void AssertAreEqual<T>(T model, T result)
         {
             foreach (var propInfo in model.GetSerialiazableProperties())

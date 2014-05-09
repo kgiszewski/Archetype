@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Archetype.Tests.Serialization.Base;
+﻿using Archetype.Tests.Serialization.Base;
 using Newtonsoft.Json;
 using NUnit.Framework;
 
@@ -133,6 +128,13 @@ namespace Archetype.Tests.Serialization.Regression
         {
             var nestedModel = _testHelper.GetModel<NestedModelWithFieldset>();
             NestedModel_Regression_Battery(nestedModel);
+        }
+
+        [Test]
+        public void ComplexModel_Regression_Battery()
+        {
+            var complexModel = _testHelper.GetModel<ComplexModel>();
+            NestedModel_Regression_Battery(complexModel);
         }
     }
 }

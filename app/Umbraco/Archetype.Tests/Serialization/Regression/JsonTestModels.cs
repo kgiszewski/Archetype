@@ -234,4 +234,24 @@ namespace Archetype.Tests.Serialization.Regression
         [JsonProperty("integer")]
         public int Id { get; set; }
     }
+
+    [AsArchetype("complexModel")]
+    [JsonConverter(typeof(ArchetypeJsonConverter))]
+    public class ComplexModel
+    {
+        [JsonProperty("compoundModels")]
+        public CompoundModelWrapper CompoundModelWrapper { get; set; }
+        [JsonProperty("text")]
+        public String Text { get; set; }
+    }
+
+    [AsArchetype("compoundModelWrapper")]
+    [JsonConverter(typeof(ArchetypeJsonConverter))]
+    public class CompoundModelWrapper
+    {
+        [JsonProperty("compoundModels")]
+        public List<CompoundModel> CompoundModels { get; set; }
+        [JsonProperty("text")]
+        public String Text { get; set; }
+    }
 }
