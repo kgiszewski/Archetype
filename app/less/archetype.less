@@ -1,5 +1,9 @@
 ﻿.archetypeEditor {
     width: 98%;
+
+    .dropdown-menu {
+        top: auto;
+    }
 }
 
 .archetypeEditor fieldset{
@@ -24,8 +28,18 @@
         }
     }
 
+    .dropdown-menu {
+        padding: 0;
+        border-radius: 0;
+        box-shadow: none;
+        margin-top: -10px;
+        margin-left: -200px;
+    }
+
     span {
         font-weight: bold;
+
+        &.menu-label { font-weight: normal; }
     }
 
     label:hover {
