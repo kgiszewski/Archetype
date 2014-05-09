@@ -1,12 +1,12 @@
 ﻿using System;
-using Archetype.Umbraco.PropertyConverters;
+using Archetype.Tests.Serialization.Base;
 using Newtonsoft.Json;
 using NUnit.Framework;
 
-namespace Archetype.Tests.Serialization
+namespace Archetype.Tests.Serialization.UseCases
 {
     [TestFixture]
-    public class ArchetypeJsonConverterTest
+    public class ArchetypeJsonConverterTest : ArchetypeJsonConverterTestBase
     {
         private ContactDetails _contactDetails;
         private CompanyDetails _companyDetails;
@@ -60,32 +60,32 @@ namespace Archetype.Tests.Serialization
         #region serialization tests
 
         [Test]
-        public void MergerDetailsModel_Serializes_To_Archetype_Property()
+        public void Convert_MergerDetailsModel_To_ArchetypeJson()
         {
-            var result = JsonConvert.SerializeObject(_mergerDetails, Formatting.Indented);
+            var result = ConvertModelToArchetypeJson(_mergerDetails, Formatting.Indented);
             Assert.AreEqual(JsonTestStrings._MERGER_DETAILS_JSON, result);
         }        
         
         [Test]
-        public void ContactDetailsModel_Serializes_To_Archetype_Property()
+        public void Convert_ContactDetailsModel_To_ArchetypeJson()
         {
-            var result = JsonConvert.SerializeObject(_contactDetails, Formatting.Indented);
+            var result = ConvertModelToArchetypeJson(_contactDetails, Formatting.Indented);
             Assert.AreEqual(JsonTestStrings._CONTACT_DETAILS_JSON, result);
         }
 
         [Test]
-        public void CompanyDetailsModel_Fieldset_Serializes_As_Expected()
+        public void Convert_CompanyDetailsModel_To_ArchetypeJson()
         {
-            var result = JsonConvert.SerializeObject(_companyDetails, Formatting.Indented);
+            var result = ConvertModelToArchetypeJson(_companyDetails, Formatting.Indented);
 
             Assert.AreEqual(JsonTestStrings._COMPANY_DETAILS_JSON, result);
 
         }
 
         [Test]
-        public void AnnualStatementModel_Fieldset_Serializes_As_Expected()
+        public void Convert_AnnualStatementModel_To_ArchetypeJson()
         {
-            var result = JsonConvert.SerializeObject(_annualStatement, Formatting.Indented);
+            var result = ConvertModelToArchetypeJson(_annualStatement, Formatting.Indented);
 
             Assert.AreEqual(JsonTestStrings._ANNUAL_STATEMENT_JSON, result);
 
@@ -94,14 +94,14 @@ namespace Archetype.Tests.Serialization
         [Test]
         public void NullValues_Serialize_To_Empty_String()
         {
-            var result = JsonConvert.SerializeObject(new ContactDetails());
+            var result = ConvertModelToArchetypeJson(new ContactDetails());
 
             Assert.AreEqual(JsonTestStrings._NULL_VALUES_JSON, result);
 
         }
 
         [Test]
-        public void ConvertModelToArchetype()
+        public void Convert_ContactDetailsModel_To_Archetype()
         {
             var model = new ContactDetails
             {
@@ -109,25 +109,17 @@ namespace Archetype.Tests.Serialization
                 Email = "email"
             };
 
-            var converter = new ArchetypeValueConverter();
-            var json = JsonConvert.SerializeObject(model);
-            var archetype = (Archetype.Umbraco.Models.Archetype)converter.ConvertDataToSource(null, json, false);
-
-            Assert.NotNull(archetype);
+            Assert.NotNull(ConvertModelToArchetype(model));
         }
 
         [Test]
-        public void ConvertNumericAndDateModelToArchetype()
+        public void Convert_AnnualStatementModel_To_Archetype()
         {
-            var converter = new ArchetypeValueConverter();
-            var json = JsonConvert.SerializeObject(_annualStatement);
-            var archetype = (Archetype.Umbraco.Models.Archetype)converter.ConvertDataToSource(null, json, false);
-
-            Assert.NotNull(archetype);
+            Assert.NotNull(ConvertModelToArchetype(_annualStatement));
         }
 
         [Test]
-        public void ConvertCompoundModelToArchetype()
+        public void Convert_AllContactDetailsModel_To_Archetype()
         {
             var item1 = new ContactDetails
             {
@@ -147,15 +139,11 @@ namespace Archetype.Tests.Serialization
                 AdminDetails = item2
             };
 
-            var converter = new ArchetypeValueConverter();
-            var json = JsonConvert.SerializeObject(model, Formatting.Indented);
-            var archetype = (Archetype.Umbraco.Models.Archetype)converter.ConvertDataToSource(null, json, false);
-
-            Assert.NotNull(archetype);
+            Assert.NotNull(ConvertModelToArchetype(model));
         }
 
         [Test]
-        public void ConvertEnumerableModelToArchetype()
+        public void Convert_ContactDetailsListModel_To_Archetype()
         {
             var item1 = new ContactDetails
             {
@@ -175,15 +163,11 @@ namespace Archetype.Tests.Serialization
                 item2
             };
 
-            var converter = new ArchetypeValueConverter();
-            var json = JsonConvert.SerializeObject(model, Formatting.Indented);
-            var archetype = (Archetype.Umbraco.Models.Archetype)converter.ConvertDataToSource(null, json, false);
-
-            Assert.NotNull(archetype);
+            Assert.NotNull(ConvertModelToArchetype(model));
         }
 
         [Test]
-        public void ConvertNestedModelToArchetype()
+        public void Convert_CompanyDetailsModel_To_Archetype()
         {
             var model = new CompanyDetails
             {
@@ -195,11 +179,7 @@ namespace Archetype.Tests.Serialization
                 }
             };
 
-            var converter = new ArchetypeValueConverter();
-            var json = JsonConvert.SerializeObject(model, Formatting.Indented);
-            var archetype = (Archetype.Umbraco.Models.Archetype)converter.ConvertDataToSource(null, json, false);
-
-            Assert.NotNull(archetype);
+            Assert.NotNull(ConvertModelToArchetype(model));
         }
 
         #endregion
@@ -207,9 +187,9 @@ namespace Archetype.Tests.Serialization
         #region deserialization tests
 
         [Test]
-        public void DeserializeModelFromArchetype()
+        public void Convert_ArchetypeJson_To_ContactDetailsModel()
         {
-            var result = JsonConvert.DeserializeObject<ContactDetails>(JsonTestStrings._CONTACT_DETAILS_JSON);
+            var result = ConvertArchetypeJsonToModel<ContactDetails>(JsonTestStrings._CONTACT_DETAILS_JSON);
 
             Assert.NotNull(result);
             Assert.IsInstanceOf<ContactDetails>(result);
@@ -228,9 +208,9 @@ namespace Archetype.Tests.Serialization
         }
 
         [Test]
-        public void DeserializeNumericAndDateModelFromArchetype()
+        public void Convert_ArchetypeJson_To_AnnualStatementModel()
         {
-            var result = JsonConvert.DeserializeObject<AnnualStatement>(JsonTestStrings._ANNUAL_STATEMENT_JSON);
+            var result = ConvertArchetypeJsonToModel<AnnualStatement>(JsonTestStrings._ANNUAL_STATEMENT_JSON);
 
             Assert.NotNull(result);
             Assert.IsInstanceOf<AnnualStatement>(result);
@@ -244,7 +224,7 @@ namespace Archetype.Tests.Serialization
         }
 
         [Test]
-        public void DeserializeNumericAndDateModel_NullableDate_HasValue_FromArchetype()
+        public void Convert_ArchetypeJson_To_AnnualStatementModel_NullableDate_HasValue()
         {
             var annualStatement = new AnnualStatement
             {
@@ -256,8 +236,7 @@ namespace Archetype.Tests.Serialization
                 Profit = 1123456.78m
             };
 
-            var json = JsonConvert.SerializeObject(annualStatement);
-            var result = JsonConvert.DeserializeObject<AnnualStatement>(json);
+            var result = ConvertModelToArchetypeAndBack(annualStatement);
 
             Assert.NotNull(result);
             Assert.IsInstanceOf<AnnualStatement>(result);
@@ -271,7 +250,7 @@ namespace Archetype.Tests.Serialization
         }
 
         [Test]
-        public void DeserializeCompoundModelFromArchetype()
+        public void Convert_ArchetypeJson_To_AllContactDetailsModel()
         {
             var item1 = new ContactDetails
             {
@@ -291,8 +270,7 @@ namespace Archetype.Tests.Serialization
                 AdminDetails = item2
             };
 
-            var json = JsonConvert.SerializeObject(model, Formatting.Indented);
-            var result = JsonConvert.DeserializeObject<AllContactDetails>(json);
+            var result = ConvertModelToArchetypeAndBack(model);
 
             Assert.NotNull(result);
             Assert.IsInstanceOf<AllContactDetails>(result);
@@ -304,7 +282,7 @@ namespace Archetype.Tests.Serialization
         }
 
         [Test]
-        public void DeserializeEnumerableModelFromArchetype()
+        public void Convert_ArchetypeJson_To_ContactDetailsListModel()
         {
             var item1 = new ContactDetails
             {
@@ -324,8 +302,7 @@ namespace Archetype.Tests.Serialization
                 item2
             };
 
-            var json = JsonConvert.SerializeObject(model, Formatting.Indented);
-            var result = JsonConvert.DeserializeObject<ContactDetailsList>(json);
+            var result = ConvertModelToArchetypeAndBack(model);
 
             Assert.NotNull(result);
             Assert.IsInstanceOf<ContactDetailsList>(result);
@@ -338,7 +315,7 @@ namespace Archetype.Tests.Serialization
         }
 
         [Test]
-        public void DeserializeNestedModelFromArchetype()
+        public void Convert_ArchetypeJson_To_CompanyDetailsModel()
         {
             var model = new CompanyDetails
             {
@@ -350,8 +327,7 @@ namespace Archetype.Tests.Serialization
                 }
             };
 
-            var json = JsonConvert.SerializeObject(model, Formatting.Indented);
-            var result = JsonConvert.DeserializeObject<CompanyDetails>(json);
+            var result = ConvertModelToArchetypeAndBack(model);
 
             Assert.NotNull(result);
             Assert.IsInstanceOf<CompanyDetails>(result);
