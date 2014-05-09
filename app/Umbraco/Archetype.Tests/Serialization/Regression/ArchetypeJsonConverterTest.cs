@@ -51,7 +51,46 @@ namespace Archetype.Tests.Serialization.Regression
             SimpleModels_Regression_Battery(simpleModels);
         }
 
+        [Test]
+        public void SimpleModelsWithFieldsets_Regression_Battery()
+        {
+            var simpleModels = _testHelper.GetModel<SimpleModelsWithFieldsets>();
+            SimpleModels_Regression_Battery(simpleModels);
+        }
 
+        [Test]
+        public void SimpleModelsWithMixedFieldsets_Regression_Battery()
+        {
+            var simpleModels = _testHelper.GetModel<SimpleModelsWithMixedFieldsets>();
+            SimpleModels_Regression_Battery(simpleModels);
+        }
 
+        [Test]
+        public void CompoundModel_Regression_Battery()
+        {
+            var compoundModel = _testHelper.GetModel<CompoundModel>();
+            CompoundModel_Regression_Battery(compoundModel);
+        }
+
+        [Test]
+        public void CompoundModelWithMixedFieldsetVariant1_Regression_Battery()
+        {
+            var compoundModel = _testHelper.GetModel<CompoundModelWithMixedFieldsetVariant1>();
+            CompoundModel_Regression_Battery(compoundModel);
+        }
+
+        [Test]
+        public void CompoundModelWithMixedFieldsetVariant2_Regression_Battery()
+        {
+            var compoundModel = _testHelper.GetModel<CompoundModelWithMixedFieldsetVariant2>();
+            CompoundModel_Regression_Battery(compoundModel);
+        }
+
+        [Test]
+        public void CompoundModelWithFieldset_Regression_Battery()
+        {
+            var compoundModel = _testHelper.GetModel<CompoundModelWithFieldset>();
+            CompoundModel_Regression_Battery(compoundModel);
+        }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Archetype.Umbraco.Serialization;
 using Newtonsoft.Json;
 using NUnit.Framework;
@@ -19,13 +20,7 @@ namespace Archetype.Tests.Serialization.Base
             var result = ConvertModelToArchetypeAndBack(model);
 
             Assert.IsInstanceOf<T>(result);
-
-            foreach (var propInfo in model.GetSerialiazableProperties())
-            {
-                Assert.AreEqual(propInfo.GetValue(model, null), 
-                    result.GetSerialiazableProperties().Single(pinfo => pinfo.Name.Equals(propInfo.Name))
-                        .GetValue(result, null));
-            }
+            AssertAreEqual(model, result);
         }
 
         protected void SimpleModels_Regression_Battery<T>(T model)
@@ -44,14 +39,49 @@ namespace Archetype.Tests.Serialization.Base
             foreach (var resultItem in result)
             {
                 var index = result.IndexOf(resultItem);
-
-                foreach (var propInfo in model[index].GetSerialiazableProperties())
-                {
-                    Assert.AreEqual(propInfo.GetValue(model[index], null),
-                        resultItem.GetSerialiazableProperties().Single(pinfo => pinfo.Name.Equals(propInfo.Name))
-                            .GetValue(resultItem, null));
-                }
+                AssertAreEqual(model[index], resultItem);
             }
+        }
+
+        protected void CompoundModel_Regression_Battery<T>(T model)
+        {
+            Assert.IsNotNull(ConvertModelToArchetype(model));
+
+            var json = ConvertModelToArchetypeJson(model, Formatting.Indented);
+            Assert.IsNotNullOrEmpty(json);
+
+            var result = ConvertModelToArchetypeAndBack(model);
+
+            Assert.IsInstanceOf<T>(result);
+            AssertAreEqual(model, result);
+        }
+
+        private static void AssertAreEqual<T>(T model, T result)
+        {
+            foreach (var propInfo in model.GetSerialiazableProperties())
+            {
+                if (!propInfo.PropertyType.Namespace.Equals("System"))
+                {
+                    AssertAreEqual(GetExpectedValue(model, propInfo),
+                        GetActualValue(result, propInfo));
+                    
+                    continue;
+                }
+
+                Assert.AreEqual(GetExpectedValue(model, propInfo),
+                    GetActualValue(result, propInfo));
+            }
+        }
+
+        private static object GetExpectedValue<T>(T expected, PropertyInfo propInfo)
+        {
+            return propInfo.GetValue(expected, null);
+        }
+
+        private static object GetActualValue<T>(T actual, PropertyInfo propInfo)
+        {
+            return actual.GetSerialiazableProperties().Single(pinfo => pinfo.Name.Equals(propInfo.Name))
+                .GetValue(actual, null);
         }
     }
 }

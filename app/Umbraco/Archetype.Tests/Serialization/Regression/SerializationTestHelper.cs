@@ -67,5 +67,75 @@ namespace Archetype.Tests.Serialization.Regression
                 GetSimpleModel()
             };
         }
+
+        public SimpleModelsWithFieldsets GetSimpleModelsWithFieldsets()
+        {
+            return new SimpleModelsWithFieldsets
+            {
+                GetSimpleModelWithFieldsets(),
+                GetSimpleModelWithFieldsets(),
+                GetSimpleModelWithFieldsets()
+            };
+        }
+
+        public SimpleModelsWithMixedFieldsets GetSimpleModelsWithMixedFieldsets()
+        {
+            return new SimpleModelsWithMixedFieldsets
+            {
+                GetSimpleModelWithMixedFieldsets(),
+                GetSimpleModelWithMixedFieldsets(),
+                GetSimpleModelWithMixedFieldsets()
+            };
+        }
+
+        public CompoundModel GetCompoundModel()
+        {
+            return new CompoundModel
+            {
+                Id = -1,
+                SimpleModel = GetModel<SimpleModel>(),
+                Text = typeof(CompoundModel).Name
+            };
+        }
+
+        public CompoundModelWithMixedFieldsetVariant1 GetCompoundModelWithMixedFieldsetVariant1()
+        {
+            return new CompoundModelWithMixedFieldsetVariant1
+            {
+                Id = -1,
+                SimpleModel = GetModel<SimpleModel>(),
+                Text = typeof(CompoundModelWithMixedFieldsetVariant1).Name
+            };
+        }
+
+        public CompoundModelWithMixedFieldsetVariant2 GetCompoundModelWithMixedFieldsetVariant2()
+        {
+            return new CompoundModelWithMixedFieldsetVariant2
+            {
+                Id = -1,
+                SimpleModel = GetModel<SimpleModel>(),
+                Text = typeof(CompoundModelWithMixedFieldsetVariant2).Name
+            };
+        }
+
+        public CompoundModelWithFieldset GetCompoundModelWithFieldset()
+        {
+            return new CompoundModelWithFieldset
+            {
+                Id = -1,
+                SimpleModel = GetModel<SimpleModel>(),
+                Text = typeof(CompoundModelWithFieldset).Name
+            };
+        }
+
+        public CompoundModelWithList GetCompoundModelWithList()
+        {
+            return new CompoundModelWithList
+            {
+                Id = -1,
+                SimpleModelList = GetSimpleModels(),
+                Text = typeof(CompoundModelWithList).Name
+            };
+        }
     }
 }
