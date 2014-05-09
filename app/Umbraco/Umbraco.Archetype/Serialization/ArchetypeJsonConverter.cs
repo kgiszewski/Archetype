@@ -14,6 +14,8 @@ namespace Archetype.Umbraco.Serialization
 {
     public class ArchetypeJsonConverter : JsonConverter
     {
+        private const string _ROOT_FS_ALIAS = "rootFs";
+        
         #region public methods
 
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
@@ -107,19 +109,33 @@ namespace Archetype.Umbraco.Serialization
 
             var objToken = GetFieldsetJTokenByTypeAlias(obj.GetType(), jToken);
 
-            return objToken == null
-                          ? obj
-                          : PopulateProperties(obj, objToken["properties"] ?? new JArray(objToken));
+            //return objToken == null
+            //              ? obj
+            //              : PopulateProperties(obj, objToken["properties"] ?? new JArray(objToken));
 
-            //if (objToken == null)
-            //    return obj;
+            if (objToken == null)
+                return obj;
+
+            if (objToken.SelectToken("properties") != null)
+                return PopulateProperties(obj, objToken["properties"]);
+
+            if (objToken is JArray) 
+            {
+                var defaultFsProperties = properties.Where(pInfo => !HasAsFieldsetAttribute(pInfo)).ToList();                
+
+                foreach (var property in defaultFsProperties)
+                {
+                    var propJToken = ParseJTokenFromItems(objToken, GetJsonPropertyName(property));
+                    PopulateProperty(obj, propJToken["properties"], property);
+                }                
+            }
 
             //if (objToken.SelectToken("properties") != null)
             //    return PopulateProperties(obj, objToken["properties"]);
 
             //PopulateProperties(obj, new JArray(objToken));
 
-            //var defaultFsProperties = properties.Where(pInfo =>  !HasAsFieldsetAttribute(pInfo)).ToList();
+            //var defaultFsProperties = properties.Where(pInfo => !HasAsFieldsetAttribute(pInfo)).ToList();
 
             //foreach (var property in defaultFsProperties)
             //{
@@ -127,7 +143,7 @@ namespace Archetype.Umbraco.Serialization
             //    PopulateProperty(obj, propJToken["properties"], property);
             //}
 
-            //return PopulateProperties(obj, new JArray(objToken));
+            return PopulateProperties(obj, new JArray(objToken));
         }
 
         private JToken GetFieldsetJTokenByTypeAlias(Type objType, JToken jToken)
@@ -270,29 +286,40 @@ namespace Archetype.Umbraco.Serialization
             if (!PropertyLayoutHasFieldsets(properties))
                 return new List<object>() { value };
 
-            var dynamicModel = new ExpandoObject() as IDictionary<string, object>;
+            models = new List<object>();
+
+            var fieldsetModels = properties.Where(HasAsFieldsetAttribute)
+                .Select(pInfo =>
+                {
+                    var fsModel = GetDynamicModel(GetJsonPropertyName(pInfo));
+                    fsModel.Add(GetJsonPropertyName(pInfo), pInfo.GetValue(value));
+                    return fsModel;
+                });
+
+            models = ((IEnumerable<object>)models).Concat(fieldsetModels).ToList();
+
+            var remainingProps = properties.Where(pInfo => !HasAsFieldsetAttribute(pInfo)).ToList();
+
+            if (!remainingProps.Any())
+                return models;
+
+            var dynamicModel = GetDynamicModel(GetFieldsetName(value.GetType()));
 
             foreach (var pInfo in properties.Where(pInfo => !HasAsFieldsetAttribute(pInfo)))
             {
                 dynamicModel.Add(GetJsonPropertyName(pInfo), pInfo.GetValue(value));
             }
 
-            var fieldsetModels = properties.Where(HasAsFieldsetAttribute)
-                .Select(pInfo =>
-                {
-                    var fsModel = new ExpandoObject() as IDictionary<string, object>;
-                    fsModel.Add(GetJsonPropertyName(pInfo), pInfo.GetValue(value));
-                    return fsModel;
-                });
-
-            models = new List<object>();
-
-            if (dynamicModel.Any())
-                models.Add(dynamicModel);
-
-            models = ((IEnumerable<object>)models).Concat(fieldsetModels).ToList();
+            models.Add(dynamicModel);
 
             return models;
+        }
+
+        private IDictionary<string, object> GetDynamicModel(string rootFsAlias)
+        {
+            var dynamicModel = new ExpandoObject() as IDictionary<string, object>;
+            dynamicModel.Add(_ROOT_FS_ALIAS, rootFsAlias);
+            return dynamicModel;
         }
 
         private JObject SerializeModelToFieldset(IEnumerable models)
@@ -320,7 +347,7 @@ namespace Archetype.Umbraco.Serialization
                 return null;
 
             var jObj = IsExpandoObject(value) 
-                ? GetJObjectFromExpandoObject(value as IDictionary<string, object>) 
+                ? GetJObjectFromExpandoObject(value as IDictionary<string, object>)
                 : GetJObject(value);
 
             var fieldsetJson = new StringBuilder();
@@ -350,28 +377,32 @@ namespace Archetype.Umbraco.Serialization
             return value.GetType().Name.Equals(typeof (ExpandoObject).Name);
         }
 
-        private JObject GetJObjectFromExpandoObject(IEnumerable<KeyValuePair<string, object>> obj)
+        private JObject GetJObjectFromExpandoObject(IDictionary<string, object> expandoObj)
         {
-            var property = obj.ElementAt(0);
-            var alias = property.Key;
-            var value = property.Value;
-
             var jObj = new JObject
-                {
-                    {
-                        "alias",
-                        new JValue(alias)
-                    }
-                };
-
-            var fsProperties = new List<JObject>
             {
-                new JObject {new JProperty("alias", alias), 
-                    new JProperty("value", value != null ? JToken.FromObject(value) : value)}
+                {
+                    "alias",
+                    new JValue(expandoObj[_ROOT_FS_ALIAS])
+                }
             };
 
-            jObj.Add("properties", new JRaw(JsonConvert.SerializeObject(fsProperties)));
+            var fsProperties = new List<JObject>();
 
+            foreach (var item in expandoObj.Skip(1))
+            {
+                var property = item;
+                var alias = property.Key;
+                var value = property.Value;
+
+                fsProperties.Add(new JObject 
+                {
+                    new JProperty("alias", alias), 
+                    new JProperty("value", value != null ? JToken.FromObject(value) : value)
+                });                
+            }
+
+            jObj.Add("properties", new JRaw(JsonConvert.SerializeObject(fsProperties)));
             return jObj;
         }
 
