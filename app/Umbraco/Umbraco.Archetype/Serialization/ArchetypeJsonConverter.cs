@@ -93,8 +93,11 @@ namespace Archetype.Umbraco.Serialization
                                 ? GetFieldsetJTokenByAlias(propAlias, jToken) 
                                 : GetFieldsetJTokenByTypeAlias(propInfo.PropertyType, jToken);
 
-                var propJToken =
-                    fsJToken["properties"].Single(p => p.SelectToken("alias").ToString().Equals(propAlias));
+                //make recursive
+                var propJToken = fsJToken.SelectToken("properties") != null
+                     ? GetPropertyJToken(propAlias, fsJToken["properties"])
+                     : GetPropertyJToken(propAlias, 
+                        fsJToken.Single(p => p.SelectToken("alias").ToString().Equals(propAlias))["properties"]);
 
                 if (propJToken == null)
                     continue;

@@ -132,9 +132,29 @@ namespace Archetype.Tests.Serialization.Regression
         {
             return new CompoundModelWithList
             {
-                Id = -1,
+                Id = 10,
                 SimpleModelList = GetSimpleModels(),
                 Text = typeof(CompoundModelWithList).Name
+            };
+        }
+
+        public CompoundModelWithMixedFieldsetWithList GetCompoundModelWithMixedFieldsetWithList()
+        {
+            return new CompoundModelWithMixedFieldsetWithList
+            {
+                Id = 11,
+                SimpleModelList = GetSimpleModels(),
+                Text = typeof(CompoundModelWithMixedFieldsetWithList).Name
+            };
+        }
+
+        public CompoundModelWithFieldsetWithList GetCompoundModelWithFieldsetWithList()
+        {
+            return new CompoundModelWithFieldsetWithList
+            {
+                Id = 12,
+                SimpleModelList = GetSimpleModels(),
+                Text = typeof(CompoundModelWithFieldsetWithList).Name
             };
         }
     }

@@ -158,4 +158,32 @@ namespace Archetype.Tests.Serialization.Regression
         [JsonProperty("integer")]
         public int Id { get; set; }
     }
+
+    [AsArchetype("compoundModelWithList")]
+    [JsonConverter(typeof(ArchetypeJsonConverter))]
+    public class CompoundModelWithMixedFieldsetWithList
+    {
+        [JsonProperty("simpleModelList")]
+        public List<SimpleModel> SimpleModelList { get; set; }
+        [AsFieldset]
+        [JsonProperty("text")]
+        public String Text { get; set; }
+        [JsonProperty("integer")]
+        public int Id { get; set; }
+    }
+
+    [AsArchetype("compoundModelWithList")]
+    [JsonConverter(typeof(ArchetypeJsonConverter))]
+    public class CompoundModelWithFieldsetWithList
+    {
+        [AsFieldset]
+        [JsonProperty("simpleModelList")]
+        public List<SimpleModel> SimpleModelList { get; set; }
+        [AsFieldset]
+        [JsonProperty("text")]
+        public String Text { get; set; }
+        [AsFieldset]
+        [JsonProperty("integer")]
+        public int Id { get; set; }
+    }
 }

@@ -60,16 +60,27 @@ namespace Archetype.Tests.Serialization.Base
         {
             foreach (var propInfo in model.GetSerialiazableProperties())
             {
-                if (!propInfo.PropertyType.Namespace.Equals("System"))
+                var expected = GetExpectedValue(model, propInfo);
+                var actual = GetActualValue(result, propInfo);
+                
+                if (propInfo.PropertyType.Namespace.Equals("System"))
                 {
-                    AssertAreEqual(GetExpectedValue(model, propInfo),
-                        GetActualValue(result, propInfo));
-                    
+                    Assert.AreEqual(expected, actual);                 
                     continue;
                 }
 
-                Assert.AreEqual(GetExpectedValue(model, propInfo),
-                    GetActualValue(result, propInfo));
+                var list = expected as IList;
+                if (list != null)
+                {
+                    foreach (var expectedItem in list)
+                    {
+                        var index = list.IndexOf(expectedItem);
+                        AssertAreEqual(expectedItem, ((IList)actual)[index]);
+                    }
+                    continue;
+                }
+
+                AssertAreEqual(expected, actual);
             }
         }
 
