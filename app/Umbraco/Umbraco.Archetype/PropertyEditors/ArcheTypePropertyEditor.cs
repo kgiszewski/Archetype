@@ -11,6 +11,7 @@ using Umbraco.Core.Models.Editors;
 using Umbraco.Core.PropertyEditors;
 using Umbraco.Core.Services;
 using Umbraco.Web.PropertyEditors;
+using Umbraco.Core.Logging;
 
 namespace Archetype.Umbraco.PropertyEditors
 {
@@ -64,11 +65,18 @@ namespace Archetype.Umbraco.PropertyEditors
 				{
 					foreach (var propDef in fieldset.Properties)
 					{
-						var dtd = dataTypeService.GetDataTypeDefinitionById(Guid.Parse(propDef.DataTypeGuid));
-						var propType = new PropertyType(dtd) { Alias = propDef.Alias };
-						var prop = new Property(propType, propDef.Value);
-						var propEditor = PropertyEditorResolver.Current.GetByAlias(dtd.PropertyEditorAlias);
-						propDef.Value = propEditor.ValueEditor.ConvertDbToString(prop, propType, dataTypeService);
+                        try
+                        {
+						    var dtd = dataTypeService.GetDataTypeDefinitionById(Guid.Parse(propDef.DataTypeGuid));
+						    var propType = new PropertyType(dtd) { Alias = propDef.Alias };
+						    var prop = new Property(propType, propDef.Value);
+						    var propEditor = PropertyEditorResolver.Current.GetByAlias(dtd.PropertyEditorAlias);
+						    propDef.Value = propEditor.ValueEditor.ConvertDbToString(prop, propType, dataTypeService);
+                        }
+                        catch (Exception ex)
+                        {
+                            LogHelper.Error<ArchetypeHelper>(ex.Message, ex);
+                        }
 					}
 				}
 
@@ -86,11 +94,18 @@ namespace Archetype.Umbraco.PropertyEditors
 				{
 					foreach (var propDef in fieldset.Properties)
 					{
-						var dtd = dataTypeService.GetDataTypeDefinitionById(Guid.Parse(propDef.DataTypeGuid));
-						var propType = new PropertyType(dtd) { Alias = propDef.Alias };
-						var prop = new Property(propType, propDef.Value);
-						var propEditor = PropertyEditorResolver.Current.GetByAlias(dtd.PropertyEditorAlias);
-						propDef.Value = propEditor.ValueEditor.ConvertDbToEditor(prop, propType, dataTypeService);
+                        try
+                        {
+                            var dtd = dataTypeService.GetDataTypeDefinitionById(Guid.Parse(propDef.DataTypeGuid));
+                            var propType = new PropertyType(dtd) { Alias = propDef.Alias };
+                            var prop = new Property(propType, propDef.Value);
+                            var propEditor = PropertyEditorResolver.Current.GetByAlias(dtd.PropertyEditorAlias);
+                            propDef.Value = propEditor.ValueEditor.ConvertDbToEditor(prop, propType, dataTypeService);
+                        }
+                        catch (Exception ex)
+                        {
+                            LogHelper.Error<ArchetypeHelper>(ex.Message, ex);
+                        }
 					}
 				}
 
@@ -107,11 +122,18 @@ namespace Archetype.Umbraco.PropertyEditors
 				{
 					foreach (var propDef in fieldset.Properties)
 					{
-						var dtd = ApplicationContext.Current.Services.DataTypeService.GetDataTypeDefinitionById(Guid.Parse(propDef.DataTypeGuid));
-						var preValues = ApplicationContext.Current.Services.DataTypeService.GetPreValuesCollectionByDataTypeId(dtd.Id);
-						var propData = new ContentPropertyData(propDef.Value, preValues, new Dictionary<string, object>());
-						var propEditor = PropertyEditorResolver.Current.GetByAlias(dtd.PropertyEditorAlias);
-						propDef.Value = propEditor.ValueEditor.ConvertEditorToDb(propData, propDef.Value);
+                        try
+                        {
+						    var dtd = ApplicationContext.Current.Services.DataTypeService.GetDataTypeDefinitionById(Guid.Parse(propDef.DataTypeGuid));
+						    var preValues = ApplicationContext.Current.Services.DataTypeService.GetPreValuesCollectionByDataTypeId(dtd.Id);
+						    var propData = new ContentPropertyData(propDef.Value, preValues, new Dictionary<string, object>());
+						    var propEditor = PropertyEditorResolver.Current.GetByAlias(dtd.PropertyEditorAlias);
+						    propDef.Value = propEditor.ValueEditor.ConvertEditorToDb(propData, propDef.Value);
+                        }
+                        catch (Exception ex)
+                        {
+                            LogHelper.Error<ArchetypeHelper>(ex.Message, ex);
+                        }
 					}
 				}
 
