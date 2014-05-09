@@ -15,6 +15,8 @@
 
     //helper to get $eval the labelTemplate
     $scope.getFieldsetTitle = function(fieldsetConfigModel, fieldsetIndex) {
+        if(!fieldsetConfigModel)
+            return "";
         var fieldset = $scope.model.value.fieldsets[fieldsetIndex];
         var fieldsetConfig = $scope.getConfigFieldsetByAlias(fieldset.alias);
         var template = fieldsetConfigModel.labelTemplate;
@@ -107,8 +109,8 @@
     //helpers for determining if the add button should be shown
     $scope.showAddButton = function () {
         return $scope.model.config.startWithAddButton
-            && countVisible() === 0
-            && $scope.model.config.fieldsets.length == 1;
+            && countVisible() === 0;
+            ///&& $scope.model.config.fieldsets.length == 1;
     }
 
     //helper, ini the render model from the server (model.value)
