@@ -43,7 +43,7 @@
         cursor: "move",
         handle: ".handle",
         update: function (ev, ui) {
-
+            $scope.setDirty();
         },
         stop: function (ev, ui) {
 
@@ -67,7 +67,7 @@
                     $scope.model.value.fieldsets.push(newFieldset);
                 }
             }
-            $scope.model.value.rowsChanged = true;
+            $scope.setDirty();
 
             newFieldset.collapse = $scope.model.config.enableCollapsing ? true : false;
             $scope.focusFieldset(newFieldset);
@@ -77,7 +77,7 @@
     $scope.removeRow = function ($index) {
         if ($scope.canRemove()) {
             if (confirm('Are you sure you want to remove this?')) {
-                $scope.model.value.rowsChanged = true;
+                $scope.setDirty();
                 $scope.model.value.fieldsets.splice($index, 1);
             }
         }
@@ -118,10 +118,6 @@
     //helper, ini the render model from the server (model.value)
     function init() {
         $scope.model.value = removeNulls($scope.model.value);
-
-        // state variable to keep track of any rows added/removed
-        $scope.model.value.rowsChanged = false;
-
         addDefaultProperties($scope.model.value.fieldsets);
     }
 
@@ -209,8 +205,6 @@
                 $scope.model.value.toString = stringify;
             }
         }
-        // re-initialize state
-        $scope.model.value.rowsChanged = $scope.model.value.rowsChanged || false;
     });
 
     //helper to count what is visible
@@ -267,6 +261,11 @@
         }
 
         return (typeof property == 'undefined') ? true : property.isValid;
+    }
+
+    // helper to force the current form into the dirty state
+    $scope.setDirty = function () {
+        form.$setDirty();
     }
 
     //custom js
