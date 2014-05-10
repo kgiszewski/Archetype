@@ -142,6 +142,14 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
 
                     //watch for changes since there is no two-way binding with the local model.value
                     scope.$watch('model.value', function (newValue, oldValue) {
+                        if (newValue == oldValue) {
+                            //issue #121: 
+                            //don't update if there's nothing to update - if we do, the form will be considered dirty (even if the values are the same) and the user will be prompted to save/discard changes
+                            //special case: we need to update regardless of value change or not if the number of rows have changed, so the form picks up the dirty state on the newly added rows
+                            if (!scope.archetypeRenderModel.rowsChanged) {
+                                return;
+                            }
+                        }
                         scope.archetypeRenderModel.fieldsets[scope.fieldsetIndex].properties[renderModelPropertyIndex].value = newValue;
 
                         //trigger the validation pipeline
