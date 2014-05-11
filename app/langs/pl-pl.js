@@ -27,6 +27,7 @@
 	"defaultValue": "Default Value",
 	"dataType": "DataType",
 	"required": "Required",
+	"regEx": "RegEx Validation",
 	"properties": "Properties",
 	"labelTemplate": "Label Template",
 	"select": "Select",
