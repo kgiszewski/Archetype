@@ -93,11 +93,7 @@ namespace Archetype.Umbraco.Serialization
                                 ? GetFieldsetJTokenByAlias(propAlias, jToken) 
                                 : GetFieldsetJTokenByTypeAlias(propInfo.PropertyType, jToken);
 
-                //make recursive
-                var propJToken = fsJToken.SelectToken("properties") != null
-                     ? GetPropertyJToken(propAlias, fsJToken["properties"])
-                     : GetPropertyJToken(propAlias, 
-                        fsJToken.Single(p => p.SelectToken("alias").ToString().Equals(propAlias))["properties"]);
+                var propJToken = GetPropertyJToken(fsJToken, propAlias);
 
                 if (propJToken == null)
                     continue;
@@ -111,10 +107,6 @@ namespace Archetype.Umbraco.Serialization
                 return obj;
 
             var objToken = GetFieldsetJTokenByTypeAlias(obj.GetType(), jToken);
-
-            //return objToken == null
-            //              ? obj
-            //              : PopulateProperties(obj, objToken["properties"] ?? new JArray(objToken));
 
             if (objToken == null)
                 return obj;
@@ -133,20 +125,19 @@ namespace Archetype.Umbraco.Serialization
                 }                
             }
 
-            //if (objToken.SelectToken("properties") != null)
-            //    return PopulateProperties(obj, objToken["properties"]);
-
-            //PopulateProperties(obj, new JArray(objToken));
-
-            //var defaultFsProperties = properties.Where(pInfo => !HasAsFieldsetAttribute(pInfo)).ToList();
-
-            //foreach (var property in defaultFsProperties)
-            //{
-            //    var propJToken = ParseJTokenFromItems(objToken, GetJsonPropertyName(property));
-            //    PopulateProperty(obj, propJToken["properties"], property);
-            //}
-
             return PopulateProperties(obj, new JArray(objToken));
+        }
+
+        private JToken GetPropertyJToken(JToken fsJToken, string propAlias)
+        {
+            //make recursive
+            if (fsJToken.SelectToken("properties") != null)
+                return GetPropertyAliasJToken(propAlias, fsJToken["properties"]);
+
+            var nestedPropJToken = fsJToken
+                .SingleOrDefault(p => p.SelectToken("alias").ToString().Equals(propAlias));
+
+            return nestedPropJToken != null ? GetPropertyAliasJToken(propAlias, nestedPropJToken["properties"]) : null;
         }
 
         private JToken GetFieldsetJTokenByTypeAlias(Type objType, JToken jToken)
@@ -187,7 +178,7 @@ namespace Archetype.Umbraco.Serialization
         private void PopulateProperty(object obj, JToken jToken, PropertyInfo propertyInfo)
         {
             var propAlias = GetJsonPropertyName(propertyInfo);
-            var propJToken = GetPropertyJToken(propAlias, jToken);
+            var propJToken = GetPropertyAliasJToken(propAlias, jToken);
 
             if (propJToken == null)
                 return;
@@ -196,7 +187,7 @@ namespace Archetype.Umbraco.Serialization
             propertyInfo.SetValue(obj, propValue);
         }
 
-        private JToken GetPropertyJToken(string propAlias, JToken jToken)
+        private JToken GetPropertyAliasJToken(string propAlias, JToken jToken)
         {
             return jToken.SingleOrDefault(p => p.SelectToken("alias").ToString().Equals(propAlias));
         }
@@ -260,7 +251,10 @@ namespace Archetype.Umbraco.Serialization
         private bool TryParseJTokenAsEnumerable(JToken jToken, out JToken resultToken)
         {
             resultToken = null;
-            var jTokenEnumerable = jToken != null && jToken["fieldsets"] != null && jToken["fieldsets"].Any();
+            
+            //To Do: Strange newtonsoft behaviour
+            var fsToken = jToken.Parent == null ? jToken["fieldsets"] : jToken.Parent.Children().First();
+            var jTokenEnumerable = jToken != null && fsToken != null && fsToken.Any();
 
             if (jTokenEnumerable)
                 resultToken = jToken;
@@ -506,11 +500,11 @@ namespace Archetype.Umbraco.Serialization
         private object GetTypedValue(JToken jToken, Type type)
         {
             var property = JsonConvert.DeserializeObject<Property>(jToken.ToString());
-            
+
             var method = typeof(Property).GetMethod("GetValue");
             var getValue = method.MakeGenericMethod(type);
 
-            return getValue.Invoke(property, null);            
+            return getValue.Invoke(property, null);
         }
 
         private object GetDefault(Type type)
