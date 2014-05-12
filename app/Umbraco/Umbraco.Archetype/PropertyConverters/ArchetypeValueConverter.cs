@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Archetype.Umbraco.Extensions;
-using Archetype.Umbraco.Models;
+using Archetype.Models;
 using Newtonsoft.Json;
 using Umbraco.Core;
 using Umbraco.Core.Models;
@@ -12,7 +12,7 @@ using Umbraco.Core.Services;
 
 namespace Archetype.Umbraco.PropertyConverters
 {
-    [PropertyValueType(typeof(Models.Archetype))]
+    [PropertyValueType(typeof(Models.ArchetypeModel))]
     [PropertyValueCache(PropertyCacheValue.All, PropertyCacheLevel.Content)]
     public class ArchetypeValueConverter : PropertyValueConverterBase
     {
@@ -29,7 +29,7 @@ namespace Archetype.Umbraco.PropertyConverters
 
         public override object ConvertDataToSource(PublishedPropertyType propertyType, object source, bool preview)
         {
-            var defaultValue = new Models.Archetype();
+            var defaultValue = new Models.ArchetypeModel();
 
             if (source == null)
                 return defaultValue;

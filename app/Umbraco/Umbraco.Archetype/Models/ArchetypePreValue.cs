@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace Archetype.Umbraco.Models
+namespace Archetype.Models
 {
     public class ArchetypePreValue
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq;
-using Archetype.Umbraco.Models;
+using Archetype.Models;
 using Newtonsoft.Json;
 using Umbraco.Core;
 using Umbraco.Core.Models;
@@ -22,11 +22,11 @@ namespace Archetype.Umbraco.Extensions
             _app = ApplicationContext.Current;
         }
 
-        internal Models.Archetype DeserializeJsonToArchetype(string sourceJson, PreValueCollection dataTypePreValues)
+        internal Models.ArchetypeModel DeserializeJsonToArchetype(string sourceJson, PreValueCollection dataTypePreValues)
         {
             try
             {
-                var archetype = JsonConvert.DeserializeObject<Models.Archetype>(sourceJson, _jsonSettings);
+                var archetype = JsonConvert.DeserializeObject<Models.ArchetypeModel>(sourceJson, _jsonSettings);
 
                 try
                 {
@@ -42,15 +42,15 @@ namespace Archetype.Umbraco.Extensions
             }
             catch
             {
-                return new Models.Archetype();
+                return new Models.ArchetypeModel();
             }         
         }
 
-        internal Models.Archetype DeserializeJsonToArchetype(string sourceJson, int dataTypeId)
+        internal Models.ArchetypeModel DeserializeJsonToArchetype(string sourceJson, int dataTypeId)
         {
             try
             {
-                var archetype = JsonConvert.DeserializeObject<Models.Archetype>(sourceJson, _jsonSettings);
+                var archetype = JsonConvert.DeserializeObject<Models.ArchetypeModel>(sourceJson, _jsonSettings);
 
                 try
                 {
@@ -66,7 +66,7 @@ namespace Archetype.Umbraco.Extensions
             }
             catch
             {
-                return new Models.Archetype();
+                return new Models.ArchetypeModel();
             }
         }
 
@@ -110,7 +110,7 @@ namespace Archetype.Umbraco.Extensions
         /// </summary>
         /// <param name="archetype">The Archetype to add the additional metadata to</param>
         /// <param name="preValue">The configuration of the Archetype</param>
-        private void RetrieveAdditionalProperties(ref Models.Archetype archetype, ArchetypePreValue preValue)
+        private void RetrieveAdditionalProperties(ref Models.ArchetypeModel archetype, ArchetypePreValue preValue)
         {
             foreach (var fieldset in preValue.Fieldsets)
             {

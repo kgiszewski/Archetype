@@ -31,9 +31,9 @@ namespace Archetype.Tests.PropertyValueConverter
             var converter = new ArchetypeValueConverter();
             var result = converter.ConvertDataToSource(null, data, false);
 
-            Assert.AreEqual(result.GetType(), typeof (Archetype.Umbraco.Models.Archetype));
+            Assert.AreEqual(result.GetType(), typeof (Archetype.Models.ArchetypeModel));
 
-            var fieldsets = (Archetype.Umbraco.Models.Archetype) result;
+            var fieldsets = (Archetype.Models.ArchetypeModel) result;
             Assert.IsTrue(fieldsets.Count() == 0);
         }
 
@@ -44,9 +44,9 @@ namespace Archetype.Tests.PropertyValueConverter
             var converter = new ArchetypeValueConverter();
             var result = converter.ConvertDataToSource(null, data, false);
             
-            Assert.AreEqual(result.GetType(), typeof (Archetype.Umbraco.Models.Archetype));
+            Assert.AreEqual(result.GetType(), typeof (Archetype.Models.ArchetypeModel));
 
-            var fieldsets = (Archetype.Umbraco.Models.Archetype) result;
+            var fieldsets = (Archetype.Models.ArchetypeModel) result;
             Assert.IsTrue(fieldsets.Count() == 0);
         }
 
@@ -54,7 +54,7 @@ namespace Archetype.Tests.PropertyValueConverter
         public void Can_Serialize_From_Json_Model()
         {
             var converter = new ArchetypeValueConverter();
-            var result = (Archetype.Umbraco.Models.Archetype)converter.ConvertDataToSource(null, _sampleJson, false);
+            var result = (Archetype.Models.ArchetypeModel)converter.ConvertDataToSource(null, _sampleJson, false);
 
             Assert.That(result != null);
             Assert.That(result.Fieldsets.Count() == 2);
