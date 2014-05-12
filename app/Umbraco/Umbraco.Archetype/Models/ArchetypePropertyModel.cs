@@ -7,9 +7,9 @@ using Umbraco.Core.Models.PublishedContent;
 using Umbraco.Core.PropertyEditors;
 using Umbraco.Web;
 
-namespace Archetype.Umbraco.Models
+namespace Archetype.Models
 {
-    public class Property
+    public class ArchetypeProperty
     {
         [JsonProperty("alias")]
         public string Alias { get; internal set; }

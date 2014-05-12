@@ -64,6 +64,10 @@
                                         <label for="archetypePropertyRequired_{{$parent.$index}}_{{$index}}"><archetype-localize key="required">Required</archetype-localize></label>
                                         <input type="checkbox" id="archetypePropertyRequired_{{$parent.$index}}_{{$index}}" ng-model="property.required" />
                                     </div>
+                                    <div>
+                                        <label for="archetypePropertyRegEx_{{$parent.$index}}_{{$index}}"><archetype-localize key="regEx">RegEx Validation</archetype-localize></label>
+                                        <input type="text" id="archetypePropertyRegExValue_{{$parent.$index}}_{{$index}}" ng-model="property.regEx" />
+                                    </div>
                                 </div>
                             </li>
                         </ul>
