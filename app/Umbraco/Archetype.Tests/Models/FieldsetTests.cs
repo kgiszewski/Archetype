@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Archetype.Umbraco.PropertyConverters;
+using Archetype.PropertyConverters;
 using NUnit.Framework;
 
 namespace Archetype.Tests.Models
@@ -26,7 +26,7 @@ namespace Archetype.Tests.Models
         public void Can_Get_Fieldset_Property_By_Alias()
         {
             var converter = new ArchetypeValueConverter();
-            var result = (Archetype.Umbraco.Models.Archetype)converter.ConvertDataToSource(null, _sampleJson, false);
+            var result = (Archetype.Models.ArchetypeModel)converter.ConvertDataToSource(null, _sampleJson, false);
 
             var fieldset = result.Fieldsets.First();
             var propertyValue = fieldset.GetValue("boxHeadline");
@@ -38,7 +38,7 @@ namespace Archetype.Tests.Models
         public void Can_Convert_Property_Value_Types()
         {
             var converter = new ArchetypeValueConverter();
-            var result = (Archetype.Umbraco.Models.Archetype)converter.ConvertDataToSource(null, _sampleJson, false);
+            var result = (Archetype.Models.ArchetypeModel)converter.ConvertDataToSource(null, _sampleJson, false);
 
             var fieldset = result.Fieldsets.First();
 
@@ -51,7 +51,7 @@ namespace Archetype.Tests.Models
         public void Returns_String_When_No_Type_Specified()
         {
             var converter = new ArchetypeValueConverter();
-            var result = (Archetype.Umbraco.Models.Archetype)converter.ConvertDataToSource(null, _sampleJson, false);
+            var result = (Archetype.Models.ArchetypeModel)converter.ConvertDataToSource(null, _sampleJson, false);
 
             var fieldset = result.Fieldsets.First();
 
