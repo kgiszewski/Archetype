@@ -3,19 +3,19 @@ using System.Linq;
 using Newtonsoft.Json;
 using Umbraco.Core;
 
-namespace Archetype.Umbraco.Models
+namespace Archetype.Models
 {
-    public class Fieldset
+    public class ArchetypeFieldsetModel
     {
         [JsonProperty("alias")]
         public string Alias { get; set; }
 
         [JsonProperty("properties")]
-        public IEnumerable<Property> Properties;
+        public IEnumerable<ArchetypeProperty> Properties;
 
-        public Fieldset()
+        public ArchetypeFieldsetModel()
         {
-            Properties = new List<Property>();
+            Properties = new List<ArchetypeProperty>();
         }
 
         #region Helper Methods
@@ -49,7 +49,7 @@ namespace Archetype.Umbraco.Models
             return !string.IsNullOrEmpty(property.Value.ToString());
         }
 
-        private Property GetProperty(string propertyAlias)
+        private ArchetypeProperty GetProperty(string propertyAlias)
         {
             return Properties.FirstOrDefault(p => p.Alias.InvariantEquals(propertyAlias));
         }
