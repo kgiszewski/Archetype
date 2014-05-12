@@ -157,8 +157,11 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
                     scope.$watch('model.value', function (newValue, oldValue) {
                         scope.archetypeRenderModel.fieldsets[scope.fieldsetIndex].properties[renderModelPropertyIndex].value = newValue;
 
-                        //trigger the validation pipeline
-                        ngModelCtrl.$setViewValue(ngModelCtrl.$viewValue);
+                        // don't set the current value twice - this will keep Umbraco from prompting to discard changes immediately after saving
+                        if (newValue != oldValue) {
+                            //trigger the validation pipeline
+                            ngModelCtrl.$setViewValue(ngModelCtrl.$viewValue);
+                        }
                     });
 
                     element.html(data).show();
