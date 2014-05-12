@@ -121,6 +121,7 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
                     }
 
                     //define the initial model and config
+                    scope.form = scope.umbracoForm;
                     scope.model = {};
                     scope.model.config = {};
 
@@ -173,7 +174,8 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
             fieldset: '=',
             fieldsetIndex: '=',
             archetypeRenderModel: '=',
-            umbracoPropertyAlias: '='
+            umbracoPropertyAlias: '=',
+            umbracoForm: '='
         }
     }
 });

@@ -4,7 +4,7 @@
     $scope.model.hideLabel = $scope.model.config.hideLabel == 1;
 
     //get a reference to the current form
-    var form = angularHelper.getCurrentForm($scope);
+    $scope.form = $scope.form || angularHelper.getCurrentForm($scope);
 
     //set the config equal to our prevalue config
     $scope.model.config = $scope.model.config.archetypeConfig;
