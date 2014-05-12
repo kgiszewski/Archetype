@@ -97,10 +97,22 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
                     property.isValid = true;
 
                     var propertyConfig = getPropertyByAlias(configFieldsetModel, property.alias);
-                    if(propertyConfig && propertyConfig.required && (property.value == null || property.value === "")){
-                        fieldset.isValid = false;
-                        property.isValid = false;
-                        valid = false;
+                    if (propertyConfig) {
+                        if(propertyConfig.required && (property.value == null || property.value === "")) {
+                            fieldset.isValid = false;
+                            property.isValid = false;
+                            valid = false;
+                        }
+                        // issue 116: RegEx validate property value
+                        // Only validate the property value if anything has been entered - RegEx is considered a supplement to "required".
+                        if (valid == true && propertyConfig.regEx && property.value) {
+                            var regEx = new RegExp(propertyConfig.regEx);
+                            if (regEx.test(property.value) == false) {
+                                fieldset.isValid = false;
+                                property.isValid = false;
+                                valid = false;
+                            }
+                        }
                     }
                 });
             });
@@ -143,6 +155,11 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
 
                     //watch for changes since there is no two-way binding with the local model.value
                     scope.$watch('model.value', function (newValue, oldValue) {
+                        if (newValue == oldValue) {
+                            //issue #121: 
+                            //don't update if there's nothing to update - if we do, the form will be considered dirty (even if the values are the same) and the user will be prompted to save/discard changes
+                            return;
+                        }
                         scope.archetypeRenderModel.fieldsets[scope.fieldsetIndex].properties[renderModelPropertyIndex].value = newValue;
 
                         //trigger the validation pipeline

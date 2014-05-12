@@ -31,5 +31,8 @@ namespace Archetype.Models
 
         [JsonProperty("required")]
         public bool Required { get; set; }
+
+        [JsonProperty("regEx")]
+        public bool RegEx { get; set; }
     }
 }
