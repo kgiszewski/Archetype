@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Archetype.Umbraco.PropertyConverters;
+using Archetype.PropertyConverters;
 using Moq;
 using NUnit.Framework;
 using Umbraco.Core.Models.PublishedContent;

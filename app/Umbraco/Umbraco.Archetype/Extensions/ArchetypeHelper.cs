@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 using Umbraco.Core;
 using Umbraco.Core.Models;
 
-namespace Archetype.Umbraco.Extensions
+namespace Archetype.Extensions
 {
     public class ArchetypeHelper
     {

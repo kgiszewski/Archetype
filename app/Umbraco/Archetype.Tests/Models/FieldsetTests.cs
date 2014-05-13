@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Archetype.Umbraco.PropertyConverters;
+using Archetype.PropertyConverters;
 using NUnit.Framework;
 
 namespace Archetype.Tests.Models

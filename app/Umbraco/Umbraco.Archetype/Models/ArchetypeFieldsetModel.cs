@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
 using Umbraco.Core;
@@ -16,7 +16,6 @@ namespace Archetype.Models
         public ArchetypeFieldsetModel()
         {
             Properties = new List<ArchetypePropertyModel>();
-        }
 
         #region Helper Methods
 

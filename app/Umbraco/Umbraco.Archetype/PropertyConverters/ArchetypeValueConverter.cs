@@ -1,7 +1,7 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Archetype.Umbraco.Extensions;
+using Archetype.Extensions;
 using Archetype.Models;
 using Newtonsoft.Json;
 using Umbraco.Core;
@@ -10,7 +10,7 @@ using Umbraco.Core.Models.PublishedContent;
 using Umbraco.Core.PropertyEditors;
 using Umbraco.Core.Services;
 
-namespace Archetype.Umbraco.PropertyConverters
+namespace Archetype.PropertyConverters
 {
     [PropertyValueType(typeof(Models.ArchetypeModel))]
     [PropertyValueCache(PropertyCacheValue.All, PropertyCacheLevel.Content)]

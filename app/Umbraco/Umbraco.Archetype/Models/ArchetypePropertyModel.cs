@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
 using Umbraco.Core;
@@ -10,7 +10,6 @@ using Umbraco.Web;
 namespace Archetype.Models
 {
     public class ArchetypePropertyModel
-    {
         [JsonProperty("alias")]
         public string Alias { get; internal set; }
 

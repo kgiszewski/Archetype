@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Web;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -7,7 +7,7 @@ using Umbraco.Core;
 using Umbraco.Web;
 using Archetype.Models;
 
-namespace Archetype.Umbraco.Extensions
+namespace Archetype.Extensions
 {
     public static class Extensions
     {
