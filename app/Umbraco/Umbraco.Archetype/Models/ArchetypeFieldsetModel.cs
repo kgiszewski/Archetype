@@ -16,6 +16,7 @@ namespace Archetype.Models
         public ArchetypeFieldsetModel()
         {
             Properties = new List<ArchetypePropertyModel>();
+        }
 
         #region Helper Methods
 

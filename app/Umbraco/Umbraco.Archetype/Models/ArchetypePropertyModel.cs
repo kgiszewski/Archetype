@@ -9,7 +9,7 @@ using Umbraco.Web;
 
 namespace Archetype.Models
 {
-    public class ArchetypePropertyModel
+    public class ArchetypePropertyModel {
         [JsonProperty("alias")]
         public string Alias { get; internal set; }
 
