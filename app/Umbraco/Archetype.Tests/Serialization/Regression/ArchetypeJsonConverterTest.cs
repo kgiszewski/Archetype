@@ -131,10 +131,18 @@ namespace Archetype.Tests.Serialization.Regression
         }
 
         [Test]
+        public void NestedModel_WithEscapedJson_Regression_Battery()
+        {
+            var nestedModel = _testHelper.GetModel<NestedModelWithFieldset>();
+            NestedModel_WithEscapedJson_Regression_Battery(nestedModel);
+        }
+
+        [Test]
         public void ComplexModel_Regression_Battery()
         {
             var complexModel = _testHelper.GetModel<ComplexModel>();
             NestedModel_Regression_Battery(complexModel);
         }
+
     }
 }

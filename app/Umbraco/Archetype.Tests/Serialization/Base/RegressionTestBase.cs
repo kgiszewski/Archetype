@@ -12,53 +12,88 @@ namespace Archetype.Tests.Serialization.Base
     {
         protected void SimpleModel_Regression_Battery<T>(T model)
         {
-            Assert.IsNotNull(ConvertModelToArchetype(model));
+            var archetype = ConvertModelToArchetype(model);
+            Assert.IsNotNull(archetype);
 
-            var json = ConvertModelToArchetypeJson(model, Formatting.Indented);
-            Assert.IsNotNullOrEmpty(json);
+            var archetypeJson = archetype.SerializeForPersistence();
+            var modelJson = ConvertModelToArchetypeJson(model, Formatting.Indented);
+
+            Assert.IsNotNullOrEmpty(modelJson);
 
             var result = ConvertModelToArchetypeAndBack(model);
+            var resultfromArchetypeJson = ConvertArchetypeJsonToModel<T>(archetypeJson);
 
             Assert.IsInstanceOf<T>(result);
+            Assert.IsInstanceOf<T>(resultfromArchetypeJson);
             AssertAreEqual(model, result);
+            AssertAreEqual(model, resultfromArchetypeJson);
         }
 
         protected void SimpleModels_Regression_Battery<T>(T model)
             where T : IList
         {
-            Assert.IsNotNull(ConvertModelToArchetype(model));
+            var archetype = ConvertModelToArchetype(model);
+            Assert.IsNotNull(archetype);
 
-            var json = ConvertModelToArchetypeJson(model, Formatting.Indented);
-            Assert.IsNotNullOrEmpty(json);
+            var archetypeJson = archetype.SerializeForPersistence();
+            var modelJson = ConvertModelToArchetypeJson(model, Formatting.Indented);
+
+            Assert.IsNotNullOrEmpty(modelJson);
 
             var result = ConvertModelToArchetypeAndBack(model);
+            var resultfromArchetypeJson = ConvertArchetypeJsonToModel<T>(archetypeJson);
 
             Assert.IsInstanceOf<T>(result);
+            Assert.IsInstanceOf<T>(resultfromArchetypeJson);
+
             Assert.AreEqual(model.Count, result.Count);
+            Assert.AreEqual(model.Count, resultfromArchetypeJson.Count);
 
             foreach (var resultItem in result)
             {
                 var index = result.IndexOf(resultItem);
                 AssertAreEqual(model[index], resultItem);
             }
+
+            foreach (var resultItem in resultfromArchetypeJson)
+            {
+                var index = resultfromArchetypeJson.IndexOf(resultItem);
+                AssertAreEqual(model[index], resultItem);
+            }
         }
 
         protected void CompoundModel_Regression_Battery<T>(T model)
         {
-            Assert.IsNotNull(ConvertModelToArchetype(model));
+            var archetype = ConvertModelToArchetype(model);
+            Assert.IsNotNull(archetype);
 
-            var json = ConvertModelToArchetypeJson(model, Formatting.Indented);
-            Assert.IsNotNullOrEmpty(json);
+            var archetypeJson = archetype.SerializeForPersistence();
+            var modelJson = ConvertModelToArchetypeJson(model, Formatting.Indented);
+
+            Assert.IsNotNullOrEmpty(modelJson);
 
             var result = ConvertModelToArchetypeAndBack(model);
+            var resultfromArchetypeJson = ConvertArchetypeJsonToModel<T>(archetypeJson);
 
             Assert.IsInstanceOf<T>(result);
             AssertAreEqual(model, result);
+
+            Assert.IsInstanceOf<T>(resultfromArchetypeJson);
+            AssertAreEqual(model, resultfromArchetypeJson);
         }
 
         protected void NestedModel_Regression_Battery<T>(T model)
         {
             CompoundModel_Regression_Battery(model);
+        }
+
+
+        protected void NestedModel_WithEscapedJson_Regression_Battery<T>(T model)
+        {
+            var archetype = ConvertModelToArchetype(model);
+            Assert.IsNotNull(ConvertModelToArchetype(model));
+
+            var nestedJson = archetype.SerializeForPersistence();
         }
 
         protected void ComplexModel_Regression_Battery<T>(T model)
