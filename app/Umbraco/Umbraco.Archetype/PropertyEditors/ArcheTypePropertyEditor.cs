@@ -127,7 +127,7 @@ namespace Archetype.Umbraco.PropertyEditors
 						    var dtd = ApplicationContext.Current.Services.DataTypeService.GetDataTypeDefinitionById(Guid.Parse(propDef.DataTypeGuid));
 						    var preValues = ApplicationContext.Current.Services.DataTypeService.GetPreValuesCollectionByDataTypeId(dtd.Id);
 						    var propData = new ContentPropertyData(propDef.Value, preValues, new Dictionary<string, object>());
-						    var propEditor = PropertyEditorResolver.Current.GetByAlias(dtd.PropertyEditorAlias);
+						    var propEditor = GetPropertyEditor(dtd);
 						    propDef.Value = propEditor.ValueEditor.ConvertEditorToDb(propData, propDef.Value);
                         }
                         catch (Exception ex)
@@ -139,6 +139,15 @@ namespace Archetype.Umbraco.PropertyEditors
 
                 return archetype.SerializeForPersistence();
 			}
+
+		    internal virtual PropertyEditor GetPropertyEditor(IDataTypeDefinition dtd)
+		    {
+		        return dtd.Id == 0 
+                    ? dtd.PropertyEditorAlias.Equals(Constants.PropertyEditorAlias) 
+                        ? new ArchetypePropertyEditor() 
+                        : new PropertyEditor()
+                    : PropertyEditorResolver.Current.GetByAlias(dtd.PropertyEditorAlias);
+		    }
 		}
 
 		#endregion	
