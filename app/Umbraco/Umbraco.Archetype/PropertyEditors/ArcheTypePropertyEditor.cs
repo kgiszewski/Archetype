@@ -116,19 +116,29 @@ namespace Archetype.PropertyEditors
 				if (editorValue.Value == null || editorValue.Value.ToString() == "")
 					return string.Empty;
 
-				var archetype = new ArchetypeHelper().DeserializeJsonToArchetype(editorValue.Value.ToString(), editorValue.PreValues);
+				var helper = new ArchetypeHelper();
+				// attempt to deserialize the current property value as an Archetype
+				var currentArchetype = currentValue != null ? helper.DeserializeJsonToArchetype(currentValue.ToString(), editorValue.PreValues) : null;
+				var archetype = helper.DeserializeJsonToArchetype(editorValue.Value.ToString(), editorValue.PreValues);
 
 				foreach (var fieldset in archetype.Fieldsets)
 				{
+					// assign an id to the fieldset if it has none (e.g. newly created fieldset)
+					fieldset.Id = fieldset.Id == Guid.Empty ? Guid.NewGuid() : fieldset.Id;
+					// find the corresponding fieldset in the current Archetype value (if any)
+					var currentFieldset = currentArchetype != null ? currentArchetype.Fieldsets.FirstOrDefault(f => f.Id == fieldset.Id) : null;
 					foreach (var propDef in fieldset.Properties)
 					{
                         try
                         {
+							// find the corresponding property in the current Archetype value (if any)
+							var currentProperty = currentFieldset != null ? currentFieldset.Properties.FirstOrDefault(p => p.Alias == propDef.Alias) : null;
 						    var dtd = ApplicationContext.Current.Services.DataTypeService.GetDataTypeDefinitionById(Guid.Parse(propDef.DataTypeGuid));
 						    var preValues = ApplicationContext.Current.Services.DataTypeService.GetPreValuesCollectionByDataTypeId(dtd.Id);
 						    var propData = new ContentPropertyData(propDef.Value, preValues, new Dictionary<string, object>());
 						    var propEditor = PropertyEditorResolver.Current.GetByAlias(dtd.PropertyEditorAlias);
-						    propDef.Value = propEditor.ValueEditor.ConvertEditorToDb(propData, propDef.Value);
+							// make sure to send the current property value (if any) to the PE ValueEditor
+							propDef.Value = propEditor.ValueEditor.ConvertEditorToDb(propData, currentProperty != null ? currentProperty.Value : null);
                         }
                         catch (Exception ex)
                         {
