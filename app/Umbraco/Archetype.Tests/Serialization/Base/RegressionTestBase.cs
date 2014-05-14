@@ -7,6 +7,7 @@ using Archetype.Umbraco.PropertyEditors;
 using Archetype.Umbraco.Serialization;
 using Moq;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using Umbraco.Core;
 using Umbraco.Core.Models;
@@ -143,14 +144,14 @@ namespace Archetype.Tests.Serialization.Base
             
             var propEditor = new ArchetypePropertyEditor.ArchetypePropertyValueEditor(new PropertyValueEditor());
 
-            var convertedJson = (string)propEditor.ConvertEditorToDb(new ContentPropertyData(archetypeJson, 
-                new PreValueCollection(new Dictionary<string, PreValue>()), new Dictionary<string, object>()), 
-                model);
+            var convertedJson = propEditor.ConvertEditorToDb(new ContentPropertyData(JObject.FromObject(archetype), 
+                new PreValueCollection(new Dictionary<string, PreValue>()), new Dictionary<string, object>()),
+                archetypeJson);
 
-            Assert.IsNotNullOrEmpty(convertedJson);
+            Assert.IsNotNull(convertedJson);
 
             var resultfromArchetypeJson = ConvertArchetypeJsonToModel<T>(archetypeJson);
-            var resultfromConvertedJson = ConvertArchetypeJsonToModel<T>(convertedJson);
+            var resultfromConvertedJson = ConvertArchetypeJsonToModel<T>(convertedJson.ToString());
 
             Assert.IsInstanceOf<T>(resultfromArchetypeJson);
             AssertAreEqual(model, resultfromArchetypeJson);
@@ -164,7 +165,7 @@ namespace Archetype.Tests.Serialization.Base
             CompoundModel_Regression_Battery(model);
         }
 
-        private static void AssertAreEqual<T>(T model, T result)
+        protected void AssertAreEqual<T>(T model, T result)
         {
             foreach (var propInfo in model.GetSerialiazableProperties())
             {
@@ -192,15 +193,17 @@ namespace Archetype.Tests.Serialization.Base
             }
         }
 
-        private static object GetExpectedValue<T>(T expected, PropertyInfo propInfo)
+        private object GetExpectedValue<T>(T expected, PropertyInfo propInfo)
         {
             return propInfo.GetValue(expected, null);
         }
 
-        private static object GetActualValue<T>(T actual, PropertyInfo propInfo)
+        private object GetActualValue<T>(T actual, PropertyInfo propInfo)
         {
-            return actual.GetSerialiazableProperties().Single(pinfo => pinfo.Name.Equals(propInfo.Name))
-                .GetValue(actual, null);
+            var actualProp = actual.GetSerialiazableProperties().SingleOrDefault(pinfo => pinfo.Name.Equals(propInfo.Name));
+            return actualProp != null
+                ? actualProp.GetValue(actual, null)
+                : null;
         }
     }
 }

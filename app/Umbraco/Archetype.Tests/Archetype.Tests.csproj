@@ -235,6 +235,7 @@
     <Compile Include="Serialization\UseCases\Enumerable\JsonTestStrings.cs" />
     <Compile Include="Serialization\UseCases\JsonTestModels.cs" />
     <Compile Include="Serialization\UseCases\JsonTestStrings.cs" />
+    <Compile Include="UnescapeJsonTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

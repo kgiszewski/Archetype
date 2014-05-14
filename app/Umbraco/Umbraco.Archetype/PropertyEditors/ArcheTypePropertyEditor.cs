@@ -142,11 +142,12 @@ namespace Archetype.Umbraco.PropertyEditors
 
 		    internal virtual PropertyEditor GetPropertyEditor(IDataTypeDefinition dtd)
 		    {
-		        return dtd.Id == 0 
-                    ? dtd.PropertyEditorAlias.Equals(Constants.PropertyEditorAlias) 
-                        ? new ArchetypePropertyEditor() 
-                        : new PropertyEditor()
-                    : PropertyEditorResolver.Current.GetByAlias(dtd.PropertyEditorAlias);
+		        if (dtd.Id != 0) 
+                    return PropertyEditorResolver.Current.GetByAlias(dtd.PropertyEditorAlias);
+
+		        return dtd.PropertyEditorAlias.Equals(Constants.PropertyEditorAlias)
+		            ? new ArchetypePropertyEditor()
+                    : (PropertyEditor)new TextboxPropertyEditor();
 		    }
 		}
 

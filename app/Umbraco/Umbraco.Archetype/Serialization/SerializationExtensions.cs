@@ -21,6 +21,9 @@ namespace Archetype.Umbraco.Serialization
 
         public static IEnumerable<PropertyInfo> GetSerialiazableProperties(this object obj)
         {
+            if (obj == null)
+                return new List<PropertyInfo>();
+            
             return obj.GetType()
                 .GetProperties(BindingFlags.Instance | BindingFlags.Public)
                 .Where(prop => !Attribute.IsDefined(prop, typeof(JsonIgnoreAttribute)));

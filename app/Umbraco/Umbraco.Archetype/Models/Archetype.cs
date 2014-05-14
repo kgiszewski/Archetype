@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Archetype.Umbraco.Extensions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -38,6 +39,7 @@ namespace Archetype.Umbraco.Models
               .ToList()
               .ForEach(x => x.Remove());
 
+            //return json.ToString(Formatting.None).UnescapeJson();
             return json.ToString(Formatting.None);
         }
     }
