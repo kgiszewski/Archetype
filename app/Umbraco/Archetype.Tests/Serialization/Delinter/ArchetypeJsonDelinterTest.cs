@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Archetype.PropertyEditors;
+using Archetype.Serialization;
 using Archetype.Tests.Serialization.Base;
-using Archetype.Umbraco.PropertyEditors;
-using Archetype.Umbraco.Serialization;
 using Moq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -129,7 +129,7 @@ namespace Archetype.Tests.Serialization.Delinter
             {
                 prop.DataTypeGuid = propGuid.ToString();
                 if (prop.Value.ToString().Contains("fieldsets"))
-                    prop.PropertyEditorAlias = Umbraco.Constants.PropertyEditorAlias;
+                    prop.PropertyEditorAlias = Constants.PropertyEditorAlias;
             }
 
             var archetypeJson = JsonConvert.SerializeObject(archetype);

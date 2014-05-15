@@ -1,16 +1,16 @@
-﻿using Archetype.Umbraco.PropertyConverters;
-using at = Archetype.Umbraco.Models;
+﻿using Archetype.PropertyConverters;
+using at = Archetype.Models;
 using Newtonsoft.Json;
 
 namespace Archetype.Tests.Serialization.Base
 {
     public abstract class ArchetypeJsonConverterTestBase
     {
-        public at.Archetype ConvertModelToArchetype<T>(T model)
+        public at.ArchetypeModel ConvertModelToArchetype<T>(T model)
         {
             var converter = new ArchetypeValueConverter();
             var json = JsonConvert.SerializeObject(model);
-            var archetype = (Umbraco.Models.Archetype)converter.ConvertDataToSource(null, json, false);
+            var archetype = (at.ArchetypeModel)converter.ConvertDataToSource(null, json, false);
             return archetype;
         }
 

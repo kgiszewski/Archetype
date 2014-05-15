@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Archetype.Umbraco.Serialization;
+using Archetype.Serialization;
 using Newtonsoft.Json;
 
 namespace Archetype.Tests.Serialization.UseCases.Complex

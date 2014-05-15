@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Archetype.Models;
+using Archetype.PropertyConverters;
 using Archetype.Tests.Serialization.Base;
-using Archetype.Umbraco.PropertyConverters;
 using Newtonsoft.Json;
 using NUnit.Framework;
 
@@ -43,7 +44,7 @@ namespace Archetype.Tests.Serialization.UseCases.Enumerable
         {
             var converter = new ArchetypeValueConverter();
             var json = JsonConvert.SerializeObject(_feedbacks);
-            var archetype = (Umbraco.Models.Archetype)converter.ConvertDataToSource(null, json, false);
+            var archetype = (ArchetypeModel)converter.ConvertDataToSource(null, json, false);
 
             Assert.NotNull(archetype);
         }
@@ -93,7 +94,7 @@ namespace Archetype.Tests.Serialization.UseCases.Enumerable
         {
             var converter = new ArchetypeValueConverter();
             var json = JsonConvert.SerializeObject(_captions);
-            var archetype = (Umbraco.Models.Archetype)converter.ConvertDataToSource(null, json, false);
+            var archetype = (ArchetypeModel)converter.ConvertDataToSource(null, json, false);
 
             Assert.NotNull(archetype);
         }

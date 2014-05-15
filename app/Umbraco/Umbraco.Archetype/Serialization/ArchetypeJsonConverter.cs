@@ -6,11 +6,11 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using Archetype.Umbraco.Models;
+using Archetype.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace Archetype.Umbraco.Serialization
+namespace Archetype.Serialization
 {
     public class ArchetypeJsonConverter : JsonConverter
     {
@@ -512,9 +512,9 @@ namespace Archetype.Umbraco.Serialization
 
         private object GetTypedValue(JToken jToken, Type type)
         {
-            var property = JsonConvert.DeserializeObject<Property>(jToken.ToString());
+            var property = JsonConvert.DeserializeObject<ArchetypePropertyModel>(jToken.ToString());
 
-            var method = typeof(Property).GetMethod("GetValue");
+            var method = typeof(ArchetypePropertyModel).GetMethod("GetValue");
             var getValue = method.MakeGenericMethod(type);
 
             return getValue.Invoke(property, null);

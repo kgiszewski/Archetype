@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Archetype.Umbraco.Extensions;
+using Archetype.Extensions;
 using Newtonsoft.Json;
 using Umbraco.Core.Models;
 using Umbraco.Web;
 
-namespace Archetype.Umbraco.Serialization
+namespace Archetype.Serialization
 {
     public static class SerializationExtensions
     {

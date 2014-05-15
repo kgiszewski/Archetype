@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-namespace Archetype.Umbraco.Serialization
+namespace Archetype.Serialization
 {
     public enum DelinterStep
     {

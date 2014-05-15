@@ -2,7 +2,6 @@ using System;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
-using Archetype.Umbraco.Serialization;
 using Umbraco.Core;
 using Archetype.Models;
 

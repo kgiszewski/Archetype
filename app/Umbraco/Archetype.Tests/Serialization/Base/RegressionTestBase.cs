@@ -3,9 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Archetype.Umbraco.Extensions;
-using Archetype.Umbraco.PropertyEditors;
-using Archetype.Umbraco.Serialization;
+using Archetype.PropertyEditors;
+using Archetype.Serialization;
 using Moq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -13,6 +12,7 @@ using NUnit.Framework;
 using Umbraco.Core;
 using Umbraco.Core.Models;
 using Umbraco.Core.Models.Editors;
+using Umbraco.Core.Models.Membership;
 using Umbraco.Core.Persistence;
 using Umbraco.Core.PropertyEditors;
 using Umbraco.Core.Services;
@@ -111,7 +111,7 @@ namespace Archetype.Tests.Serialization.Base
             {
                 prop.DataTypeGuid = propGuid.ToString();
                 if (prop.Value.ToString().Contains("fieldsets"))
-                    prop.PropertyEditorAlias = Umbraco.Constants.PropertyEditorAlias;
+                    prop.PropertyEditorAlias = Constants.PropertyEditorAlias;
             }
 
             var archetypeJson = JsonConvert.SerializeObject(archetype);
@@ -193,9 +193,13 @@ namespace Archetype.Tests.Serialization.Base
                 Mock.Of<IEntityService>(),
                 Mock.Of<IRelationService>(),
                 Mock.Of<IMemberGroupService>(),
+                Mock.Of<IMemberTypeService>(),
+                Mock.Of<IMemberService>(),
+                Mock.Of<IUserService>(),
                 Mock.Of<ISectionService>(),
                 Mock.Of<IApplicationTreeService>(),
-                Mock.Of<ITagService>()
+                Mock.Of<ITagService>(),
+                Mock.Of<INotificationService>()
                 );
 
             ApplicationContext.EnsureContext(
