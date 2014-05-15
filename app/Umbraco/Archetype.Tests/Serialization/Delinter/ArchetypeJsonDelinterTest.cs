@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Archetype.Tests.Serialization.Base;
-using Archetype.Umbraco.Extensions;
 using Archetype.Umbraco.PropertyEditors;
 using Archetype.Umbraco.Serialization;
 using Moq;

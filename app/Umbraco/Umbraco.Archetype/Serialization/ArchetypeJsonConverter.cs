@@ -6,7 +6,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using Archetype.Umbraco.Extensions;
 using Archetype.Umbraco.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
