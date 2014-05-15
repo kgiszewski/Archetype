@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Archetype.Umbraco.Extensions;
 using Newtonsoft.Json;
 using Umbraco.Core.Models;
 using Umbraco.Web;
@@ -36,6 +37,15 @@ namespace Archetype.Umbraco.Serialization
             var archetypeJson = content.GetPropertyDataValue(cmsFieldAlias);
             return JsonConvert.DeserializeObject<T>(archetypeJson) ??
                    (returnInstanceIfNull ? Activator.CreateInstance<T>() : default(T));
+        }
+
+        public static string DelintArchetypeJson(this string input)
+        {
+            if (!input.DetectIsJson())
+                return String.Empty;
+
+            var delinter = new ArchetypeJsonDelinter();
+            return delinter.Execute(input);
         }
     }
 }

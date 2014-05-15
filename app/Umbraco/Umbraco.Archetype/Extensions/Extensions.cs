@@ -22,14 +22,5 @@ namespace Archetype.Umbraco.Extensions
         {
             return prop.PropertyEditorAlias.InvariantEquals(Constants.PropertyEditorAlias);
         }
-
-        public static string DelintArchetypeJson(this string input)
-        {
-            if (!input.DetectIsJson())
-                return String.Empty;
-
-            var delinter = new ArchetypeJsonDelinter();
-            return delinter.Execute(input);
-        }
     }
 }

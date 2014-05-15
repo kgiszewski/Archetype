@@ -22,6 +22,10 @@ namespace Archetype.Tests.Serialization.Delinter
         private const string _ESCAPED_JSON = @"{""fieldsets"":[{""properties"":[{""alias"":""slides"",""value"":""2680""}],""alias"":""slides""},{""properties"":[{""alias"":""captions"",""value"":""{\""fieldsets\"":[{\""properties\"":[{\""alias\"":\""textstring\"",\""value\"":\""test1 test1\""}],\""alias\"":\""textstringArray\""},{\""properties\"":[{\""alias\"":\""textstring\"",\""value\"":\""test2  test2\""}],\""alias\"":\""textstringArray\""},{\""properties\"":[{\""alias\"":\""textstring\"",\""value\"":\""test3b   test3b\""}],\""alias\"":\""textstringArray\""}]}""}],""alias"":""captions""}]}";
         private const string _JSON = @"{""fieldsets"":[{""properties"":[{""alias"":""slides"",""value"":""2680""}],""alias"":""slides""},{""properties"":[{""alias"":""captions"",""value"":{""fieldsets"":[{""properties"":[{""alias"":""textstring"",""value"":""test1 test1""}],""alias"":""textstringArray""},{""properties"":[{""alias"":""textstring"",""value"":""test2  test2""}],""alias"":""textstringArray""},{""properties"":[{""alias"":""textstring"",""value"":""test3b   test3b""}],""alias"":""textstringArray""}]}}],""alias"":""captions""}]}";
         private const string _ESCAPED_JSON_DEEP_NESTED = @"{""fieldsets"":[{""properties"":[{""alias"":""pages"",""value"":""""},{""alias"":""captions"",""value"":""{\""fieldsets\"":[{\""properties\"":[{\""alias\"":\""captions\"",\""value\"":\""{\\\""fieldsets\\\"":[{\\\""properties\\\"":[{\\\""alias\\\"":\\\""textString\\\"",\\\""value\\\"":\\\""{\\\\\\\""fieldsets\\\\\\\"":[{\\\\\\\""properties\\\\\\\"":[{\\\\\\\""alias\\\\\\\"":\\\\\\\""textString\\\\\\\"",\\\\\\\""value\\\\\\\"":\\\\\\\""\\\\\\\""}],\\\\\\\""alias\\\\\\\"":\\\\\\\""textItem\\\\\\\""}]}\\\""}],\\\""alias\\\"":\\\""textList\\\""}]}\""}],\""alias\"":\""captions\""}]}""}],""alias"":""pages""}]}";
+        private const string _ESCAPED_JSON_FROM_APP = @"{
+  ""alias"": ""captions"",
+  ""value"": ""{\""fieldsets\"":[{\""properties\"":[{\""alias\"":\""textstring\"",\""value\"":\""test1 test1\""}],\""alias\"":\""textstringArray\""},{\""properties\"":[{\""alias\"":\""textstring\"",\""value\"":\""test2  test2\""}],\""alias\"":\""textstringArray\""},{\""properties\"":[{\""alias\"":\""textstring\"",\""value\"":\""test3b   test3b\""}],\""alias\"":\""textstringArray\""}]}""
+}";
 
         private SlideShow _referenceModel;
         private NestedClass _nestedClass;
@@ -81,6 +85,30 @@ namespace Archetype.Tests.Serialization.Delinter
             Assert.AreEqual(3, actualModel.Captions.Count);
 
             AssertAreEqual(expectedModel, actualModel);
+        }
+
+        [Test]
+        public void EscapedJson_FromApp_SerializesToModel()
+        {
+            var delintedJson = _ESCAPED_JSON_FROM_APP.DelintArchetypeJson();
+
+            var referenceModel = new Captions()
+            {
+                new TextString() {Text = "test1 test1"},
+                new TextString() {Text = "test2  test2"},
+                new TextString() {Text = "test3b   test3b"}
+            };
+
+            var actualModel = ConvertArchetypeJsonToModel<Captions>(delintedJson);
+
+            Assert.IsInstanceOf<Captions>(actualModel);
+            Assert.AreEqual(3, actualModel.Count);
+
+            foreach (var refItem in referenceModel)
+            {
+                var index = referenceModel.IndexOf(refItem);
+                AssertAreEqual(refItem, actualModel.ElementAt(index));
+            }
         }
 
         [Test]
@@ -164,7 +192,7 @@ namespace Archetype.Tests.Serialization.Delinter
         {
         }
 
-        [AsArchetype("textstringArray")] /* Must have same archetype alias as list class */
+        [AsArchetype("textstringArray")] /* due to hard coded string calues above, must have same archetype alias as list class */
         [JsonConverter(typeof(ArchetypeJsonConverter))]
         public class TextString
         {

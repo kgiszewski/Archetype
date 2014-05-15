@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using Archetype.Umbraco.Extensions;
 using Archetype.Umbraco.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -73,7 +74,7 @@ namespace Archetype.Umbraco.Serialization
             foreach (var fs in jToken["fieldsets"].Where(fs => fs["alias"].ToString().Equals(GetFieldsetName(itemType))))
             {
                 var item = JsonConvert.DeserializeObject(
-                    fs["properties"].ToString(), itemType, this);
+                    fs["properties"].ToString().DelintArchetypeJson(), itemType, this);
 
                 obj.GetType().GetMethod("Add").Invoke(obj, new[] { item });
             }
@@ -208,7 +209,7 @@ namespace Archetype.Umbraco.Serialization
         private object GetPropertyValue(PropertyInfo propertyInfo, JToken propJToken)
         {
             return IsTypeArchetypeDatatype(propertyInfo.PropertyType)
-                ? JsonConvert.DeserializeObject(propJToken.ToString(), propertyInfo.PropertyType,
+                ? JsonConvert.DeserializeObject(propJToken.ToString().DelintArchetypeJson(), propertyInfo.PropertyType,
                     this)
                     : IsTypeIEnumerableArchetypeDatatype(propertyInfo.PropertyType)
                     ? JsonConvert.DeserializeObject(propJToken["value"].SelectToken("fieldsets").ToString(), propertyInfo.PropertyType,

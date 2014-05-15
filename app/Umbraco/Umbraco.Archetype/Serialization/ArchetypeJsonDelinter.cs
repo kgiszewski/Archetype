@@ -62,7 +62,7 @@ namespace Archetype.Umbraco.Serialization
                 {DelinterStep.LabelAlias, new Regex(@"\s*\\+""(alias)\\+"":\s*")},
                 {DelinterStep.LabelValue, new Regex(@"\s*\\+""(value)\\+"":\s*")},
                 {DelinterStep.UnescapeValues, new Regex(@"""(alias|value)"":\\+""(.*?)\\+""")},
-                {DelinterStep.FixNestedFieldsets, new Regex(@"""(value)"":""({""fieldsets"".+?})""")},
+                {DelinterStep.FixNestedFieldsets, new Regex(@"""(value)"":\s*?""({""fieldsets"".+?})""")},
                 {DelinterStep.RemoveWhiteSpace, new Regex(@"\s+(?=([^""]*""[^""]*"")*[^""]*$)")}
             };
             
