@@ -1,10 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Archetype.Tests.Serialization.Base;
 using Archetype.Umbraco.Extensions;
+using Archetype.Umbraco.PropertyEditors;
 using Archetype.Umbraco.Serialization;
+using Moq;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using NUnit.Framework;
+using Umbraco.Core.Models;
+using Umbraco.Core.Models.Editors;
+using Umbraco.Core.PropertyEditors;
+using Umbraco.Core.Services;
 
 namespace Archetype.Tests.Serialization.Delinter
 {
@@ -16,6 +24,8 @@ namespace Archetype.Tests.Serialization.Delinter
         private const string _ESCAPED_JSON_DEEP_NESTED = @"{""fieldsets"":[{""properties"":[{""alias"":""pages"",""value"":""""},{""alias"":""captions"",""value"":""{\""fieldsets\"":[{\""properties\"":[{\""alias\"":\""captions\"",\""value\"":\""{\\\""fieldsets\\\"":[{\\\""properties\\\"":[{\\\""alias\\\"":\\\""textString\\\"",\\\""value\\\"":\\\""{\\\\\\\""fieldsets\\\\\\\"":[{\\\\\\\""properties\\\\\\\"":[{\\\\\\\""alias\\\\\\\"":\\\\\\\""textString\\\\\\\"",\\\\\\\""value\\\\\\\"":\\\\\\\""\\\\\\\""}],\\\\\\\""alias\\\\\\\"":\\\\\\\""textItem\\\\\\\""}]}\\\""}],\\\""alias\\\"":\\\""textList\\\""}]}\""}],\""alias\"":\""captions\""}]}""}],""alias"":""pages""}]}";
 
         private SlideShow _referenceModel;
+        private NestedClass _nestedClass;
+
         [SetUp]
         public void SetUp()
         {
@@ -29,6 +39,13 @@ namespace Archetype.Tests.Serialization.Delinter
                     new TextString(){Text = "test3b   test3b"}
                 }
             };
+
+            _nestedClass = GetNestedClass();
+            _nestedClass.SlideShow = _referenceModel;
+            _nestedClass.Nested = GetNestedClass();
+            _nestedClass.Nested.SlideShow = _referenceModel;
+            _nestedClass.Nested.Nested = GetNestedClass();
+
         }        
 
         [Test]
@@ -69,10 +86,60 @@ namespace Archetype.Tests.Serialization.Delinter
         [Test]
         public void DeepNestedJson_Escapes_Correctly()
         {
-            var actual = _ESCAPED_JSON_DEEP_NESTED.DelintArchetypeJson();
+            var propGuid = new Guid();
+            var dtd = new DataTypeDefinition(-1, String.Empty) { Id = 0 };
 
-            Assert.IsNotNullOrEmpty(actual);
+            var dataTypeService = new Mock<IDataTypeService>();
+            dataTypeService.Setup(dts => dts.GetDataTypeDefinitionById(Guid.Parse(propGuid.ToString()))).Returns(dtd);
+            dataTypeService.Setup(dts => dts.GetPreValuesCollectionByDataTypeId(dtd.Id)).Returns(new PreValueCollection(new Dictionary<string, PreValue>()));
+
+            var propValueEditor = new Mock<ArchetypePropertyEditor.ArchetypePropertyValueEditor>(new PropertyValueEditor());
+            propValueEditor.Setup(pe => pe.GetPropertyEditor(dtd)).Returns(new ArchetypePropertyEditor());
+
+            var archetype = ConvertModelToArchetype(_nestedClass);
+
+            foreach (var prop in archetype.Fieldsets.SelectMany(fs => fs.Properties))
+            {
+                prop.DataTypeGuid = propGuid.ToString();
+                if (prop.Value.ToString().Contains("fieldsets"))
+                    prop.PropertyEditorAlias = Umbraco.Constants.PropertyEditorAlias;
+            }
+
+            var archetypeJson = JsonConvert.SerializeObject(archetype);
+            Assert.IsNotNullOrEmpty(archetypeJson);
+
+            EnsureUmbracoContext(dataTypeService);
+
+            var propEditor = new ArchetypePropertyEditor.ArchetypePropertyValueEditor(new PropertyValueEditor());
+            var convertedJson = propEditor.ConvertEditorToDb(new ContentPropertyData(JObject.FromObject(archetype),
+                new PreValueCollection(new Dictionary<string, PreValue>()), new Dictionary<string, object>()),
+                archetypeJson);
+
+            Assert.IsNotNull(convertedJson);
+
+            var delintedJson = convertedJson.ToString().DelintArchetypeJson();
+            Assert.IsNotNullOrEmpty(delintedJson);
+
+            var resultfromArchetypeJson = ConvertArchetypeJsonToModel<NestedClass>(archetypeJson);
+            var resultfromConvertedJson = ConvertArchetypeJsonToModel<NestedClass>(delintedJson);
+
+            Assert.IsInstanceOf<NestedClass>(resultfromArchetypeJson);
+            Assert.IsInstanceOf<NestedClass>(resultfromConvertedJson);
+
+            AssertAreEqual(resultfromArchetypeJson, resultfromConvertedJson);
+
         }
+
+        #region private methods
+
+        private NestedClass GetNestedClass()
+        {
+            return new NestedClass();
+        }
+
+        #endregion
+
+        #region classes
 
         [AsArchetype("slides")]
         [JsonConverter(typeof(ArchetypeJsonConverter))]
@@ -98,5 +165,17 @@ namespace Archetype.Tests.Serialization.Delinter
             [JsonProperty("textstring")]
             public String Text { get; set; }
         }
+
+        [AsArchetype("nestedClass")]
+        [JsonConverter(typeof(ArchetypeJsonConverter))]
+        public class NestedClass
+        {
+            [JsonProperty("nestedClass")]
+            public NestedClass Nested { get; set; }
+            [JsonProperty("slides")]
+            public SlideShow SlideShow { get; set; }
+        }
+
+        #endregion
     }
 }

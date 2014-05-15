@@ -83,6 +83,10 @@ namespace Archetype.Umbraco.Serialization
 
         private object DeserializeObject(object obj, JToken jToken)
         {
+            if (jToken.SelectToken("value") != null
+                && String.IsNullOrEmpty(jToken.SelectToken("value").ToString()))
+                return obj;
+            
             var properties = GetSerialiazableProperties(obj).ToList();
             var asFieldset = properties.Where(HasAsFieldsetAttribute).ToList();
 
@@ -130,6 +134,9 @@ namespace Archetype.Umbraco.Serialization
 
         private JToken GetPropertyJToken(JToken fsJToken, string propAlias)
         {
+            if (fsJToken == null)
+                return null;
+            
             //make recursive
             if (fsJToken.SelectToken("properties") != null)
                 return GetPropertyAliasJToken(propAlias, fsJToken["properties"]);
