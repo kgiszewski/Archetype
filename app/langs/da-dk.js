@@ -27,6 +27,7 @@
 	"defaultValue": "Standard værdi",
 	"dataType": "Datatype",
 	"required": "Påkrævet",
+	"regEx": "RegEx validering",
 	"properties": "Egenskaber",
 	"labelTemplate": "Label skabelon",
 	"select": "Vælg",
