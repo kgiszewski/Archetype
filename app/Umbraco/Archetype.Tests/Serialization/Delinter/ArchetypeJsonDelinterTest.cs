@@ -120,13 +120,19 @@ namespace Archetype.Tests.Serialization.Delinter
             var delintedJson = convertedJson.ToString().DelintArchetypeJson();
             Assert.IsNotNullOrEmpty(delintedJson);
 
-            var resultfromArchetypeJson = ConvertArchetypeJsonToModel<NestedClass>(archetypeJson);
-            var resultfromConvertedJson = ConvertArchetypeJsonToModel<NestedClass>(delintedJson);
+            var modelfromArchetypeJson = ConvertArchetypeJsonToModel<NestedClass>(archetypeJson);
+            var modelfromConvertedJson = ConvertArchetypeJsonToModel<NestedClass>(delintedJson);
 
-            Assert.IsInstanceOf<NestedClass>(resultfromArchetypeJson);
-            Assert.IsInstanceOf<NestedClass>(resultfromConvertedJson);
+            Assert.IsInstanceOf<NestedClass>(modelfromArchetypeJson);
+            Assert.IsInstanceOf<NestedClass>(modelfromConvertedJson);
 
-            AssertAreEqual(resultfromArchetypeJson, resultfromConvertedJson);
+            Assert.AreEqual(3, modelfromArchetypeJson.SlideShow.Captions.Count);
+            Assert.AreEqual(3, modelfromConvertedJson.SlideShow.Captions.Count);
+
+            Assert.AreEqual(3, modelfromArchetypeJson.Nested.SlideShow.Captions.Count);
+            Assert.AreEqual(3, modelfromConvertedJson.Nested.SlideShow.Captions.Count);
+
+            AssertAreEqual(modelfromArchetypeJson, modelfromConvertedJson);
 
         }
 

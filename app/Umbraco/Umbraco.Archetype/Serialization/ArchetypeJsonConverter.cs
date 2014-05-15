@@ -94,8 +94,8 @@ namespace Archetype.Umbraco.Serialization
             {
                 var propAlias = GetJsonPropertyName(propInfo);
                 var fsJToken = propInfo.PropertyType.Namespace.Equals("System") 
-                                ? GetFieldsetJTokenByAlias(propAlias, jToken) 
-                                : GetFieldsetJTokenByTypeAlias(propInfo.PropertyType, jToken);
+                                ? GetFieldsetJTokenFromAlias(propAlias, jToken)
+                                : GetFieldsetJTokenFromPropertyAlias(propInfo, jToken);
 
                 var propJToken = GetPropertyJToken(fsJToken, propAlias);
 
@@ -110,7 +110,7 @@ namespace Archetype.Umbraco.Serialization
             if (properties.All(HasAsFieldsetAttribute))
                 return obj;
 
-            var objToken = GetFieldsetJTokenByTypeAlias(obj.GetType(), jToken);
+            var objToken = GetFieldsetJTokenFromTypeAlias(obj.GetType(), jToken);
 
             if (objToken == null)
                 return obj;
@@ -147,13 +147,19 @@ namespace Archetype.Umbraco.Serialization
             return nestedPropJToken != null ? GetPropertyAliasJToken(propAlias, nestedPropJToken["properties"]) : null;
         }
 
-        private JToken GetFieldsetJTokenByTypeAlias(Type objType, JToken jToken)
+        private JToken GetFieldsetJTokenFromTypeAlias(Type objType, JToken jToken)
         {
             var objAlias = GetFieldsetName(objType);
-            return GetFieldsetJTokenByAlias(objAlias, jToken);
+            return GetFieldsetJTokenFromAlias(objAlias, jToken);
         }
 
-        private JToken GetFieldsetJTokenByAlias(string objAlias, JToken jToken)
+        private JToken GetFieldsetJTokenFromPropertyAlias(PropertyInfo propInfo, JToken jToken)
+        {
+            var objAlias = GetJsonPropertyName(propInfo);
+            return GetFieldsetJTokenFromAlias(objAlias, jToken);
+        }
+
+        private JToken GetFieldsetJTokenFromAlias(string objAlias, JToken jToken)
         {
             JToken propJToken;
 
