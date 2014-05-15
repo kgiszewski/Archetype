@@ -12,6 +12,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{D84AA4
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Archetype.Tests", "Archetype.Tests\Archetype.Tests.csproj", "{21F3E6CF-B76F-4059-9474-1AF1CE63CD6B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DatabaseSizer", "DatabaseSizer\DatabaseSizer.csproj", "{0114C963-C514-49C1-B7AB-DCB1825F498C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -26,6 +28,10 @@ Global
 		{21F3E6CF-B76F-4059-9474-1AF1CE63CD6B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{21F3E6CF-B76F-4059-9474-1AF1CE63CD6B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{21F3E6CF-B76F-4059-9474-1AF1CE63CD6B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0114C963-C514-49C1-B7AB-DCB1825F498C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0114C963-C514-49C1-B7AB-DCB1825F498C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0114C963-C514-49C1-B7AB-DCB1825F498C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0114C963-C514-49C1-B7AB-DCB1825F498C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

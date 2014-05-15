@@ -1,12 +1,12 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using Archetype.Umbraco.Serialization;
 using Umbraco.Core;
-using Archetype.Umbraco.Models;
+using Archetype.Models;
 
-namespace Archetype.Umbraco.Extensions
+namespace Archetype.Extensions
 {
     public static class Extensions
     {
@@ -18,7 +18,7 @@ namespace Archetype.Umbraco.Extensions
                    || input.StartsWith("[") && input.EndsWith("]");
         }
 
-        public static bool IsArchetype(this Property prop)
+        public static bool IsArchetype(this ArchetypePropertyModel prop)
         {
             return prop.PropertyEditorAlias.InvariantEquals(Constants.PropertyEditorAlias);
         }

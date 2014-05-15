@@ -1,7 +1,7 @@
 ﻿using System;
 using Newtonsoft.Json;
 
-namespace Archetype.Umbraco.Models
+namespace Archetype.Models
 {
     public class ArchetypePreValueProperty
     {
@@ -31,5 +31,8 @@ namespace Archetype.Umbraco.Models
 
         [JsonProperty("required")]
         public bool Required { get; set; }
+
+        [JsonProperty("regEx")]
+        public string RegEx { get; set; }
     }
 }

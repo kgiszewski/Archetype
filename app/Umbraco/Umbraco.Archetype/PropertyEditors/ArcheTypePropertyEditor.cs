@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Archetype.Umbraco.Extensions;
+using Archetype.Extensions;
 using ClientDependency.Core;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -13,7 +13,7 @@ using Umbraco.Core.Services;
 using Umbraco.Web.PropertyEditors;
 using Umbraco.Core.Logging;
 
-namespace Archetype.Umbraco.PropertyEditors
+namespace Archetype.PropertyEditors
 {
 	[PropertyEditorAsset(ClientDependencyType.Javascript, "/App_Plugins/Archetype/js/archetype.js")]
 	[PropertyEditor("Imulus.Archetype", "Archetype", "/App_Plugins/Archetype/views/archetype.html",
