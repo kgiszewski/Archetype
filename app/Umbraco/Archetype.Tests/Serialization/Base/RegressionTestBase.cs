@@ -93,13 +93,7 @@ namespace Archetype.Tests.Serialization.Base
             AssertAreEqual(model, resultfromArchetypeJson);
         }
 
-        protected void NestedModel_Regression_Battery<T>(T model)
-        {
-            CompoundModel_Regression_Battery(model);
-        }
-
-
-        protected void NestedModel_WithEscapedJson_Regression_Battery<T>(T model)
+        protected void CompoundModel_WithEscapedJson_Regression_Battery<T>(T model)
         {
             var propGuid = new Guid();
             var dtd = new DataTypeDefinition(-1, String.Empty) {Id = 0};
@@ -140,6 +134,16 @@ namespace Archetype.Tests.Serialization.Base
 
             Assert.IsInstanceOf<T>(resultfromConvertedJson);
             AssertAreEqual(model, resultfromConvertedJson);
+        }
+
+        protected void NestedModel_Regression_Battery<T>(T model)
+        {
+            CompoundModel_Regression_Battery(model);
+        }
+
+        protected void NestedModel_WithEscapedJson_Regression_Battery<T>(T model)
+        {
+            CompoundModel_WithEscapedJson_Regression_Battery(model);
         }
 
         protected void ComplexModel_Regression_Battery<T>(T model)
