@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Archetype.Tests.Serialization.Base;
 using Archetype.Umbraco.Extensions;
 using Archetype.Umbraco.Serialization;
@@ -14,8 +11,9 @@ namespace Archetype.Tests
     [TestFixture]
     public class UnescapeJsonTest : RegressionTestBase
     {
-        private const string _ESCAPED_JSON = @"{""fieldsets"":[{""properties"":[{""alias"":""slides"",""value"":""2680""}],""alias"":""slides""},{""properties"":[{""alias"":""captions"",""value"":""{\""fieldsets\"":[{\""properties\"":[{\""alias\"":\""textstring\"",\""value\"":\""test1\""}],\""alias\"":\""textstringArray\""},{\""properties\"":[{\""alias\"":\""textstring\"",\""value\"":\""test2\""}],\""alias\"":\""textstringArray\""},{\""properties\"":[{\""alias\"":\""textstring\"",\""value\"":\""test3b\""}],\""alias\"":\""textstringArray\""}]}""}],""alias"":""captions""}]}";
-        private const string _JSON = @"{""fieldsets"":[{""properties"":[{""alias"":""slides"",""value"":""2680""}],""alias"":""slides""},{""properties"":[{""alias"":""captions"",""value"":{""fieldsets"":[{""properties"":[{""alias"":""textstring"",""value"":""test1""}],""alias"":""textstringArray""},{""properties"":[{""alias"":""textstring"",""value"":""test2""}],""alias"":""textstringArray""},{""properties"":[{""alias"":""textstring"",""value"":""test3b""}],""alias"":""textstringArray""}]}}],""alias"":""captions""}]}";
+        private const string _ESCAPED_JSON = @"{""fieldsets"":[{""properties"":[{""alias"":""slides"",""value"":""2680""}],""alias"":""slides""},{""properties"":[{""alias"":""captions"",""value"":""{\""fieldsets\"":[{\""properties\"":[{\""alias\"":\""textstring\"",\""value\"":\""test1 test1\""}],\""alias\"":\""textstringArray\""},{\""properties\"":[{\""alias\"":\""textstring\"",\""value\"":\""test2  test2\""}],\""alias\"":\""textstringArray\""},{\""properties\"":[{\""alias\"":\""textstring\"",\""value\"":\""test3b   test3b\""}],\""alias\"":\""textstringArray\""}]}""}],""alias"":""captions""}]}";
+        private const string _JSON = @"{""fieldsets"":[{""properties"":[{""alias"":""slides"",""value"":""2680""}],""alias"":""slides""},{""properties"":[{""alias"":""captions"",""value"":{""fieldsets"":[{""properties"":[{""alias"":""textstring"",""value"":""test1 test1""}],""alias"":""textstringArray""},{""properties"":[{""alias"":""textstring"",""value"":""test2  test2""}],""alias"":""textstringArray""},{""properties"":[{""alias"":""textstring"",""value"":""test3b   test3b""}],""alias"":""textstringArray""}]}}],""alias"":""captions""}]}";
+        private const string _ESCAPED_JSON_DEEP_NESTED = @"{""fieldsets"":[{""properties"":[{""alias"":""pages"",""value"":""""},{""alias"":""captions"",""value"":""{\""fieldsets\"":[{\""properties\"":[{\""alias\"":\""captions\"",\""value\"":\""{\\\""fieldsets\\\"":[{\\\""properties\\\"":[{\\\""alias\\\"":\\\""textString\\\"",\\\""value\\\"":\\\""{\\\\\\\""fieldsets\\\\\\\"":[{\\\\\\\""properties\\\\\\\"":[{\\\\\\\""alias\\\\\\\"":\\\\\\\""textString\\\\\\\"",\\\\\\\""value\\\\\\\"":\\\\\\\""\\\\\\\""}],\\\\\\\""alias\\\\\\\"":\\\\\\\""textItem\\\\\\\""}]}\\\""}],\\\""alias\\\"":\\\""textList\\\""}]}\""}],\""alias\"":\""captions\""}]}""}],""alias"":""pages""}]}";
 
         private SlideShow _referenceModel;
         [SetUp]
@@ -26,9 +24,9 @@ namespace Archetype.Tests
                 Slides = "2680",
                 Captions = new Captions()
                 {
-                    new TextString(){Text = "test1"},
-                    new TextString(){Text = "test2"},
-                    new TextString(){Text = "test3b"}
+                    new TextString(){Text = "test1 test1"},
+                    new TextString(){Text = "test2  test2"},
+                    new TextString(){Text = "test3b   test3b"}
                 }
             };
         }        
@@ -54,7 +52,7 @@ namespace Archetype.Tests
         public void UnescapedJsonAndModel_Equal_ExpectedJsonAndModel()
         {
             const string expectedJson = _JSON;
-            var unescapedJson = _ESCAPED_JSON.UnescapeJson();
+            var unescapedJson = _ESCAPED_JSON.DelintArchetypeJson();
 
             var expectedModel = ConvertArchetypeJsonToModel<SlideShow>(expectedJson);
             var actualModel = ConvertArchetypeJsonToModel<SlideShow>(unescapedJson);
@@ -66,6 +64,14 @@ namespace Archetype.Tests
             Assert.AreEqual(3, actualModel.Captions.Count);
 
             AssertAreEqual(expectedModel, actualModel);
+        }
+
+        [Test]
+        public void DeepNestedJson_Escapes_Correctly()
+        {
+            var actual = _ESCAPED_JSON_DEEP_NESTED.DelintArchetypeJson();
+
+            Assert.IsNotNullOrEmpty(actual);
         }
 
         [AsArchetype("slides")]

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Archetype.Umbraco.Extensions;
 using Archetype.Umbraco.PropertyEditors;
 using Archetype.Umbraco.Serialization;
 using Moq;
@@ -101,7 +102,6 @@ namespace Archetype.Tests.Serialization.Base
         protected void NestedModel_WithEscapedJson_Regression_Battery<T>(T model)
         {
             var propGuid = new Guid();
-            var cacheHelper = CacheHelper.CreateDisabledCacheHelper();
             var dtd = new DataTypeDefinition(-1, String.Empty) {Id = 0};
             
             var dataTypeService = new Mock<IDataTypeService>();
@@ -110,25 +110,6 @@ namespace Archetype.Tests.Serialization.Base
 
             var propValueEditor = new Mock<ArchetypePropertyEditor.ArchetypePropertyValueEditor>(new PropertyValueEditor());
             propValueEditor.Setup(pe => pe.GetPropertyEditor(dtd)).Returns(new ArchetypePropertyEditor());
-
-            var serviceContext = new ServiceContext(
-                Mock.Of<IContentService>(), 
-                Mock.Of<IMediaService>(), 
-                Mock.Of<IContentTypeService>(),
-                dataTypeService.Object, 
-                Mock.Of<IFileService>(), 
-                Mock.Of<ILocalizationService>(), 
-                Mock.Of<IPackagingService>(), 
-                Mock.Of<IEntityService>(), 
-                Mock.Of<IRelationService>(), 
-                Mock.Of<IMemberGroupService>(), 
-                Mock.Of<ISectionService>(), 
-                Mock.Of<IApplicationTreeService>(), 
-                Mock.Of<ITagService>()
-                );
-
-            ApplicationContext.EnsureContext(
-                new DatabaseContext(Mock.Of<IDatabaseFactory>()), serviceContext, cacheHelper, true);
 
             var archetype = ConvertModelToArchetype(model);
 
@@ -141,9 +122,10 @@ namespace Archetype.Tests.Serialization.Base
 
             var archetypeJson = JsonConvert.SerializeObject(archetype);
             Assert.IsNotNullOrEmpty(archetypeJson);
-            
-            var propEditor = new ArchetypePropertyEditor.ArchetypePropertyValueEditor(new PropertyValueEditor());
 
+            EnsureUmbracoContext(dataTypeService);
+
+            var propEditor = new ArchetypePropertyEditor.ArchetypePropertyValueEditor(new PropertyValueEditor());
             var convertedJson = propEditor.ConvertEditorToDb(new ContentPropertyData(JObject.FromObject(archetype), 
                 new PreValueCollection(new Dictionary<string, PreValue>()), new Dictionary<string, object>()),
                 archetypeJson);
@@ -151,7 +133,7 @@ namespace Archetype.Tests.Serialization.Base
             Assert.IsNotNull(convertedJson);
 
             var resultfromArchetypeJson = ConvertArchetypeJsonToModel<T>(archetypeJson);
-            var resultfromConvertedJson = ConvertArchetypeJsonToModel<T>(convertedJson.ToString());
+            var resultfromConvertedJson = ConvertArchetypeJsonToModel<T>(convertedJson.ToString().DelintArchetypeJson());
 
             Assert.IsInstanceOf<T>(resultfromArchetypeJson);
             AssertAreEqual(model, resultfromArchetypeJson);
@@ -191,6 +173,29 @@ namespace Archetype.Tests.Serialization.Base
 
                 AssertAreEqual(expected, actual);
             }
+        }
+
+        protected void EnsureUmbracoContext(Mock<IDataTypeService> dataTypeService)
+        {
+            var cacheHelper = CacheHelper.CreateDisabledCacheHelper();
+            var serviceContext = new ServiceContext(
+                Mock.Of<IContentService>(),
+                Mock.Of<IMediaService>(),
+                Mock.Of<IContentTypeService>(),
+                dataTypeService.Object,
+                Mock.Of<IFileService>(),
+                Mock.Of<ILocalizationService>(),
+                Mock.Of<IPackagingService>(),
+                Mock.Of<IEntityService>(),
+                Mock.Of<IRelationService>(),
+                Mock.Of<IMemberGroupService>(),
+                Mock.Of<ISectionService>(),
+                Mock.Of<IApplicationTreeService>(),
+                Mock.Of<ITagService>()
+                );
+
+            ApplicationContext.EnsureContext(
+                new DatabaseContext(Mock.Of<IDatabaseFactory>()), serviceContext, cacheHelper, true);
         }
 
         private object GetExpectedValue<T>(T expected, PropertyInfo propInfo)
