@@ -6,10 +6,10 @@ using Archetype.Umbraco.Serialization;
 using Newtonsoft.Json;
 using NUnit.Framework;
 
-namespace Archetype.Tests
+namespace Archetype.Tests.Serialization.Delinter
 {
     [TestFixture]
-    public class UnescapeJsonTest : RegressionTestBase
+    public class ArchetypeJsonDelinterTest : RegressionTestBase
     {
         private const string _ESCAPED_JSON = @"{""fieldsets"":[{""properties"":[{""alias"":""slides"",""value"":""2680""}],""alias"":""slides""},{""properties"":[{""alias"":""captions"",""value"":""{\""fieldsets\"":[{\""properties\"":[{\""alias\"":\""textstring\"",\""value\"":\""test1 test1\""}],\""alias\"":\""textstringArray\""},{\""properties\"":[{\""alias\"":\""textstring\"",\""value\"":\""test2  test2\""}],\""alias\"":\""textstringArray\""},{\""properties\"":[{\""alias\"":\""textstring\"",\""value\"":\""test3b   test3b\""}],\""alias\"":\""textstringArray\""}]}""}],""alias"":""captions""}]}";
         private const string _JSON = @"{""fieldsets"":[{""properties"":[{""alias"":""slides"",""value"":""2680""}],""alias"":""slides""},{""properties"":[{""alias"":""captions"",""value"":{""fieldsets"":[{""properties"":[{""alias"":""textstring"",""value"":""test1 test1""}],""alias"":""textstringArray""},{""properties"":[{""alias"":""textstring"",""value"":""test2  test2""}],""alias"":""textstringArray""},{""properties"":[{""alias"":""textstring"",""value"":""test3b   test3b""}],""alias"":""textstringArray""}]}}],""alias"":""captions""}]}";

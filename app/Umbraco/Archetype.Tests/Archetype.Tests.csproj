@@ -222,6 +222,7 @@
     <Compile Include="PropertyValueConverter\PropertyValueConverterTests.cs" />
     <Compile Include="Serialization\Base\ArchetypeJsonConverterTestBase.cs" />
     <Compile Include="Serialization\Base\RegressionTestBase.cs" />
+    <Compile Include="Serialization\Delinter\ArchetypeJsonDelinterTest.cs" />
     <Compile Include="Serialization\Regression\ArchetypeJsonConverterTest.cs" />
     <Compile Include="Serialization\Regression\SerializationTestHelper.cs" />
     <Compile Include="Serialization\Regression\JsonTestModels.cs" />
@@ -235,7 +236,6 @@
     <Compile Include="Serialization\UseCases\Enumerable\JsonTestStrings.cs" />
     <Compile Include="Serialization\UseCases\JsonTestModels.cs" />
     <Compile Include="Serialization\UseCases\JsonTestStrings.cs" />
-    <Compile Include="UnescapeJsonTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
