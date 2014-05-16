@@ -56,13 +56,13 @@ namespace Archetype.Serialization
         {
             Tokens = new Dictionary<DelinterStep, Regex>
             {
-                {DelinterStep.RemoveNewLine, new Regex(@"\\r|\\n|[\r\n]", RegexOptions.Multiline)},
-                {DelinterStep.LabelFieldsets, new Regex(@"\s*\\+""(fieldsets)\\+"":\s*")},
-                {DelinterStep.LabelProperties, new Regex(@"\s*\\+""(properties)\\+"":\s*")},
-                {DelinterStep.LabelAlias, new Regex(@"\s*\\+""(alias)\\+"":\s*")},
-                {DelinterStep.LabelValue, new Regex(@"\s*\\+""(value)\\+"":\s*")},
-                {DelinterStep.UnescapeValues, new Regex(@"""(alias|value)"":\\+""(.*?)\\+""")},
-                {DelinterStep.FixNestedFieldsets, new Regex(@"""(value)"":\s*?""({""fieldsets"".+?})""")},
+                {DelinterStep.RemoveNewLine, new Regex(@"(?<!""value"":"".*?\\r\\n)\\r\\n", RegexOptions.Multiline)},
+                {DelinterStep.LabelFieldsets, new Regex(@"\s*\\+""(fieldsets)\\+"":\s*", RegexOptions.Multiline)},
+                {DelinterStep.LabelProperties, new Regex(@"\s*\\+""(properties)\\+"":\s*", RegexOptions.Multiline)},
+                {DelinterStep.LabelAlias, new Regex(@"\s*\\+""(alias)\\+"":\s*", RegexOptions.Multiline)},
+                {DelinterStep.LabelValue, new Regex(@"\s*\\+""(value)\\+"":\s*", RegexOptions.Multiline)},
+                {DelinterStep.UnescapeValues, new Regex(@"""(alias|value)"":\\+""(.*?)\\+""", RegexOptions.Multiline)},
+                {DelinterStep.FixNestedFieldsets, new Regex(@"""(value)"":\s*?""{[\\rn]+?(""fieldsets""[\S\s]+?)}""", RegexOptions.Multiline)},
                 {DelinterStep.RemoveWhiteSpace, new Regex(@"\s+(?=([^""]*""[^""]*"")*[^""]*$)")}
             };
             
@@ -71,19 +71,19 @@ namespace Archetype.Serialization
                 {DelinterAction.Remove, match => String.Empty},
                 {DelinterAction.UnescapeLabels, match => String.Format(@"""{0}"":", match.Groups[1])},
                 {DelinterAction.UnescapeValues, match => String.Format(@"""{0}"":""{1}""", match.Groups[1], match.Groups[2])},
-                {DelinterAction.FixNestedFieldsets, match => String.Format(@"""{0}"":{1}", match.Groups[1], match.Groups[2])}
+                {DelinterAction.FixNestedFieldsets, match => String.Format(@"""{0}"":{{{1}}}", match.Groups[1], match.Groups[2])}
             };
             
             Pipeline = new Dictionary<DelinterStep, DelinterAction>
             {
-                {DelinterStep.RemoveNewLine, DelinterAction.Remove},
                 {DelinterStep.LabelFieldsets, DelinterAction.UnescapeLabels},
                 {DelinterStep.LabelProperties, DelinterAction.UnescapeLabels},
                 {DelinterStep.LabelAlias, DelinterAction.UnescapeLabels},
                 {DelinterStep.LabelValue, DelinterAction.UnescapeLabels},
                 {DelinterStep.UnescapeValues, DelinterAction.UnescapeValues},
                 {DelinterStep.FixNestedFieldsets, DelinterAction.FixNestedFieldsets},
-                {DelinterStep.RemoveWhiteSpace, DelinterAction.Remove}
+                {DelinterStep.RemoveWhiteSpace, DelinterAction.Remove},
+                {DelinterStep.RemoveNewLine, DelinterAction.Remove}
             };
         }
     }
