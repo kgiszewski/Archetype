@@ -164,6 +164,11 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
                         }
                     });
 
+                    // TODO: upload-imagecrop-datatypes
+                    scope.$on("filesSelected", function (event, args) {
+                        scope.archetypeRenderModel.setFiles(scope.model.alias, args.files);
+                    });
+
                     element.html(data).show();
                     $compile(element.contents())(scope);
 

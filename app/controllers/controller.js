@@ -191,9 +191,37 @@
     //developerMode helpers
     $scope.model.value.toString = stringify;
 
+    // TODO: upload-imagecrop-datatypes
+    $scope.model.value.setFiles = setFiles;
+
     //encapsulate stringify (should be built into browsers, not sure of IE support)
     function stringify() {
         return JSON.stringify(this);
+    }
+
+    // TODO: upload-imagecrop-datatypes
+    function setFiles(alias, files) {
+        // get all currently selected files from file manager
+        var currentFiles = fileManager.getFiles();
+        console.log("currentFiles", currentFiles);
+
+        // remove the files set for this alias
+        fileManager.setFiles(alias, []);
+
+        // get the files already selected for this archetype (by alias)
+        var archetypeFiles = [];
+        _.each(currentFiles, function (item) {
+            if (item.alias === $scope.model.alias) {
+                archetypeFiles.push(item.file);
+            }
+        });
+        // add the newly selected files
+        _.each(files, function (file) {
+            archetypeFiles.push(file);
+        });
+        console.log("fileList", archetypeFiles);
+        // update the selected files for this archetype (by alias))
+        fileManager.setFiles($scope.model.alias, archetypeFiles);
     }
 
     //watch for changes
@@ -205,6 +233,8 @@
                 $scope.model.value.toString = stringify;
             }
         }
+        // TODO: upload-imagecrop-datatypes
+        $scope.model.value.setFiles = setFiles;
     });
 
     //helper to count what is visible
