@@ -40,20 +40,7 @@ namespace Archetype.Serialization
             if (jToken == null)
                 return null;
 
-            var obj = Activator.CreateInstance(objectType);
-
-            if (null != obj as IEnumerable<object>)
-            {
-                JToken enumerableToken;
-
-                if (TryParseJTokenAsEnumerable(jToken, out enumerableToken) 
-                    || TryParseJTokenAsEnumerable(jToken["value"], out enumerableToken))
-                return DeserializeEnumerableObject(obj, enumerableToken);
-            }
-
-            return null == jToken as JArray 
-                        ? DeserializeObject(obj, jToken) 
-                        : PopulateProperties(obj, jToken);
+            return DeserializeJson(objectType, GetDelintedJToken(jToken));
         }
 
         public override bool CanConvert(Type objectType)
@@ -65,15 +52,46 @@ namespace Archetype.Serialization
 
         #region private methods - deserialization
 
+        private JToken GetDelintedJToken(JToken jToken)
+        {
+            return JToken.Parse(jToken.ToString(Formatting.None).DelintArchetypeJson());
+        }
+
+        private object DeserializeJson(Type objectType, JToken jToken)
+        {
+
+            var obj = Activator.CreateInstance(objectType);
+
+            if (null != obj as IEnumerable<object>)
+            {
+                JToken enumerableToken;
+
+                if (TryParseJTokenAsEnumerable(jToken, out enumerableToken)
+                    || (jToken.SelectToken("value") != null && TryParseJTokenAsEnumerable(jToken["value"], out enumerableToken)))
+                    return DeserializeEnumerableObject(obj, enumerableToken);
+            }
+
+            return null == jToken as JArray
+                        ? DeserializeObject(obj, jToken)
+                        : PopulateProperties(obj, jToken);
+        }
+
         private object DeserializeEnumerableObject(object obj, JToken jToken)
         {
             var model = obj as IEnumerable<object>;
+            var fsToken = jToken;
 
-            var itemType = model.GetType().BaseType.GetGenericArguments().First();
-            foreach (var fs in jToken["fieldsets"].Where(fs => fs["alias"].ToString().Equals(GetFieldsetName(itemType))))
+            var itemType = model.GetType().GetGenericArguments().FirstOrDefault();
+
+            if (itemType == null)
             {
-                var item = JsonConvert.DeserializeObject(
-                    fs["properties"].ToString().DelintArchetypeJson(), itemType, this);
+                itemType = model.GetType().BaseType.GetGenericArguments().First();
+                fsToken = fsToken["fieldsets"];
+            }
+
+            foreach (var fs in fsToken.Where(fs => fs["alias"].ToString().Equals(GetFieldsetName(itemType))))
+            {
+                var item = DeserializeJson(itemType, fs["properties"]);
 
                 obj.GetType().GetMethod("Add").Invoke(obj, new[] { item });
             }
@@ -208,14 +226,11 @@ namespace Archetype.Serialization
         private object GetPropertyValue(PropertyInfo propertyInfo, JToken propJToken)
         {
             return IsTypeArchetypeDatatype(propertyInfo.PropertyType)
-                ? JsonConvert.DeserializeObject(propJToken.ToString().DelintArchetypeJson(), propertyInfo.PropertyType,
-                    this)
+                ? DeserializeJson(propertyInfo.PropertyType, propJToken)
                     : IsTypeIEnumerableArchetypeDatatype(propertyInfo.PropertyType)
-                    ? JsonConvert.DeserializeObject(propJToken["value"].SelectToken("fieldsets").ToString(), propertyInfo.PropertyType,
-                    this)
+                    ? DeserializeJson(propertyInfo.PropertyType, propJToken["value"].SelectToken("fieldsets"))
                 : GetDeserializedPropertyValue(propJToken, propertyInfo.PropertyType);
         }
-
 
         private JToken ParseJTokenFromItem(JToken jToken, string itemAlias)
         {
@@ -266,8 +281,10 @@ namespace Archetype.Serialization
             resultToken = null;
             
             //To Do: Strange newtonsoft behaviour
-            var fsToken = jToken.Parent == null ? jToken["fieldsets"] : jToken.Parent.Children().First();
-            var jTokenEnumerable = jToken != null && fsToken != null && fsToken.Any();
+            //var fsToken = jToken.Parent == null ? jToken["fieldsets"] : jToken.Parent.Children().First()["fieldsets"];
+            var fsToken = jToken.SelectToken("fieldsets") != null ? jToken["fieldsets"] : jToken.Parent.Children().First();
+            var jTokenEnumerable = jToken != null
+                && fsToken != null && fsToken is JArray;
 
             if (jTokenEnumerable)
                 resultToken = jToken;
