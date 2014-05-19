@@ -1,5 +1,5 @@
 angular.module("umbraco.directives").directive('archetypeProperty', function ($compile, $http, archetypePropertyEditorResource, umbPropEditorHelper, $timeout, $rootScope, $q) {
-    
+
     function getFieldsetByAlias(fieldsets, alias)
     {
         return _.find(fieldsets, function(fieldset){
@@ -56,6 +56,10 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
         var alias = configFieldsetModel.properties[scope.propertyConfigIndex].alias;
         var defaultValue = configFieldsetModel.properties[scope.propertyConfigIndex].value;
         var umbracoPropertyAlias = scope.umbracoPropertyAlias;
+        // initialize container for invalid fieldset identifiers (store on ngModelCtrl to separate Archetype validations, e.g. when there two Archetype properties on the same document)
+        if(ngModelCtrl.invalidFieldsets == null) {
+            ngModelCtrl.invalidFieldsets = [];
+        }
 
         //try to convert the defaultValue to a JS object
         defaultValue = jsonOrString(defaultValue, scope.archetypeConfig.developerMode, "defaultValue");
@@ -81,48 +85,74 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
 
                 var mergedConfig = _.extend(defaultConfigObj, config);
 
-                loadView(pathToView, mergedConfig, defaultValue, alias, umbracoPropertyAlias, scope, element, ngModelCtrl);
+                loadView(pathToView, mergedConfig, defaultValue, alias, umbracoPropertyAlias, scope, element, ngModelCtrl, validate);
             });
         });
 
-        ngModelCtrl.$parsers.push(validate);
-        ngModelCtrl.$formatters.push(validate);
+        scope.$on("formSubmitting", function (ev, args) {
+            // "hard" validate to highlight any erroneous entries
+            validate([scope.fieldset], true);
+        });
 
-        function validate(renderModel){
+        scope.$on("formSubmitted", function (ev, args) {
+            ngModelCtrl.invalidFieldsets = [];
+        });
+
+        function validate(renderModel, markAsInvalid){
+            if(renderModel == undefined) {
+                return renderModel;
+            }
             var valid = true;
-
             _.each(renderModel, function(fieldset){
                 fieldset.isValid = true;
                 _.each(fieldset.properties, function(property){
                     property.isValid = true;
-
+                    var propertyValid = true;
                     var propertyConfig = getPropertyByAlias(configFieldsetModel, property.alias);
                     if (propertyConfig) {
-                        if(propertyConfig.required && (property.value == null || property.value === "")) {
-                            fieldset.isValid = false;
-                            property.isValid = false;
+                        // use property.value !== property.value to check for NaN values on numeric inputs
+                        if(propertyConfig.required && (property.value == null || property.value === "" || property.value !== property.value)) {
                             valid = false;
+                            propertyValid = false;
                         }
                         // issue 116: RegEx validate property value
                         // Only validate the property value if anything has been entered - RegEx is considered a supplement to "required".
                         if (valid == true && propertyConfig.regEx && property.value) {
                             var regEx = new RegExp(propertyConfig.regEx);
                             if (regEx.test(property.value) == false) {
-                                fieldset.isValid = false;
-                                property.isValid = false;
                                 valid = false;
+                                propertyValid = false;
                             }
+                        }
+                        // only mark the fieldset and property as invalid when doing a "hard" validation
+                        if(propertyValid == false && markAsInvalid == true) {
+                            fieldset.isValid = false;
+                            property.isValid = false;
                         }
                     }
                 });
             });
 
-            ngModelCtrl.$setValidity('validation', valid);
+            // handle nested fieldset validation by storing the identifier of all invalid fieldsets 
+            var fieldsetIdentifier = scope.umbracoPropertyAlias + "_" + scope.fieldsetIndex;
+            var fieldsetIdentifierIndex = ngModelCtrl.invalidFieldsets.indexOf(fieldsetIdentifier);
+            if(valid == false) {
+                if(fieldsetIdentifierIndex == -1) {
+                    ngModelCtrl.invalidFieldsets.push(fieldsetIdentifier);
+                }
+            }
+            else {
+                if(fieldsetIdentifierIndex != -1) {
+                    ngModelCtrl.invalidFieldsets.splice(fieldsetIdentifierIndex, 1);
+                }
+            }
+            // set invalid state if one or more fieldsets contain invalid entries
+            ngModelCtrl.$setValidity('validation', ngModelCtrl.invalidFieldsets.length == 0);
             return renderModel;
         }
     }
 
-    function loadView(view, config, defaultValue, alias, umbracoPropertyAlias, scope, element, ngModelCtrl) {
+    function loadView(view, config, defaultValue, alias, umbracoPropertyAlias, scope, element, ngModelCtrl, validate) {
         if (view)
         {
             $http.get(view).success(function (data) {
@@ -157,11 +187,9 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
                     scope.$watch('model.value', function (newValue, oldValue) {
                         scope.archetypeRenderModel.fieldsets[scope.fieldsetIndex].properties[renderModelPropertyIndex].value = newValue;
 
-                        // don't set the current value twice - this will keep Umbraco from prompting to discard changes immediately after saving
-                        if (newValue != oldValue) {
-                            //trigger the validation pipeline
-                            ngModelCtrl.$setViewValue(ngModelCtrl.$viewValue);
-                        }
+                        // call validation method for this fieldset when a property value changes 
+                        // use "soft" validation to mimic the default umbraco validation style (show error highlights on submit, not while entering data)
+                        validate([scope.archetypeRenderModel.fieldsets[scope.fieldsetIndex]], false);
                     });
 
                     element.html(data).show();
