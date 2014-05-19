@@ -52,7 +52,7 @@ namespace Archetype.Tests.Serialization.Delinter
         }
 
         [Test]
-        public void Delinter_ByPasses_Values()
+        public void Delinter_RemoveNewLine_ByPasses_Values()
         {
             const string _JSON_WITH_RESERVED_CHARS = @"{
   ""alias"": ""captions"",

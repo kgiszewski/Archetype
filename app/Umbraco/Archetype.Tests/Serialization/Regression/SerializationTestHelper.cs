@@ -27,7 +27,7 @@ namespace Archetype.Tests.Serialization.Regression
                 DateTwo = null,
                 Id = 123,
                 NullableId = null,
-                Text = "Test Text"
+                Text = @"Test \r\n Text ""quote"" \r\n"
             };
         }
 
