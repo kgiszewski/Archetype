@@ -143,13 +143,21 @@ namespace Archetype.PropertyEditors
 							var additionalData = new Dictionary<string, object>();
 
 							// figure out if we need to pass a files collection in the additional data to the property value editor
-							if(uploadedFiles != null && propDef.FileNames != null && propDef.FileNames.Any())
+							if(uploadedFiles != null)
 							{
-								// get the uploaded files that belongs to this property (if any)
-								var propertyFiles = propDef.FileNames.Select(f => uploadedFiles.FirstOrDefault(u => u.FileName == f)).Where(f => f != null).ToList();
-								if(propertyFiles.Any())
+								if(dtd.PropertyEditorAlias == Constants.PropertyEditorAlias)
 								{
-									additionalData["files"] = propertyFiles;
+									// it's a nested Archetype - just pass all uploaded files to the value editor
+									additionalData["files"] = uploadedFiles.ToList();
+								}
+								else if(propDef.FileNames != null && propDef.FileNames.Any())
+								{
+									// pass the uploaded files that belongs to this property (if any) to the value editor
+									var propertyFiles = propDef.FileNames.Select(f => uploadedFiles.FirstOrDefault(u => u.FileName == f)).Where(f => f != null).ToList();
+									if(propertyFiles.Any())
+									{
+										additionalData["files"] = propertyFiles;
+									}
 								}
 							}
 

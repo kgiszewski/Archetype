@@ -1,4 +1,4 @@
-angular.module("umbraco.directives").directive('archetypeProperty', function ($compile, $http, archetypePropertyEditorResource, umbPropEditorHelper, $timeout, $rootScope, $q) {
+angular.module("umbraco.directives").directive('archetypeProperty', function ($compile, $http, archetypePropertyEditorResource, umbPropEditorHelper, $timeout, $rootScope, $q, fileManager) {
     
     function getFieldsetByAlias(fieldsets, alias)
     {
@@ -166,7 +166,19 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
 
                     // issue 114: handle file selection on property editors
                     scope.$on("filesSelected", function (event, args) {
-                        scope.archetypeRenderModel.setFiles(scope.archetypeRenderModel.fieldsets[scope.fieldsetIndex].properties[renderModelPropertyIndex], scope.model.alias, args.files);
+                        // populate the fileNames collection on the property
+                        var property = scope.archetypeRenderModel.fieldsets[scope.fieldsetIndex].properties[renderModelPropertyIndex];
+                        property.fileNames = [];
+                        _.each(args.files, function (item) {
+                            property.fileNames.push(item.name);
+                        });
+
+                        // remove the files set for this property
+                        // NOTE: we can't use property.alias because the file manager registers the selected files on the assigned Archetype property alias (e.g. "archetype-property-archetype-property-archetype-property-content-0-2-0-1-0-0")
+                        fileManager.setFiles(scope.model.alias, []);
+
+                        // now tell the containing Archetype to pick up the selected files
+                        scope.archetypeRenderModel.setFiles(args.files);
                     });
 
                     element.html(data).show();

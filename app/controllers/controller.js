@@ -200,14 +200,10 @@
     }
 
     // issue 114: handler for file selection
-    function setFiles(property, alias, files) {
+    function setFiles(files) {
         // get all currently selected files from file manager
         var currentFiles = fileManager.getFiles();
-
-        // remove the files set for this property alias
-        // NOTE: we can't use property.alias because the file manager registers the selected files on the assigned Archetype property alias (e.g. "archetype-property-archetype-0-1")
-        fileManager.setFiles(alias, []);
-
+        
         // get the files already selected for this archetype (by alias)
         var archetypeFiles = [];
         _.each(currentFiles, function (item) {
@@ -216,27 +212,13 @@
             }
         });
 
-        // remove the previously selected files for this property (if any)
-        //if (property.fileNames != null) {
-        //    console.log("rejecting files", property.alias, property.fileNames);
-        //    archetypeFiles = _.reject(archetypeFiles, function (item) {
-        //        return property.fileNames.indexOf(item.name) != -1;
-        //    });
-        //}
-
         // add the newly selected files
         _.each(files, function (file) {
             archetypeFiles.push(file);
         });
 
-        // update the selected files for this archetype (by alias))
+        // update the selected files for this archetype (by alias)
         fileManager.setFiles($scope.model.alias, archetypeFiles);
-
-        // update the property files collection
-        property.fileNames = [];
-        _.each(files, function (item) {
-            property.fileNames.push(item.name);
-        });
     }
 
     //watch for changes
