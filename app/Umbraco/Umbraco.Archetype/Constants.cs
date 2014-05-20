@@ -1,4 +1,4 @@
-﻿namespace Archetype.Umbraco
+﻿namespace Archetype
 {
     public static class Constants
     {

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
 using Umbraco.Core;
@@ -7,10 +7,9 @@ using Umbraco.Core.Models.PublishedContent;
 using Umbraco.Core.PropertyEditors;
 using Umbraco.Web;
 
-namespace Archetype.Umbraco.Models
+namespace Archetype.Models
 {
-    public class Property
-    {
+    public class ArchetypePropertyModel {
         [JsonProperty("alias")]
         public string Alias { get; internal set; }
 

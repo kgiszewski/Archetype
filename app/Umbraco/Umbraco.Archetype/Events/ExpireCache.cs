@@ -8,7 +8,7 @@ using Umbraco.Core.Models;
 using Umbraco.Core.Services;
 using Umbraco.Web;
 
-namespace Archetype.Umbraco.Events
+namespace Archetype.Events
 {
     public class ExpireCache : ApplicationEventHandler
     {

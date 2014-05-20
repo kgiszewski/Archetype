@@ -9,7 +9,7 @@ using Umbraco.Web.Models.ContentEditing;
 using Umbraco.Web.Mvc;
 using Umbraco.Web.Editors;
 
-namespace Archetype.Umbraco.Api
+namespace Archetype.Api
 {
     [PluginController("ArchetypeApi")]
     public class ArchetypeDataTypeController : UmbracoAuthorizedJsonController
