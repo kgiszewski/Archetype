@@ -127,7 +127,7 @@ namespace Archetype.PropertyEditors
 						    var dtd = ApplicationContext.Current.Services.DataTypeService.GetDataTypeDefinitionById(Guid.Parse(propDef.DataTypeGuid));
 						    var preValues = ApplicationContext.Current.Services.DataTypeService.GetPreValuesCollectionByDataTypeId(dtd.Id);
 						    var propData = new ContentPropertyData(propDef.Value, preValues, new Dictionary<string, object>());
-						    var propEditor = GetPropertyEditor(dtd);
+                            var propEditor = PropertyEditorResolver.Current.GetByAlias(dtd.PropertyEditorAlias);
 						    propDef.Value = propEditor.ValueEditor.ConvertEditorToDb(propData, propDef.Value);
                         }
                         catch (Exception ex)

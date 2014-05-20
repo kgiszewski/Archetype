@@ -56,13 +56,16 @@ namespace Archetype.Tests.Serialization.Delinter
         {
             const string _JSON_WITH_RESERVED_CHARS = @"{
   ""alias"": ""captions"",
-  ""value"": ""{\""fieldsets\"":[{\""properties\"":[{\""alias\"":\""textstring\"",\""value\"":\""test1 \r \n  test1\r\""}],\""alias\"":\""textstringArray\""},{\""properties\"":[{\""alias\"":\""textstring\"",\""value\"":\""test2\r\n  test2\""}],\""alias\"":\""textstringArray\""},{\""properties\"":[{\""alias\"":\""textstring\"",\""value\"":\""test3b   \r\r\rtest3\""}],\""alias\"":\""textstringArray\""}]}""
+  ""value"": ""{\""fieldsets\"":[{\""properties\"":[{\""alias\"":\""textstring\"",\""value\"":\""test1 \r\n  test1\r\n\""}],\""alias\"":\""textstringArray\""},{\""properties\"":[{\""alias\"":\""textstring\"",\""value\"":\""test2\r\ntest2\""}],\""alias\"":\""textstringArray\""},{\""properties\"":[{\""alias\"":\""textstring\"",\""value\"":\""test3b   \\r\\r\\rtest3\""}],\""alias\"":\""textstringArray\""}]}""
 }";
 
             var referenceModel = new Captions()
             {
-                new TextString() {Text = @"test1 \\r \\n  test1\r"},
-                new TextString() {Text = @"test2\r\n  test2"},
+                new TextString() {Text = @"test1 
+  test1
+"},
+                new TextString() {Text = @"test2
+test2"},
                 new TextString() {Text = @"test3b   \r\r\rtest3"}
             };
 

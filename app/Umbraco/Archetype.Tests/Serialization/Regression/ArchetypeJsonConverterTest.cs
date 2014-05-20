@@ -68,24 +68,10 @@ namespace Archetype.Tests.Serialization.Regression
         }
 
         [Test]
-        public void CompoundModel_WithEscapedJson_Regression_Battery()
-        {
-            var compoundModel = _testHelper.GetModel<CompoundModel>();
-            CompoundModel_WithEscapedJson_Regression_Battery(compoundModel);
-        }
-
-        [Test]
         public void CompoundModelWithMixedFieldsetVariant1_Regression_Battery()
         {
             var compoundModel = _testHelper.GetModel<CompoundModelWithMixedFieldsetVariant1>();
             CompoundModel_Regression_Battery(compoundModel);
-        }
-
-        [Test]
-        public void CompoundModelWithMixedFieldsetVariant1_WithEscapedJson_Regression_Battery()
-        {
-            var compoundModel = _testHelper.GetModel<CompoundModelWithMixedFieldsetVariant1>();
-            CompoundModel_WithEscapedJson_Regression_Battery(compoundModel);
         }
 
         [Test]
@@ -96,24 +82,10 @@ namespace Archetype.Tests.Serialization.Regression
         }
 
         [Test]
-        public void CompoundModelWithMixedFieldsetVariant2_WithEscapedJson_Regression_Battery()
-        {
-            var compoundModel = _testHelper.GetModel<CompoundModelWithMixedFieldsetVariant2>();
-            CompoundModel_WithEscapedJson_Regression_Battery(compoundModel);
-        }
-
-        [Test]
         public void CompoundModelWithFieldset_Regression_Battery()
         {
             var compoundModel = _testHelper.GetModel<CompoundModelWithFieldset>();
             CompoundModel_Regression_Battery(compoundModel);
-        }
-
-        [Test]
-        public void CompoundModelWithFieldset_WithEscapedJson_Regression_Battery()
-        {
-            var compoundModel = _testHelper.GetModel<CompoundModelWithFieldset>();
-            CompoundModel_WithEscapedJson_Regression_Battery(compoundModel);
         }
 
         [Test]
@@ -124,24 +96,10 @@ namespace Archetype.Tests.Serialization.Regression
         }
 
         [Test]
-        public void CompoundModelWithList_WithEscapedJson_Regression_Battery()
-        {
-            var compoundModel = _testHelper.GetModel<CompoundModelWithList>();
-            CompoundModel_WithEscapedJson_Regression_Battery(compoundModel);
-        }
-
-        [Test]
         public void CompoundModelWithMixedFieldsetWithList_Regression_Battery()
         {
             var compoundModelWithList = _testHelper.GetModel<CompoundModelWithMixedFieldsetWithList>();
             CompoundModel_Regression_Battery(compoundModelWithList);
-        }
-
-        [Test]
-        public void CompoundModelWithMixedFieldsetWithList_WithEscapedJson_Regression_Battery()
-        {
-            var compoundModel = _testHelper.GetModel<CompoundModelWithMixedFieldsetWithList>();
-            CompoundModel_WithEscapedJson_Regression_Battery(compoundModel);
         }
 
         [Test]
@@ -152,24 +110,10 @@ namespace Archetype.Tests.Serialization.Regression
         }
 
         [Test]
-        public void CompoundModelWithFieldsetWithList_WithEscapedJson_Regression_Battery()
-        {
-            var compoundModel = _testHelper.GetModel<CompoundModelWithFieldsetWithList>();
-            CompoundModel_WithEscapedJson_Regression_Battery(compoundModel);
-        }
-
-        [Test]
         public void NestedModel_Regression_Battery()
         {
             var nestedModel = _testHelper.GetModel<NestedModel>();
             NestedModel_Regression_Battery(nestedModel);
-        }
-
-        [Test]
-        public void NestedModel_WithEscapedJson_Regression_Battery()
-        {
-            var nestedModel = _testHelper.GetModel<NestedModel>();
-            NestedModel_WithEscapedJson_Regression_Battery(nestedModel);
         }
 
         [Test]
@@ -180,24 +124,10 @@ namespace Archetype.Tests.Serialization.Regression
         }
 
         [Test]
-        public void NestedModelWithMixedFieldset_WithEscapedJson_Regression_Battery()
-        {
-            var nestedModel = _testHelper.GetModel<NestedModelWithMixedFieldset>();
-            NestedModel_WithEscapedJson_Regression_Battery(nestedModel);
-        }
-
-        [Test]
         public void NestedModelWithFieldset_Regression_Battery()
         {
             var nestedModel = _testHelper.GetModel<NestedModelWithFieldset>();
             NestedModel_Regression_Battery(nestedModel);
-        }
-
-        [Test]
-        public void NestedModelWithFieldset_WithEscapedJson_Regression_Battery()
-        {
-            var nestedModel = _testHelper.GetModel<NestedModelWithFieldset>();
-            NestedModel_WithEscapedJson_Regression_Battery(nestedModel);            
         }
 
         [Test]

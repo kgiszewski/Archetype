@@ -11,8 +11,7 @@ namespace Archetype.Serialization
         UnescapeLabels,
         UnescapeAlias,
         UnescapeValues,
-        FixNestedFieldsets,
-        FixValueContent
+        FixNestedFieldsets
     }
 
     public enum DelinterAction
@@ -21,8 +20,7 @@ namespace Archetype.Serialization
         RemoveWhiteSpace,
         UnescapeLabels,
         UnescapeValues,
-        FixNestedFieldsets,
-        FixValueContent
+        FixNestedFieldsets
     }
     
     public class ArchetypeJsonDelinter
@@ -58,8 +56,7 @@ namespace Archetype.Serialization
                 {DelinterStep.UnescapeLabels, new Regex(@"\\+""(fieldsets|properties|alias|value)\\+"":(\s*)")},
                 {DelinterStep.UnescapeAlias, new Regex(@"""(alias)"":\\+""(.*?)\\+""")},
                 {DelinterStep.UnescapeValues, new Regex(@"""(value)"":\\+""(.*?)\\+""(?=\s*?\})")},
-                {DelinterStep.FixNestedFieldsets, new Regex(@"""(value)"":\s*?""\{\s*?(""fieldsets""[\S\s]+?)}""")},
-                {DelinterStep.FixValueContent, new Regex(@"""(value)"":""(.*?)(?<!\\)""")}
+                {DelinterStep.FixNestedFieldsets, new Regex(@"""(value)"":\s*?""\{\s*?(""fieldsets""[\S\s]+?)}""")}
             };
 
             Actions = new Dictionary<DelinterAction, Func<string, Regex, string>>
@@ -78,11 +75,7 @@ namespace Archetype.Serialization
                 },
                 {DelinterAction.FixNestedFieldsets, (input, pattern) =>
                     RecursiveReplace(input, pattern, match => String.Format(@"""{0}"":{{{1}}}", match.Groups[1].Value, match.Groups[2].Value))
-                },
-                {DelinterAction.FixValueContent, (input, pattern) =>
-                    pattern.Replace(input, match => String.Format(@"""{0}"":""{1}""", match.Groups[1].Value, 
-                    (new Regex(@"\\{2,}")).Replace(match.Groups[2].Value, @"\")))
-                },
+                }
             };
             
             Pipeline = new Dictionary<DelinterStep, DelinterAction>
@@ -92,7 +85,6 @@ namespace Archetype.Serialization
                 {DelinterStep.UnescapeAlias, DelinterAction.UnescapeValues},
                 {DelinterStep.UnescapeValues, DelinterAction.UnescapeValues},
                 {DelinterStep.FixNestedFieldsets, DelinterAction.FixNestedFieldsets},
-                {DelinterStep.FixValueContent, DelinterAction.FixValueContent}
                 //{DelinterStep.RemoveWhiteSpace, DelinterAction.RemoveWhiteSpace},  
             };
         }
