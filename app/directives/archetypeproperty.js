@@ -164,9 +164,9 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
                         }
                     });
 
-                    // TODO: upload-imagecrop-datatypes
+                    // issue 114: handle file selection on property editors
                     scope.$on("filesSelected", function (event, args) {
-                        scope.archetypeRenderModel.setFiles(scope.model.alias, args.files);
+                        scope.archetypeRenderModel.setFiles(scope.archetypeRenderModel.fieldsets[scope.fieldsetIndex].properties[renderModelPropertyIndex], scope.model.alias, args.files);
                     });
 
                     element.html(data).show();

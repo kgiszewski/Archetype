@@ -1,4 +1,4 @@
-﻿angular.module("umbraco").controller("Imulus.ArchetypeController", function ($scope, $http, assetsService, angularHelper, notificationsService, $timeout) {
+﻿angular.module("umbraco").controller("Imulus.ArchetypeController", function ($scope, $http, assetsService, angularHelper, notificationsService, $timeout, fileManager) {
 
     //$scope.model.value = "";
     $scope.model.hideLabel = $scope.model.config.hideLabel == 1;
@@ -191,7 +191,7 @@
     //developerMode helpers
     $scope.model.value.toString = stringify;
 
-    // TODO: upload-imagecrop-datatypes
+    // issue 114: register handler for file selection
     $scope.model.value.setFiles = setFiles;
 
     //encapsulate stringify (should be built into browsers, not sure of IE support)
@@ -199,13 +199,13 @@
         return JSON.stringify(this);
     }
 
-    // TODO: upload-imagecrop-datatypes
-    function setFiles(alias, files) {
+    // issue 114: handler for file selection
+    function setFiles(property, alias, files) {
         // get all currently selected files from file manager
         var currentFiles = fileManager.getFiles();
-        console.log("currentFiles", currentFiles);
 
-        // remove the files set for this alias
+        // remove the files set for this property alias
+        // NOTE: we can't use property.alias because the file manager registers the selected files on the assigned Archetype property alias (e.g. "archetype-property-archetype-0-1")
         fileManager.setFiles(alias, []);
 
         // get the files already selected for this archetype (by alias)
@@ -215,13 +215,28 @@
                 archetypeFiles.push(item.file);
             }
         });
+
+        // remove the previously selected files for this property (if any)
+        //if (property.fileNames != null) {
+        //    console.log("rejecting files", property.alias, property.fileNames);
+        //    archetypeFiles = _.reject(archetypeFiles, function (item) {
+        //        return property.fileNames.indexOf(item.name) != -1;
+        //    });
+        //}
+
         // add the newly selected files
         _.each(files, function (file) {
             archetypeFiles.push(file);
         });
-        console.log("fileList", archetypeFiles);
+
         // update the selected files for this archetype (by alias))
         fileManager.setFiles($scope.model.alias, archetypeFiles);
+
+        // update the property files collection
+        property.fileNames = [];
+        _.each(files, function (item) {
+            property.fileNames.push(item.name);
+        });
     }
 
     //watch for changes
@@ -233,8 +248,9 @@
                 $scope.model.value.toString = stringify;
             }
         }
-        // TODO: upload-imagecrop-datatypes
+        // issue 114: re-register handler for files selection and reset the currently selected files on the file manager
         $scope.model.value.setFiles = setFiles;
+        fileManager.setFiles($scope.model.alias, []);
     });
 
     //helper to count what is visible
