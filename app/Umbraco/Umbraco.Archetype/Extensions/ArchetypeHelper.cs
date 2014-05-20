@@ -4,7 +4,7 @@ using Archetype.Models;
 using Newtonsoft.Json;
 using Umbraco.Core;
 using Umbraco.Core.Models;
-using Archetype.Umbraco.PropertyEditors;
+using Archetype.PropertyEditors;
 
 namespace Archetype.Extensions
 {
