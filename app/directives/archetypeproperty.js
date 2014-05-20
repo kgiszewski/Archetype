@@ -90,20 +90,29 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
 
         function validate(renderModel){
             var valid = true;
-            var activeFieldsets = renderModel.filter(function(fieldset) {
-                return !fieldset.remove;
-            });
 
-            _.each(activeFieldsets, function(fieldset){
+            _.each(renderModel, function(fieldset){
                 fieldset.isValid = true;
                 _.each(fieldset.properties, function(property){
                     property.isValid = true;
 
                     var propertyConfig = getPropertyByAlias(configFieldsetModel, property.alias);
-                    if(propertyConfig && propertyConfig.required && (property.value == null || property.value === "")){
-                        fieldset.isValid = false;
-                        property.isValid = false;
-                        valid = false;
+                    if (propertyConfig) {
+                        if(propertyConfig.required && (property.value == null || property.value === "")) {
+                            fieldset.isValid = false;
+                            property.isValid = false;
+                            valid = false;
+                        }
+                        // issue 116: RegEx validate property value
+                        // Only validate the property value if anything has been entered - RegEx is considered a supplement to "required".
+                        if (valid == true && propertyConfig.regEx && property.value) {
+                            var regEx = new RegExp(propertyConfig.regEx);
+                            if (regEx.test(property.value) == false) {
+                                fieldset.isValid = false;
+                                property.isValid = false;
+                                valid = false;
+                            }
+                        }
                     }
                 });
             });
@@ -124,6 +133,7 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
                     }
 
                     //define the initial model and config
+                    scope.form = scope.umbracoForm;
                     scope.model = {};
                     scope.model.config = {};
 
@@ -147,8 +157,11 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
                     scope.$watch('model.value', function (newValue, oldValue) {
                         scope.archetypeRenderModel.fieldsets[scope.fieldsetIndex].properties[renderModelPropertyIndex].value = newValue;
 
-                        //trigger the validation pipeline
-                        ngModelCtrl.$setViewValue(ngModelCtrl.$viewValue);
+                        // don't set the current value twice - this will keep Umbraco from prompting to discard changes immediately after saving
+                        if (newValue != oldValue) {
+                            //trigger the validation pipeline
+                            ngModelCtrl.$setViewValue(ngModelCtrl.$viewValue);
+                        }
                     });
 
                     element.html(data).show();
@@ -176,7 +189,8 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
             fieldset: '=',
             fieldsetIndex: '=',
             archetypeRenderModel: '=',
-            umbracoPropertyAlias: '='
+            umbracoPropertyAlias: '=',
+            umbracoForm: '='
         }
     }
 });

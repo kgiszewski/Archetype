@@ -5,20 +5,20 @@ using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace Archetype.Umbraco.Models
+namespace Archetype.Models
 {
     [JsonObject]
-    public class Archetype : IEnumerable<Fieldset>
+    public class ArchetypeModel : IEnumerable<ArchetypeFieldsetModel>
     {
         [JsonProperty("fieldsets")]
-        internal IEnumerable<Fieldset> Fieldsets { get; set; }
+        internal IEnumerable<ArchetypeFieldsetModel> Fieldsets { get; set; }
 
-        public Archetype()
+        public ArchetypeModel()
         {
-            Fieldsets = new List<Fieldset>();
+            Fieldsets = new List<ArchetypeFieldsetModel>();
         }
 
-        public IEnumerator<Fieldset> GetEnumerator()
+        public IEnumerator<ArchetypeFieldsetModel> GetEnumerator()
         {
             return this.Fieldsets.GetEnumerator();
         }

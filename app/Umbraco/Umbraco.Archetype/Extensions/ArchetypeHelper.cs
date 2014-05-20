@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Linq;
-using Archetype.Umbraco.Models;
+using Archetype.Models;
 using Newtonsoft.Json;
 using Umbraco.Core;
 using Umbraco.Core.Models;
+using Archetype.PropertyEditors;
 
-namespace Archetype.Umbraco.Extensions
+namespace Archetype.Extensions
 {
     public class ArchetypeHelper
     {
@@ -22,11 +23,11 @@ namespace Archetype.Umbraco.Extensions
             _app = ApplicationContext.Current;
         }
 
-        internal Models.Archetype DeserializeJsonToArchetype(string sourceJson, PreValueCollection dataTypePreValues)
+        internal Models.ArchetypeModel DeserializeJsonToArchetype(string sourceJson, PreValueCollection dataTypePreValues)
         {
             try
             {
-                var archetype = JsonConvert.DeserializeObject<Models.Archetype>(sourceJson, _jsonSettings);
+                var archetype = JsonConvert.DeserializeObject<Models.ArchetypeModel>(sourceJson, _jsonSettings);
 
                 try
                 {
@@ -42,15 +43,15 @@ namespace Archetype.Umbraco.Extensions
             }
             catch
             {
-                return new Models.Archetype();
+                return new Models.ArchetypeModel();
             }         
         }
 
-        internal Models.Archetype DeserializeJsonToArchetype(string sourceJson, int dataTypeId)
+        internal Models.ArchetypeModel DeserializeJsonToArchetype(string sourceJson, int dataTypeId)
         {
             try
             {
-                var archetype = JsonConvert.DeserializeObject<Models.Archetype>(sourceJson, _jsonSettings);
+                var archetype = JsonConvert.DeserializeObject<Models.ArchetypeModel>(sourceJson, _jsonSettings);
 
                 try
                 {
@@ -66,7 +67,7 @@ namespace Archetype.Umbraco.Extensions
             }
             catch
             {
-                return new Models.Archetype();
+                return new Models.ArchetypeModel();
             }
         }
 
@@ -78,11 +79,7 @@ namespace Archetype.Umbraco.Extensions
                 {
                     var preValues = _app.Services.DataTypeService.GetPreValuesCollectionByDataTypeId(dataTypeId);
 
-                    var configJson = preValues.IsDictionaryBased
-                        ? preValues.PreValuesAsDictionary[Constants.PreValueAlias].Value
-                        : preValues.PreValuesAsArray.First().Value;
-
-                    var config = JsonConvert.DeserializeObject<ArchetypePreValue>(configJson, _jsonSettings);
+                    var config = GetArchetypePreValueFromPreValuesCollection(preValues);
                     RetrieveAdditionalProperties(ref config);
 
                     return config;
@@ -92,7 +89,7 @@ namespace Archetype.Umbraco.Extensions
 
         private ArchetypePreValue GetArchetypePreValueFromPreValuesCollection(PreValueCollection dataTypePreValues)
         {
-            var preValueAsString = dataTypePreValues.PreValuesAsDictionary.First().Value.Value;
+            var preValueAsString = ArchetypePropertyEditor.ArchetypePreValueEditor.UnChunkify(dataTypePreValues);
             var preValue = JsonConvert.DeserializeObject<ArchetypePreValue>(preValueAsString, _jsonSettings);
             return preValue;
         }
@@ -110,7 +107,7 @@ namespace Archetype.Umbraco.Extensions
         /// </summary>
         /// <param name="archetype">The Archetype to add the additional metadata to</param>
         /// <param name="preValue">The configuration of the Archetype</param>
-        private void RetrieveAdditionalProperties(ref Models.Archetype archetype, ArchetypePreValue preValue)
+        private void RetrieveAdditionalProperties(ref Models.ArchetypeModel archetype, ArchetypePreValue preValue)
         {
             foreach (var fieldset in preValue.Fieldsets)
             {

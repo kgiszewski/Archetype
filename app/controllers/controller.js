@@ -4,7 +4,7 @@
     $scope.model.hideLabel = $scope.model.config.hideLabel == 1;
 
     //get a reference to the current form
-    var form = angularHelper.getCurrentForm($scope);
+    $scope.form = $scope.form || angularHelper.getCurrentForm($scope);
 
     //set the config equal to our prevalue config
     $scope.model.config = $scope.model.config.archetypeConfig;
@@ -15,6 +15,8 @@
 
     //helper to get $eval the labelTemplate
     $scope.getFieldsetTitle = function(fieldsetConfigModel, fieldsetIndex) {
+        if(!fieldsetConfigModel)
+            return "";
         var fieldset = $scope.model.value.fieldsets[fieldsetIndex];
         var fieldsetConfig = $scope.getConfigFieldsetByAlias(fieldset.alias);
         var template = fieldsetConfigModel.labelTemplate;
@@ -41,7 +43,7 @@
         cursor: "move",
         handle: ".handle",
         update: function (ev, ui) {
-
+            $scope.setDirty();
         },
         stop: function (ev, ui) {
 
@@ -65,6 +67,7 @@
                     $scope.model.value.fieldsets.push(newFieldset);
                 }
             }
+            $scope.setDirty();
 
             newFieldset.collapse = $scope.model.config.enableCollapsing ? true : false;
             $scope.focusFieldset(newFieldset);
@@ -74,6 +77,7 @@
     $scope.removeRow = function ($index) {
         if ($scope.canRemove()) {
             if (confirm('Are you sure you want to remove this?')) {
+                $scope.setDirty();
                 $scope.model.value.fieldsets.splice($index, 1);
             }
         }
@@ -107,8 +111,8 @@
     //helpers for determining if the add button should be shown
     $scope.showAddButton = function () {
         return $scope.model.config.startWithAddButton
-            && countVisible() === 0
-            && $scope.model.config.fieldsets.length == 1;
+            && countVisible() === 0;
+            ///&& $scope.model.config.fieldsets.length == 1;
     }
 
     //helper, ini the render model from the server (model.value)
@@ -257,6 +261,13 @@
         }
 
         return (typeof property == 'undefined') ? true : property.isValid;
+    }
+
+    // helper to force the current form into the dirty state
+    $scope.setDirty = function () {
+        if($scope.form) {
+            $scope.form.$setDirty();
+        }
     }
 
     //custom js
