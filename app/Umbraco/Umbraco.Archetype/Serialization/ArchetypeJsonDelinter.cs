@@ -54,12 +54,12 @@ namespace Archetype.Serialization
         {
             Tokens = new Dictionary<DelinterStep, Regex>
             {
-                {DelinterStep.RemoveWhiteSpace, new Regex(@"\s+(?!([^""]*""[^""]*"")*[^""]*$)", RegexOptions.Multiline)},                
-                {DelinterStep.RemoveNewLine, new Regex(@"(?<=\,){0,1}(\\+r\\+n)(?=\\+?""(alias|value|properties|fieldsets)\\+?"":\{*?(\\*|""|\[))|(\\+r\\+n)(?=(\{|\}|\]))")},
+                {DelinterStep.RemoveNewLine, new Regex(@"(?<=\,){0,1}(\\+r\\+n)(?=\\*?""(alias|value|properties|fieldsets)\\*?"":\{*?(\\*|""|\[))|(\\+r\\+n)(?=\s*?(\{|\}|\]))|(\r|\n)+|(\\+r\\n+)(?=\s+)")},                
+                {DelinterStep.RemoveWhiteSpace, new Regex(@"\s+")},
                 {DelinterStep.UnescapeLabels, new Regex(@"\\+""(fieldsets|properties|alias|value)\\+"":")},
-                {DelinterStep.UnescapeAlias, new Regex(@"""(alias)"":\\+""(.*?)\\+""", RegexOptions.Multiline)},
-                {DelinterStep.UnescapeValues, new Regex(@"""(value)"":\\+""(.*?)\\+""(?=\})", RegexOptions.Multiline)},
-                {DelinterStep.FixNestedFieldsets, new Regex(@"""(value)"":\s*?""\{(\\+r\\+n)*?(""fieldsets""[\S\s]+?)}""", RegexOptions.Multiline)}
+                {DelinterStep.UnescapeAlias, new Regex(@"""(alias)"":\\+""(.*?)\\+""")},
+                {DelinterStep.UnescapeValues, new Regex(@"""(value)"":\\+""(.*?)\\+""(?=\})")},
+                {DelinterStep.FixNestedFieldsets, new Regex(@"""(value)"":\s*?""\{(\\+r\\+n)*?(""fieldsets""[\S\s]+?)}""")}
             };
             
             Actions = new Dictionary<DelinterAction, Func<Match, string>>
@@ -72,8 +72,8 @@ namespace Archetype.Serialization
             
             Pipeline = new Dictionary<DelinterStep, DelinterAction>
             {
-                {DelinterStep.RemoveWhiteSpace, DelinterAction.Remove},                
-                {DelinterStep.RemoveNewLine, DelinterAction.Remove},                
+                {DelinterStep.RemoveNewLine, DelinterAction.Remove},                    
+                {DelinterStep.RemoveWhiteSpace, DelinterAction.Remove},                            
                 {DelinterStep.UnescapeLabels, DelinterAction.UnescapeLabels},
                 {DelinterStep.UnescapeAlias, DelinterAction.UnescapeValues},
                 {DelinterStep.UnescapeValues, DelinterAction.UnescapeValues},
