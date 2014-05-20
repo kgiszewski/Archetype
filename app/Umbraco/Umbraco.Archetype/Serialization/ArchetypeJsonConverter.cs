@@ -281,8 +281,12 @@ namespace Archetype.Serialization
             resultToken = null;
             
             //To Do: Strange newtonsoft behaviour
-            //var fsToken = jToken.Parent == null ? jToken["fieldsets"] : jToken.Parent.Children().First()["fieldsets"];
-            var fsToken = jToken.SelectToken("fieldsets") != null ? jToken["fieldsets"] : jToken.Parent.Children().First();
+            var fsToken = jToken.Parent != null
+                ? jToken.Parent.Children().First() is JArray
+                    ? jToken.Parent.Children().First()
+                    : jToken.Parent.Children().First()["fieldsets"] 
+                : jToken.SelectToken("fieldsets");
+
             var jTokenEnumerable = jToken != null
                 && fsToken != null && fsToken is JArray;
 

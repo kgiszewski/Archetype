@@ -54,7 +54,7 @@ namespace Archetype.Serialization
         {
             Tokens = new Dictionary<DelinterStep, Regex>
             {
-                {DelinterStep.RemoveWhiteSpace, new Regex(@"\s+(?=([^""]*""[^""]*"")*[^""]*$)", RegexOptions.Multiline)},                
+                {DelinterStep.RemoveWhiteSpace, new Regex(@"\s+(?!([^""]*""[^""]*"")*[^""]*$)", RegexOptions.Multiline)},                
                 {DelinterStep.RemoveNewLine, new Regex(@"(?<=\,){0,1}(\\+r\\+n)(?=\\+?""(alias|value|properties|fieldsets)\\+?"":\{*?(\\*|""|\[))|(\\+r\\+n)(?=(\{|\}|\]))")},
                 {DelinterStep.UnescapeLabels, new Regex(@"\\+""(fieldsets|properties|alias|value)\\+"":")},
                 {DelinterStep.UnescapeAlias, new Regex(@"""(alias)"":\\+""(.*?)\\+""", RegexOptions.Multiline)},
