@@ -12,6 +12,7 @@ namespace Archetype.Serialization
         UnescapeAlias,
         UnescapeValues,
         FixNestedFieldsets,
+        FixValueContent
     }
 
     public enum DelinterAction
@@ -20,14 +21,15 @@ namespace Archetype.Serialization
         RemoveWhiteSpace,
         UnescapeLabels,
         UnescapeValues,
-        FixNestedFieldsets
+        FixNestedFieldsets,
+        FixValueContent
     }
     
     public class ArchetypeJsonDelinter
     {
         public IDictionary<DelinterStep, DelinterAction> Pipeline { get; set; }
         public IDictionary<DelinterStep, Regex> Tokens { get; set; }
-        public IDictionary<DelinterAction, Func<Match,string>> Actions { get; set; }
+        public IDictionary<DelinterAction, Func<string, Regex, string>> Actions { get; set; }
 
         public ArchetypeJsonDelinter()
         {
@@ -41,11 +43,7 @@ namespace Archetype.Serialization
             foreach (var step in Pipeline.Keys)
             {
                 var action = Pipeline[step];
-                while (Tokens[step].IsMatch(buffer))
-                {
-                    buffer = Tokens[step]
-                        .Replace(buffer, match => Actions[action](match));
-                }                
+                buffer = Actions[action](buffer, Tokens[step]);             
             }
 
             return buffer;
@@ -60,27 +58,53 @@ namespace Archetype.Serialization
                 {DelinterStep.UnescapeLabels, new Regex(@"\\+""(fieldsets|properties|alias|value)\\+"":(\s*)")},
                 {DelinterStep.UnescapeAlias, new Regex(@"""(alias)"":\\+""(.*?)\\+""")},
                 {DelinterStep.UnescapeValues, new Regex(@"""(value)"":\\+""(.*?)\\+""(?=\s*?\})")},
-                {DelinterStep.FixNestedFieldsets, new Regex(@"""(value)"":\s*?""\{\s*?(""fieldsets""[\S\s]+?)}""")}
+                {DelinterStep.FixNestedFieldsets, new Regex(@"""(value)"":\s*?""\{\s*?(""fieldsets""[\S\s]+?)}""")},
+                {DelinterStep.FixValueContent, new Regex(@"""(value)"":""(.*?)(?<!\\)""")}
             };
-            
-            Actions = new Dictionary<DelinterAction, Func<Match, string>>
+
+            Actions = new Dictionary<DelinterAction, Func<string, Regex, string>>
             {
-                {DelinterAction.Remove, match => String.Empty},
-                {DelinterAction.RemoveWhiteSpace, match => match.Groups[2].Success ? match.Groups[0].Value : String.Empty},
-                {DelinterAction.UnescapeLabels, match => String.Format(@"""{0}"":", match.Groups[1].Value)},
-                {DelinterAction.UnescapeValues, match => String.Format(@"""{0}"":""{1}""", match.Groups[1].Value, match.Groups[2].Value)},
-                {DelinterAction.FixNestedFieldsets, match => String.Format(@"""{0}"":{{{1}}}", match.Groups[1].Value, match.Groups[2].Value)}
+                {DelinterAction.Remove, (input, pattern) =>
+                    RecursiveReplace(input, pattern, match => String.Empty)
+                },
+                {DelinterAction.RemoveWhiteSpace, (input, pattern) =>
+                    RecursiveReplace(input, pattern, match => match.Groups[2].Success ? match.Groups[0].Value : String.Empty)
+                },
+                {DelinterAction.UnescapeLabels, (input, pattern) =>
+                    RecursiveReplace(input, pattern, match => String.Format(@"""{0}"":", match.Groups[1].Value))
+                },
+                {DelinterAction.UnescapeValues, (input, pattern) =>
+                    RecursiveReplace(input, pattern, match => String.Format(@"""{0}"":""{1}""", match.Groups[1].Value, match.Groups[2].Value))
+                },
+                {DelinterAction.FixNestedFieldsets, (input, pattern) =>
+                    RecursiveReplace(input, pattern, match => String.Format(@"""{0}"":{{{1}}}", match.Groups[1].Value, match.Groups[2].Value))
+                },
+                {DelinterAction.FixValueContent, (input, pattern) =>
+                    pattern.Replace(input, match => String.Format(@"""{0}"":""{1}""", match.Groups[1].Value, 
+                    (new Regex(@"\\+")).Replace(match.Groups[2].Value, @"\")))
+                },
             };
             
             Pipeline = new Dictionary<DelinterStep, DelinterAction>
             {
-                {DelinterStep.RemoveNewLine, DelinterAction.Remove},                    
-                //{DelinterStep.RemoveWhiteSpace, DelinterAction.RemoveWhiteSpace},                            
+                {DelinterStep.RemoveNewLine, DelinterAction.Remove},                                              
                 {DelinterStep.UnescapeLabels, DelinterAction.UnescapeLabels},
                 {DelinterStep.UnescapeAlias, DelinterAction.UnescapeValues},
                 {DelinterStep.UnescapeValues, DelinterAction.UnescapeValues},
-                {DelinterStep.FixNestedFieldsets, DelinterAction.FixNestedFieldsets}
+                {DelinterStep.FixNestedFieldsets, DelinterAction.FixNestedFieldsets},
+                {DelinterStep.FixValueContent, DelinterAction.FixValueContent}
+                //{DelinterStep.RemoveWhiteSpace, DelinterAction.RemoveWhiteSpace},  
             };
+        }
+
+        private string RecursiveReplace(string input, Regex pattern, Func<Match, string> matchFunc)
+        {
+            var buffer = input;
+            while (pattern.IsMatch(buffer))
+            {
+                buffer = pattern.Replace(input, match => matchFunc(match));
+            }
+            return buffer;            
         }
     }
 }
