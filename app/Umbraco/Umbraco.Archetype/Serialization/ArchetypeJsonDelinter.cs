@@ -53,7 +53,7 @@ namespace Archetype.Serialization
         {
             Tokens = new Dictionary<DelinterStep, Regex>
             {
-                {DelinterStep.RemoveNewLine, new Regex(@"(?<=\,){0,1}(\\+r\\+n)(?=\\*?""""(alias|value|properties|fieldsets)\\*?"""":\{*?(\\*|""""|\[))|(\\+r\\+n)(?=\s*?(\{|\}|\]))|(\r|\n)+|(\\+r\\n+)(?!\s+.*?\\+""})")},                
+                {DelinterStep.RemoveNewLine, new Regex(@"(?<=\,){0,1}(\\+r\\+n)(?=\\*?""(alias|value|properties|fieldsets)\\*?"":\{*?(\\*|""|\[))|(\r|\n)+|(\\+r\\+n)(?=\s*?(\{|\}|\]))|(\\+r\\n+)(?=\s+\\*?""(alias|value|properties|fieldsets))")},                
                 {DelinterStep.RemoveWhiteSpace, new Regex(@"(\s*?)\\+""(fieldsets|properties|alias|value)\\+"":(\s+)|""(\s*?)\},(\s+)\{|\[(\s+)\{|[\]\}](\s+)[\]\}]")},
                 {DelinterStep.UnescapeLabels, new Regex(@"\\+""(fieldsets|properties|alias|value)\\+"":(\s*)")},
                 {DelinterStep.UnescapeAlias, new Regex(@"""(alias)"":\\+""(.*?)\\+""")},
@@ -81,7 +81,7 @@ namespace Archetype.Serialization
                 },
                 {DelinterAction.FixValueContent, (input, pattern) =>
                     pattern.Replace(input, match => String.Format(@"""{0}"":""{1}""", match.Groups[1].Value, 
-                    (new Regex(@"\\+")).Replace(match.Groups[2].Value, @"\")))
+                    (new Regex(@"\\{2,}")).Replace(match.Groups[2].Value, @"\")))
                 },
             };
             
