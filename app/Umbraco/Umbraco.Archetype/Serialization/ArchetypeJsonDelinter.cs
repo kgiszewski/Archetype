@@ -67,12 +67,8 @@ namespace Archetype.Serialization
                 },
                 {DelinterAction.RemoveWhiteSpace, (input, pattern) =>
                     RecursiveReplace(input.Trim(), pattern, match =>
-                        String.Join(String.Empty, 
-                            match.Groups
-                             .OfType<Group>()
-                             .Select((g, i) => String.IsNullOrWhiteSpace(g.Value) ? String.Empty : g.Value)
-                             .Skip(1)
-                             .ToArray()))
+                        String.Format("{0}{1}{2}{3}", match.Groups[1].Value, 
+                            match.Groups[3].Value, match.Groups[4].Value, match.Groups[6].Value))
                 },
                 {DelinterAction.UnescapeLabels, (input, pattern) =>
                     RecursiveReplace(input, pattern, match => String.Format(@"""{0}"":", match.Groups[1].Value))
