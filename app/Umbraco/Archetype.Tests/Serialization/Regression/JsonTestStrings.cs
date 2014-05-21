@@ -9,7 +9,7 @@
       ""properties"": [
         {
           ""alias"": ""text"",
-          ""value"": ""Test Text""
+          ""value"": ""Test \r\nText \""quote\"" \r\n""
         },
         {
           ""alias"": ""integer"",

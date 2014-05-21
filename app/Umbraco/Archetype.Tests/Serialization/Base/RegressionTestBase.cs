@@ -1,20 +1,12 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections;
 using System.Linq;
 using System.Reflection;
-using Archetype.PropertyEditors;
 using Archetype.Serialization;
 using Moq;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using Umbraco.Core;
-using Umbraco.Core.Models;
-using Umbraco.Core.Models.Editors;
-using Umbraco.Core.Models.Membership;
 using Umbraco.Core.Persistence;
-using Umbraco.Core.PropertyEditors;
 using Umbraco.Core.Services;
 
 namespace Archetype.Tests.Serialization.Base
@@ -93,57 +85,9 @@ namespace Archetype.Tests.Serialization.Base
             AssertAreEqual(model, resultfromArchetypeJson);
         }
 
-        protected void CompoundModel_WithEscapedJson_Regression_Battery<T>(T model)
-        {
-            var propGuid = new Guid();
-            var dtd = new DataTypeDefinition(-1, String.Empty) {Id = 0};
-            
-            var dataTypeService = new Mock<IDataTypeService>();
-            dataTypeService.Setup(dts => dts.GetDataTypeDefinitionById(Guid.Parse(propGuid.ToString()))).Returns(dtd);
-            dataTypeService.Setup(dts => dts.GetPreValuesCollectionByDataTypeId(dtd.Id)).Returns(new PreValueCollection(new Dictionary<string, PreValue>()));
-
-            var propValueEditor = new Mock<ArchetypePropertyEditor.ArchetypePropertyValueEditor>(new PropertyValueEditor());
-            propValueEditor.Setup(pe => pe.GetPropertyEditor(dtd)).Returns(new ArchetypePropertyEditor());
-
-            var archetype = ConvertModelToArchetype(model);
-
-            foreach (var prop in archetype.Fieldsets.SelectMany(fs => fs.Properties))
-            {
-                prop.DataTypeGuid = propGuid.ToString();
-                if (prop.Value.ToString().Contains("fieldsets"))
-                    prop.PropertyEditorAlias = Constants.PropertyEditorAlias;
-            }
-
-            var archetypeJson = JsonConvert.SerializeObject(archetype);
-            Assert.IsNotNullOrEmpty(archetypeJson);
-
-            EnsureUmbracoContext(dataTypeService);
-
-            var propEditor = new ArchetypePropertyEditor.ArchetypePropertyValueEditor(new PropertyValueEditor());
-            var convertedJson = propEditor.ConvertEditorToDb(new ContentPropertyData(JObject.FromObject(archetype), 
-                new PreValueCollection(new Dictionary<string, PreValue>()), new Dictionary<string, object>()),
-                archetypeJson);
-
-            Assert.IsNotNull(convertedJson);
-
-            var resultfromArchetypeJson = ConvertArchetypeJsonToModel<T>(archetypeJson);
-            var resultfromConvertedJson = ConvertArchetypeJsonToModel<T>(convertedJson.ToString().DelintArchetypeJson());
-
-            Assert.IsInstanceOf<T>(resultfromArchetypeJson);
-            AssertAreEqual(model, resultfromArchetypeJson);
-
-            Assert.IsInstanceOf<T>(resultfromConvertedJson);
-            AssertAreEqual(model, resultfromConvertedJson);
-        }
-
         protected void NestedModel_Regression_Battery<T>(T model)
         {
             CompoundModel_Regression_Battery(model);
-        }
-
-        protected void NestedModel_WithEscapedJson_Regression_Battery<T>(T model)
-        {
-            CompoundModel_WithEscapedJson_Regression_Battery(model);
         }
 
         protected void ComplexModel_Regression_Battery<T>(T model)

@@ -1,24 +1,24 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 namespace Archetype.Serialization
 {
     public enum DelinterStep
-    {
+    {     
         RemoveNewLine = 0,
-        LabelFieldsets,
-        LabelProperties,
-        LabelAlias,
-        LabelValue,
+        RemoveWhiteSpace,
+        UnescapeLabels,
+        UnescapeAlias,
         UnescapeValues,
-        FixNestedFieldsets,
-        RemoveWhiteSpace
+        FixNestedFieldsets
     }
 
     public enum DelinterAction
     {
         Remove = 0,
+        RemoveWhiteSpace,
         UnescapeLabels,
         UnescapeValues,
         FixNestedFieldsets
@@ -26,9 +26,9 @@ namespace Archetype.Serialization
     
     public class ArchetypeJsonDelinter
     {
-        public IDictionary<DelinterStep, DelinterAction> Pipeline { get; set; }
-        public IDictionary<DelinterStep, Regex> Tokens { get; set; }
-        public IDictionary<DelinterAction, Func<Match,string>> Actions { get; set; }
+        public IDictionary<DelinterStep, DelinterAction> Pipeline { get; private set; }
+        public IDictionary<DelinterStep, Regex> Tokens { get; private set; }
+        public IDictionary<DelinterAction, Func<string, Regex, string>> Actions { get; private set; }
 
         public ArchetypeJsonDelinter()
         {
@@ -42,11 +42,7 @@ namespace Archetype.Serialization
             foreach (var step in Pipeline.Keys)
             {
                 var action = Pipeline[step];
-                while (Tokens[step].IsMatch(buffer))
-                {
-                    buffer = Tokens[step]
-                        .Replace(buffer, match => Actions[action](match));
-                }                
+                buffer = Actions[action](buffer, Tokens[step]);             
             }
 
             return buffer;
@@ -56,35 +52,54 @@ namespace Archetype.Serialization
         {
             Tokens = new Dictionary<DelinterStep, Regex>
             {
-                {DelinterStep.RemoveNewLine, new Regex(@"\\r|\\n|[\r\n]", RegexOptions.Multiline)},
-                {DelinterStep.LabelFieldsets, new Regex(@"\s*\\+""(fieldsets)\\+"":\s*")},
-                {DelinterStep.LabelProperties, new Regex(@"\s*\\+""(properties)\\+"":\s*")},
-                {DelinterStep.LabelAlias, new Regex(@"\s*\\+""(alias)\\+"":\s*")},
-                {DelinterStep.LabelValue, new Regex(@"\s*\\+""(value)\\+"":\s*")},
-                {DelinterStep.UnescapeValues, new Regex(@"""(alias|value)"":\\+""(.*?)\\+""")},
-                {DelinterStep.FixNestedFieldsets, new Regex(@"""(value)"":\s*?""({""fieldsets"".+?})""")},
-                {DelinterStep.RemoveWhiteSpace, new Regex(@"\s+(?=([^""]*""[^""]*"")*[^""]*$)")}
+                {DelinterStep.RemoveNewLine, new Regex(@"(?<=\,){0,1}(\\+r\\+n)(?=\\*?""(alias|value|properties|fieldsets)\\*?"":\{*?(\\*|""|\[))|(\r|\n)+|(\\+r\\+n)(?=\s*?(\{|\}|\]))|(\\+r\\n+)(?=\s+\\*?""(alias|value|properties|fieldsets))")},                
+                {DelinterStep.RemoveWhiteSpace, new Regex(@"(""\S+?"":)(\s+?)("")|([\{\[\}\],]|(?<!\\)"")(\s+)([\{\[\}\],]|(?<!\\)"")")},
+                {DelinterStep.UnescapeLabels, new Regex(@"\\+""(fieldsets|properties|alias|value)\\+"":(\s*)")},
+                {DelinterStep.UnescapeAlias, new Regex(@"""(alias)"":\\+""(.*?)\\+""")},
+                {DelinterStep.UnescapeValues, new Regex(@"""(value)"":\\+""(.*?)\\+""(?=\s*?\})")},
+                {DelinterStep.FixNestedFieldsets, new Regex(@"""(value)"":\s*?""\{\s*?(""fieldsets""[\S\s]+?)}""")}
             };
-            
-            Actions = new Dictionary<DelinterAction, Func<Match, string>>
+
+            Actions = new Dictionary<DelinterAction, Func<string, Regex, string>>
             {
-                {DelinterAction.Remove, match => String.Empty},
-                {DelinterAction.UnescapeLabels, match => String.Format(@"""{0}"":", match.Groups[1])},
-                {DelinterAction.UnescapeValues, match => String.Format(@"""{0}"":""{1}""", match.Groups[1], match.Groups[2])},
-                {DelinterAction.FixNestedFieldsets, match => String.Format(@"""{0}"":{1}", match.Groups[1], match.Groups[2])}
+                {DelinterAction.Remove, (input, pattern) =>
+                    RecursiveReplace(input, pattern, match => String.Empty)
+                },
+                {DelinterAction.RemoveWhiteSpace, (input, pattern) =>
+                    RecursiveReplace(input.Trim(), pattern, match =>
+                        String.Format("{0}{1}{2}{3}", match.Groups[1].Value, 
+                            match.Groups[3].Value, match.Groups[4].Value, match.Groups[6].Value))
+                },
+                {DelinterAction.UnescapeLabels, (input, pattern) =>
+                    RecursiveReplace(input, pattern, match => String.Format(@"""{0}"":", match.Groups[1].Value))
+                },
+                {DelinterAction.UnescapeValues, (input, pattern) =>
+                    RecursiveReplace(input, pattern, match => String.Format(@"""{0}"":""{1}""", match.Groups[1].Value, match.Groups[2].Value))
+                },
+                {DelinterAction.FixNestedFieldsets, (input, pattern) =>
+                    RecursiveReplace(input, pattern, match => String.Format(@"""{0}"":{{{1}}}", match.Groups[1].Value, match.Groups[2].Value))
+                }
             };
             
             Pipeline = new Dictionary<DelinterStep, DelinterAction>
             {
-                {DelinterStep.RemoveNewLine, DelinterAction.Remove},
-                {DelinterStep.LabelFieldsets, DelinterAction.UnescapeLabels},
-                {DelinterStep.LabelProperties, DelinterAction.UnescapeLabels},
-                {DelinterStep.LabelAlias, DelinterAction.UnescapeLabels},
-                {DelinterStep.LabelValue, DelinterAction.UnescapeLabels},
+                {DelinterStep.RemoveNewLine, DelinterAction.Remove},                                              
+                {DelinterStep.UnescapeLabels, DelinterAction.UnescapeLabels},
+                {DelinterStep.UnescapeAlias, DelinterAction.UnescapeValues},
                 {DelinterStep.UnescapeValues, DelinterAction.UnescapeValues},
                 {DelinterStep.FixNestedFieldsets, DelinterAction.FixNestedFieldsets},
-                {DelinterStep.RemoveWhiteSpace, DelinterAction.Remove}
+                {DelinterStep.RemoveWhiteSpace, DelinterAction.RemoveWhiteSpace},  
             };
+        }
+
+        private string RecursiveReplace(string input, Regex pattern, Func<Match, string> matchFunc)
+        {
+            var buffer = input;
+            while (pattern.IsMatch(buffer))
+            {
+                buffer = pattern.Replace(buffer, match => matchFunc(match));
+            }
+            return buffer;            
         }
     }
 }
