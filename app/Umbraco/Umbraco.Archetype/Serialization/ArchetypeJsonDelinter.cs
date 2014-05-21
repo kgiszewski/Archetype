@@ -1,13 +1,14 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 namespace Archetype.Serialization
 {
     public enum DelinterStep
-    {
-        RemoveWhiteSpace = 0,        
-        RemoveNewLine,
+    {     
+        RemoveNewLine = 0,
+        RemoveWhiteSpace,
         UnescapeLabels,
         UnescapeAlias,
         UnescapeValues,
@@ -25,9 +26,9 @@ namespace Archetype.Serialization
     
     public class ArchetypeJsonDelinter
     {
-        public IDictionary<DelinterStep, DelinterAction> Pipeline { get; set; }
-        public IDictionary<DelinterStep, Regex> Tokens { get; set; }
-        public IDictionary<DelinterAction, Func<string, Regex, string>> Actions { get; set; }
+        public IDictionary<DelinterStep, DelinterAction> Pipeline { get; private set; }
+        public IDictionary<DelinterStep, Regex> Tokens { get; private set; }
+        public IDictionary<DelinterAction, Func<string, Regex, string>> Actions { get; private set; }
 
         public ArchetypeJsonDelinter()
         {
@@ -52,7 +53,7 @@ namespace Archetype.Serialization
             Tokens = new Dictionary<DelinterStep, Regex>
             {
                 {DelinterStep.RemoveNewLine, new Regex(@"(?<=\,){0,1}(\\+r\\+n)(?=\\*?""(alias|value|properties|fieldsets)\\*?"":\{*?(\\*|""|\[))|(\r|\n)+|(\\+r\\+n)(?=\s*?(\{|\}|\]))|(\\+r\\n+)(?=\s+\\*?""(alias|value|properties|fieldsets))")},                
-                {DelinterStep.RemoveWhiteSpace, new Regex(@"(\s*?)\\+""(fieldsets|properties|alias|value)\\+"":(\s+)|""(\s*?)\},(\s+)\{|\[(\s+)\{|[\]\}](\s+)[\]\}]")},
+                {DelinterStep.RemoveWhiteSpace, new Regex(@"(""\S+?"":)(\s+?)("")|([\{\[\}\],]|(?<!\\)"")(\s+)([\{\[\}\],]|(?<!\\)"")")},
                 {DelinterStep.UnescapeLabels, new Regex(@"\\+""(fieldsets|properties|alias|value)\\+"":(\s*)")},
                 {DelinterStep.UnescapeAlias, new Regex(@"""(alias)"":\\+""(.*?)\\+""")},
                 {DelinterStep.UnescapeValues, new Regex(@"""(value)"":\\+""(.*?)\\+""(?=\s*?\})")},
@@ -65,7 +66,13 @@ namespace Archetype.Serialization
                     RecursiveReplace(input, pattern, match => String.Empty)
                 },
                 {DelinterAction.RemoveWhiteSpace, (input, pattern) =>
-                    RecursiveReplace(input, pattern, match => match.Groups[2].Success ? match.Groups[0].Value : String.Empty)
+                    RecursiveReplace(input.Trim(), pattern, match =>
+                        String.Join(String.Empty, 
+                            match.Groups
+                             .OfType<Group>()
+                             .Select((g, i) => String.IsNullOrWhiteSpace(g.Value) ? String.Empty : g.Value)
+                             .Skip(1)
+                             .ToArray()))
                 },
                 {DelinterAction.UnescapeLabels, (input, pattern) =>
                     RecursiveReplace(input, pattern, match => String.Format(@"""{0}"":", match.Groups[1].Value))
@@ -85,7 +92,7 @@ namespace Archetype.Serialization
                 {DelinterStep.UnescapeAlias, DelinterAction.UnescapeValues},
                 {DelinterStep.UnescapeValues, DelinterAction.UnescapeValues},
                 {DelinterStep.FixNestedFieldsets, DelinterAction.FixNestedFieldsets},
-                //{DelinterStep.RemoveWhiteSpace, DelinterAction.RemoveWhiteSpace},  
+                {DelinterStep.RemoveWhiteSpace, DelinterAction.RemoveWhiteSpace},  
             };
         }
 
@@ -94,7 +101,7 @@ namespace Archetype.Serialization
             var buffer = input;
             while (pattern.IsMatch(buffer))
             {
-                buffer = pattern.Replace(input, match => matchFunc(match));
+                buffer = pattern.Replace(buffer, match => matchFunc(match));
             }
             return buffer;            
         }
