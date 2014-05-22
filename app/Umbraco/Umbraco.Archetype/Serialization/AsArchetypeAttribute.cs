@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Archetype.Umbraco.Serialization
+namespace Archetype.Serialization
 {
     public class AsArchetypeAttribute : Attribute
     {

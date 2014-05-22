@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 using Umbraco.Core.Models;
 using Umbraco.Web;
 
-namespace Archetype.Umbraco.Serialization
+namespace Archetype.Serialization
 {
     public static class SerializationExtensions
     {

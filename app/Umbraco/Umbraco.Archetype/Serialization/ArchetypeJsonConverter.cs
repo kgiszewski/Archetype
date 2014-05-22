@@ -9,7 +9,7 @@ using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace Archetype.Umbraco.Serialization
+namespace Archetype.Serialization
 {
     public class ArchetypeJsonConverter : JsonConverter
     {
