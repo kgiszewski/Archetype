@@ -1,21 +1,21 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
 using Umbraco.Core;
 
-namespace Archetype.Umbraco.Models
+namespace Archetype.Models
 {
-    public class Fieldset
+    public class ArchetypeFieldsetModel
     {
         [JsonProperty("alias")]
         public string Alias { get; set; }
 
         [JsonProperty("properties")]
-        public IEnumerable<Property> Properties;
+        public IEnumerable<ArchetypePropertyModel> Properties;
 
-        public Fieldset()
+        public ArchetypeFieldsetModel()
         {
-            Properties = new List<Property>();
+            Properties = new List<ArchetypePropertyModel>();
         }
 
         #region Helper Methods
@@ -29,7 +29,7 @@ namespace Archetype.Umbraco.Models
         {
             var property = GetProperty(propertyAlias);
 
-            if (property == null || string.IsNullOrEmpty(property.Value.ToString()))
+            if (property == null || property.Value == null || string.IsNullOrEmpty(property.Value.ToString()))
                 return default(T);
 
             return property.GetValue<T>();
@@ -43,13 +43,13 @@ namespace Archetype.Umbraco.Models
         public bool HasValue(string propertyAlias)
         {
             var property = GetProperty(propertyAlias);
-            if (property == null)
+            if (property == null || property.Value == null)
                 return false;
 
             return !string.IsNullOrEmpty(property.Value.ToString());
         }
 
-        private Property GetProperty(string propertyAlias)
+        private ArchetypePropertyModel GetProperty(string propertyAlias)
         {
             return Properties.FirstOrDefault(p => p.Alias.InvariantEquals(propertyAlias));
         }
