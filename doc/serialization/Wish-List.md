@@ -1,0 +1,2 @@
+1. Simplify JToken navigation, generally simplify where possible.
+1. Investigate whether it is useful to access the property editor context during serialization / deserialization. This would enable us to convert for example, any macros embedded in rich text editors on the fly. But there is a cost to this as well in terms of security, database access and complexity considerations.

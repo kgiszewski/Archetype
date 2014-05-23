@@ -1,0 +1,5 @@
+### [Model Set-Up How To: A simple model](https://github.com/cankoluman/Archetype/wiki/Model-Set-Up-How-To:-A-simple-model)
+### [Model Set-Up How To: A very simple list model](https://github.com/cankoluman/Archetype/wiki/Model-Set-Up-How-To:-A-very-simple-list-model)
+### [Model Set-Up How To: A simple list model](https://github.com/cankoluman/Archetype/wiki/Model-Set-Up-How-To:-A-simple-list-model)
+### [Model Set-Up How To: A complex list model](https://github.com/cankoluman/Archetype/wiki/Model-Set-Up-How-To:-A-complex-list-model)
+### [Serializer Documentation](https://github.com/cankoluman/Archetype/wiki/Serializer-Documentation)
