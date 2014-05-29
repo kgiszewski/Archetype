@@ -29,7 +29,7 @@ namespace Archetype.Models
         {
             var property = GetProperty(propertyAlias);
 
-            if (property == null || string.IsNullOrEmpty(property.Value.ToString()))
+            if (property == null || property.Value == null || string.IsNullOrEmpty(property.Value.ToString()))
                 return default(T);
 
             return property.GetValue<T>();
@@ -43,7 +43,7 @@ namespace Archetype.Models
         public bool HasValue(string propertyAlias)
         {
             var property = GetProperty(propertyAlias);
-            if (property == null)
+            if (property == null || property.Value == null)
                 return false;
 
             return !string.IsNullOrEmpty(property.Value.ToString());
