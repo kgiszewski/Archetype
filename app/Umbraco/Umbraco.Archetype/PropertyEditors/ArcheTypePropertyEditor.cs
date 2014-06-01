@@ -173,12 +173,6 @@ namespace Archetype.PropertyEditors
 					}
 				}
 
-				// clear the contents of the property files collections before saving to DB
-				foreach(var property in archetype.Fieldsets.SelectMany(f => f.Properties.Where(p => p.FileNames != null)).ToList())
-				{
-					property.FileNames = null;
-				}
-
                 return archetype.SerializeForPersistence();
 			}
 		}
