@@ -1,10 +1,8 @@
 using System;
-using System.Web;
-using System.Text;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using Umbraco.Core;
-using Umbraco.Web;
 using Archetype.Models;
 
 namespace Archetype.Extensions

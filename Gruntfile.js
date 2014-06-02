@@ -190,6 +190,7 @@ module.exports = function(grunt) {
         stdout: true,
         verbosity: 'quiet',
         maxCpuCount: 4,
+		version: 4.0,
         buildParameters: {
           WarningLevel: 2,
           NoWarn: 1607
