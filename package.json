@@ -27,5 +27,8 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/imulus/Archetype.git"
+  },
+  "devDependencies": {
+    "grunt-msbuild": "^0.1.12"
   }
 }
