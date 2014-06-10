@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
 using Umbraco.Core;
+using System;
 
 namespace Archetype.Models
 {
@@ -12,6 +13,9 @@ namespace Archetype.Models
 
         [JsonProperty("properties")]
         public IEnumerable<ArchetypePropertyModel> Properties;
+
+        [JsonProperty("id")]
+        public Guid Id { get; set; }
 
         public ArchetypeFieldsetModel()
         {
