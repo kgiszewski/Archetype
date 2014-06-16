@@ -29,6 +29,9 @@ namespace Archetype.Models
         [JsonProperty("fileNames")]
         internal IEnumerable<string> FileNames;
 
+		[JsonProperty("hostContentType")]
+        internal PublishedContentType HostContentType { get; set; }
+
         public T GetValue<T>()
         {
 
@@ -84,7 +87,7 @@ namespace Archetype.Models
 
         private PublishedPropertyType CreateDummyPropertyType(int dataTypeId, string propertyEditorAlias)
         {
-            return new PublishedPropertyType(null,
+            return new PublishedPropertyType(this.HostContentType,
                 new PropertyType(new DataTypeDefinition(-1, propertyEditorAlias)
                 {
                     Id = dataTypeId

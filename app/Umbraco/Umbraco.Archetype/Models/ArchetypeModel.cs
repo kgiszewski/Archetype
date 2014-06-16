@@ -36,7 +36,7 @@ namespace Archetype.Models
                 property.FileNames = null;
             }
             var json = JObject.Parse(JsonConvert.SerializeObject(this));
-            var propertiesToRemove = new String[] { "propertyEditorAlias", "dataTypeId", "dataTypeGuid" };
+            var propertiesToRemove = new String[] { "propertyEditorAlias", "dataTypeId", "dataTypeGuid", "hostContentType" };
 
             json.Descendants().OfType<JProperty>()
               .Where(p => propertiesToRemove.Contains(p.Name))
