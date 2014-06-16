@@ -126,6 +126,10 @@
             <input type="text" id="archetypeAdvancedOptionsCustomJs" ng-model="archetypeConfigRenderModel.customJsPath"/>
         </div>
         <div>
+            <label for="archetypeAdvancedOptionsCustomView"><archetype-localize key="viewFile">View File</archetype-localize><small><archetype-localize key="viewFileDescription">(Optional) Enter a path for a custom view file to be used to render this Archetype.</archetype-localize></small></label>
+            <input type="text" id="archetypeAdvancedOptionsCustomView" ng-model="archetypeConfigRenderModel.customViewPath"/>
+        </div>
+        <div>
             <label for="archetypeAdvancedOptionsDeveloperMode"><archetype-localize key="toggleDeveloperMode">Toggle Developer Mode</archetype-localize><small><archetype-localize key="toggleDeveloperModeDescription">Toggle Developer Mode</archetype-localize></small></label>
             <input type="checkbox" id="archetypeAdvancedOptionsDeveloperMode" ng-model="archetypeConfigRenderModel.developerMode"/>
         </div>

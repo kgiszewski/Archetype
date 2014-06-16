@@ -1,4 +1,4 @@
-<div class="archetypeEditor ng-class:model.config.customCssClass" >
+<div class="archetypeEditor ng-class:model.config.customCssClass" ng-controller="Imulus.ArchetypeController">
     <textarea class="archetypeDeveloperModel" ng-show="model.config.developerMode" ng-model="model.value"></textarea>
     <ul ui-sortable="sortableOptions" ng-model="model.value.fieldsets" ng-show="!showAddButton()">
         <li ng-repeat="fieldset in model.value.fieldsets">
