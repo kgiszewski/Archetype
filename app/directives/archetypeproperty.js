@@ -202,7 +202,7 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
                         var def = $q.defer();
                         def.resolve(true);
                         $rootScope.$apply();
-                    }, 500)
+                    }, 500);
                 }
             });
         }
@@ -211,7 +211,7 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
     return {
         require: "^ngModel",
         restrict: "E",
-        rep1ace: true,
+        replace: true,
         link: linker,
         scope: {
             property: '=',
