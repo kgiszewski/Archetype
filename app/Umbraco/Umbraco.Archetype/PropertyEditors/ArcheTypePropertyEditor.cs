@@ -12,6 +12,7 @@ using Umbraco.Core.PropertyEditors;
 using Umbraco.Core.Services;
 using Umbraco.Web.PropertyEditors;
 using Umbraco.Core.Logging;
+using Umbraco.Web.Models.ContentEditing;
 
 namespace Archetype.PropertyEditors
 {
@@ -116,19 +117,54 @@ namespace Archetype.PropertyEditors
 				if (editorValue.Value == null || editorValue.Value.ToString() == "")
 					return string.Empty;
 
-				var archetype = new ArchetypeHelper().DeserializeJsonToArchetype(editorValue.Value.ToString(), editorValue.PreValues);
+				var helper = new ArchetypeHelper();
+				// attempt to deserialize the current property value as an Archetype
+				var currentArchetype = currentValue != null ? helper.DeserializeJsonToArchetype(currentValue.ToString(), editorValue.PreValues) : null;
+				var archetype = helper.DeserializeJsonToArchetype(editorValue.Value.ToString(), editorValue.PreValues);
+
+				// get all files uploaded via the file manager (if any)
+				var uploadedFiles = editorValue.AdditionalData.ContainsKey("files") ? editorValue.AdditionalData["files"] as IEnumerable<ContentItemFile> : null;
 
 				foreach (var fieldset in archetype.Fieldsets)
 				{
+					// assign an id to the fieldset if it has none (e.g. newly created fieldset)
+					fieldset.Id = fieldset.Id == Guid.Empty ? Guid.NewGuid() : fieldset.Id;
+					// find the corresponding fieldset in the current Archetype value (if any)
+					var currentFieldset = currentArchetype != null ? currentArchetype.Fieldsets.FirstOrDefault(f => f.Id == fieldset.Id) : null;
 					foreach (var propDef in fieldset.Properties)
 					{
                         try
                         {
+							// find the corresponding property in the current Archetype value (if any)
+							var currentProperty = currentFieldset != null ? currentFieldset.Properties.FirstOrDefault(p => p.Alias == propDef.Alias) : null;
 						    var dtd = ApplicationContext.Current.Services.DataTypeService.GetDataTypeDefinitionById(Guid.Parse(propDef.DataTypeGuid));
 						    var preValues = ApplicationContext.Current.Services.DataTypeService.GetPreValuesCollectionByDataTypeId(dtd.Id);
-						    var propData = new ContentPropertyData(propDef.Value, preValues, new Dictionary<string, object>());
+
+							var additionalData = new Dictionary<string, object>();
+
+							// figure out if we need to pass a files collection in the additional data to the property value editor
+							if(uploadedFiles != null)
+							{
+								if(dtd.PropertyEditorAlias == Constants.PropertyEditorAlias)
+								{
+									// it's a nested Archetype - just pass all uploaded files to the value editor
+									additionalData["files"] = uploadedFiles.ToList();
+								}
+								else if(propDef.FileNames != null && propDef.FileNames.Any())
+								{
+									// pass the uploaded files that belongs to this property (if any) to the value editor
+									var propertyFiles = propDef.FileNames.Select(f => uploadedFiles.FirstOrDefault(u => u.FileName == f)).Where(f => f != null).ToList();
+									if(propertyFiles.Any())
+									{
+										additionalData["files"] = propertyFiles;
+									}
+								}
+							}
+
+							var propData = new ContentPropertyData(propDef.Value, preValues, additionalData);
 						    var propEditor = PropertyEditorResolver.Current.GetByAlias(dtd.PropertyEditorAlias);
-						    propDef.Value = propEditor.ValueEditor.ConvertEditorToDb(propData, propDef.Value);
+							// make sure to send the current property value (if any) to the PE ValueEditor
+							propDef.Value = propEditor.ValueEditor.ConvertEditorToDb(propData, currentProperty != null ? currentProperty.Value : null);
                         }
                         catch (Exception ex)
                         {

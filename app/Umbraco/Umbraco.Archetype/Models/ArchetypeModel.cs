@@ -30,6 +30,11 @@ namespace Archetype.Models
 
         internal string SerializeForPersistence()
         {
+            // clear the contents of the property files collections before serializing (it's temporary state data)
+            foreach(var property in Fieldsets.SelectMany(f => f.Properties.Where(p => p.FileNames != null)).ToList())
+            {
+                property.FileNames = null;
+            }
             var json = JObject.Parse(JsonConvert.SerializeObject(this));
             var propertiesToRemove = new String[] { "propertyEditorAlias", "dataTypeId", "dataTypeGuid", "hostContentType" };
 

@@ -8,6 +8,9 @@ using Umbraco.Core.Models;
 using Umbraco.Web.Models.ContentEditing;
 using Umbraco.Web.Mvc;
 using Umbraco.Web.Editors;
+using Umbraco.Core.PropertyEditors;
+using Archetype.Extensions;
+using Newtonsoft.Json;
 
 namespace Archetype.Api
 {
@@ -35,8 +38,32 @@ namespace Archetype.Api
             {
                 throw new HttpResponseException(HttpStatusCode.NotFound);
             }
+
             var dataTypeDisplay = Mapper.Map<IDataTypeDefinition, DataTypeDisplay>(dataType);
-            return new { selectedEditor = dataTypeDisplay.SelectedEditor, preValues = dataTypeDisplay.PreValues };
+
+			// enrich the prevalues with any missing default prevalues for the datatype (e.g. image cropper "focalPoint# prevalue)
+			var preValues = dataTypeDisplay.PreValues.ToList();
+			if(string.IsNullOrEmpty(dataType.PropertyEditorAlias) == false)
+			{
+				// fetch the default prevalues for the datatype
+				var propEditor = PropertyEditorResolver.Current.GetByAlias(dataType.PropertyEditorAlias);
+				if(propEditor != null && propEditor.DefaultPreValues != null && propEditor.DefaultPreValues.Any())
+				{
+					// add any missing prevalues
+					foreach(var missingPreValue in propEditor.DefaultPreValues.Where(p => preValues.Any(pre => pre.Key == p.Key) == false))
+					{
+						var value = missingPreValue.Value;
+						// if the prevalue is a JSON object, deserialize it
+						if(value != null && value.ToString().DetectIsJson())
+						{
+							value = JsonConvert.DeserializeObject(value.ToString());
+						}
+						preValues.Add(new PreValueFieldDisplay { Key = missingPreValue.Key, Value = value });
+					}
+				}
+			}
+
+			return new { selectedEditor = dataTypeDisplay.SelectedEditor, preValues = preValues };
         }
     }
 }

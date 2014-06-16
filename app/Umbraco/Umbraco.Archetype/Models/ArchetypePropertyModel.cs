@@ -25,7 +25,11 @@ namespace Archetype.Models
         [JsonProperty("dataTypeGuid")]
         internal string DataTypeGuid { get; set; }
 
-        [JsonProperty("hostContentType")]
+        // container for the names of any files selected for this property in the Umbraco backend
+        [JsonProperty("fileNames")]
+        internal IEnumerable<string> FileNames;
+
+		[JsonProperty("hostContentType")]
         internal PublishedContentType HostContentType { get; set; }
 
         public T GetValue<T>()

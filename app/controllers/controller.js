@@ -1,4 +1,4 @@
-﻿angular.module("umbraco").controller("Imulus.ArchetypeController", function ($scope, $http, assetsService, angularHelper, notificationsService, $timeout) {
+﻿angular.module("umbraco").controller("Imulus.ArchetypeController", function ($scope, $http, assetsService, angularHelper, notificationsService, $timeout, fileManager) {
 
     //$scope.model.value = "";
     $scope.model.hideLabel = $scope.model.config.hideLabel == 1;
@@ -191,9 +191,34 @@
     //developerMode helpers
     $scope.model.value.toString = stringify;
 
+    // issue 114: register handler for file selection
+    $scope.model.value.setFiles = setFiles;
+
     //encapsulate stringify (should be built into browsers, not sure of IE support)
     function stringify() {
         return JSON.stringify(this);
+    }
+
+    // issue 114: handler for file selection
+    function setFiles(files) {
+        // get all currently selected files from file manager
+        var currentFiles = fileManager.getFiles();
+        
+        // get the files already selected for this archetype (by alias)
+        var archetypeFiles = [];
+        _.each(currentFiles, function (item) {
+            if (item.alias === $scope.model.alias) {
+                archetypeFiles.push(item.file);
+            }
+        });
+
+        // add the newly selected files
+        _.each(files, function (file) {
+            archetypeFiles.push(file);
+        });
+
+        // update the selected files for this archetype (by alias)
+        fileManager.setFiles($scope.model.alias, archetypeFiles);
     }
 
     //watch for changes
@@ -205,6 +230,9 @@
                 $scope.model.value.toString = stringify;
             }
         }
+        // issue 114: re-register handler for files selection and reset the currently selected files on the file manager
+        $scope.model.value.setFiles = setFiles;
+        fileManager.setFiles($scope.model.alias, []);
     });
 
     //helper to count what is visible
