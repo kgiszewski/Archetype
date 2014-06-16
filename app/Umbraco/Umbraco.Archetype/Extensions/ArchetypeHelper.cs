@@ -4,6 +4,7 @@ using Archetype.Models;
 using Newtonsoft.Json;
 using Umbraco.Core;
 using Umbraco.Core.Models;
+using Umbraco.Core.Models.PublishedContent;
 
 namespace Archetype.Extensions
 {
@@ -46,7 +47,7 @@ namespace Archetype.Extensions
             }         
         }
 
-        internal Models.ArchetypeModel DeserializeJsonToArchetype(string sourceJson, int dataTypeId)
+        internal Models.ArchetypeModel DeserializeJsonToArchetype(string sourceJson, int dataTypeId, PublishedContentType hostContentType = null)
         {
             try
             {
@@ -56,7 +57,7 @@ namespace Archetype.Extensions
                 {
                     // Get list of configured properties and their types and map them to the deserialized archetype model
                     var preValue = GetArchetypePreValueFromDataTypeId(dataTypeId);
-                    RetrieveAdditionalProperties(ref archetype, preValue);
+                    RetrieveAdditionalProperties(ref archetype, preValue, hostContentType);
                 }
                 catch (Exception ex)
                 {
@@ -110,7 +111,7 @@ namespace Archetype.Extensions
         /// </summary>
         /// <param name="archetype">The Archetype to add the additional metadata to</param>
         /// <param name="preValue">The configuration of the Archetype</param>
-        private void RetrieveAdditionalProperties(ref Models.ArchetypeModel archetype, ArchetypePreValue preValue)
+        private void RetrieveAdditionalProperties(ref Models.ArchetypeModel archetype, ArchetypePreValue preValue, PublishedContentType hostContentType = null)
         {
             foreach (var fieldset in preValue.Fieldsets)
             {
@@ -125,6 +126,7 @@ namespace Archetype.Extensions
                             propertyInst.DataTypeGuid = property.DataTypeGuid.ToString();
                             propertyInst.DataTypeId = GetDataTypeByGuid(property.DataTypeGuid).Id;
                             propertyInst.PropertyEditorAlias = property.PropertyEditorAlias;
+                            propertyInst.HostContentType = hostContentType;
                         }
                     }
                 }
