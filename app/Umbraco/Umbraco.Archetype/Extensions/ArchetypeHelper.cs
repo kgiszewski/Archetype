@@ -14,6 +14,10 @@ namespace Archetype.Extensions
         protected JsonSerializerSettings _jsonSettings;
         protected ApplicationContext _app; 
 
+        private static readonly ArchetypeHelper _instance = new ArchetypeHelper();
+
+        internal static ArchetypeHelper Instance { get { return _instance; } }
+
         internal ArchetypeHelper()
         {
             var dcr = new Newtonsoft.Json.Serialization.DefaultContractResolver();

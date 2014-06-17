@@ -58,7 +58,7 @@ namespace Archetype.PropertyEditors
 				if (property.Value == null || property.Value.ToString() == "")
 					return string.Empty;
 
-			    var archetype = new ArchetypeHelper().DeserializeJsonToArchetype(property.Value.ToString(), propertyType.DataTypeDefinitionId);
+				var archetype = ArchetypeHelper.Instance.DeserializeJsonToArchetype(property.Value.ToString(), propertyType.DataTypeDefinitionId);
 
 				foreach (var fieldset in archetype.Fieldsets)
 				{
@@ -87,7 +87,7 @@ namespace Archetype.PropertyEditors
 				if (property.Value == null || property.Value.ToString() == "")
 					return string.Empty;
 
-			    var archetype = new ArchetypeHelper().DeserializeJsonToArchetype(property.Value.ToString(), propertyType.DataTypeDefinitionId);
+				var archetype = ArchetypeHelper.Instance.DeserializeJsonToArchetype(property.Value.ToString(), propertyType.DataTypeDefinitionId);
 
 				foreach (var fieldset in archetype.Fieldsets)
 				{
@@ -115,7 +115,7 @@ namespace Archetype.PropertyEditors
 				if (editorValue.Value == null || editorValue.Value.ToString() == "")
 					return string.Empty;
 
-				var archetype = new ArchetypeHelper().DeserializeJsonToArchetype(editorValue.Value.ToString(), editorValue.PreValues);
+				var archetype = ArchetypeHelper.Instance.DeserializeJsonToArchetype(editorValue.Value.ToString(), editorValue.PreValues);
 
 				foreach (var fieldset in archetype.Fieldsets)
 				{
