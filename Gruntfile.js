@@ -55,6 +55,7 @@ module.exports = function(grunt) {
           'app/controllers/controller.js',
           'app/controllers/config.controller.js',
           'app/directives/archetypeproperty.js',
+          'app/directives/archetypecustomview.js',
           'app/directives/localize.js',
           'app/services/localization.js',
           'app/resources/propertyeditor.js'
@@ -66,7 +67,7 @@ module.exports = function(grunt) {
     copy: {
       html: {
         cwd: 'app/views/',
-        src: ['archetype.html', 'archetype.config.html'],
+        src: ['archetype.html', 'archetype.default.html', 'archetype.config.html'],
         dest: '<%= basePath %>/views',
         expand: true
       },
@@ -190,6 +191,7 @@ module.exports = function(grunt) {
         stdout: true,
         verbosity: 'quiet',
         maxCpuCount: 4,
+		version: 4.0,
         buildParameters: {
           WarningLevel: 2,
           NoWarn: 1607
