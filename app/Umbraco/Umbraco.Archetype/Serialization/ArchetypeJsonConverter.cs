@@ -136,15 +136,15 @@ namespace Archetype.Serialization
             if (objToken.SelectToken("properties") != null)
                 return PopulateProperties(obj, objToken["properties"]);
 
-            if (objToken is JArray) 
-            {
-                var defaultFsProperties = properties.Where(pInfo => !HasAsFieldsetAttribute(pInfo)).ToList();                
+            if (!(objToken is JArray) || (objToken as JArray).Count <= 0)
+                return null;
 
-                foreach (var property in defaultFsProperties)
-                {
-                    var propJToken = ParseJTokenFromItems(objToken, GetJsonPropertyName(property));
-                    PopulateProperty(obj, propJToken["properties"], property);
-                }                
+            var defaultFsProperties = properties.Where(pInfo => !HasAsFieldsetAttribute(pInfo)).ToList();                
+
+            foreach (var property in defaultFsProperties)
+            {
+                var propJToken = ParseJTokenFromItems(objToken, GetJsonPropertyName(property));
+                PopulateProperty(obj, propJToken["properties"], property);
             }
 
             return PopulateProperties(obj, new JArray(objToken));
