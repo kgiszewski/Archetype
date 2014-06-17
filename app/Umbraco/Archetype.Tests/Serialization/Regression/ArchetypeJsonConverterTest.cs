@@ -14,6 +14,15 @@ namespace Archetype.Tests.Serialization.Regression
         {
             _testHelper = new SerializationTestHelper();
         }
+
+        [Test]
+        public void EmptyArray_Returns_Null()
+        {
+            var archetypeJson = @"{""fieldsets"": []}";
+            var result = ConvertArchetypeJsonToModel<SimpleModel>(archetypeJson);
+
+            Assert.IsNull(result);
+        }
         
         [Test]
         public void SimpleModel_Regression_Battery()
