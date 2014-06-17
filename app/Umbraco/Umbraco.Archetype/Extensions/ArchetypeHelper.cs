@@ -10,9 +10,8 @@ namespace Archetype.Extensions
 {
     public class ArchetypeHelper
     {
-
         protected JsonSerializerSettings _jsonSettings;
-        protected ApplicationContext _app; 
+        protected ApplicationContext _app;
 
         private static readonly ArchetypeHelper _instance = new ArchetypeHelper();
 
@@ -48,7 +47,7 @@ namespace Archetype.Extensions
             catch
             {
                 return new Models.ArchetypeModel();
-            }         
+            }
         }
 
         internal Models.ArchetypeModel DeserializeJsonToArchetype(string sourceJson, int dataTypeId, PublishedContentType hostContentType = null)
@@ -75,8 +74,8 @@ namespace Archetype.Extensions
             }
         }
 
-         private ArchetypePreValue GetArchetypePreValueFromDataTypeId(int dataTypeId)
-         {
+        private ArchetypePreValue GetArchetypePreValueFromDataTypeId(int dataTypeId)
+        {
             return _app.ApplicationCache.RuntimeCache.GetCacheItem(
                 Constants.CacheKey_PreValueFromDataTypeId + dataTypeId,
                 () =>
@@ -93,7 +92,7 @@ namespace Archetype.Extensions
                     return config;
 
                 }) as ArchetypePreValue;
-        }  
+        }
 
         private ArchetypePreValue GetArchetypePreValueFromPreValuesCollection(PreValueCollection dataTypePreValues)
         {
@@ -102,10 +101,9 @@ namespace Archetype.Extensions
             return preValue;
         }
 
-
         private IDataTypeDefinition GetDataTypeByGuid(Guid guid)
         {
-            return (IDataTypeDefinition) ApplicationContext.Current.ApplicationCache.RuntimeCache.GetCacheItem(
+            return (IDataTypeDefinition)ApplicationContext.Current.ApplicationCache.RuntimeCache.GetCacheItem(
                 Constants.CacheKey_DataTypeByGuid + guid,
                 () => _app.Services.DataTypeService.GetDataTypeDefinitionById(guid));
         }
@@ -125,7 +123,7 @@ namespace Archetype.Extensions
                     foreach (var property in fieldset.Properties)
                     {
                         var propertyAlias = property.Alias;
-                        foreach ( var propertyInst in fieldsetInst.Properties.Where(x => x.Alias == propertyAlias))
+                        foreach (var propertyInst in fieldsetInst.Properties.Where(x => x.Alias == propertyAlias))
                         {
                             propertyInst.DataTypeGuid = property.DataTypeGuid.ToString();
                             propertyInst.DataTypeId = GetDataTypeByGuid(property.DataTypeGuid).Id;
@@ -152,6 +150,5 @@ namespace Archetype.Extensions
                 }
             }
         }
-
     }
 }
