@@ -44,6 +44,9 @@ namespace Archetype.Models
         [JsonProperty("customJsPath")]
         public string CustomJsPath { get; set; }
 
+        [JsonProperty("customViewPath")]
+        public string CustomViewPath { get; set; }
+
         [JsonProperty("developerMode")]
         public bool DeveloperMode { get; set; }
     }
