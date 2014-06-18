@@ -225,7 +225,9 @@
     <Compile Include="Serialization\Base\ArchetypeJsonConverterTestBase.cs" />
     <Compile Include="Serialization\Base\RegressionTestBase.cs" />
     <Compile Include="Serialization\Delinter\ArchetypeJsonDelinterTest.cs" />
+    <Compile Include="Serialization\Regression\ArchetypeJsonConverterLegacySetUpTest.cs" />
     <Compile Include="Serialization\Regression\ArchetypeJsonConverterTest.cs" />
+    <Compile Include="Serialization\Regression\JsonTestLegacyModelSetUp.cs" />
     <Compile Include="Serialization\Regression\SerializationTestHelper.cs" />
     <Compile Include="Serialization\Regression\JsonTestModels.cs" />
     <Compile Include="Serialization\Regression\JsonTestStrings.cs" />

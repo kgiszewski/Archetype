@@ -57,5 +57,68 @@
       }
    ]
 }";
+
+        public const string _SLIDES_JSON =
+                    @"{
+  ""fieldsets"": [
+    {
+      ""alias"": ""captions"",
+      ""properties"": [
+        {
+          ""alias"": ""captions"",
+          ""value"": {
+            ""fieldsets"": [
+              {
+                ""alias"": ""textstringArray"",
+                ""properties"": [
+                  {
+                    ""alias"": ""textstring"",
+                    ""value"": ""Test 1""
+                  }
+                ]
+              },
+              {
+                ""alias"": ""textstringArray"",
+                ""properties"": [
+                  {
+                    ""alias"": ""textstring"",
+                    ""value"": ""Test 2""
+                  }
+                ]
+              },
+              {
+                ""alias"": ""textstringArray"",
+                ""properties"": [
+                  {
+                    ""alias"": ""textstring"",
+                    ""value"": ""Test 3""
+                  }
+                ]
+              },
+              {
+                ""alias"": ""textstringArray"",
+                ""properties"": [
+                  {
+                    ""alias"": ""textstring"",
+                    ""value"": ""Test 4""
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      ""alias"": ""slides"",
+      ""properties"": [
+        {
+          ""alias"": ""slides"",
+          ""value"": ""1,2,3,4,5""
+        }
+      ]
+    }
+  ]
+}";
     }
 }
