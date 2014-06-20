@@ -41,7 +41,8 @@ namespace Archetype.PropertyConverters
                 return defaultValue;
 
             var archetype = new ArchetypeHelper().DeserializeJsonToArchetype(source.ToString(),
-                (propertyType != null ? propertyType.DataTypeId : -1));
+                (propertyType != null ? propertyType.DataTypeId : -1),
+                (propertyType != null ? propertyType.ContentType : null));
 
             return archetype;
         }

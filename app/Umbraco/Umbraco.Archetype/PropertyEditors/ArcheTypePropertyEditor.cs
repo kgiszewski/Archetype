@@ -16,8 +16,7 @@ using Umbraco.Core.Logging;
 namespace Archetype.PropertyEditors
 {
 	[PropertyEditorAsset(ClientDependencyType.Javascript, "/App_Plugins/Archetype/js/archetype.js")]
-	[PropertyEditor("Imulus.Archetype", "Archetype", "/App_Plugins/Archetype/views/archetype.html",
-		ValueType = "JSON")]
+	[PropertyEditor("Imulus.Archetype", "Archetype", "/App_Plugins/Archetype/views/archetype.html", ValueType = "JSON")]
 	public class ArchetypePropertyEditor : PropertyEditor
 	{
 		#region Pre Value Editor
