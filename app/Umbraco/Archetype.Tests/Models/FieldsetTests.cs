@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Archetype.PropertyConverters;
 using NUnit.Framework;
-using Archetype.Tests.Serialization;
+using Archetype.Tests.Serialization.UseCases;
 
 namespace Archetype.Tests.Models
 {
