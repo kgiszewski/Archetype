@@ -14,6 +14,10 @@ angular.module("umbraco.directives").directive('archetypeCustomView', function (
             scope.model.value = scope.archetype.value;
             scope.model.config = scope.archetype.config;
 
+            scope.$watch('model.value', function (newValue, oldValue) {
+                scope.archetype.value = newValue;
+            });
+
             element.html(data.data).show();
 
             $compile(element.contents())(scope);

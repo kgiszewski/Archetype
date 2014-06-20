@@ -1,11 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Archetype.Extensions;
 using Archetype.Models;
-using Newtonsoft.Json;
 using Umbraco.Core;
-using Umbraco.Core.Models;
 using Umbraco.Core.Models.PublishedContent;
 using Umbraco.Core.PropertyEditors;
 using Umbraco.Core.Services;
@@ -29,7 +24,7 @@ namespace Archetype.PropertyConverters
 
         public override object ConvertDataToSource(PublishedPropertyType propertyType, object source, bool preview)
         {
-            var defaultValue = new Models.ArchetypeModel();
+            var defaultValue = new ArchetypeModel();
 
             if (source == null)
                 return defaultValue;
@@ -39,11 +34,14 @@ namespace Archetype.PropertyConverters
             if (!sourceString.DetectIsJson())
                 return defaultValue;
 
-            var archetype = new ArchetypeHelper().DeserializeJsonToArchetype(source.ToString(),
-                (propertyType != null ? propertyType.DataTypeId : -1),
-                (propertyType != null ? propertyType.ContentType : null));
+            using (var timer = DisposableTimer.DebugDuration<ArchetypeValueConverter>(string.Format("ConvertDataToSource ({0})", propertyType.PropertyTypeAlias)))
+            {
+                var archetype = ArchetypeHelper.Instance.DeserializeJsonToArchetype(sourceString,
+                    (propertyType != null ? propertyType.DataTypeId : -1),
+                    (propertyType != null ? propertyType.ContentType : null));
 
-            return archetype;
+                return archetype;
+            }
         }
     }
 }

@@ -1,17 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Archetype.Extensions;
 using ClientDependency.Core;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Umbraco.Core;
+using Umbraco.Core.Logging;
 using Umbraco.Core.Models;
 using Umbraco.Core.Models.Editors;
 using Umbraco.Core.PropertyEditors;
 using Umbraco.Core.Services;
 using Umbraco.Web.PropertyEditors;
-using Umbraco.Core.Logging;
 
 namespace Archetype.PropertyEditors
 {
@@ -58,7 +56,7 @@ namespace Archetype.PropertyEditors
 				if (property.Value == null || property.Value.ToString() == "")
 					return string.Empty;
 
-			    var archetype = new ArchetypeHelper().DeserializeJsonToArchetype(property.Value.ToString(), propertyType.DataTypeDefinitionId);
+				var archetype = ArchetypeHelper.Instance.DeserializeJsonToArchetype(property.Value.ToString(), propertyType.DataTypeDefinitionId);
 
 				foreach (var fieldset in archetype.Fieldsets)
 				{
@@ -87,7 +85,7 @@ namespace Archetype.PropertyEditors
 				if (property.Value == null || property.Value.ToString() == "")
 					return string.Empty;
 
-			    var archetype = new ArchetypeHelper().DeserializeJsonToArchetype(property.Value.ToString(), propertyType.DataTypeDefinitionId);
+				var archetype = ArchetypeHelper.Instance.DeserializeJsonToArchetype(property.Value.ToString(), propertyType.DataTypeDefinitionId);
 
 				foreach (var fieldset in archetype.Fieldsets)
 				{
@@ -115,7 +113,7 @@ namespace Archetype.PropertyEditors
 				if (editorValue.Value == null || editorValue.Value.ToString() == "")
 					return string.Empty;
 
-				var archetype = new ArchetypeHelper().DeserializeJsonToArchetype(editorValue.Value.ToString(), editorValue.PreValues);
+				var archetype = ArchetypeHelper.Instance.DeserializeJsonToArchetype(editorValue.Value.ToString(), editorValue.PreValues);
 
 				foreach (var fieldset in archetype.Fieldsets)
 				{
