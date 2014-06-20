@@ -29,11 +29,35 @@ namespace Archetype.Models
         {
             var property = GetProperty(propertyAlias);
 
-            if (property == null || property.Value == null || string.IsNullOrEmpty(property.Value.ToString()))
-                return default(T);
+			if (IsEmptyProperty(property)) 
+			{
+				return default(T);
+			}
 
             return property.GetValue<T>();
         }
+
+		// issue 142: support default T value supplied by caller
+		// this code would look nicer if the two GetValue<T>() methods had one common implementation.
+		// however, this would require GetValue<T>(string propertyAlias) to call the common implementation
+		// with a default(T) value, which could in theory result in a performance hit, if T for some reason
+		// is costly to instantiate.
+		public T GetValue<T>(string propertyAlias, T defaultValue)
+        {
+            var property = GetProperty(propertyAlias);
+
+			if (IsEmptyProperty(property)) 
+			{
+				return defaultValue;
+			}
+
+            return property.GetValue<T>();
+        }
+
+		private bool IsEmptyProperty(ArchetypePropertyModel property) 
+		{
+			return (property == null || property.Value == null || string.IsNullOrEmpty(property.Value.ToString()));
+		}
 
         public bool HasProperty(string propertyAlias)
         {
