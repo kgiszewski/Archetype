@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using Archetype.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -13,6 +14,10 @@ namespace Archetype.Serialization
 {
     public class ArchetypeJsonConverter : JsonConverter
     {
+        private const string _ROOT_FS_ALIAS = "rootFs";
+        
+        #region public methods
+
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
             var models = GenerateModels(value);
@@ -23,13 +28,7 @@ namespace Archetype.Serialization
             if (models.Count == 1 && models[0] == null) 
                 return;
 
-            var jObj = new JObject
-            {
-                {
-                    "fieldsets", 
-                     new JArray( new JRaw(SerializeModels(models)))
-                }
-            };
+            var jObj = SerializeModelToFieldset(models);
 
             writer.WriteRaw(ApplyFormatting(jObj.ToString(), writer.Formatting));
         }
@@ -41,25 +40,268 @@ namespace Archetype.Serialization
             if (jToken == null)
                 return null;
 
-            var obj = Activator.CreateInstance(objectType);
-
-            if (null != obj as IEnumerable<object>
-                && jToken["fieldsets"] != null && jToken["fieldsets"].Any())
-            {
-                return DeserializeEnumerableObject(obj, jToken);
-            }
-
-            return null == jToken as JArray 
-                        ? DeserializeObject(obj, jToken) 
-                        : PopulateProperties(obj, jToken);
+            return DeserializeJson(objectType, GetDelintedJToken(jToken));
         }
 
         public override bool CanConvert(Type objectType)
         {
-            return IsValueArchetypeDatatype(objectType);
+            return IsTypeArchetypeDatatype(objectType);
         }
 
-        #region private methods
+        #endregion
+
+        #region private methods - deserialization
+
+        private JToken GetDelintedJToken(JToken jToken)
+        {
+            return JToken.Parse(jToken.ToString(Formatting.None).DelintArchetypeJson());
+        }
+
+        private object DeserializeJson(Type objectType, JToken jToken)
+        {
+
+            var obj = Activator.CreateInstance(objectType);
+
+            if (null != obj as IEnumerable<object>)
+            {
+                JToken enumerableToken;
+
+                if (TryParseJTokenAsEnumerable(jToken, out enumerableToken)
+                    || (jToken.SelectToken("value") != null && TryParseJTokenAsEnumerable(jToken["value"], out enumerableToken)))
+                    return DeserializeEnumerableObject(obj, enumerableToken);
+            }
+
+            return null == jToken as JArray
+                        ? DeserializeObject(obj, jToken)
+                        : PopulateProperties(obj, jToken);
+        }
+
+        private object DeserializeEnumerableObject(object obj, JToken jToken)
+        {
+            var model = obj as IEnumerable<object>;
+            var fsToken = jToken;
+
+            var itemType = model.GetType().GetGenericArguments().FirstOrDefault();
+
+            if (itemType == null)
+            {
+                itemType = model.GetType().BaseType.GetGenericArguments().First();
+                fsToken = fsToken["fieldsets"];
+            }
+
+            foreach (var fs in fsToken.Where(fs => fs["alias"].ToString().Equals(GetFieldsetName(itemType))))
+            {
+                var item = DeserializeJson(itemType, fs["properties"]);
+
+                obj.GetType().GetMethod("Add").Invoke(obj, new[] { item });
+            }
+
+            return obj;
+        }
+
+        private object DeserializeObject(object obj, JToken jToken)
+        {
+            if (jToken.SelectToken("value") != null
+                && String.IsNullOrEmpty(jToken.SelectToken("value").ToString()))
+                return obj;
+            
+            var properties = GetSerialiazableProperties(obj).ToList();
+            var asFieldset = properties.Where(HasAsFieldsetAttribute).ToList();
+
+            foreach (var propInfo in asFieldset)
+            {
+                var propAlias = GetJsonPropertyName(propInfo);
+                var fsJToken = propInfo.PropertyType.Namespace.Equals("System") 
+                                ? GetFieldsetJTokenFromAlias(propAlias, jToken)
+                                : GetFieldsetJTokenFromPropertyAlias(propInfo, jToken);
+
+                var propJToken = GetPropertyJToken(fsJToken, propAlias);
+
+                if (propJToken == null)
+                    continue;
+
+                var propValue = GetPropertyValue(propInfo, propJToken);
+
+                propInfo.SetValue(obj, propValue);
+            }
+
+            if (properties.All(HasAsFieldsetAttribute))
+                return obj;
+
+            var objToken = GetFieldsetJTokenFromTypeAlias(obj.GetType(), jToken);
+
+            if (objToken == null)
+                return obj;
+
+            if (objToken.SelectToken("properties") != null)
+                return PopulateProperties(obj, objToken["properties"]);
+
+            if ((objToken is JArray) && (objToken as JArray).Count <= 0)
+                return null;
+
+            if (!(objToken is JArray))
+                return PopulateProperties(obj, new JArray(objToken));
+
+            var defaultFsProperties = properties.Where(pInfo => !HasAsFieldsetAttribute(pInfo)).ToList();                
+
+            foreach (var property in defaultFsProperties)
+            {
+                var propJToken = ParseJTokenFromItems(objToken, GetJsonPropertyName(property));
+                PopulateProperty(obj, propJToken["properties"], property);
+            }
+
+            return PopulateProperties(obj, new JArray(objToken));
+        }
+
+        private JToken GetPropertyJToken(JToken fsJToken, string propAlias)
+        {
+            if (fsJToken == null)
+                return null;
+            
+            //make recursive
+            if (fsJToken.SelectToken("properties") != null)
+                return GetPropertyAliasJToken(propAlias, fsJToken["properties"]);
+
+            var nestedPropJToken = fsJToken
+                .SingleOrDefault(p => p.SelectToken("alias").ToString().Equals(propAlias));
+
+            return nestedPropJToken != null ? GetPropertyAliasJToken(propAlias, nestedPropJToken["properties"]) : null;
+        }
+
+        private JToken GetFieldsetJTokenFromTypeAlias(Type objType, JToken jToken)
+        {
+            var objAlias = GetFieldsetName(objType);
+            return GetFieldsetJTokenFromAlias(objAlias, jToken);
+        }
+
+        private JToken GetFieldsetJTokenFromPropertyAlias(PropertyInfo propInfo, JToken jToken)
+        {
+            var objAlias = GetJsonPropertyName(propInfo);
+            return GetFieldsetJTokenFromAlias(objAlias, jToken);
+        }
+
+        private JToken GetFieldsetJTokenFromAlias(string objAlias, JToken jToken)
+        {
+            JToken propJToken;
+
+            if (TryParseJTokenFromNamedFieldset(jToken, objAlias, out propJToken))
+                return propJToken;
+
+            if (TryParseJTokenFromNestedFieldset(jToken, objAlias, out propJToken))
+                return propJToken;
+
+            if (TryParseJTokenFromDefaultFieldset(jToken, out propJToken))
+                return propJToken;
+
+            return propJToken
+                        ?? ParseJTokenFromItem(jToken, objAlias);
+        }
+
+        private object PopulateProperties(object obj, JToken jToken)
+        {
+            var properties = GetSerialiazableProperties(obj);
+
+            foreach (var propertyInfo in properties)
+            {
+                PopulateProperty(obj, jToken, propertyInfo);
+            }
+
+            return obj;
+        }
+
+        private void PopulateProperty(object obj, JToken jToken, PropertyInfo propertyInfo)
+        {
+            var propAlias = GetJsonPropertyName(propertyInfo);
+            var propJToken = GetPropertyAliasJToken(propAlias, jToken);
+
+            if (propJToken == null)
+                return;
+
+            var propValue = GetPropertyValue(propertyInfo, propJToken);
+            propertyInfo.SetValue(obj, propValue);
+        }
+
+        private JToken GetPropertyAliasJToken(string propAlias, JToken jToken)
+        {
+            return jToken.SingleOrDefault(p => p.SelectToken("alias").ToString().Equals(propAlias));
+        }
+
+        private object GetPropertyValue(PropertyInfo propertyInfo, JToken propJToken)
+        {
+            return IsTypeArchetypeDatatype(propertyInfo.PropertyType)
+                ? DeserializeJson(propertyInfo.PropertyType, propJToken)
+                    : IsTypeIEnumerableArchetypeDatatype(propertyInfo.PropertyType)
+                    ? DeserializeJson(propertyInfo.PropertyType, propJToken["value"].SelectToken("fieldsets"))
+                : GetDeserializedPropertyValue(propJToken, propertyInfo.PropertyType);
+        }
+
+        private JToken ParseJTokenFromItem(JToken jToken, string itemAlias)
+        {
+            return (jToken.SelectToken("alias") != null && jToken["alias"].ToString().Equals(itemAlias))
+                    ? jToken
+                    : null;
+        }
+
+        private JToken ParseJTokenFromItems(JToken jToken, string itemAlias)
+        {
+            return jToken.SingleOrDefault(jT => ParseJTokenFromItem(jT, itemAlias) != null);
+        }
+
+        private bool TryParseJTokenFromNamedFieldset(JToken jToken, string objAlias, out JToken resultToken)
+        {
+            resultToken = null;
+
+            if (jToken.SelectToken("fieldsets") == null)
+                return false;
+
+            resultToken = jToken["fieldsets"].SingleOrDefault(p => p.SelectToken("alias").ToString().Equals(objAlias));
+
+            return resultToken != null;
+        }
+
+        private bool TryParseJTokenFromNestedFieldset(JToken jToken, string objAlias, out JToken resultToken)
+        {
+            resultToken = null;
+
+            if (jToken.SelectToken("value") == null || !jToken["value"].HasValues
+                                    || jToken["value"]["fieldsets"] == null)
+                return false;
+
+            resultToken = jToken["value"]["fieldsets"].SingleOrDefault(p => p.SelectToken("alias").ToString().Equals(objAlias));
+
+            return resultToken != null;
+        }
+
+        private bool TryParseJTokenFromDefaultFieldset(JToken jToken, out JToken resultToken)
+        {
+            resultToken = jToken.SelectToken("fieldsets");
+
+            return resultToken != null;
+        }
+
+        private bool TryParseJTokenAsEnumerable(JToken jToken, out JToken resultToken)
+        {
+            resultToken = null;
+            
+            //To Do: Strange newtonsoft behaviour
+            var fsToken = jToken.Parent != null
+                ? jToken.Parent.Children().First() is JArray
+                    ? jToken.Parent.Children().First()
+                    : jToken.Parent.Children().First()["fieldsets"] 
+                : jToken.SelectToken("fieldsets");
+
+            var jTokenEnumerable = jToken != null
+                && fsToken != null && fsToken is JArray;
+
+            if (jTokenEnumerable)
+                resultToken = jToken;
+
+            return jTokenEnumerable;
+        }
+
+        #endregion
+
+        #region private methods - serialization
 
         private string ApplyFormatting(string json, Formatting formatting)
         {
@@ -78,113 +320,52 @@ namespace Archetype.Serialization
             if (!PropertyLayoutHasFieldsets(properties))
                 return new List<object>() { value };
 
-            var dynamicModel = new ExpandoObject() as IDictionary<string, object>;
+            models = new List<object>();
+
+            var fieldsetModels = properties.Where(HasAsFieldsetAttribute)
+                .Select(pInfo =>
+                {
+                    var fsModel = GetDynamicModel(GetJsonPropertyName(pInfo));
+                    fsModel.Add(GetJsonPropertyName(pInfo), pInfo.GetValue(value));
+                    return fsModel;
+                });
+
+            models = ((IEnumerable<object>)models).Concat(fieldsetModels).ToList();
+
+            var remainingProps = properties.Where(pInfo => !HasAsFieldsetAttribute(pInfo)).ToList();
+
+            if (!remainingProps.Any())
+                return models;
+
+            var dynamicModel = GetDynamicModel(GetFieldsetName(value.GetType()));
 
             foreach (var pInfo in properties.Where(pInfo => !HasAsFieldsetAttribute(pInfo)))
             {
                 dynamicModel.Add(GetJsonPropertyName(pInfo), pInfo.GetValue(value));
             }
 
-            var fieldsetModels = properties.Where(HasAsFieldsetAttribute)
-                .Select(pInfo => pInfo.GetValue(value));
-
-            models = new List<object>
-            {
-                dynamicModel,                
-            };
-
-            models = ((IEnumerable<object>)models).Concat(fieldsetModels).ToList();
+            models.Add(dynamicModel);
 
             return models;
         }
 
-        private object DeserializeEnumerableObject(object obj, JToken jToken)
+        private IDictionary<string, object> GetDynamicModel(string rootFsAlias)
         {
-            var model = obj as IEnumerable<object>;
+            var dynamicModel = new ExpandoObject() as IDictionary<string, object>;
+            dynamicModel.Add(_ROOT_FS_ALIAS, rootFsAlias);
+            return dynamicModel;
+        }
 
-            var itemType = model.GetType().BaseType.GetGenericArguments().First();
-            foreach (var fs in jToken["fieldsets"].Where(fs => fs["alias"].ToString().Equals(GetFieldsetName(itemType))))
+        private JObject SerializeModelToFieldset(IEnumerable models)
+        {
+            var jObj = new JObject
             {
-                var item = JsonConvert.DeserializeObject(
-                    fs["properties"].ToString(), itemType, GetArchetypeDatatypeConverter());
-
-                obj.GetType().GetMethod("Add").Invoke(obj, new[] { item });
-            }
-
-            return obj;
-        }
-
-        private object DeserializeObject(object obj, JToken jToken)
-        {
-            var properties = GetSerialiazableProperties(obj).ToList();
-            var asFieldset = properties.Where(HasAsFieldsetAttribute).ToList();
-
-            foreach (var propInfo in asFieldset)
-            {
-                var propAlias = GetJsonPropertyName(propInfo);
-                var fsJToken = GetFieldsetProperties(propInfo.PropertyType, jToken);
-                var propJToken =
-                    fsJToken.Single(p => p.SelectToken("alias").ToString().Equals(propAlias));
-
-                if (propJToken == null)
-                    continue;
-
-                var propValue = IsValueArchetypeDatatype(propInfo.PropertyType)
-                ? JsonConvert.DeserializeObject(fsJToken.ToString(), propInfo.PropertyType,
-                    GetArchetypeDatatypeConverter())
-                : GetDeserializedPropertyValue(fsJToken, propInfo.PropertyType); ;
-
-                propInfo.SetValue(obj, propValue);
-            }
-
-            return PopulateProperties(obj, GetFieldsetProperties(obj.GetType(), jToken));
-        }
-
-        private JToken GetFieldsetProperties(Type objType, JToken jToken)
-        {
-            var objAlias = GetFieldsetName(objType);
-            return
-                jToken["fieldsets"].Single(p => p.SelectToken("alias").ToString().Equals(objAlias)).SelectToken("properties");
-        }
-
-        private object PopulateProperties(object obj, JToken jToken)
-        {
-            var properties = GetSerialiazableProperties(obj);
-
-            foreach (var propertyInfo in properties)
-            {
-                var propAlias = GetJsonPropertyName(propertyInfo);
-
-                var propJToken = jToken.SingleOrDefault(p => p.SelectToken("alias").ToString().Equals(propAlias));
-
-                if (propJToken == null)
-                    continue;
-
-                var propValue = GetPropertyValue(propertyInfo, propJToken);
-
-                propertyInfo.SetValue(obj, propValue);
-            }
-
-            return obj;
-        }
-
-        private object GetPropertyValue(PropertyInfo propertyInfo, JToken propJToken)
-        {
-            return IsValueArchetypeDatatype(propertyInfo.PropertyType)
-                ? JsonConvert.DeserializeObject(propJToken["value"].ToString(), propertyInfo.PropertyType,
-                    GetArchetypeDatatypeConverter())
-                : GetDeserializedPropertyValue(propJToken["value"], propertyInfo.PropertyType);
-        }
-
-        private bool PropertyLayoutHasFieldsets(IEnumerable<PropertyInfo> properties)
-        {
-            return properties.Any(HasAsFieldsetAttribute);
-        }
-
-        private static bool HasAsFieldsetAttribute(PropertyInfo pInfo)
-        {
-            return pInfo
-                .GetCustomAttributes(typeof(AsFieldsetAttribute), true).Length > 0;
+                {
+                    "fieldsets",
+                    new JArray(new JRaw(SerializeModels(models)))
+                }
+            };
+            return jObj;
         }
 
         private IEnumerable SerializeModels(IEnumerable models)
@@ -200,7 +381,7 @@ namespace Archetype.Serialization
                 return null;
 
             var jObj = IsExpandoObject(value) 
-                ? GetJObjectFromExpandoObject(value as IDictionary<string, object>) 
+                ? GetJObjectFromExpandoObject(value as IDictionary<string, object>)
                 : GetJObject(value);
 
             var fieldsetJson = new StringBuilder();
@@ -214,31 +395,48 @@ namespace Archetype.Serialization
             return fieldsetJson.ToString();
         }
 
+        private bool PropertyLayoutHasFieldsets(IEnumerable<PropertyInfo> properties)
+        {
+            return properties.Any(HasAsFieldsetAttribute);
+        }
+
+        private static bool HasAsFieldsetAttribute(PropertyInfo pInfo)
+        {
+            return pInfo
+                .GetCustomAttributes(typeof(AsFieldsetAttribute), true).Length > 0;
+        }
+
         private bool IsExpandoObject(object value)
         {
             return value.GetType().Name.Equals(typeof (ExpandoObject).Name);
         }
 
-        private JObject GetJObjectFromExpandoObject(IEnumerable<KeyValuePair<string, object>> obj)
+        private JObject GetJObjectFromExpandoObject(IDictionary<string, object> expandoObj)
         {
-            var property = obj.ElementAt(0);
-            var alias = property.Key;
-            var value = property.Value;
-
             var jObj = new JObject
-                {
-                    {
-                        "alias",
-                        new JValue(alias)
-                    }
-                };
-
-            var fsProperties = new List<JObject>
             {
-                new JObject {new JProperty("alias", alias), new JProperty("value", value)}
+                {
+                    "alias",
+                    new JValue(expandoObj[_ROOT_FS_ALIAS])
+                }
             };
-            jObj.Add("properties", new JRaw(JsonConvert.SerializeObject(fsProperties)));
 
+            var fsProperties = new List<JObject>();
+
+            foreach (var item in expandoObj.SkipWhile(i => i.Key.Equals(_ROOT_FS_ALIAS)))
+            {
+                var property = item;
+                var alias = property.Key;
+                var value = property.Value;
+
+                fsProperties.Add(new JObject 
+                {
+                    new JProperty("alias", alias), 
+                    new JProperty("value", value != null ? JToken.FromObject(value) : value)
+                });                
+            }
+
+            jObj.Add("properties", new JRaw(JsonConvert.SerializeObject(fsProperties)));
             return jObj;
         }
 
@@ -252,7 +450,7 @@ namespace Archetype.Serialization
                     }
                 };
 
-            var properties = GetSerialiazableProperties(obj);
+            var properties = GetProperties(obj);
 
             var fsProperties = new List<JObject>();
 
@@ -262,14 +460,12 @@ namespace Archetype.Serialization
                 var jProperty = new JProperty("alias", GetJsonPropertyName(propertyInfo));
                 fsProperty.Add(jProperty);
 
-                var propValue = propertyInfo.GetValue(obj, null);
+                var propValue = propertyInfo.GetIndexParameters().Length == 0 
+                                    ? propertyInfo.GetValue(obj, null)
+                                    : obj as string;
 
                 fsProperty.Add(
-                    new JProperty("value",
-                                  IsValueArchetypeDatatype(propValue)
-                                      ? new JRaw(JsonConvert.SerializeObject(propValue,
-                                                                             GetArchetypeDatatypeConverter()))
-                                      : new JValue(GetSerializedPropertyValue(propValue))));
+                    new JProperty("value", GetJPropertyValue(propValue)));
 
                 fsProperties.Add(fsProperty);
             }
@@ -279,11 +475,29 @@ namespace Archetype.Serialization
             return jObj;
         }
 
+        private object GetJPropertyValue(object value)
+        {
+            return IsValueArchetypeDatatype(value)
+                ? new JRaw(JsonConvert.SerializeObject(value))
+                : IsValueIEnumerableArchetypeDatatype(value)
+                    ? new JRaw(SerializeModelToFieldset(value as IEnumerable))
+                    : new JValue(GetSerializedPropertyValue(value));
+        }
+
+        private IEnumerable<PropertyInfo> GetProperties(object obj)
+        {
+            if (obj.GetType() !=  typeof(string))
+                return GetSerialiazableProperties(obj);
+
+            var indexer = ((DefaultMemberAttribute)obj.GetType()
+                .GetCustomAttributes(typeof(DefaultMemberAttribute), true)[0]).MemberName;
+
+            return new List<PropertyInfo> { obj.GetType().GetProperty(indexer) };
+        }
+
         private IEnumerable<PropertyInfo> GetSerialiazableProperties(object obj)
         {
-            return obj.GetType()
-                .GetProperties(BindingFlags.Instance | BindingFlags.Public)
-                .Where(prop => !Attribute.IsDefined(prop, typeof(JsonIgnoreAttribute)));
+            return obj.GetSerialiazableProperties();
         }
 
         private string GetJsonPropertyName(PropertyInfo property)
@@ -302,22 +516,6 @@ namespace Archetype.Serialization
             return archetypeDatatypeAttribute != null ? archetypeDatatypeAttribute.FieldsetName : type.Name;
         }
 
-        private bool IsValueArchetypeDatatype(object value)
-        {
-            return value != null &&
-                IsValueArchetypeDatatype(value.GetType());
-        }
-
-        private bool IsValueArchetypeDatatype(Type type)
-        {
-            return type.GetCustomAttributes(typeof(AsArchetypeAttribute), true).Length > 0;
-        }
-
-        private JsonConverter GetArchetypeDatatypeConverter()
-        {
-            return (JsonConverter)Activator.CreateInstance(GetType());
-        }
-
         private string GetSerializedPropertyValue(object propValue)
         {
             if (propValue == null)
@@ -330,23 +528,56 @@ namespace Archetype.Serialization
         }
 
         private object GetDeserializedPropertyValue(JToken jToken, Type type)
-        {            
-            if (String.IsNullOrEmpty(jToken.ToString()))
-                return GetDefault(type);
+        {
+            return String.IsNullOrEmpty(jToken.ToString()) 
+                        ? GetDefault(type) 
+                        : GetTypedValue(jToken, type);
+        }
 
-            var localType = Nullable.GetUnderlyingType(type) ?? type;
+        private object GetTypedValue(JToken jToken, Type type)
+        {
+            var property = JsonConvert.DeserializeObject<ArchetypePropertyModel>(jToken.ToString());
 
-            if (localType == typeof(bool))
-                return jToken.ToString() == "1";
+            var method = typeof(ArchetypePropertyModel).GetMethod("GetValue");
+            var getValue = method.MakeGenericMethod(type);
 
-            return localType == typeof(DateTime) 
-                ? Convert.ToDateTime(jToken.ToString())
-                : jToken.ToObject(localType);
+            return getValue.Invoke(property, null);
         }
 
         private object GetDefault(Type type)
         {
             return type.IsValueType ? Activator.CreateInstance(type) : null;
+        }
+
+        #endregion
+
+        #region private methods - common
+
+        private bool IsValueIEnumerableArchetypeDatatype(object value)
+        {
+            if (value as IEnumerable != null && value.GetType().IsGenericType)
+                return IsTypeArchetypeDatatype(value.GetType().GetGenericArguments()[0]);
+
+            return false;
+        }
+
+        private bool IsTypeIEnumerableArchetypeDatatype(Type type)
+        {
+            if (typeof(IEnumerable).IsAssignableFrom(type) && type.IsGenericType)
+                return IsTypeArchetypeDatatype(type.GetGenericArguments()[0]);
+
+            return false;
+        }
+
+        private bool IsValueArchetypeDatatype(object value)
+        {
+            return value != null &&
+                IsTypeArchetypeDatatype(value.GetType());
+        }
+
+        private bool IsTypeArchetypeDatatype(Type type)
+        {
+            return type.GetCustomAttributes(typeof(AsArchetypeAttribute), true).Length > 0;
         }
 
         #endregion
