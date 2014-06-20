@@ -34,7 +34,7 @@ namespace Archetype.PropertyConverters
             if (!sourceString.DetectIsJson())
                 return defaultValue;
 
-            using (var timer = DisposableTimer.DebugDuration<ArchetypeValueConverter>(string.Format("ConvertDataToSource ({0})", propertyType.PropertyTypeAlias)))
+			using (var timer = DisposableTimer.DebugDuration<ArchetypeValueConverter>(string.Format("ConvertDataToSource ({0})", propertyType != null ? propertyType.PropertyTypeAlias : "null")))
             {
                 var archetype = ArchetypeHelper.Instance.DeserializeJsonToArchetype(sourceString,
                     (propertyType != null ? propertyType.DataTypeId : -1),
