@@ -55,7 +55,8 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
         var config = null;
         var alias = configFieldsetModel.properties[scope.propertyConfigIndex].alias;
         var defaultValue = configFieldsetModel.properties[scope.propertyConfigIndex].value;
-        var umbracoPropertyAlias = scope.umbracoPropertyAlias;
+        var umbracoPropertyAlias = getUniquePropertyAlias(scope);
+        propertyAliasParts = [];
         // initialize container for invalid fieldset property identifiers (store on ngModelCtrl to separate Archetype validations, e.g. when there two Archetype properties on the same document)
         if(ngModelCtrl.invalidProperties == null) {
             ngModelCtrl.invalidProperties = [];
@@ -155,6 +156,27 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
         }
     }
 
+    var getPropertyAlias = function(currentScope) {
+        if (currentScope == null)
+            return "";
+        if (currentScope.property)
+            return currentScope.property.alias;
+    }
+
+    var propertyAliasParts = [];
+    var getUniquePropertyAlias = function (currentScope) {
+        var currentPropertyAlias = getPropertyAlias(currentScope);
+        if (currentPropertyAlias != null)
+            propertyAliasParts.push(currentPropertyAlias);
+
+        if (currentScope.$parent)
+            getUniquePropertyAlias(currentScope.$parent);
+
+        var alias = _.unique(propertyAliasParts).reverse().join("-");
+        return alias;
+    };
+
+
     function loadView(view, config, defaultValue, alias, umbracoPropertyAlias, scope, element, ngModelCtrl, validateProperty) {
         if (view)
         {
@@ -184,7 +206,7 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
                     scope.model.config = config;
 
                     //some items need an alias
-                    scope.model.alias = "archetype-property-" + umbracoPropertyAlias + "-" + scope.fieldsetIndex + "-" + scope.propertyConfigIndex;
+                    scope.model.alias = "archetype-property-" + umbracoPropertyAlias + "-" + scope.fieldsetIndex;
 
                     //watch for changes since there is no two-way binding with the local model.value
                     scope.$watch('model.value', function (newValue, oldValue) {
