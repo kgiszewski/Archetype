@@ -29,14 +29,14 @@
                 <div class="archetypeCollapser animate-hide" ng-hide="isCollapsed(fieldset)">
                     <form class="form-inline">
                         <div ng-class="[property.alias, (getPropertyValidity($parent.$index, property.alias) === false ? 'archetypePropertyError' : '')]" class="archetypeProperty control-group" ng-repeat="property in fieldsetConfigModel.properties">
-                            <label ng-hide="archetypeConfig.hidePropertyLabels == '1'" class="control-label" for="archetype-property-{{model.alias}}-{{$parent.$index}}-{{$index}}">
+                            <label ng-hide="model.config.hidePropertyLabels == '1'" class="control-label" for="archetype-property-{{model.alias}}-{{$parent.$index}}-{{$index}}">
                                 <span>{{property.label}}</span>
                                 <div class="archetypeFieldsetHelpText" ng-show="property.helpText">
                                     <small>{{property.helpText}}</small>
                                 </div>
                             </label>
 
-                            <div class="controls">
+                            <div ng-class="[(model.config.hidePropertyLabels == '1' ? 'controls-no-label' : 'controls')]">
                                 <archetype-property class="archetypeEditor" property="property" fieldset-index="$parent.$index" fieldset="fieldset" archetype-config="model.config" property-config-index="$index" archetype-render-model="model.value" umbraco-property-alias="model.alias" umbraco-form = "form"></archetype-property>
                             </div>
                         </div>
