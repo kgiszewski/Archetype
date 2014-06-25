@@ -55,7 +55,7 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
         var config = null;
         var alias = configFieldsetModel.properties[scope.propertyConfigIndex].alias;
         var defaultValue = configFieldsetModel.properties[scope.propertyConfigIndex].value;
-        var umbracoPropertyAlias = getUniquePropertyAlias(scope);
+        var propertyAlias = getUniquePropertyAlias(scope);
         propertyAliasParts = [];
         // initialize container for invalid fieldset property identifiers (store on ngModelCtrl to separate Archetype validations, e.g. when there two Archetype properties on the same document)
         if(ngModelCtrl.invalidProperties == null) {
@@ -86,7 +86,7 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
 
                 var mergedConfig = _.extend(defaultConfigObj, config);
 
-                loadView(pathToView, mergedConfig, defaultValue, alias, umbracoPropertyAlias, scope, element, ngModelCtrl, validateProperty);
+                loadView(pathToView, mergedConfig, defaultValue, alias, propertyAlias, scope, element, ngModelCtrl, validateProperty);
             });
         });
 
@@ -156,28 +156,27 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
         }
     }
 
-    var getPropertyAlias = function(currentScope) {
-        if (currentScope == null)
-            return "";
-        if (currentScope.property)
-            return currentScope.property.alias;
-    }
-
     var propertyAliasParts = [];
     var getUniquePropertyAlias = function (currentScope) {
-        var currentPropertyAlias = getPropertyAlias(currentScope);
-        if (currentPropertyAlias != null)
+        if (currentScope.hasOwnProperty('fieldsetIndex') && currentScope.hasOwnProperty('property') && currentScope.hasOwnProperty('propertyConfigIndex'))
+        {
+            var currentPropertyAlias = "f" + currentScope.fieldsetIndex + "-" + currentScope.property.alias + "-p" + currentScope.propertyConfigIndex;
             propertyAliasParts.push(currentPropertyAlias);
+        }
+        else if (currentScope.hasOwnProperty('isPreValue')) // Crappy way to identify this is the umbraco property scope
+        {
+            var umbracoPropertyAlias = currentScope.$parent.$parent.property.alias; // Crappy way to get the umbraco host alias once we identify its scope
+            propertyAliasParts.push(umbracoPropertyAlias);
+        }
 
         if (currentScope.$parent)
             getUniquePropertyAlias(currentScope.$parent);
 
-        var alias = _.unique(propertyAliasParts).reverse().join("-");
-        return alias;
+        return _.unique(propertyAliasParts).reverse().join("-");
     };
 
 
-    function loadView(view, config, defaultValue, alias, umbracoPropertyAlias, scope, element, ngModelCtrl, validateProperty) {
+    function loadView(view, config, defaultValue, alias, propertyAlias, scope, element, ngModelCtrl, validateProperty) {
         if (view)
         {
             $http.get(view).success(function (data) {
@@ -206,7 +205,7 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
                     scope.model.config = config;
 
                     //some items need an alias
-                    scope.model.alias = "archetype-property-" + umbracoPropertyAlias + "-" + scope.fieldsetIndex;
+                    scope.model.alias = "archetype-property-" + propertyAlias;
 
                     //watch for changes since there is no two-way binding with the local model.value
                     scope.$watch('model.value', function (newValue, oldValue) {
