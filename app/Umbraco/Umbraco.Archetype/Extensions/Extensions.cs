@@ -1,9 +1,13 @@
+using System;
+using System.Web;
 using System.Web.Mvc;
 using System.Web.Mvc.Html;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using Umbraco.Core;
 using Umbraco.Core.Logging;
+using Umbraco.Web;
 using Archetype.Models;
 
 namespace Archetype.Extensions
