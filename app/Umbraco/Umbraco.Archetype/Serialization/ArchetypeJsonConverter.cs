@@ -136,8 +136,11 @@ namespace Archetype.Serialization
             if (objToken.SelectToken("properties") != null)
                 return PopulateProperties(obj, objToken["properties"]);
 
-            if (!(objToken is JArray) || (objToken as JArray).Count <= 0)
+            if ((objToken is JArray) && (objToken as JArray).Count <= 0)
                 return null;
+
+            if (!(objToken is JArray))
+                return PopulateProperties(obj, new JArray(objToken));
 
             var defaultFsProperties = properties.Where(pInfo => !HasAsFieldsetAttribute(pInfo)).ToList();                
 

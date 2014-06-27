@@ -1,9 +1,5 @@
 ﻿using System.Linq;
-using Archetype.PropertyConverters;
 using Archetype.Tests.Serialization.Base;
-using Newtonsoft.Json;
-using NUnit.Framework;
-
 namespace Archetype.Tests.Serialization.UseCases.Complex
 {
     [TestFixture]
