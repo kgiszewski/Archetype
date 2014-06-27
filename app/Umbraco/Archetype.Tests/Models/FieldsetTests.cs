@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Archetype.PropertyConverters;
+using Archetype.Tests.Serialization.UseCases;
 using NUnit.Framework;
 using Archetype.Tests.Serialization;
 
