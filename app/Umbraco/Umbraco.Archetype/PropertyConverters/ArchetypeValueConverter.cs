@@ -1,3 +1,4 @@
+using System;
 using Archetype.Extensions;
 using Archetype.Models;
 using Umbraco.Core;
@@ -19,7 +20,8 @@ namespace Archetype.PropertyConverters
 
         public override bool IsConverter(PublishedPropertyType propertyType)
         {
-            return propertyType.PropertyEditorAlias.Equals(Constants.PropertyEditorAlias);
+            return !String.IsNullOrEmpty(propertyType.PropertyEditorAlias)
+                && propertyType.PropertyEditorAlias.Equals(Constants.PropertyEditorAlias);
         }
 
         public override object ConvertDataToSource(PublishedPropertyType propertyType, object source, bool preview)
