@@ -124,7 +124,7 @@ namespace Archetype.PropertyEditors
 						    var dtd = ApplicationContext.Current.Services.DataTypeService.GetDataTypeDefinitionById(Guid.Parse(propDef.DataTypeGuid));
 						    var preValues = ApplicationContext.Current.Services.DataTypeService.GetPreValuesCollectionByDataTypeId(dtd.Id);
 						    var propData = new ContentPropertyData(propDef.Value, preValues, new Dictionary<string, object>());
-						    var propEditor = PropertyEditorResolver.Current.GetByAlias(dtd.PropertyEditorAlias);
+                            var propEditor = PropertyEditorResolver.Current.GetByAlias(dtd.PropertyEditorAlias);
 						    propDef.Value = propEditor.ValueEditor.ConvertEditorToDb(propData, propDef.Value);
                         }
                         catch (Exception ex)
@@ -136,6 +136,16 @@ namespace Archetype.PropertyEditors
 
                 return archetype.SerializeForPersistence();
 			}
+
+		    internal virtual PropertyEditor GetPropertyEditor(IDataTypeDefinition dtd)
+		    {
+		        if (dtd.Id != 0) 
+                    return PropertyEditorResolver.Current.GetByAlias(dtd.PropertyEditorAlias);
+
+		        return dtd.PropertyEditorAlias.Equals(Constants.PropertyEditorAlias)
+		            ? new ArchetypePropertyEditor()
+                    : (PropertyEditor)new TextboxPropertyEditor();
+		    }
 		}
 
 		#endregion	
