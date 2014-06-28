@@ -31,5 +31,7 @@
 	"properties": "Egenskaber",
 	"labelTemplate": "Label skabelon",
 	"select": "Vælg",
-	"icon": "Ikon"
+	"icon": "Ikon",
+	"enableDisabling": "Aktivér fieldset-deaktivering?",
+	"enableDisablingDescription": "Tillad brugere at aktivere/deaktivere individuelle fieldsets."
 }
