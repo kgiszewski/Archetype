@@ -7,7 +7,7 @@
                     <div ng-click="focusFieldset(fieldset)" class="label-sub module-label">
                         <span class="caret" ng-hide="fieldset.collapse || !model.config.enableCollapsing"></span>
                         <span class="caret caret-right" ng-show="fieldset.collapse && model.config.enableCollapsing"></span>
-                        <label>
+                        <label ng-class="{dimmed: fieldset.disabled}">
                             <i class="fieldsetIcon icon ng-class:fieldsetConfigModel.icon"></i>
                             <span ng-bind="getFieldsetTitle(fieldsetConfigModel, $index)"></span>
                         </label>
@@ -23,6 +23,7 @@
                             </li>
                         </ul>
                         <i class="icon icon-remove" ng-click="removeRow($index)" ng-show="canRemove()"></i>
+                        <i class="icon icon-power" ng-class="{dimmed: fieldset.disabled}" ng-click="enableDisable(fieldset)" ng-show="canDisable()"></i>
                         <i class="icon icon-navigation handle" ng-show="canSort()"></i>
                     </div>
                 </div>
