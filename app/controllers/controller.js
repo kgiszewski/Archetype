@@ -267,6 +267,27 @@
         return (typeof property == 'undefined') ? true : property.isValid;
     }
 
+    //helper to lookup validity when given a fieldset
+    $scope.getFieldsetValidity = function (fieldset) {
+        if (fieldset.isValid == false) {
+            return false;
+        }
+
+        // recursive validation of nested fieldsets
+        var nestedFieldsetsValid = true;
+        _.each(fieldset.properties, function (property) {
+            if (property != null && property.value != null && property.propertyEditorAlias == "Imulus.Archetype") {
+                _.each(property.value.fieldsets, function (inner) {
+                    if ($scope.getFieldsetValidity(inner) == false) {
+                        nestedFieldsetsValid = false;
+                    }
+                });
+            }
+        });
+
+        return nestedFieldsetsValid;
+    }
+
     // helper to force the current form into the dirty state
     $scope.setDirty = function () {
         if($scope.form) {

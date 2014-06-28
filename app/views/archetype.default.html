@@ -2,7 +2,7 @@
     <textarea class="archetypeDeveloperModel" ng-show="model.config.developerMode" ng-model="model.value"></textarea>
     <ul ui-sortable="sortableOptions" ng-model="model.value.fieldsets" ng-show="!showAddButton()">
         <li ng-repeat="fieldset in model.value.fieldsets">
-            <fieldset ng-class="[fieldset.alias, (!fieldset.isValid ? 'archetypeFieldsetError' : '')]" ng-init="fieldsetConfigModel = getConfigFieldsetByAlias(fieldset.alias)">
+            <fieldset ng-class="[fieldset.alias, (getFieldsetValidity(fieldset) == false ? 'archetypeFieldsetError' : '')]" ng-init="fieldsetConfigModel = getConfigFieldsetByAlias(fieldset.alias)">
                 <div class="archetypeFieldsetLabel" ng-class="{enableCollapsing: model.config.enableCollapsing}">
                     <div ng-click="focusFieldset(fieldset)" class="label-sub module-label">
                         <span class="caret" ng-hide="fieldset.collapse || !model.config.enableCollapsing"></span>
