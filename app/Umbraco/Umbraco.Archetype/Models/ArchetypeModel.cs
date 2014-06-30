@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Archetype.Serialization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -39,7 +38,7 @@ namespace Archetype.Models
               .ToList()
               .ForEach(x => x.Remove());
 
-            return json.ToString(Formatting.None).DelintArchetypeJson();
+            return json.ToString(Formatting.None);//.DelintArchetypeJson();
         }
     }
 }
