@@ -87,6 +87,12 @@
         }
     }
 
+    $scope.enableDisable = function (fieldset) {
+        fieldset.disabled = !fieldset.disabled;
+        // explicitly set the form as dirty when manipulating the enabled/disabled state of a fieldset
+        $scope.setDirty();
+    }
+
     //helpers for determining if a user can do something
     $scope.canAdd = function ()
     {
@@ -110,6 +116,11 @@
     $scope.canSort = function ()
     {
         return countVisible() > 1;
+    }
+
+    //helper that returns if an item can be disabled
+    $scope.canDisable = function () {
+        return $scope.model.config.enableDisabling;
     }
 
     //helpers for determining if the add button should be shown

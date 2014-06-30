@@ -31,5 +31,7 @@
 	"properties": "Properties",
 	"labelTemplate": "Label Template",
 	"select": "Select",
-	"icon": "Icon"
+	"icon": "Icon",
+	"enableDisabling": "Enable Fieldset Disabling?",
+	"enableDisablingDescription": "Allows fieldsets to be individually enabled/disabled."
 }

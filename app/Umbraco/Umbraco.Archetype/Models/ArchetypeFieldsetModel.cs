@@ -10,6 +10,9 @@ namespace Archetype.Models
         [JsonProperty("alias")]
         public string Alias { get; set; }
 
+        [JsonProperty("disabled")]
+        public bool Disabled { get; set; }
+
         [JsonProperty("properties")]
         public IEnumerable<ArchetypePropertyModel> Properties;
 

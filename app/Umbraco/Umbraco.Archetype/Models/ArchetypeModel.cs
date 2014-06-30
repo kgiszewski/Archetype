@@ -21,7 +21,7 @@ namespace Archetype.Models
 
         public IEnumerator<ArchetypeFieldsetModel> GetEnumerator()
         {
-            return this.Fieldsets.GetEnumerator();
+            return this.Fieldsets.Where(f => f.Disabled == false).GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
