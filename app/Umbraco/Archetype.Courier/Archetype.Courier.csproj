@@ -76,20 +76,8 @@
       <HintPath>lib\Umbraco.Courier.Providers.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="umbraco.DataLayer">
-      <HintPath>..\packages\UmbracoCms.Core.7.1.2\lib\umbraco.DataLayer.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="umbraco.providers">
       <HintPath>..\packages\UmbracoCms.Core.7.1.2\lib\umbraco.providers.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Umbraco.Web.UI">
-      <HintPath>..\packages\UmbracoCms.Core.7.1.2\lib\Umbraco.Web.UI.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="umbraco.XmlSerializers">
-      <HintPath>..\packages\UmbracoCms.Core.7.1.2\lib\umbraco.XmlSerializers.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>
