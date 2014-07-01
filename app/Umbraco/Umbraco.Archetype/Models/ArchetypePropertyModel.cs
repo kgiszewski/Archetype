@@ -1,15 +1,16 @@
 using System.Collections.Generic;
 using System.Linq;
+using Archetype.Extensions;
 using Newtonsoft.Json;
 using Umbraco.Core;
-using Umbraco.Core.Models;
 using Umbraco.Core.Models.PublishedContent;
 using Umbraco.Core.PropertyEditors;
 using Umbraco.Web;
 
 namespace Archetype.Models
 {
-    public class ArchetypePropertyModel {
+    public class ArchetypePropertyModel
+    {
         [JsonProperty("alias")]
         public string Alias { get; internal set; }
 
@@ -54,7 +55,7 @@ namespace Archetype.Models
 
         private Attempt<T> TryConvertWithPropertyValueConverters<T>(object value, IEnumerable<IPropertyValueConverter> converters)
         {
-            var properyType = CreateDummyPropertyType(DataTypeId, PropertyEditorAlias);
+            var properyType = this.CreateDummyPropertyType();
 
             // In umbraco, there are default value converters that try to convert the 
             // value if all else fails. The problem is, they are also in the list of
@@ -79,15 +80,6 @@ namespace Archetype.Models
             }
 
             return Attempt<T>.Fail();
-        }
-
-        private PublishedPropertyType CreateDummyPropertyType(int dataTypeId, string propertyEditorAlias)
-        {
-            return new PublishedPropertyType(this.HostContentType,
-                new PropertyType(new DataTypeDefinition(-1, propertyEditorAlias)
-                {
-                    Id = dataTypeId
-                }));
         }
     }
 }
