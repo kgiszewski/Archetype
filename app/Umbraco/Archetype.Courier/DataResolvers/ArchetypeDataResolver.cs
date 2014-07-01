@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Archetype.Models;
+using Archetype.PropertyConverters;
 using Newtonsoft.Json;
 using Umbraco.Core;
 using Umbraco.Core.Logging;
 using Umbraco.Core.Models;
 using Umbraco.Core.Models.PublishedContent;
 using Umbraco.Courier.Core;
-using Umbraco.Courier.Core.Enums;
-using Umbraco.Courier.Core.Helpers;
 using Umbraco.Courier.DataResolvers;
 using Umbraco.Courier.ItemProviders;
 
@@ -57,7 +57,7 @@ namespace Archetype.Courier.DataResolvers
 				var prevalue = item.Prevalues[0];
 				if (prevalue.Alias.InvariantEquals(Archetype.Constants.PreValueAlias) && !string.IsNullOrWhiteSpace(prevalue.Value))
 				{
-					var config = JsonConvert.DeserializeObject<Archetype.Models.ArchetypePreValue>(prevalue.Value);
+					var config = JsonConvert.DeserializeObject<ArchetypePreValue>(prevalue.Value);
 
 					if (config != null && config.Fieldsets != null)
 					{
@@ -78,10 +78,10 @@ namespace Archetype.Courier.DataResolvers
 			{
 				// just look at the amount of dancing around we have to do in order to fake a `PublishedPropertyType`?!
 				var dataTypeId = PersistenceManager.Default.GetNodeId(propertyData.DataType, NodeObjectTypes.DataType);
-				var fakePropertyType = this.CreateFakePropertyType(dataTypeId, this.EditorAlias);
+				var fakePropertyType = this.CreateDummyPropertyType(dataTypeId, this.EditorAlias);
 
-				var converter = new Archetype.PropertyConverters.ArchetypeValueConverter();
-				var archetype = (Archetype.Models.ArchetypeModel)converter.ConvertDataToSource(fakePropertyType, propertyData.Value, false);
+				var converter = new ArchetypeValueConverter();
+				var archetype = (ArchetypeModel)converter.ConvertDataToSource(fakePropertyType, propertyData.Value, false);
 
 				if (archetype != null)
 				{
@@ -168,7 +168,7 @@ namespace Archetype.Courier.DataResolvers
 			}
 		}
 
-		private PublishedPropertyType CreateFakePropertyType(int dataTypeId, string propertyEditorAlias)
+		private PublishedPropertyType CreateDummyPropertyType(int dataTypeId, string propertyEditorAlias)
 		{
 			return new PublishedPropertyType(null, new PropertyType(new DataTypeDefinition(-1, propertyEditorAlias) { Id = dataTypeId }));
 		}
