@@ -232,7 +232,9 @@
     <Compile Include="Constants.cs" />
     <Compile Include="Events\ExpireCache.cs" />
     <Compile Include="Extensions\ArchetypeHelper.cs" />
-    <Compile Include="Extensions\Extensions.cs" />
+    <Compile Include="Extensions\HtmlHelperExtensions.cs" />
+    <Compile Include="Extensions\ArchetypePropertyModelExtensions.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Models\ArchetypeModel.cs" />
     <Compile Include="Models\ArchetypePreValue.cs" />
     <Compile Include="Models\ArchetypePreValueFieldset.cs" />

@@ -1,32 +1,14 @@
-using System;
+using System.Text;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Mvc.Html;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Collections.Generic;
-using Umbraco.Core;
-using Umbraco.Core.Logging;
-using Umbraco.Web;
 using Archetype.Models;
+using Umbraco.Core.Logging;
 
 namespace Archetype.Extensions
 {
-    public static class Extensions
+    public static class HtmlHelperExtensions
     {
-        //lifted from the core as it is marked 'internal'
-        public static bool DetectIsJson(this string input)
-        {
-            input = input.Trim();
-            return input.StartsWith("{") && input.EndsWith("}")
-                   || input.StartsWith("[") && input.EndsWith("]");
-        }
-
-        public static bool IsArchetype(this ArchetypePropertyModel prop)
-        {
-            return prop.PropertyEditorAlias.InvariantEquals(Constants.PropertyEditorAlias);
-        }
-
         public static IHtmlString RenderArchetypePartials(this HtmlHelper htmlHelper, ArchetypeModel archetypeModel)
         {
             return RenderPartials(htmlHelper, archetypeModel, null, null);
@@ -44,10 +26,10 @@ namespace Archetype.Extensions
 
         public static IHtmlString RenderArchetypePartials(this HtmlHelper htmlHelper, ArchetypeModel archetypeModel, string partialPath, ViewDataDictionary viewDataDictionary)
         {
-            return RenderPartials(htmlHelper, archetypeModel, partialPath, viewDataDictionary);
+            return htmlHelper.RenderPartials(archetypeModel, partialPath, viewDataDictionary);
         }
 
-        private static IHtmlString RenderPartials(HtmlHelper htmlHelper, ArchetypeModel archetypeModel, string partialPath, ViewDataDictionary viewDataDictionary)
+        private static IHtmlString RenderPartials(this HtmlHelper htmlHelper, ArchetypeModel archetypeModel, string partialPath, ViewDataDictionary viewDataDictionary)
         {
             var context = HttpContext.Current;
 
@@ -57,7 +39,7 @@ namespace Archetype.Extensions
             }
 
             var sb = new StringBuilder();
-            
+
             var pathToPartials = "~/Views/Partials/Archetype/";
             if (!string.IsNullOrEmpty(partialPath))
             {
