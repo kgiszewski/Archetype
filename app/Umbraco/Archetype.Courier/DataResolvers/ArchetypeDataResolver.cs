@@ -119,33 +119,24 @@ namespace Archetype.Courier.DataResolvers
 							}
 							catch (Exception ex)
 							{
-								LogHelper.Error<ArchetypeDataResolver>(string.Concat("Error resolving data value: ", fakeItem.Name), ex);
+								LogHelper.Error<ArchetypeDataResolver>(string.Concat("Error packaging data value: ", fakeItem.Name), ex);
 							}
 
 							// pass up the dependencies and resources
 							item.Dependencies.AddRange(fakeItem.Dependencies);
 							item.Resources.AddRange(fakeItem.Resources);
-
-							if (fakeItem.Data != null && fakeItem.Data.Any())
-							{
-								var firstDataType = fakeItem.Data.FirstOrDefault();
-								if (firstDataType != null)
-								{
-									// add a dependency for the property's data-type
-									property.DataTypeGuid = firstDataType.ToString();
-									item.Dependencies.Add(property.DataTypeGuid, ProviderIDCollection.dataTypeItemProviderGuid);
-								}
-							}
 						}
 						else if (direction == Direction.Extracting)
 						{
-							// run the 'fake' item through Courier's data resolvers
-							ResolutionManager.Instance.ExtractingItem(fakeItem, fakeItemProvider);
-
-							// resolve the property's data-type Id
-							int identifier;
-							if (int.TryParse(Dependencies.ConvertIdentifier(property.DataTypeGuid, IdentifierReplaceDirection.FromGuidToNodeId), out identifier))
-								property.DataTypeId = dataTypeId;
+							try
+							{
+								// run the 'fake' item through Courier's data resolvers
+								ResolutionManager.Instance.ExtractingItem(fakeItem, fakeItemProvider);
+							}
+							catch (Exception ex)
+							{
+								LogHelper.Error<ArchetypeDataResolver>(string.Concat("Error extracting data value: ", fakeItem.Name), ex);
+							}
 						}
 
 						if (fakeItem.Data != null && fakeItem.Data.Any())
@@ -155,6 +146,10 @@ namespace Archetype.Courier.DataResolvers
 							{
 								// set the resolved property data value
 								property.Value = firstDataType.Value;
+
+								// (if packaging) add a dependency for the property's data-type
+								if (direction == Direction.Packaging)
+									item.Dependencies.Add(firstDataType.DataType.ToString(), ProviderIDCollection.dataTypeItemProviderGuid);
 							}
 						}
 					}
@@ -167,7 +162,7 @@ namespace Archetype.Courier.DataResolvers
 					else
 					{
 						// if the Archetype is the root/container, then we can serialize it to a string
-						propertyData.Value = JsonConvert.SerializeObject(archetype, Formatting.None);
+						propertyData.Value = archetype.SerializeForPersistence();
 					}
 				}
 			}
