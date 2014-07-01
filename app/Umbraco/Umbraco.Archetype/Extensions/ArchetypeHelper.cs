@@ -26,11 +26,11 @@ namespace Archetype.Extensions
             _app = ApplicationContext.Current;
         }
 
-        internal Models.ArchetypeModel DeserializeJsonToArchetype(string sourceJson, PreValueCollection dataTypePreValues)
+        internal ArchetypeModel DeserializeJsonToArchetype(string sourceJson, PreValueCollection dataTypePreValues)
         {
             try
             {
-                var archetype = JsonConvert.DeserializeObject<Models.ArchetypeModel>(sourceJson, _jsonSettings);
+                var archetype = JsonConvert.DeserializeObject<ArchetypeModel>(sourceJson, _jsonSettings);
 
                 try
                 {
@@ -46,15 +46,15 @@ namespace Archetype.Extensions
             }
             catch
             {
-                return new Models.ArchetypeModel();
+                return new ArchetypeModel();
             }
         }
 
-        internal Models.ArchetypeModel DeserializeJsonToArchetype(string sourceJson, int dataTypeId, PublishedContentType hostContentType = null)
+        internal ArchetypeModel DeserializeJsonToArchetype(string sourceJson, int dataTypeId, PublishedContentType hostContentType = null)
         {
             try
             {
-                var archetype = JsonConvert.DeserializeObject<Models.ArchetypeModel>(sourceJson, _jsonSettings);
+                var archetype = JsonConvert.DeserializeObject<ArchetypeModel>(sourceJson, _jsonSettings);
 
                 try
                 {
@@ -70,7 +70,7 @@ namespace Archetype.Extensions
             }
             catch
             {
-                return new Models.ArchetypeModel();
+                return new ArchetypeModel();
             }
         }
 
@@ -113,7 +113,7 @@ namespace Archetype.Extensions
         /// </summary>
         /// <param name="archetype">The Archetype to add the additional metadata to</param>
         /// <param name="preValue">The configuration of the Archetype</param>
-        private void RetrieveAdditionalProperties(ref Models.ArchetypeModel archetype, ArchetypePreValue preValue, PublishedContentType hostContentType = null)
+        private void RetrieveAdditionalProperties(ref ArchetypeModel archetype, ArchetypePreValue preValue, PublishedContentType hostContentType = null)
         {
             foreach (var fieldset in preValue.Fieldsets)
             {
@@ -140,7 +140,7 @@ namespace Archetype.Extensions
         /// </summary>
         /// <param name="archetype">The Archetype to add the additional metadata to</param>
         /// <param name="preValue">The configuration of the Archetype</param>
-        private void RetrieveAdditionalProperties(ref Models.ArchetypePreValue preValue)
+        private void RetrieveAdditionalProperties(ref ArchetypePreValue preValue)
         {
             foreach (var fieldset in preValue.Fieldsets)
             {
