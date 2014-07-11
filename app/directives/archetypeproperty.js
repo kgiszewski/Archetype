@@ -129,25 +129,23 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
             }
 
             // handle nested fieldset validation by storing the identifier of all invalid fieldset properties 
-            var fieldsetIdentifier = scope.umbracoPropertyAlias + "_" + scope.fieldsetIndex;
-            var propertyIdentifier = fieldsetIdentifier + "_" + property.alias;
-            var propertyIdentifierIndex = ngModelCtrl.invalidProperties.indexOf(propertyIdentifier);
+            var propertyAliasIndex = ngModelCtrl.invalidProperties.indexOf(propertyAlias);
             if (valid == false) {
-                if (propertyIdentifierIndex == -1) {
-                    ngModelCtrl.invalidProperties.push(propertyIdentifier);
+                if (propertyAliasIndex == -1) {
+                    ngModelCtrl.invalidProperties.push(propertyAlias);
                 }
             }
             else {
-                if (propertyIdentifierIndex != -1) {
-                    ngModelCtrl.invalidProperties.splice(propertyIdentifierIndex, 1);
+                if (propertyAliasIndex != -1) {
+                    ngModelCtrl.invalidProperties.splice(propertyAliasIndex, 1);
                 }
             }
             
             if (markAsInvalid) {
                 // mark the entire fieldset as invalid if there are any invalid properties in the fieldset, otherwise mark it as valid
                 fieldset.isValid =
-                    _.find(ngModelCtrl.invalidProperties, function (item) {
-                        return item.indexOf(fieldsetIdentifier) == 0
+                    _.find(fieldset.properties, function (property) {
+                        return property.isValid == false
                     }) == null;
             }
 
