@@ -154,16 +154,8 @@ namespace Archetype.Courier.DataResolvers
 						}
 					}
 
-					if (item.Name.Contains(string.Concat(this.EditorAlias, ": Nested")))
-					{
-						// if the Archetype is nested, then we only want to return the object itself - not a serialized string
-						propertyData.Value = archetype;
-					}
-					else
-					{
-						// if the Archetype is the root/container, then we can serialize it to a string
-						propertyData.Value = archetype.SerializeForPersistence();
-					}
+					// serialize the Archetype back to a string
+					propertyData.Value = archetype.SerializeForPersistence();
 				}
 			}
 		}
