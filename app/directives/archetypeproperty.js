@@ -1,4 +1,4 @@
-angular.module("umbraco.directives").directive('archetypeProperty', function ($compile, $http, archetypePropertyEditorResource, umbPropEditorHelper, $timeout, $rootScope, $q) {
+angular.module("umbraco.directives").directive('archetypeProperty', function ($compile, $http, archetypePropertyEditorResource, umbPropEditorHelper, $timeout, $rootScope, $q, editorState) {
 
     function getFieldsetByAlias(fieldsets, alias)
     {
@@ -66,7 +66,7 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
         defaultValue = jsonOrString(defaultValue, scope.archetypeConfig.developerMode, "defaultValue");
 
         //grab info for the selected datatype, prepare for view
-        archetypePropertyEditorResource.getDataType(dataTypeGuid).then(function (data) {
+        archetypePropertyEditorResource.getDataType(dataTypeGuid, editorState.current.contentTypeAlias, scope.propertyEditorAlias, alias).then(function (data) {
             //transform preValues array into object expected by propertyeditor views
             var configObj = {};
             _.each(data.preValues, function(p) {
@@ -235,6 +235,7 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
         scope: {
             property: '=',
             propertyConfigIndex: '=',
+            propertyEditorAlias: '=',
             archetypeConfig: '=',
             fieldset: '=',
             fieldsetIndex: '=',
