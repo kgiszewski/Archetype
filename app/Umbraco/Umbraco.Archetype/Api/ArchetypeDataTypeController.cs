@@ -28,7 +28,7 @@ namespace Archetype.Api
             return dataTypes.Select(t => new { guid = t.Key, name = t.Name });
         }
 
-        public object GetByGuid(Guid guid, string contentTypeAlias, string propertyTypeAlias, string archetypeAlias)
+        public object GetByGuid(Guid guid, string contentTypeAlias, string propertyTypeAlias, string archetypeAlias, int nodeId)
         {
             var dataType = Services.DataTypeService.GetDataTypeDefinitionById(guid);
             if (dataType == null)
@@ -36,7 +36,7 @@ namespace Archetype.Api
                 throw new HttpResponseException(HttpStatusCode.NotFound);
             }
             var dataTypeDisplay = Mapper.Map<IDataTypeDefinition, DataTypeDisplay>(dataType);
-            return new { selectedEditor = dataTypeDisplay.SelectedEditor, preValues = dataTypeDisplay.PreValues, contentTypeAlias = contentTypeAlias, propertyTypeAlias = propertyTypeAlias, archetypeAlias = archetypeAlias };
+            return new { selectedEditor = dataTypeDisplay.SelectedEditor, preValues = dataTypeDisplay.PreValues, contentTypeAlias = contentTypeAlias, propertyTypeAlias = propertyTypeAlias, archetypeAlias = archetypeAlias, nodeId = nodeId };
         }
     }
 }
