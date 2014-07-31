@@ -66,7 +66,7 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
         defaultValue = jsonOrString(defaultValue, scope.archetypeConfig.developerMode, "defaultValue");
 
         //grab info for the selected datatype, prepare for view
-        archetypePropertyEditorResource.getDataType(dataTypeGuid, editorState.current.contentTypeAlias, scope.propertyEditorAlias, alias).then(function (data) {
+        archetypePropertyEditorResource.getDataType(dataTypeGuid, editorState.current.contentTypeAlias, scope.propertyEditorAlias, alias, editorState.current.id).then(function (data) {
             //transform preValues array into object expected by propertyeditor views
             var configObj = {};
             _.each(data.preValues, function(p) {
