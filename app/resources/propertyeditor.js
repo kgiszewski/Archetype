@@ -6,9 +6,9 @@ angular.module('umbraco.resources').factory('archetypePropertyEditorResource', f
                 $http.get("/umbraco/backoffice/ArchetypeApi/ArchetypeDataType/GetAll"), 'Failed to retrieve datatypes from tree service'
             );
         },
-        getDataType: function (guid, contentTypeAlias, propertyTypeAlias, archetypeAlias) {
+        getDataType: function (guid, contentTypeAlias, propertyTypeAlias, archetypeAlias, nodeId) {
         	return umbRequestHelper.resourcePromise(
-        		$http.get("/umbraco/backoffice/ArchetypeApi/ArchetypeDataType/GetByGuid?guid=" + guid + "&contentTypeAlias=" + contentTypeAlias + "&propertyTypeAlias=" + propertyTypeAlias + "&archetypeAlias=" + archetypeAlias), 'Failed to retrieve datatype'
+        		$http.get("/umbraco/backoffice/ArchetypeApi/ArchetypeDataType/GetByGuid?guid=" + guid + "&contentTypeAlias=" + contentTypeAlias + "&propertyTypeAlias=" + propertyTypeAlias + "&archetypeAlias=" + archetypeAlias + "&nodeId=" + nodeId), 'Failed to retrieve datatype'
     		);
         },
         getPropertyEditorMapping: function(alias) {
