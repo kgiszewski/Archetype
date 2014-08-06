@@ -73,6 +73,13 @@ namespace Archetype.Models
                 if (value2 is T)
                     return Attempt<T>.Succeed((T)value2);
 
+                // If ConvertDataToSource failed try ConvertSourceToObject.
+                var value3 = converter.ConvertSourceToObject(properyType, value, false);
+
+                // If the value is of type T, just return it
+                if (value3 is T)
+                    return Attempt<T>.Succeed((T)value3);
+
                 // Value is not final value type, so try a regular type conversion aswell
                 var convertAttempt = value2.TryConvertTo<T>();
                 if (convertAttempt.Success)
