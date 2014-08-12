@@ -1,4 +1,4 @@
-﻿angular.module("umbraco").controller("Imulus.ArchetypeController", function ($scope, $http, assetsService, angularHelper, notificationsService, $timeout) {
+﻿angular.module("umbraco").controller("Imulus.ArchetypeController", function ($scope, $http, assetsService, angularHelper, notificationsService, $timeout, entityResource) {
 
     //$scope.model.value = "";
     $scope.model.hideLabel = $scope.model.config.hideLabel == 1;
@@ -14,6 +14,8 @@
 
     // store the umbraco property alias to help generate unique IDs.  Hopefully there's a better way to get this in the future :)
     $scope.umbracoHostPropertyAlias = $scope.$parent.$parent.model.alias;
+
+
 
     init();
 
@@ -33,13 +35,43 @@
         var parsedTemplate = template;
 
         while ((results = rgx.exec(template)) !== null) {
-            var propertyAlias = results[1];
-            var propertyValue = $scope.getPropertyValueByAlias(fieldset, propertyAlias);
-            parsedTemplate = parsedTemplate.replace(results[0], propertyValue);
+            var propertyAlias = "";
+
+            //test for function
+            var beginIndexOf = results[1].indexOf("(");
+            var endIndexOf = results[1].indexOf(")");
+
+            if(beginIndexOf != -1 && endIndexOf != -1)
+            {
+                var functionName = results[1].substring(0, beginIndexOf);
+                propertyAlias = results[1].substring(beginIndexOf + 1, endIndexOf);
+                parsedTemplate = parsedTemplate.replace(results[0], executeFunctionByName(functionName, window, $scope, entityResource, $scope.getPropertyValueByAlias(fieldset, propertyAlias)));
+            }
+            else {
+                propertyAlias = results[1];
+                parsedTemplate = parsedTemplate.replace(results[0], $scope.getPropertyValueByAlias(fieldset, propertyAlias));
+            }
         }
 
         return parsedTemplate;
     };
+
+    function executeFunctionByName(functionName, context) {
+        var args = Array.prototype.slice.call(arguments).splice(2);
+
+        var namespaces = functionName.split(".");
+        var func = namespaces.pop();
+
+        for(var i = 0; i < namespaces.length; i++) {
+            context = context[namespaces[i]];
+        }
+
+        if(context && context[func]) {
+            return context[func].apply(this, args);
+        }
+
+        return "";
+    }
 
     //sort config
     $scope.sortableOptions = {
