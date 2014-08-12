@@ -177,7 +177,7 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
     function loadView(view, config, defaultValue, alias, propertyAlias, scope, element, ngModelCtrl, validateProperty) {
         if (view)
         {
-            $http.get(view).success(function (data) {
+            $http.get(view, { cache: true }).success(function (data) {
                 if (data) {
                     if (scope.archetypeConfig.developerMode == '1')
                     {

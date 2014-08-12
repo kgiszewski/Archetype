@@ -15,8 +15,6 @@
     // store the umbraco property alias to help generate unique IDs.  Hopefully there's a better way to get this in the future :)
     $scope.umbracoHostPropertyAlias = $scope.$parent.$parent.model.alias;
 
-
-
     init();
 
     //helper to get $eval the labelTemplate

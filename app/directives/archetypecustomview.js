@@ -6,7 +6,7 @@ angular.module("umbraco.directives").directive('archetypeCustomView', function (
             view = config.customViewPath;
         }
 
-        $http.get(view).then(function(data) {
+        $http.get(view, { cache: true }).then(function(data) {
 
             element.html(data.data).show();
 
