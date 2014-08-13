@@ -17,6 +17,11 @@
 
     init();
 
+    //hold references to helper resources
+    $scope.resources = {
+        entityResource: entityResource
+    }
+
     //helper to get $eval the labelTemplate
     $scope.getFieldsetTitle = function(fieldsetConfigModel, fieldsetIndex) {
         if(!fieldsetConfigModel)
@@ -43,7 +48,7 @@
             {
                 var functionName = results[1].substring(0, beginIndexOf);
                 propertyAlias = results[1].substring(beginIndexOf + 1, endIndexOf);
-                parsedTemplate = parsedTemplate.replace(results[0], executeFunctionByName(functionName, window, $scope, entityResource, $scope.getPropertyValueByAlias(fieldset, propertyAlias)));
+                parsedTemplate = parsedTemplate.replace(results[0], executeFunctionByName(functionName, window, $scope, $scope.getPropertyValueByAlias(fieldset, propertyAlias)));
             }
             else {
                 propertyAlias = results[1];

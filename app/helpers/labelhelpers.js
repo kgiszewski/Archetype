@@ -1,9 +1,9 @@
 var ArchetypeLabels = (function() {
 
-    var isLoading = false;
+    var isEntityLookupLoading = false;
     var entityNameLookupCache = [];
 
-    function getEntityById($scope, entityResource, id, type) {
+    function getEntityById(scope, id, type) {
 
         for (var i in entityNameLookupCache) {
             if (entityNameLookupCache[i].id == id) {
@@ -11,14 +11,13 @@ var ArchetypeLabels = (function() {
             }
         }
 
+        if (!isEntityLookupLoading) {
+            isEntityLookupLoading = true;
 
-        if (!isLoading) {
-            isLoading = true;
-
-            entityResource.getById(id, type).then(function(entity) {
+            scope.resources.entityResource.getById(id, type).then(function(entity) {
                 entityNameLookupCache.push({id: id, value: entity.name});
 
-                isLoading = false;
+                isEntityLookupLoading = false;
                 return entity.name;
             });
         }
@@ -27,12 +26,12 @@ var ArchetypeLabels = (function() {
     }
 
     return {
-        GetFirstDocumentEntityName: function ($scope, entityResource, value) {
+        GetFirstDocumentEntityName: function ($scope, value) {
             if (value) {
                 var id = value.split(",")[0];
 
                 if (id) {
-                    return getEntityById($scope, entityResource, id, "Document");
+                    return getEntityById($scope, id, "Document");
                 }
             }
 
