@@ -173,7 +173,6 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
         return _.unique(propertyAliasParts).reverse().join("-");
     };
 
-
     function loadView(view, config, defaultValue, alias, propertyAlias, scope, element, ngModelCtrl, validateProperty) {
         if (view)
         {
