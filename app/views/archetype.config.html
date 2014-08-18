@@ -134,6 +134,10 @@
             <input type="text" id="archetypeAdvancedOptionsCustomView" ng-model="archetypeConfigRenderModel.customViewPath"/>
         </div>
         <div>
+            <label for="archetypeAdvancedOptionsDeepDatatypeRequest"><archetype-localize key="deepDatatypeRequest">Enable Deep Datatype Requests</archetype-localize><small><archetype-localize key="deepDatatypeRequestDescription">Allows for easier datatype interception at the cost of caching performance.</archetype-localize></small></label>
+            <input type="checkbox" id="archetypeAdvancedOptionsDeepDatatypeRequest" ng-model="archetypeConfigRenderModel.enableDeepDatatypeRequests"/>
+        </div>
+        <div>
             <label for="archetypeAdvancedOptionsDeveloperMode"><archetype-localize key="toggleDeveloperMode">Toggle Developer Mode</archetype-localize><small><archetype-localize key="toggleDeveloperModeDescription">Toggle Developer Mode</archetype-localize></small></label>
             <input type="checkbox" id="archetypeAdvancedOptionsDeveloperMode" ng-model="archetypeConfigRenderModel.developerMode"/>
         </div>

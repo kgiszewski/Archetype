@@ -50,6 +50,9 @@ namespace Archetype.Models
         [JsonProperty("customViewPath")]
         public string CustomViewPath { get; set; }
 
+        [JsonProperty("enableDeepDatatypeRequests")]
+        public bool EnableDeepDatatypeRequests { get; set; }
+        
         [JsonProperty("developerMode")]
         public bool DeveloperMode { get; set; }
     }

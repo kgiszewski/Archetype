@@ -28,6 +28,17 @@ namespace Archetype.Api
             return dataTypes.Select(t => new { guid = t.Key, name = t.Name });
         }
 
+        public object GetByGuid(Guid guid)
+        {
+            var dataType = Services.DataTypeService.GetDataTypeDefinitionById(guid);
+            if (dataType == null)
+            {
+                throw new HttpResponseException(HttpStatusCode.NotFound);
+            }
+            var dataTypeDisplay = Mapper.Map<IDataTypeDefinition, DataTypeDisplay>(dataType);
+            return new { selectedEditor = dataTypeDisplay.SelectedEditor, preValues = dataTypeDisplay.PreValues };
+        }
+
         public object GetByGuid(Guid guid, string contentTypeAlias, string propertyTypeAlias, string archetypeAlias, int nodeId)
         {
             var dataType = Services.DataTypeService.GetDataTypeDefinitionById(guid);
