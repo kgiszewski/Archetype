@@ -3,7 +3,7 @@ angular.module("umbraco.directives").directive('archetypeCustomView', function (
 
         var view = "/App_plugins/Archetype/views/archetype.default.html";
         if(scope.model.config.customViewPath) {
-            view = config.customViewPath;
+            view = scope.model.config.customViewPath;
         }
 
         $http.get(view, { cache: true }).then(function(data) {
