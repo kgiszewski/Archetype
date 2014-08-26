@@ -113,21 +113,51 @@
                     color: #d9d9d9;
                 }
             }
+
+            .archetypeEditorControls {
+                float: none;
+                position: absolute;
+                right: 15px;
+                top: 0;
+            }
         }
 
-        .archetypeEditorControls {
-            float: none;
-            position: absolute;
-            right: 15px;
-            top: 0;
+        .archetypePropertyError {
+            margin-bottom: 5px;
+            padding-top: 3px;
+            padding-bottom: 3px;
+
+            label {
+
+                span {
+                    color: #b94a48;
+                    font-weight: bold;
+                }
+            }
         }
-    }
 
-    form {
-        margin-left:20px;
+        .archetypeCollapser {
+            clear: both;
+            height: 100%;
+            padding-top: 12px;
+            background-color: #fff;
+            border-top: 1px solid silver;
+            border-radius: 0 0 0 5px;
+            overflow: hidden;
 
-        .control-label {
-            padding-top: 0 !important;
+            form {
+                margin-left:20px;
+
+                .control-label {
+                    padding-top: 0 !important;
+                }
+            }
+
+            .archetypeFieldsetHelpText {
+                clear:both;
+                margin-bottom: 3px;
+                font-size: 12px;
+            }
         }
     }
 
@@ -140,28 +170,8 @@
         border: 1px solid red;
     }
 
-    .archetypeFieldsetHelpText {
-        clear:both;
-        margin-bottom: 3px;
-        font-size: 12px;
-    }
-
     .archetypeFieldsetError {
         border: 1px solid #b94a48;
-    }
-    
-    .archetypePropertyError {
-        margin-bottom: 5px;
-        padding-top: 3px;
-        padding-bottom: 3px;
-
-        label {
-
-            span {
-                color: #b94a48;
-                font-weight: bold;
-            }
-        }
     }
 
     .archetypeAddButton:hover {
@@ -172,21 +182,11 @@
         }
     }
 
-    .archetypeCollapser {
-        clear: both;
-        height: 100%;
-        padding-top: 12px;
-        background-color: #fff;
-        border-top: 1px solid silver;
-        border-radius: 0 0 0 5px;
-        overflow: hidden;
-    }
-
-    .multiPropertyTextbox{
+    .multiPropertyTextbox {
         margin-bottom: 3px;
     }
 
-    ul{
+    ul {
         list-style: none;
         margin-left: 0;
     }
