@@ -232,6 +232,7 @@
     <Compile Include="Constants.cs" />
     <Compile Include="Events\ExpireCache.cs" />
     <Compile Include="Extensions\ArchetypeHelper.cs" />
+    <Compile Include="Extensions\EnumerableExtensions.cs" />
     <Compile Include="Extensions\HtmlHelperExtensions.cs" />
     <Compile Include="Extensions\ArchetypePropertyModelExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
