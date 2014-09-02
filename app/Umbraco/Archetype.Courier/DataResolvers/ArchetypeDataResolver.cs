@@ -86,7 +86,7 @@ namespace Archetype.Courier.DataResolvers
 				if (archetype != null)
 				{
 					// create a 'fake' provider, as ultimately only the 'Packaging' enum will be referenced.
-					var fakeItemProvider = new PropertyItemProvider();
+					var fakeItemProvider = new PropertyItemProvider() { ExecutionContext = this.ExecutionContext };
 
 					foreach (var property in archetype.Fieldsets.SelectMany(x => x.Properties))
 					{
