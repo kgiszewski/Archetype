@@ -77,7 +77,7 @@ namespace Archetype.Courier.DataResolvers
 			if (propertyData != null && propertyData.Value != null)
 			{
 				// just look at the amount of dancing around we have to do in order to fake a `PublishedPropertyType`?!
-				var dataTypeId = PersistenceManager.Default.GetNodeId(propertyData.DataType, NodeObjectTypes.DataType);
+				var dataTypeId = ExecutionContext.DatabasePersistence.GetNodeId(propertyData.DataType, NodeObjectTypes.DataType);
 				var fakePropertyType = this.CreateDummyPropertyType(dataTypeId, this.EditorAlias);
 
 				var converter = new ArchetypeValueConverter();
@@ -103,7 +103,7 @@ namespace Archetype.Courier.DataResolvers
 								new ContentProperty
 								{
 									Alias = property.Alias,
-									DataType = PersistenceManager.Default.GetUniqueId(property.DataTypeId, NodeObjectTypes.DataType),
+									DataType = ExecutionContext.DatabasePersistence.GetUniqueId(property.DataTypeId, NodeObjectTypes.DataType),
 									PropertyEditorAlias = property.PropertyEditorAlias,
 									Value = property.Value
 								}
