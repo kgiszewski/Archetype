@@ -9,6 +9,7 @@ using Umbraco.Core.Logging;
 using Umbraco.Core.Models;
 using Umbraco.Core.Models.PublishedContent;
 using Umbraco.Courier.Core;
+using Umbraco.Courier.Core.ProviderModel;
 using Umbraco.Courier.DataResolvers;
 using Umbraco.Courier.ItemProviders;
 
@@ -32,7 +33,7 @@ namespace Archetype.Courier.DataResolvers
 
 		public override void ExtractingDataType(DataType item)
 		{
-			// No longer need to extract the DataType (int) Ids as they now reference the Guid [LK]
+			// No longer need to extract the DataType (int) Ids as Archetype now references the Guid [LK]
 		}
 
 		public override void ExtractingProperty(Item item, ContentProperty propertyData)
@@ -76,7 +77,6 @@ namespace Archetype.Courier.DataResolvers
 		{
 			if (propertyData != null && propertyData.Value != null)
 			{
-				// just look at the amount of dancing around we have to do in order to fake a `PublishedPropertyType`?!
 				var dataTypeId = ExecutionContext.DatabasePersistence.GetNodeId(propertyData.DataType, NodeObjectTypes.DataType);
 				var fakePropertyType = this.CreateDummyPropertyType(dataTypeId, this.EditorAlias);
 
@@ -85,8 +85,8 @@ namespace Archetype.Courier.DataResolvers
 
 				if (archetype != null)
 				{
-					// create a 'fake' provider, as ultimately only the 'Packaging' enum will be referenced.
-					var fakeItemProvider = new PropertyItemProvider() { ExecutionContext = this.ExecutionContext };
+					// get the `PropertyItemProvider` from the collection.
+					var propertyItemProvider = ItemProviderCollection.Instance.GetProvider(ProviderIDCollection.propertyDataItemProviderGuid, this.ExecutionContext);
 
 					foreach (var property in archetype.Fieldsets.SelectMany(x => x.Properties))
 					{
@@ -115,7 +115,7 @@ namespace Archetype.Courier.DataResolvers
 							try
 							{
 								// run the 'fake' item through Courier's data resolvers
-								ResolutionManager.Instance.PackagingItem(fakeItem, fakeItemProvider);
+								ResolutionManager.Instance.PackagingItem(fakeItem, propertyItemProvider);
 							}
 							catch (Exception ex)
 							{
@@ -131,7 +131,7 @@ namespace Archetype.Courier.DataResolvers
 							try
 							{
 								// run the 'fake' item through Courier's data resolvers
-								ResolutionManager.Instance.ExtractingItem(fakeItem, fakeItemProvider);
+								ResolutionManager.Instance.ExtractingItem(fakeItem, propertyItemProvider);
 							}
 							catch (Exception ex)
 							{
