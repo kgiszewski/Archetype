@@ -28,9 +28,9 @@ namespace Archetype.Models
             return this.GetEnumerator();
         }
 
-        internal string SerializeForPersistence()
+        public string SerializeForPersistence()
         {
-            var json = JObject.Parse(JsonConvert.SerializeObject(this));
+            var json = JObject.Parse(JsonConvert.SerializeObject(this, new JsonSerializerSettings() { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
             var propertiesToRemove = new String[] { "propertyEditorAlias", "dataTypeId", "dataTypeGuid", "hostContentType" };
 
             json.Descendants().OfType<JProperty>()
@@ -38,7 +38,7 @@ namespace Archetype.Models
               .ToList()
               .ForEach(x => x.Remove());
 
-            return json.ToString(Formatting.None);//.DelintArchetypeJson();
+            return json.ToString(Formatting.None);
         }
     }
 }
