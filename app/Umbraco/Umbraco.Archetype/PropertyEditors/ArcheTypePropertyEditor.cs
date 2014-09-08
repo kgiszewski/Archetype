@@ -14,7 +14,7 @@ using Umbraco.Web.PropertyEditors;
 namespace Archetype.PropertyEditors
 {
 	[PropertyEditorAsset(ClientDependencyType.Javascript, "/App_Plugins/Archetype/js/archetype.js")]
-	[PropertyEditor("Imulus.Archetype", "Archetype", "/App_Plugins/Archetype/views/archetype.html", ValueType = "JSON")]
+	[PropertyEditor(Constants.PropertyEditorAlias, "Archetype", "/App_Plugins/Archetype/views/archetype.html", ValueType = "JSON")]
 	public class ArchetypePropertyEditor : PropertyEditor
 	{
 		#region Pre Value Editor
@@ -74,7 +74,7 @@ namespace Archetype.PropertyEditors
                         }
                         catch (Exception ex)
                         {
-                            LogHelper.Error<ArchetypeHelper>(ex.Message, ex);
+                            LogHelper.Error<ArchetypePropertyValueEditor>(ex.Message, ex);
                         }
 					}
 				}
@@ -105,7 +105,7 @@ namespace Archetype.PropertyEditors
                         }
                         catch (Exception ex)
                         {
-                            LogHelper.Error<ArchetypeHelper>(ex.Message, ex);
+                            LogHelper.Error<ArchetypePropertyValueEditor>(ex.Message, ex);
                         }
 					}
 				}
@@ -135,7 +135,7 @@ namespace Archetype.PropertyEditors
                         }
                         catch (Exception ex)
                         {
-                            LogHelper.Error<ArchetypeHelper>(ex.Message, ex);
+                            LogHelper.Error<ArchetypePropertyValueEditor>(ex.Message, ex);
                         }
 					}
 				}
