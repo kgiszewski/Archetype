@@ -12,10 +12,10 @@ namespace Archetype.Models
     public class ArchetypePropertyModel
     {
         [JsonProperty("alias")]
-        public string Alias { get; internal set; }
+        public string Alias { get; set; }
 
         [JsonProperty("value")]
-        public object Value { get; internal set; }
+        public object Value { get; set; }
 
         [JsonProperty("propertyEditorAlias")]
         public string PropertyEditorAlias { get; internal set; }
