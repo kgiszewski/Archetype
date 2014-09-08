@@ -11,7 +11,7 @@ namespace Archetype.Models
     public class ArchetypeModel : IEnumerable<ArchetypeFieldsetModel>
     {
         [JsonProperty("fieldsets")]
-        internal IEnumerable<ArchetypeFieldsetModel> Fieldsets { get; set; }
+        public IEnumerable<ArchetypeFieldsetModel> Fieldsets { get; set; }
 
         public ArchetypeModel()
         {
