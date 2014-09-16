@@ -48,7 +48,7 @@
             {
                 var functionName = results[1].substring(0, beginIndexOf);
                 propertyAlias = results[1].substring(beginIndexOf + 1, endIndexOf);
-                parsedTemplate = parsedTemplate.replace(results[0], executeFunctionByName(functionName, window, $scope, $scope.getPropertyValueByAlias(fieldset, propertyAlias)));
+                parsedTemplate = parsedTemplate.replace(results[0], executeFunctionByName(functionName, window, $scope.getPropertyValueByAlias(fieldset, propertyAlias), $scope));
             }
             else {
                 propertyAlias = results[1];
