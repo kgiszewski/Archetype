@@ -74,6 +74,15 @@ namespace Archetype.Extensions
             }
         }
 
+        internal bool IsPropertyValueConverterOverRidden(int dataTypeId)
+        {
+            var prevalues = GetArchetypePreValueFromDataTypeId(dataTypeId);
+            if (prevalues == null)
+                return false;
+
+            return prevalues.OverideDefaultPropertyValueConverter;
+        }
+
         private ArchetypePreValue GetArchetypePreValueFromDataTypeId(int dataTypeId)
         {
             return _app.ApplicationCache.RuntimeCache.GetCacheItem(

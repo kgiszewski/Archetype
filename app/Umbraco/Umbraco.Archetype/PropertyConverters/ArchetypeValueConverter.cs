@@ -20,8 +20,12 @@ namespace Archetype.PropertyConverters
 
         public override bool IsConverter(PublishedPropertyType propertyType)
         {
-            return !String.IsNullOrEmpty(propertyType.PropertyEditorAlias) 
+            var isArcheTypePropertEditor= !String.IsNullOrEmpty(propertyType.PropertyEditorAlias) 
                 && propertyType.PropertyEditorAlias.Equals(Constants.PropertyEditorAlias);
+            if (!isArcheTypePropertEditor)
+                return false;
+
+            return !ArchetypeHelper.Instance.IsPropertyValueConverterOverRidden(propertyType.DataTypeId);
         }
 
         public override object ConvertDataToSource(PublishedPropertyType propertyType, object source, bool preview)
