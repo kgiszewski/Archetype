@@ -25,7 +25,7 @@ namespace Archetype.PropertyConverters
             if (!isArcheTypePropertEditor)
                 return false;
 
-            return !ArchetypeHelper.Instance.IsPropertyValueConverterOverRidden(propertyType.DataTypeId);
+            return !ArchetypeHelper.Instance.IsPropertyValueConverterOverridden(propertyType.DataTypeId);
         }
 
         public override object ConvertDataToSource(PublishedPropertyType propertyType, object source, bool preview)
