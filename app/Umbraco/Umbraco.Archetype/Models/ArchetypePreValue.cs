@@ -56,6 +56,7 @@ namespace Archetype.Models
         [JsonProperty("developerMode")]
         public bool DeveloperMode { get; set; }
 
+        [JsonProperty("overrideDefaultPropertyValueConverter")]
         public bool OverrideDefaultPropertyValueConverter { get; set; }
     }
 }
