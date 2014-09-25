@@ -12,7 +12,6 @@ namespace Archetype.PropertyConverters
     [PropertyValueCache(PropertyCacheValue.All, PropertyCacheLevel.Content)]
     public class ArchetypeValueConverter : PropertyValueConverterBase
     {
-
         public ServiceContext Services
         {
             get { return ApplicationContext.Current.Services; }
@@ -20,9 +19,9 @@ namespace Archetype.PropertyConverters
 
         public override bool IsConverter(PublishedPropertyType propertyType)
         {
-            var isArcheTypePropertEditor= !String.IsNullOrEmpty(propertyType.PropertyEditorAlias) 
+            var isArcheTypePropertyEditor = !String.IsNullOrEmpty(propertyType.PropertyEditorAlias) 
                 && propertyType.PropertyEditorAlias.Equals(Constants.PropertyEditorAlias);
-            if (!isArcheTypePropertEditor)
+            if (!isArcheTypePropertyEditor)
                 return false;
 
             return !ArchetypeHelper.Instance.IsPropertyValueConverterOverridden(propertyType.DataTypeId);
