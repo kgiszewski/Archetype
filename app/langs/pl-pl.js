@@ -36,5 +36,6 @@
 	"enableDisablingDescription": "Allows fieldsets to be individually enabled/disabled.",
 	"deepDatatypeRequest":"Enable Deep Datatype Requests?",
 	"deepDatatypeRequestDescription":"Allows for easier datatype interception at the cost of caching performance.",
-    "archetypeOverrideDefaultConverter":"Check this if you wish to use your own custom property value converter."
+    "overrideDefaultConverterDescription":"Check this if you wish to use your own custom property value converter.",
+    "overrideDefaultConverter":"Override Default Property Value Converter?"
 }
