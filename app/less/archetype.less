@@ -2,9 +2,16 @@
 
 .archetypeEditor {
     width: 98%;
-
+    
+    .open {
+        position: relative;
+    }
+    
     .dropdown-menu {
         top: auto;
+        > li > a {
+            border-radius: 6px;
+        }
     }
 
     .controls-no-label {
@@ -12,7 +19,7 @@
     }
 
     a+ul.dropdown-menu {
-        margin-left: 25px;
+        margin-left: 0;
     }
 
     .icon {
@@ -64,7 +71,6 @@
                 border-radius: 0;
                 box-shadow: none;
                 margin-top: -10px;
-                /*margin-left: -200px;*/
             }
 
             span {
@@ -143,7 +149,6 @@
             background-color: #fff;
             border-top: 1px solid silver;
             border-radius: 0 0 0 5px;
-            overflow: hidden;
 
             form {
                 margin-left:20px;
