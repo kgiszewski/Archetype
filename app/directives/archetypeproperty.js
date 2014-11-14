@@ -82,7 +82,7 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
 
                 var mergedConfig = _.extend(defaultConfigObj, config);
 
-                loadView(pathToView, mergedConfig, defaultValue, alias, propertyAlias, scope, element, ngModelCtrl, propertyValueChanged);
+                loadView(pathToView, mergedConfig, defaultValue, alias, propertyAlias, dataTypeGuid, scope, element, ngModelCtrl, propertyValueChanged);
             });
         });
 
@@ -158,7 +158,7 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
         return _.unique(propertyAliasParts).reverse().join("-");
     };
 
-    function loadView(view, config, defaultValue, alias, propertyAlias, scope, element, ngModelCtrl, propertyValueChanged) {
+    function loadView(view, config, defaultValue, alias, propertyAlias, dataTypeGuid, scope, element, ngModelCtrl, propertyValueChanged) {
         if (view)
         {
             $http.get(view, { cache: true }).success(function (data) {
@@ -200,6 +200,9 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
                             scope.model.config.multiPicker = "0";
                         }
                     }
+
+                    //Vorto data type guid
+                    scope.model.dataTypeGuid = dataTypeGuid;
 
                     //console.log(scope.model.config);
 
