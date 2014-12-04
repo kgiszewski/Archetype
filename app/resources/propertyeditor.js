@@ -3,7 +3,7 @@ angular.module('umbraco.resources').factory('archetypePropertyEditorResource', f
         getAllDataTypes: function() {
             // Hack - grab DataTypes from Tree API, as `dataTypeService.getAll()` isn't implemented yet
             return umbRequestHelper.resourcePromise(
-                $http.get("/umbraco/backoffice/ArchetypeApi/ArchetypeDataType/GetAll", { cache: true }), 'Failed to retrieve datatypes from tree service'
+                $http.get("/umbraco/backoffice/ArchetypeApi/ArchetypeDataType/GetAll"), 'Failed to retrieve datatypes from tree service'
             );
         },
         getDataType: function (guid, useDeepDatatypeLookup, contentTypeAlias, propertyTypeAlias, archetypeAlias, nodeId) {
