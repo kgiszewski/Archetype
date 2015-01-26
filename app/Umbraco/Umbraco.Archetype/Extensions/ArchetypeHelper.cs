@@ -110,7 +110,7 @@ namespace Archetype.Extensions
             return preValue;
         }
 
-        private IDataTypeDefinition GetDataTypeByGuid(Guid guid)
+        internal IDataTypeDefinition GetDataTypeByGuid(Guid guid)
         {
             return (IDataTypeDefinition)ApplicationContext.Current.ApplicationCache.RuntimeCache.GetCacheItem(
                 Constants.CacheKey_DataTypeByGuid + guid,

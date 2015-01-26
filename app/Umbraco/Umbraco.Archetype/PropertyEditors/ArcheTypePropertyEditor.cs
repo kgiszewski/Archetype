@@ -66,7 +66,7 @@ namespace Archetype.PropertyEditors
 					{
                         try
                         {
-						    var dtd = dataTypeService.GetDataTypeDefinitionById(Guid.Parse(propDef.DataTypeGuid));
+                            var dtd = ArchetypeHelper.Instance.GetDataTypeByGuid(Guid.Parse(propDef.DataTypeGuid));
 						    var propType = new PropertyType(dtd) { Alias = propDef.Alias };
 						    var prop = new Property(propType, propDef.Value);
 						    var propEditor = PropertyEditorResolver.Current.GetByAlias(dtd.PropertyEditorAlias);
@@ -97,7 +97,7 @@ namespace Archetype.PropertyEditors
 					{
                         try
                         {
-                            var dtd = dataTypeService.GetDataTypeDefinitionById(Guid.Parse(propDef.DataTypeGuid));
+                            var dtd = ArchetypeHelper.Instance.GetDataTypeByGuid(Guid.Parse(propDef.DataTypeGuid));
                             var propType = new PropertyType(dtd) { Alias = propDef.Alias };
                             var prop = new Property(propType, propDef.Value);
                             var propEditor = PropertyEditorResolver.Current.GetByAlias(dtd.PropertyEditorAlias);
@@ -127,7 +127,7 @@ namespace Archetype.PropertyEditors
 					{
                         try
                         {
-						    var dtd = ApplicationContext.Current.Services.DataTypeService.GetDataTypeDefinitionById(Guid.Parse(propDef.DataTypeGuid));
+                            var dtd = ArchetypeHelper.Instance.GetDataTypeByGuid(Guid.Parse(propDef.DataTypeGuid));
 						    var preValues = ApplicationContext.Current.Services.DataTypeService.GetPreValuesCollectionByDataTypeId(dtd.Id);
 						    var propData = new ContentPropertyData(propDef.Value, preValues, new Dictionary<string, object>());
                             var propEditor = PropertyEditorResolver.Current.GetByAlias(dtd.PropertyEditorAlias);
