@@ -171,9 +171,14 @@
     }
 
     $scope.canClone = function () {
+
+        if (!$scope.model.config.enableCloning) {
+            return false;
+        }
+
         if ($scope.model.config.maxFieldsets)
         {
-            return countVisible() < $scope.model.config.maxFieldsets && $scope.model.config.enableCloning;
+            return countVisible() < $scope.model.config.maxFieldsets;
         }
 
         return true;
