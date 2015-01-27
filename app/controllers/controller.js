@@ -38,22 +38,33 @@
         var parsedTemplate = template;
 
         while ((results = rgx.exec(template)) !== null) {
-            var propertyAlias = "";
+            // split the template in case it consists of multiple property aliases and/or functions
+            var parts = results[1].split("|");
+            var templateLabelValue = "";
+            for(var i = 0; i < parts.length; i++) {
+                // stop looking for a template label value if a previous template part already yielded a value
+                if(templateLabelValue != "") {
+                    break;
+                }
+                
+                var part = parts[i];
+                
+                //test for function
+                var beginIndexOf = part.indexOf("(");
+                var endIndexOf = part.indexOf(")");
 
-            //test for function
-            var beginIndexOf = results[1].indexOf("(");
-            var endIndexOf = results[1].indexOf(")");
-
-            if(beginIndexOf != -1 && endIndexOf != -1)
-            {
-                var functionName = results[1].substring(0, beginIndexOf);
-                propertyAlias = results[1].substring(beginIndexOf + 1, endIndexOf);
-                parsedTemplate = parsedTemplate.replace(results[0], executeFunctionByName(functionName, window, $scope.getPropertyValueByAlias(fieldset, propertyAlias), $scope));
+                if(beginIndexOf != -1 && endIndexOf != -1)
+                {
+                    var functionName = part.substring(0, beginIndexOf);
+                    var propertyAlias = part.substring(beginIndexOf + 1, endIndexOf);
+                    templateLabelValue = executeFunctionByName(functionName, window, $scope.getPropertyValueByAlias(fieldset, propertyAlias), $scope);
+                }
+                else {
+                    propertyAlias = part;
+                    templateLabelValue = $scope.getPropertyValueByAlias(fieldset, propertyAlias);
+                }                
             }
-            else {
-                propertyAlias = results[1];
-                parsedTemplate = parsedTemplate.replace(results[0], $scope.getPropertyValueByAlias(fieldset, propertyAlias));
-            }
+            parsedTemplate = parsedTemplate.replace(results[0], templateLabelValue);
         }
 
         return parsedTemplate;
