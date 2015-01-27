@@ -20,6 +20,9 @@ namespace Archetype.Models
         [JsonProperty("enableCollapsing")]
         public bool EnableCollapsing { get; set; }
 
+        [JsonProperty("enableCloning")]
+        public bool EnableCloning { get; set; }
+
         [JsonProperty("enableDisabling")]
         public bool EnableDisabling { get; set; }
 

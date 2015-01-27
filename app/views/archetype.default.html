@@ -22,6 +22,7 @@
                                 </a>
                             </li>
                         </ul>
+                        <i class="icon icon-documents" ng-click="cloneRow($index)" ng-show="canClone()"></i>
                         <i class="icon icon-remove" ng-click="removeRow($index)" ng-show="canRemove()"></i>
                         <i class="icon icon-power" ng-class="{dimmed: fieldset.disabled}" ng-click="enableDisable(fieldset)" ng-show="canDisable()"></i>
                         <i class="icon icon-navigation handle" ng-show="canSort()"></i>

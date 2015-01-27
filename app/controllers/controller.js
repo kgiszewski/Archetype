@@ -102,10 +102,8 @@
 
     //handles a fieldset add
     $scope.addRow = function (fieldsetAlias, $index) {
-        if ($scope.canAdd())
-        {
-            if ($scope.model.config.fieldsets)
-            {
+        if ($scope.canAdd()) {
+            if ($scope.model.config.fieldsets) {
                 var newFieldset = getEmptyRenderFieldset($scope.getConfigFieldsetByAlias(fieldsetAlias));
 
                 if (typeof $index != 'undefined')
@@ -133,6 +131,22 @@
         }
     }
 
+    $scope.cloneRow = function ($index) {
+        if ($scope.canClone() && typeof $index != 'undefined') {
+            var newFieldset = angular.copy($scope.model.value.fieldsets[$index]);
+
+            if(newFieldset) {
+
+                $scope.model.value.fieldsets.splice($index + 1, 0, newFieldset);
+
+                $scope.setDirty();
+
+                newFieldset.collapse = $scope.model.config.enableCollapsing ? true : false;
+                $scope.focusFieldset(newFieldset);
+            }
+        }
+    }
+
     $scope.enableDisable = function (fieldset) {
         fieldset.disabled = !fieldset.disabled;
         // explicitly set the form as dirty when manipulating the enabled/disabled state of a fieldset
@@ -140,8 +154,7 @@
     }
 
     //helpers for determining if a user can do something
-    $scope.canAdd = function ()
-    {
+    $scope.canAdd = function () {
         if ($scope.model.config.maxFieldsets)
         {
             return countVisible() < $scope.model.config.maxFieldsets;
@@ -151,11 +164,19 @@
     }
 
     //helper that returns if an item can be removed
-    $scope.canRemove = function ()
-    {
+    $scope.canRemove = function () {
         return countVisible() > 1 
             || ($scope.model.config.maxFieldsets == 1 && $scope.model.config.fieldsets.length > 1)
             || $scope.model.config.startWithAddButton;
+    }
+
+    $scope.canClone = function () {
+        if ($scope.model.config.maxFieldsets)
+        {
+            return countVisible() < $scope.model.config.maxFieldsets && $scope.model.config.enableCloning;
+        }
+
+        return true;
     }
 
     //helper that returns if an item can be sorted
