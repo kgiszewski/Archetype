@@ -92,11 +92,18 @@
         axis: 'y',
         cursor: "move",
         handle: ".handle",
+        start: function(ev, ui) {
+            ui.item.parent().find('.umb-rte textarea').each(function () {
+                tinyMCE.execCommand('mceRemoveEditor', false, $(this).attr('id'));
+            });
+        },
         update: function (ev, ui) {
             $scope.setDirty();
         },
         stop: function (ev, ui) {
-
+            ui.item.parent().find('.umb-rte textarea').each(function () {
+                tinyMCE.execCommand('mceAddEditor', false, $(this).attr('id'));
+            });
         }
     };
 
