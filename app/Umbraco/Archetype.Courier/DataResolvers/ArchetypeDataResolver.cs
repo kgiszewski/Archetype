@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Archetype.Extensions;
 using Archetype.Models;
-using Archetype.PropertyConverters;
 using Newtonsoft.Json;
 using Umbraco.Core;
-using Umbraco.Core.Logging;
-using Umbraco.Core.Models;
-using Umbraco.Core.Models.PublishedContent;
 using Umbraco.Courier.Core;
+using Umbraco.Courier.Core.Logging;
 using Umbraco.Courier.Core.ProviderModel;
 using Umbraco.Courier.DataResolvers;
 using Umbraco.Courier.ItemProviders;
@@ -27,7 +25,7 @@ namespace Archetype.Courier.DataResolvers
 		{
 			get
 			{
-				return Archetype.Constants.PropertyEditorAlias;
+				return Constants.PropertyEditorAlias;
 			}
 		}
 
@@ -56,7 +54,7 @@ namespace Archetype.Courier.DataResolvers
 			if (item.Prevalues != null && item.Prevalues.Count > 0)
 			{
 				var prevalue = item.Prevalues[0];
-				if (prevalue.Alias.InvariantEquals(Archetype.Constants.PreValueAlias) && !string.IsNullOrWhiteSpace(prevalue.Value))
+				if (prevalue.Alias.InvariantEquals(Constants.PreValueAlias) && !string.IsNullOrWhiteSpace(prevalue.Value))
 				{
 					var config = JsonConvert.DeserializeObject<ArchetypePreValue>(prevalue.Value);
 
@@ -77,16 +75,26 @@ namespace Archetype.Courier.DataResolvers
 		{
 			if (propertyData != null && propertyData.Value != null)
 			{
-				var dataTypeId = ExecutionContext.DatabasePersistence.GetNodeId(propertyData.DataType, NodeObjectTypes.DataType);
-				var fakePropertyType = this.CreateDummyPropertyType(dataTypeId, this.EditorAlias);
+			    var dataType = ExecutionContext.DatabasePersistence.RetrieveItem<DataType>(new ItemIdentifier(propertyData.DataType.ToString(),
+			        ProviderIDCollection.dataTypeItemProviderGuid));
 
-				var converter = new ArchetypeValueConverter();
-				var archetype = (ArchetypeModel)converter.ConvertDataToSource(fakePropertyType, propertyData.Value, false);
+			    //Fetch the Prevalues for the current Property's DataType (if its an 'Archetype config')
+                var prevalue = dataType.Prevalues.FirstOrDefault(x => x.Alias.ToLowerInvariant().Equals("archetypeconfig"));
+			    var archetypePreValue = prevalue == null
+			        ? null
+			        : JsonConvert.DeserializeObject<ArchetypePreValue>(prevalue.Value,
+			            ArchetypeHelper.Instance.JsonSerializerSettings);
+			    RetrieveAdditionalProperties(ref archetypePreValue);
+
+                //Deserialize the value of the current Property to an ArchetypeModel and set additional properties before converting values
+                var sourceJson = propertyData.Value.ToString();
+                var archetype = JsonConvert.DeserializeObject<ArchetypeModel>(sourceJson, ArchetypeHelper.Instance.JsonSerializerSettings);
+                RetrieveAdditionalProperties(ref archetype, archetypePreValue);
 
 				if (archetype != null)
 				{
 					// get the `PropertyItemProvider` from the collection.
-					var propertyItemProvider = ItemProviderCollection.Instance.GetProvider(ProviderIDCollection.propertyDataItemProviderGuid, this.ExecutionContext);
+					var propertyItemProvider = ItemProviderCollection.Instance.GetProvider(ProviderIDCollection.propertyDataItemProviderGuid, ExecutionContext);
 
 					foreach (var property in archetype.Fieldsets.SelectMany(x => x.Properties))
 					{
@@ -94,10 +102,10 @@ namespace Archetype.Courier.DataResolvers
 							continue;
 
 						// create a 'fake' item for Courier to process
-						var fakeItem = new ContentPropertyData()
+						var fakeItem = new ContentPropertyData
 						{
 							ItemId = item.ItemId,
-							Name = string.Format("{0} [{1}: Nested {2} ({3})]", new[] { item.Name, this.EditorAlias, property.PropertyEditorAlias, property.Alias }),
+							Name = string.Format("{0} [{1}: Nested {2} ({3})]", new[] { item.Name, EditorAlias, property.PropertyEditorAlias, property.Alias }),
 							Data = new List<ContentProperty>
 							{
 								new ContentProperty
@@ -119,7 +127,7 @@ namespace Archetype.Courier.DataResolvers
 							}
 							catch (Exception ex)
 							{
-								LogHelper.Error<ArchetypeDataResolver>(string.Concat("Error packaging data value: ", fakeItem.Name), ex);
+								CourierLogHelper.Error<ArchetypeDataResolver>(string.Concat("Error packaging data value: ", fakeItem.Name), ex);
 							}
 
 							// pass up the dependencies and resources
@@ -135,7 +143,7 @@ namespace Archetype.Courier.DataResolvers
 							}
 							catch (Exception ex)
 							{
-								LogHelper.Error<ArchetypeDataResolver>(string.Concat("Error extracting data value: ", fakeItem.Name), ex);
+                                CourierLogHelper.Error<ArchetypeDataResolver>(string.Concat("Error extracting data value: ", fakeItem.Name), ex);
 							}
 						}
 
@@ -160,9 +168,44 @@ namespace Archetype.Courier.DataResolvers
 			}
 		}
 
-		private PublishedPropertyType CreateDummyPropertyType(int dataTypeId, string propertyEditorAlias)
-		{
-			return new PublishedPropertyType(null, new PropertyType(new DataTypeDefinition(-1, propertyEditorAlias) { Id = dataTypeId }));
-		}
+        private void RetrieveAdditionalProperties(ref ArchetypePreValue preValue)
+        {
+            if(preValue == null) return;
+
+            foreach (var fieldset in preValue.Fieldsets)
+            {
+                foreach (var property in fieldset.Properties)
+                {
+                    var dataType = ExecutionContext.DatabasePersistence.RetrieveItem<DataType>(
+                        new ItemIdentifier(property.DataTypeGuid.ToString(),
+                            ProviderIDCollection.dataTypeItemProviderGuid));
+                    if(dataType == null) continue;
+
+                    property.PropertyEditorAlias = dataType.PropertyEditorAlias;
+                }
+            }
+        }
+
+	    private void RetrieveAdditionalProperties(ref ArchetypeModel archetype, ArchetypePreValue preValue)
+	    {
+	        foreach (var fieldset in preValue.Fieldsets)
+	        {
+	            var fieldsetAlias = fieldset.Alias;
+	            foreach (var fieldsetInst in archetype.Fieldsets.Where(x => x.Alias == fieldsetAlias))
+	            {
+	                foreach (var property in fieldset.Properties)
+	                {
+	                    var propertyAlias = property.Alias;
+	                    foreach (var propertyInst in fieldsetInst.Properties.Where(x => x.Alias == propertyAlias))
+	                    {
+	                        propertyInst.DataTypeGuid = property.DataTypeGuid.ToString();
+	                        propertyInst.DataTypeId = ExecutionContext.DatabasePersistence.GetNodeId(
+	                            property.DataTypeGuid, NodeObjectTypes.DataType);
+	                        propertyInst.PropertyEditorAlias = property.PropertyEditorAlias;
+	                    }
+	                }
+	            }
+	        }
+	    }
 	}
 }
