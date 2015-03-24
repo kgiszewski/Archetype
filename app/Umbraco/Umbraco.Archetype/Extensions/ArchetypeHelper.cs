@@ -26,6 +26,8 @@ namespace Archetype.Extensions
             _app = ApplicationContext.Current;
         }
 
+        internal JsonSerializerSettings JsonSerializerSettings { get { return _jsonSettings; } }
+
         internal ArchetypeModel DeserializeJsonToArchetype(string sourceJson, PreValueCollection dataTypePreValues)
         {
             try
