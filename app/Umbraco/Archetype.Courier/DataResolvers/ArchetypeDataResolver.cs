@@ -75,21 +75,21 @@ namespace Archetype.Courier.DataResolvers
 		{
 			if (propertyData != null && propertyData.Value != null)
 			{
-			    var dataType = ExecutionContext.DatabasePersistence.RetrieveItem<DataType>(new ItemIdentifier(propertyData.DataType.ToString(),
-			        ProviderIDCollection.dataTypeItemProviderGuid));
+				var dataType = ExecutionContext.DatabasePersistence.RetrieveItem<DataType>(new ItemIdentifier(propertyData.DataType.ToString(),
+					ProviderIDCollection.dataTypeItemProviderGuid));
 
-			    //Fetch the Prevalues for the current Property's DataType (if its an 'Archetype config')
-                var prevalue = dataType.Prevalues.FirstOrDefault(x => x.Alias.ToLowerInvariant().Equals("archetypeconfig"));
-			    var archetypePreValue = prevalue == null
-			        ? null
-			        : JsonConvert.DeserializeObject<ArchetypePreValue>(prevalue.Value,
-			            ArchetypeHelper.Instance.JsonSerializerSettings);
-			    RetrieveAdditionalProperties(ref archetypePreValue);
+				//Fetch the Prevalues for the current Property's DataType (if its an 'Archetype config')
+				var prevalue = dataType.Prevalues.FirstOrDefault(x => x.Alias.ToLowerInvariant().Equals("archetypeconfig"));
+				var archetypePreValue = prevalue == null
+					? null
+					: JsonConvert.DeserializeObject<ArchetypePreValue>(prevalue.Value,
+						ArchetypeHelper.Instance.JsonSerializerSettings);
+				RetrieveAdditionalProperties(ref archetypePreValue);
 
-                //Deserialize the value of the current Property to an ArchetypeModel and set additional properties before converting values
-                var sourceJson = propertyData.Value.ToString();
-                var archetype = JsonConvert.DeserializeObject<ArchetypeModel>(sourceJson, ArchetypeHelper.Instance.JsonSerializerSettings);
-                RetrieveAdditionalProperties(ref archetype, archetypePreValue);
+				//Deserialize the value of the current Property to an ArchetypeModel and set additional properties before converting values
+				var sourceJson = propertyData.Value.ToString();
+				var archetype = JsonConvert.DeserializeObject<ArchetypeModel>(sourceJson, ArchetypeHelper.Instance.JsonSerializerSettings);
+				RetrieveAdditionalProperties(ref archetype, archetypePreValue);
 
 				if (archetype != null)
 				{
@@ -143,7 +143,7 @@ namespace Archetype.Courier.DataResolvers
 							}
 							catch (Exception ex)
 							{
-                                CourierLogHelper.Error<ArchetypeDataResolver>(string.Concat("Error extracting data value: ", fakeItem.Name), ex);
+								CourierLogHelper.Error<ArchetypeDataResolver>(string.Concat("Error extracting data value: ", fakeItem.Name), ex);
 							}
 						}
 
@@ -168,44 +168,47 @@ namespace Archetype.Courier.DataResolvers
 			}
 		}
 
-        private void RetrieveAdditionalProperties(ref ArchetypePreValue preValue)
-        {
-            if(preValue == null) return;
+		private void RetrieveAdditionalProperties(ref ArchetypePreValue preValue)
+		{
+			if (preValue == null)
+				return;
 
-            foreach (var fieldset in preValue.Fieldsets)
-            {
-                foreach (var property in fieldset.Properties)
-                {
-                    var dataType = ExecutionContext.DatabasePersistence.RetrieveItem<DataType>(
-                        new ItemIdentifier(property.DataTypeGuid.ToString(),
-                            ProviderIDCollection.dataTypeItemProviderGuid));
-                    if(dataType == null) continue;
+			foreach (var fieldset in preValue.Fieldsets)
+			{
+				foreach (var property in fieldset.Properties)
+				{
+					var dataType = ExecutionContext.DatabasePersistence.RetrieveItem<DataType>(
+						new ItemIdentifier(property.DataTypeGuid.ToString(),
+							ProviderIDCollection.dataTypeItemProviderGuid));
 
-                    property.PropertyEditorAlias = dataType.PropertyEditorAlias;
-                }
-            }
-        }
+					if (dataType == null)
+						continue;
 
-	    private void RetrieveAdditionalProperties(ref ArchetypeModel archetype, ArchetypePreValue preValue)
-	    {
-	        foreach (var fieldset in preValue.Fieldsets)
-	        {
-	            var fieldsetAlias = fieldset.Alias;
-	            foreach (var fieldsetInst in archetype.Fieldsets.Where(x => x.Alias == fieldsetAlias))
-	            {
-	                foreach (var property in fieldset.Properties)
-	                {
-	                    var propertyAlias = property.Alias;
-	                    foreach (var propertyInst in fieldsetInst.Properties.Where(x => x.Alias == propertyAlias))
-	                    {
-	                        propertyInst.DataTypeGuid = property.DataTypeGuid.ToString();
-	                        propertyInst.DataTypeId = ExecutionContext.DatabasePersistence.GetNodeId(
-	                            property.DataTypeGuid, NodeObjectTypes.DataType);
-	                        propertyInst.PropertyEditorAlias = property.PropertyEditorAlias;
-	                    }
-	                }
-	            }
-	        }
-	    }
+					property.PropertyEditorAlias = dataType.PropertyEditorAlias;
+				}
+			}
+		}
+
+		private void RetrieveAdditionalProperties(ref ArchetypeModel archetype, ArchetypePreValue preValue)
+		{
+			foreach (var fieldset in preValue.Fieldsets)
+			{
+				var fieldsetAlias = fieldset.Alias;
+				foreach (var fieldsetInst in archetype.Fieldsets.Where(x => x.Alias == fieldsetAlias))
+				{
+					foreach (var property in fieldset.Properties)
+					{
+						var propertyAlias = property.Alias;
+						foreach (var propertyInst in fieldsetInst.Properties.Where(x => x.Alias == propertyAlias))
+						{
+							propertyInst.DataTypeGuid = property.DataTypeGuid.ToString();
+							propertyInst.DataTypeId = ExecutionContext.DatabasePersistence.GetNodeId(
+								property.DataTypeGuid, NodeObjectTypes.DataType);
+							propertyInst.PropertyEditorAlias = property.PropertyEditorAlias;
+						}
+					}
+				}
+			}
+		}
 	}
 }
