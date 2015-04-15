@@ -299,6 +299,8 @@
                 $scope.model.value.toString = stringify;
             }
         }
+        // reset submit watcher counter on save
+        $scope.activeSubmitWatcher = 0;
     });
 
     //helper to count what is visible
@@ -397,5 +399,18 @@
     if($scope.model.config.customCssPath)
     {
         assetsService.loadCss($scope.model.config.customCssPath);
+    }
+
+    // submit watcher handling:
+    // because some property editors use the "formSubmitting" event to set/clean up their model.value,
+    // we need to monitor the "formSubmitting" event from a custom property and broadcast our own event
+    // to forcefully update the appropriate model.value's
+    $scope.activeSubmitWatcher = 0;
+    $scope.submitWatcherOnLoad = function () {
+        $scope.activeSubmitWatcher++;
+        return $scope.activeSubmitWatcher;
+    }
+    $scope.submitWatcherOnSubmit = function () {
+        $scope.$broadcast("archetypeFormSubmitting");
     }
 });

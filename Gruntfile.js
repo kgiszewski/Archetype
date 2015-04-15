@@ -55,6 +55,7 @@ module.exports = function(grunt) {
           'app/controllers/controller.js',
           'app/controllers/config.controller.js',
           'app/directives/archetypeproperty.js',
+          'app/directives/archetypesubmitwatcher.js',
           'app/directives/archetypecustomview.js',
           'app/directives/localize.js',
           'app/services/localization.js',
