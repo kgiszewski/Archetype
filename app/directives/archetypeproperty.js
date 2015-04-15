@@ -86,7 +86,7 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
             });
         });
 
-        scope.$on("formSubmitting", function (ev, args) {
+        scope.$on("archetypeFormSubmitting", function (ev, args) {
             // validate all fieldset properties
             _.each(scope.fieldset.properties, function (property) {
                 validateProperty(scope.fieldset, property);
