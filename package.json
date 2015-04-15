@@ -22,7 +22,7 @@
     "grunt-msbuild": "~0.1.9",
     "grunt-dotnet-assembly-info": "~1.0.9",
     "load-grunt-tasks": "~0.4.0",
-    "grunt-umbraco-package": "0.0.5"
+    "grunt-umbraco-package": "0.0.6"
   },
   "repository": {
     "type": "git",
