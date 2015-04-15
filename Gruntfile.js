@@ -55,6 +55,7 @@ module.exports = function(grunt) {
           'app/controllers/controller.js',
           'app/controllers/config.controller.js',
           'app/directives/archetypeproperty.js',
+          'app/directives/archetypesubmitwatcher.js',
           'app/directives/archetypecustomview.js',
           'app/directives/localize.js',
           'app/services/localization.js',
@@ -166,7 +167,7 @@ module.exports = function(grunt) {
         files: ['app/Umbraco/Umbraco.Archetype/Archetype.Umbraco.csproj'],
         filename: 'VersionInfo.cs',
         info: {
-          version: '<%= (pkgMeta.version.indexOf("-") ? pkgMeta.version.substring(0, pkgMeta.version.indexOf("-")) : pkgMeta.version) %>', 
+          version: '<%= (pkgMeta.version.indexOf("-") > 0 ? pkgMeta.version.substring(0, pkgMeta.version.indexOf("-")) : pkgMeta.version) %>', 
           fileVersion: '<%= pkgMeta.version %>'
         }
       }

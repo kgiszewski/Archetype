@@ -40,6 +40,7 @@
 
                             <div ng-class="[(model.config.hidePropertyLabels == '1' ? 'controls-no-label' : 'controls')]">
                                 <archetype-property class="archetypeEditor" property="property" property-editor-alias="model.alias" fieldset-index="$parent.$index" fieldset="fieldset" archetype-config="model.config" property-config-index="$index" archetype-render-model="model.value" umbraco-form="form"></archetype-property>
+                                <archetype-submit-watcher active-submit-watcher="activeSubmitWatcher" load-callback="submitWatcherOnLoad" submit-callback="submitWatcherOnSubmit"></archetype-submit-watcher>
                             </div>
                         </div>
                     </form>
