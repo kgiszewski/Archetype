@@ -34,7 +34,7 @@ namespace Archetype.Models
 
             // Try Umbraco's PropertyValueConverters
             var converters = UmbracoContext.Current != null ? PropertyValueConvertersResolver.Current.Converters : Enumerable.Empty<IPropertyValueConverter>();
-            if (converters.Any())
+            if (!string.IsNullOrWhiteSpace(this.PropertyEditorAlias) && converters.Any())
             {
                 var convertedAttempt = TryConvertWithPropertyValueConverters<T>(Value, converters);
                 if (convertedAttempt.Success)
