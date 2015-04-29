@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Archetype.Extensions;
 using ClientDependency.Core;
 using Newtonsoft.Json;
@@ -62,6 +63,7 @@ namespace Archetype.PropertyEditors
 
 				foreach (var fieldset in archetype.Fieldsets)
 				{
+          fieldset.Properties = fieldset.Properties.Where( p => p.DataTypeGuid != null );
 					foreach (var propDef in fieldset.Properties)
 					{
                         try
@@ -94,6 +96,7 @@ namespace Archetype.PropertyEditors
 
 				foreach (var fieldset in archetype.Fieldsets)
 				{
+          fieldset.Properties = fieldset.Properties.Where( p => p.DataTypeGuid != null );
 					foreach (var propDef in fieldset.Properties)
 					{
                         try
@@ -124,6 +127,7 @@ namespace Archetype.PropertyEditors
 
 				foreach (var fieldset in archetype.Fieldsets)
 				{
+          fieldset.Properties = fieldset.Properties.Where( p => p.DataTypeGuid != null );
 					foreach (var propDef in fieldset.Properties)
 					{
                         try
