@@ -57,14 +57,11 @@ namespace Archetype.PropertyEditors
 				if (property.Value == null || property.Value.ToString() == "")
 					return string.Empty;
 
-                //LogHelper.Info<ArchetypeHelper>(property.Value.ToString());
-
 				var archetype = ArchetypeHelper.Instance.DeserializeJsonToArchetype(property.Value.ToString(), propertyType.DataTypeDefinitionId);
 
 				foreach (var fieldset in archetype.Fieldsets)
 				{
-          fieldset.Properties = fieldset.Properties.Where( p => p.DataTypeGuid != null );
-					foreach (var propDef in fieldset.Properties)
+                    foreach (var propDef in fieldset.Properties.Where(p => p.DataTypeGuid != null))
 					{
                         try
                         {
@@ -88,16 +85,13 @@ namespace Archetype.PropertyEditors
 			public override object ConvertDbToEditor(Property property, PropertyType propertyType, IDataTypeService dataTypeService)
 			{
 				if (property.Value == null || property.Value.ToString() == "")
-					return string.Empty;
-
-                //LogHelper.Info<ArchetypeHelper>(property.Value.ToString());
+					return string.Empty;;
 
 				var archetype = ArchetypeHelper.Instance.DeserializeJsonToArchetype(property.Value.ToString(), propertyType.DataTypeDefinitionId);
 
 				foreach (var fieldset in archetype.Fieldsets)
 				{
-          fieldset.Properties = fieldset.Properties.Where( p => p.DataTypeGuid != null );
-					foreach (var propDef in fieldset.Properties)
+                    foreach (var propDef in fieldset.Properties.Where(p => p.DataTypeGuid != null))
 					{
                         try
                         {
@@ -121,14 +115,11 @@ namespace Archetype.PropertyEditors
 				if (editorValue.Value == null || editorValue.Value.ToString() == "")
 					return string.Empty;
 
-                //LogHelper.Info<ArchetypeHelper>(editorValue.Value.ToString());
-
 				var archetype = ArchetypeHelper.Instance.DeserializeJsonToArchetype(editorValue.Value.ToString(), editorValue.PreValues);
 
 				foreach (var fieldset in archetype.Fieldsets)
-				{
-          fieldset.Properties = fieldset.Properties.Where( p => p.DataTypeGuid != null );
-					foreach (var propDef in fieldset.Properties)
+				{    
+                    foreach (var propDef in fieldset.Properties.Where(p => p.DataTypeGuid != null))
 					{
                         try
                         {
