@@ -49,7 +49,7 @@
         </li>
     </ul>
     <div ng-show="showAddButton()">
-        <a data-toggle="{{ model.config.fieldsets.length > 1 ? 'dropdown' : ''}}" ng-click="model.config.fieldsets.length == 1 ? addRow(model.config.fieldsets[0].alias, 0) : return" prevent-default>
+        <a class="archetypeAddButton" data-toggle="{{ model.config.fieldsets.length > 1 ? 'dropdown' : ''}}" ng-click="model.config.fieldsets.length == 1 ? addRow(model.config.fieldsets[0].alias, 0) : return" prevent-default>
             <i class="icon icon-add dropdown-toggle"></i>
             <localize key="general_add" class="archetypeAddButtonText">Add</localize>
         </a>
