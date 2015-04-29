@@ -74,7 +74,7 @@ module.exports = function(grunt) {
         expand: true
       },
       dll: {
-        cwd: 'app/Umbraco/Umbraco.Archetype/bin/Release/',
+        cwd: 'app/Umbraco/Umbraco.Archetype/bin/Debug/',
         src: 'Archetype.dll',
         dest: '<%= dest %>/bin/',
         expand: true
@@ -202,7 +202,7 @@ module.exports = function(grunt) {
       dist: {
         src: ['app/Umbraco/Umbraco.Archetype/Archetype.Umbraco.csproj','app/Umbraco/Archetype.Courier/Archetype.Courier.csproj'],
         options: {
-          projectConfiguration: 'Release',
+          projectConfiguration: 'Debug',
           targets: ['Clean', 'Rebuild'],
         }
       }
