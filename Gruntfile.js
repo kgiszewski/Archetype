@@ -79,12 +79,6 @@ module.exports = function(grunt) {
         dest: '<%= dest %>/bin/',
         expand: true
       },
-	  dll_courier: {
-        cwd: 'app/Umbraco/Archetype.Courier/bin/Debug',
-        src: 'Archetype.Courier.dll',
-        dest: '<%= dest %>/bin/',
-        expand: true
-      },
       config: {
         files: [
           {
@@ -216,7 +210,7 @@ module.exports = function(grunt) {
 
   });
 
-  grunt.registerTask('default', ['clean', 'less', 'concat', 'assemblyinfo', 'msbuild:dist', 'copy:dll', 'copy:dll_courier', 'copy:config', 'copy:html']);
+  grunt.registerTask('default', ['clean', 'less', 'concat', 'assemblyinfo', 'msbuild:dist', 'copy:dll', 'copy:config', 'copy:html']);
 
   grunt.registerTask('nuget',   ['clean:tmp', 'default', 'copy:nuget', 'template:nuspec', 'nugetpack', 'clean:tmp']);
   grunt.registerTask('umbraco', ['clean:tmp', 'default', 'copy:umbraco', 'umbracoPackage', 'clean:tmp']);
