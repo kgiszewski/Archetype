@@ -164,7 +164,7 @@ module.exports = function(grunt) {
 
     assemblyinfo: {
       options: {
-        files: ['app/Umbraco/Umbraco.Archetype/Archetype.Umbraco.csproj'],
+        files: ['app/Umbraco/Umbraco.Archetype/Archetype.Umbraco.csproj', 'app/Umbraco/Umbraco.Archetype/Archetype.Courier.csproj'],
         filename: 'VersionInfo.cs',
         info: {
           version: '<%= (pkgMeta.version.indexOf("-") > 0 ? pkgMeta.version.substring(0, pkgMeta.version.indexOf("-")) : pkgMeta.version) %>', 
@@ -200,7 +200,7 @@ module.exports = function(grunt) {
         }
       },
       dist: {
-        src: ['app/Umbraco/Umbraco.Archetype/Archetype.Umbraco.csproj'],
+        src: ['app/Umbraco/Umbraco.Archetype/Archetype.Umbraco.csproj','app/Umbraco/Archetype.Courier/Archetype.Courier.csproj'],
         options: {
           projectConfiguration: 'Release',
           targets: ['Clean', 'Rebuild'],
