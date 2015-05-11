@@ -228,11 +228,6 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
                         // did the value change (if it did, it most likely did so during the "formSubmitting" event)
                         var property = getFieldsetProperty(scope);
 
-                        //not happy with this, but this is a hack to avoid #268
-                        if(property.propertyEditorAlias == "Umbraco.TinyMCEv3") {
-                            return;
-                        }
-
                         var currentValue = property.value;
 
                         if (currentValue != scope.model.value) {

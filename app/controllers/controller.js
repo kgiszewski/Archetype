@@ -87,22 +87,31 @@
         return "";
     }
 
+    var draggedRteSettings;
+
     //sort config
     $scope.sortableOptions = {
         axis: 'y',
         cursor: "move",
         handle: ".handle",
         start: function(ev, ui) {
-            ui.item.parent().find('.umb-rte textarea').each(function () {
-                tinyMCE.execCommand('mceRemoveEditor', false, $(this).attr('id'));
+            draggedRteSettings = {};
+            ui.item.parent().find('.mceNoEditor').each(function () {
+                // remove all RTEs in the dragged row and save their settings
+                var id = $(this).attr('id');
+                draggedRteSettings[id] = _.findWhere(tinyMCE.editors, { id: id }).settings;
+                tinyMCE.execCommand('mceRemoveEditor', false, id);
             });
         },
         update: function (ev, ui) {
             $scope.setDirty();
         },
         stop: function (ev, ui) {
-            ui.item.parent().find('.umb-rte textarea').each(function () {
-                tinyMCE.execCommand('mceAddEditor', false, $(this).attr('id'));
+            ui.item.parent().find('.mceNoEditor').each(function () {
+                var id = $(this).attr('id');
+                draggedRteSettings[id] = draggedRteSettings[id] || _.findWhere(tinyMCE.editors, { id: id }).settings;
+                tinyMCE.execCommand('mceRemoveEditor', false, id);
+                tinyMCE.init(draggedRteSettings[id]);
             });
         }
     };
