@@ -2,11 +2,11 @@
 
 .archetypeEditor {
     width: 98%;
-    
+
     .open {
         position: relative;
     }
-    
+
     .dropdown-menu {
         top: auto;
         > li > a {
@@ -25,7 +25,12 @@
     .icon {
         color: #333;
     }
-    
+
+    .fieldsetIcon {
+        float: left;
+        padding-right: 4px;
+    }
+
     fieldset {
         border: 1px solid #dddddd;
         padding: 0;
@@ -56,9 +61,10 @@
         .archetypeFieldsetLabel {
             position: relative;
             width: 100%;
+            min-height: 42px;
 
             .label-sub {
-                padding: 8px 0;
+                padding: 8px 0 4px 0;
                 display: inline-block;
                 &.module-label {
                     width: 100%;
@@ -98,6 +104,7 @@
 
             .caret {
                 margin: 8px 1px 0 15px;
+                position: absolute;
 
                 &.caret-right {
                     border-bottom: 4px solid transparent;
@@ -110,10 +117,15 @@
 
             label {
                 margin-bottom: 0;
-                margin-left: 5px;
+                margin-left: 38px;
+                white-space: nowrap;
                 padding: 0;
+                width: ~"calc(100% - 132px)";
+                position: absolute;
                 span {
-                    display: inline-block;
+                    display: block;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
                 }
                 &.dimmed {
                     color: #d9d9d9;
