@@ -92,14 +92,13 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
                 validateProperty(scope.fieldset, property);
             });
 
-            // set invalid state if the fieldset contains invalid properties
-            // we need an unique validation key per fieldset in this ngModelCtrl scope, which leaves us with a potential problem: 
-            // if the user invalidates the last fieldset, attempts (and fails) to save and and subsequently deletes the invalid fieldset, 
-            // the validation key will persist on ngModelCtrl and thus the form will not submit.
-            // to fix this problem, the controller probably needs to raise an event (in removeRow) that can be intercepted here to
-            // clear the validation key.
             var validationKey = "validation-f" + scope.fieldsetIndex;
             ngModelCtrl.$setValidity(validationKey, scope.fieldset.isValid);
+        });
+
+        scope.$on("archetypeRemoveFieldset", function (ev, args) {
+            var validationKey = "validation-f" + args.index;
+            ngModelCtrl.$setValidity(validationKey, true);
         });
 
 

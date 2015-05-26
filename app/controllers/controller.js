@@ -143,6 +143,7 @@
             if (confirm('Are you sure you want to remove this?')) {
                 $scope.setDirty();
                 $scope.model.value.fieldsets.splice($index, 1);
+                $scope.$broadcast("archetypeRemoveFieldset", {index: $index});
             }
         }
     }
