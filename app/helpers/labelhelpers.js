@@ -1,38 +1,85 @@
 var ArchetypeLabels = (function() {
 
+    //private vars
     var isEntityLookupLoading = false;
-    var entityNameLookupCache = [];
+    var entityCache = [];
 
+    //private functions
     function getEntityById(scope, id, type) {
 
-        for (var i in entityNameLookupCache) {
-            if (entityNameLookupCache[i].id == id) {
-                return entityNameLookupCache[i].value;
-            }
+        var cachedEntity = _.find(entityCache, function (e){
+            return e.id == id;
+        });
+
+        if(cachedEntity) {
+            return cachedEntity;
         }
 
+        //go get it from server
         if (!isEntityLookupLoading) {
             isEntityLookupLoading = true;
 
             scope.resources.entityResource.getById(id, type).then(function(entity) {
-                entityNameLookupCache.push({id: id, value: entity.name});
+
+                entityCache.push(entity);
 
                 isEntityLookupLoading = false;
-                return entity.name;
+
+                return entity;
             });
         }
-
-        return "";
     }
 
+    //public functions
     return {
-        GetFirstDocumentEntityName: function ($scope, value) {
+        GetEntityProperty: function (value, scope, args) {
+
+            if(!args) {
+                args = {entityType: "Document", propertyName: "name"}
+            }
+
             if (value) {
+                //if handed a csv list, take the first only
                 var id = value.split(",")[0];
 
                 if (id) {
-                    return getEntityById($scope, id, "Document");
+                    return getEntityById(scope, id, args.entityType)[args.propertyName];
                 }
+            }
+
+            return "";
+        },
+        UrlPickerTitle: function(value, scope, args) {
+
+            if(!args) {
+                args = {propertyName: "name"}
+            }
+
+            var entity;
+
+            switch (value.type) {
+                case "content":
+                    if(value.typeData.contentId) {
+                        entity = getEntityById(scope, value.typeData.contentId, "Document");
+                    }
+                    break;
+
+                case "media":
+                    if(value.typeData.mediaId) {
+                        entity = getEntityById(scope, value.typeData.mediaId, "Media");
+                    }
+                    break;
+
+                case "url":
+                    return value.typeData.url;
+                    
+                default:
+                    break;
+
+            }
+
+            if(entity) {
+                return entity[args.propertyName];
             }
 
             return "";

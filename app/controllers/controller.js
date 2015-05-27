@@ -33,34 +33,50 @@
         if (template.length < 1)
             return fieldsetConfig.label;
 
-        var rgx = /{{(.*?)}}*/g;
+        var rgx = /{{([^)].*)}}/g;
         var results;
         var parsedTemplate = template;
 
         while ((results = rgx.exec(template)) !== null) {
+
             // split the template in case it consists of multiple property aliases and/or functions
-            var parts = results[1].split("|");
+            var templates = results[0].replace("{{", '').replace("}}", '').split("|");
             var templateLabelValue = "";
-            for(var i = 0; i < parts.length; i++) {
+
+            for(var i = 0; i < templates.length; i++) {
                 // stop looking for a template label value if a previous template part already yielded a value
                 if(templateLabelValue != "") {
                     break;
                 }
                 
-                var part = parts[i];
+                var template = templates[i];
                 
                 //test for function
-                var beginIndexOf = part.indexOf("(");
-                var endIndexOf = part.indexOf(")");
+                var beginParamsIndexOf = template.indexOf("(");
+                var endParamsIndexOf = template.indexOf(")");
 
-                if(beginIndexOf != -1 && endIndexOf != -1)
+                if(beginParamsIndexOf != -1 && endParamsIndexOf != -1)
                 {
-                    var functionName = part.substring(0, beginIndexOf);
-                    var propertyAlias = part.substring(beginIndexOf + 1, endIndexOf);
-                    templateLabelValue = executeFunctionByName(functionName, window, $scope.getPropertyValueByAlias(fieldset, propertyAlias), $scope);
+                    var functionName = template.substring(0, beginParamsIndexOf);
+                    var propertyAlias = template.substring(beginParamsIndexOf + 1, endParamsIndexOf).split(',')[0];
+
+                    var args = {};
+
+                    var beginArgsIndexOf = template.indexOf(',');
+
+                    if(beginArgsIndexOf != -1) {
+
+                        var argsString = template.substring(beginArgsIndexOf + 1, endParamsIndexOf).trim();
+
+                        var normalizedJsonString = argsString.replace(/(\w+)\s*:/g, '"$1":');
+
+                        args = JSON.parse(normalizedJsonString);
+                    }
+
+                    templateLabelValue = executeFunctionByName(functionName, window, $scope.getPropertyValueByAlias(fieldset, propertyAlias), $scope, args);
                 }
                 else {
-                    propertyAlias = part;
+                    propertyAlias = template;
                     templateLabelValue = $scope.getPropertyValueByAlias(fieldset, propertyAlias);
                 }                
             }
