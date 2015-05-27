@@ -89,6 +89,14 @@ var ArchetypeLabels = (function() {
             }
 
             return "";
+        },
+        Rte: function (value, scope, args) {
+
+            if(!args.contentLength) {
+                args = {contentLength: 50}
+            }
+
+            return $(value).text().substring(0, args.contentLength);
         }
     }
 })();
