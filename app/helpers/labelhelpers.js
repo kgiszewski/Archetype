@@ -36,7 +36,7 @@ var ArchetypeLabels = (function() {
     return {
         GetEntityProperty: function (value, scope, args) {
 
-            if(!args) {
+           if(!args.entityType) {
                 args = {entityType: "Document", propertyName: "name"}
             }
 
@@ -55,9 +55,9 @@ var ArchetypeLabels = (function() {
 
             return "";
         },
-        UrlPickerTitle: function(value, scope, args) {
+        UrlPicker: function(value, scope, args) {
 
-            if(!args) {
+            if(!args.propertyName) {
                 args = {propertyName: "name"}
             }
 
