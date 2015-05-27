@@ -28,6 +28,8 @@ var ArchetypeLabels = (function() {
                 return entity;
             });
         }
+
+        return null;
     }
 
     //public functions
@@ -43,7 +45,11 @@ var ArchetypeLabels = (function() {
                 var id = value.split(",")[0];
 
                 if (id) {
-                    return getEntityById(scope, id, args.entityType)[args.propertyName];
+                    var entity = getEntityById(scope, id, args.entityType);
+
+                    if(entity) {
+                        return entity[args.propertyName];
+                    }
                 }
             }
 
