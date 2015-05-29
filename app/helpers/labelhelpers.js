@@ -34,7 +34,7 @@ var ArchetypeLabels = (function() {
 
     //public functions
     return {
-        GetEntityProperty: function (value, scope, args) {
+        Entity: function (value, scope, args) {
 
            if(!args.entityType) {
                 args = {entityType: "Document", propertyName: "name"}

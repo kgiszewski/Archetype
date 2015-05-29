@@ -60,7 +60,8 @@ module.exports = function(grunt) {
           'app/directives/localize.js',
           'app/services/localization.js',
           'app/helpers/labelhelpers.js',
-          'app/resources/propertyeditor.js'
+          'app/resources/propertyeditor.js',
+          'app/services/archetypeService.js'
         ],
         dest: '<%= basePath %>/js/archetype.js'
       }
