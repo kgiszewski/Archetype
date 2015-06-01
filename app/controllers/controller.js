@@ -1,4 +1,4 @@
-﻿angular.module("umbraco").controller("Imulus.ArchetypeController", function ($scope, $http, assetsService, angularHelper, notificationsService, $timeout, entityResource) {
+﻿angular.module("umbraco").controller("Imulus.ArchetypeController", function ($scope, $http, assetsService, angularHelper, notificationsService, $timeout, entityResource, archetypeService, archetypeLabelService, archetypeCacheService, archetypePropertyEditorResource) {
 
     //$scope.model.value = "";
     $scope.model.hideLabel = $scope.model.config.hideLabel == 1;
@@ -17,74 +17,22 @@
 
     init();
 
-    //hold references to helper resources
+    //hold references to helper resources 
     $scope.resources = {
-        entityResource: entityResource
+        entityResource: entityResource,
+        archetypePropertyEditorResource: archetypePropertyEditorResource
+    }
+
+    //hold references to helper services 
+    $scope.services = {
+        archetypeService: archetypeService,
+        archetypeLabelService: archetypeLabelService,
+        archetypeCacheService: archetypeCacheService
     }
 
     //helper to get $eval the labelTemplate
-    $scope.getFieldsetTitle = function(fieldsetConfigModel, fieldsetIndex) {
-        if(!fieldsetConfigModel)
-            return "";
-        var fieldset = $scope.model.value.fieldsets[fieldsetIndex];
-        var fieldsetConfig = $scope.getConfigFieldsetByAlias(fieldset.alias);
-        var template = fieldsetConfigModel.labelTemplate;
-
-        if (template.length < 1)
-            return fieldsetConfig.label;
-
-        var rgx = /{{(.*?)}}*/g;
-        var results;
-        var parsedTemplate = template;
-
-        while ((results = rgx.exec(template)) !== null) {
-            // split the template in case it consists of multiple property aliases and/or functions
-            var parts = results[1].split("|");
-            var templateLabelValue = "";
-            for(var i = 0; i < parts.length; i++) {
-                // stop looking for a template label value if a previous template part already yielded a value
-                if(templateLabelValue != "") {
-                    break;
-                }
-                
-                var part = parts[i];
-                
-                //test for function
-                var beginIndexOf = part.indexOf("(");
-                var endIndexOf = part.indexOf(")");
-
-                if(beginIndexOf != -1 && endIndexOf != -1)
-                {
-                    var functionName = part.substring(0, beginIndexOf);
-                    var propertyAlias = part.substring(beginIndexOf + 1, endIndexOf);
-                    templateLabelValue = executeFunctionByName(functionName, window, $scope.getPropertyValueByAlias(fieldset, propertyAlias), $scope);
-                }
-                else {
-                    propertyAlias = part;
-                    templateLabelValue = $scope.getPropertyValueByAlias(fieldset, propertyAlias);
-                }                
-            }
-            parsedTemplate = parsedTemplate.replace(results[0], templateLabelValue);
-        }
-
-        return parsedTemplate;
-    };
-
-    function executeFunctionByName(functionName, context) {
-        var args = Array.prototype.slice.call(arguments).splice(2);
-
-        var namespaces = functionName.split(".");
-        var func = namespaces.pop();
-
-        for(var i = 0; i < namespaces.length; i++) {
-            context = context[namespaces[i]];
-        }
-
-        if(context && context[func]) {
-            return context[func].apply(this, args);
-        }
-
-        return "";
+    $scope.getFieldsetTitle = function (fieldsetConfigModel, fieldsetIndex) {
+        return archetypeLabelService.getFieldsetTitle($scope, fieldsetConfigModel, fieldsetIndex);
     }
 
     var draggedRteSettings;

@@ -1,74 +1,32 @@
-angular.module("umbraco.directives").directive('archetypeProperty', function ($compile, $http, archetypePropertyEditorResource, umbPropEditorHelper, $timeout, $rootScope, $q, editorState) {
-
-    function getFieldsetByAlias(fieldsets, alias)
-    {
-        return _.find(fieldsets, function(fieldset){
-            return fieldset.alias == alias;
-        });
-    }
-
-    function getPropertyIndexByAlias(properties, alias){
-        for (var i in properties)
-        {
-            if (properties[i].alias == alias) {
-                return i;
-            }
-        }
-    }
-
-    function getPropertyByAlias(fieldset, alias){
-        return _.find(fieldset.properties, function(property){
-            return property.alias == alias; 
-        });
-    }
-
-    //helper that returns a JS ojbect from 'value' string or the original string
-    function jsonOrString(value, developerMode, debugLabel){
-        if(value && typeof value == 'string'){
-            try{
-                if(developerMode == '1'){
-                    console.log("Trying to parse " + debugLabel + ": " + value); 
-                }
-                value = JSON.parse(value);
-            }
-            catch(exception)
-            {
-                if(developerMode == '1'){
-                    console.log("Failed to parse " + debugLabel + "."); 
-                }
-            }
-        }
-
-        if(value && developerMode == '1'){
-            console.log(debugLabel + " post-parsing: ");
-            console.log(value); 
-        }
-
-        return value;
-    }
+angular.module("umbraco.directives").directive('archetypeProperty', function ($compile, $http, archetypePropertyEditorResource, umbPropEditorHelper, $timeout, $rootScope, $q, editorState, archetypeService, archetypeCacheService) {
 
     var linker = function (scope, element, attrs, ngModelCtrl) {
-        var configFieldsetModel = getFieldsetByAlias(scope.archetypeConfig.fieldsets, scope.fieldset.alias);
+        var configFieldsetModel = archetypeService.getFieldsetByAlias(scope.archetypeConfig.fieldsets, scope.fieldset.alias);
         var view = "";
         var label = configFieldsetModel.properties[scope.propertyConfigIndex].label;
         var dataTypeGuid = configFieldsetModel.properties[scope.propertyConfigIndex].dataTypeGuid;
         var config = null;
         var alias = configFieldsetModel.properties[scope.propertyConfigIndex].alias;
         var defaultValue = configFieldsetModel.properties[scope.propertyConfigIndex].value;
-        var propertyAlias = getUniquePropertyAlias(scope);
-        propertyAliasParts = [];
-
+        var propertyAliasParts = [];
+        var propertyAlias = archetypeService.getUniquePropertyAlias(scope, propertyAliasParts);
+        
         //try to convert the defaultValue to a JS object
-        defaultValue = jsonOrString(defaultValue, scope.archetypeConfig.developerMode, "defaultValue");
+        defaultValue = archetypeService.jsonOrString(defaultValue, scope.archetypeConfig.developerMode, "defaultValue");
 
         //grab info for the selected datatype, prepare for view
         archetypePropertyEditorResource.getDataType(dataTypeGuid, scope.archetypeConfig.enableDeepDatatypeRequests, editorState.current.contentTypeAlias, scope.propertyEditorAlias, alias, editorState.current.id).then(function (data) {
             //transform preValues array into object expected by propertyeditor views
             var configObj = {};
+
             _.each(data.preValues, function(p) {
                 configObj[p.key] = p.value;
             });
+            
             config = configObj;
+
+            //caching for use by label templates later
+            archetypeCacheService.addDatatypeToCache(data, dataTypeGuid);
 
             //determine the view to use [...] and load it
             archetypePropertyEditorResource.getPropertyEditorMapping(data.selectedEditor).then(function(propertyEditor) {
@@ -111,7 +69,7 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
 
         // validate a property in a fieldset
         function validateProperty(fieldset, property) {
-            var propertyConfig = getPropertyByAlias(configFieldsetModel, property.alias);
+            var propertyConfig = archetypeService.getPropertyByAlias(configFieldsetModel, property.alias);
             if (propertyConfig) {
                 // use property.value !== property.value to check for NaN values on numeric inputs
                 if (propertyConfig.required && (property.value == null || property.value === "" || property.value !== property.value)) {
@@ -139,33 +97,6 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
         }
     }
 
-    var propertyAliasParts = [];
-    var getUniquePropertyAlias = function (currentScope) {
-        if (currentScope.hasOwnProperty('fieldsetIndex') && currentScope.hasOwnProperty('property') && currentScope.hasOwnProperty('propertyConfigIndex'))
-        {
-            var currentPropertyAlias = "f" + currentScope.fieldsetIndex + "-" + currentScope.property.alias + "-p" + currentScope.propertyConfigIndex;
-            propertyAliasParts.push(currentPropertyAlias);
-        }
-        else if (currentScope.hasOwnProperty('isPreValue')) // Crappy way to identify this is the umbraco property scope
-        {
-            var umbracoPropertyAlias = currentScope.$parent.$parent.property.alias; // Crappy way to get the umbraco host alias once we identify its scope
-            propertyAliasParts.push(umbracoPropertyAlias);
-        }
-
-        if (currentScope.$parent)
-            getUniquePropertyAlias(currentScope.$parent);
-
-        return _.unique(propertyAliasParts).reverse().join("-");
-    };
-
-    var getFieldset = function(scope) {
-        return scope.archetypeRenderModel.fieldsets[scope.fieldsetIndex];
-    }
-
-    var getFieldsetProperty = function (scope) {
-        return getFieldset(scope).properties[scope.renderModelPropertyIndex];
-    }
-
     function loadView(view, config, defaultValue, alias, propertyAlias, scope, element, ngModelCtrl, propertyValueChanged) {
         if (view)
         {
@@ -182,15 +113,15 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
                     scope.model.config = {};
 
                     //ini the property value after test to make sure a prop exists in the renderModel
-                    scope.renderModelPropertyIndex = getPropertyIndexByAlias(getFieldset(scope).properties, alias);
+                    scope.renderModelPropertyIndex = archetypeService.getPropertyIndexByAlias(archetypeService.getFieldset(scope).properties, alias);
 
                     if (!scope.renderModelPropertyIndex)
                     {
-                        getFieldset(scope).properties.push(JSON.parse('{"alias": "' + alias + '", "value": "' + defaultValue + '"}'));
-                        scope.renderModelPropertyIndex = getPropertyIndexByAlias(getFieldset(scope).properties, alias);
+                        archetypeService.getFieldset(scope).properties.push(JSON.parse('{"alias": "' + alias + '", "value": "' + defaultValue + '"}'));
+                        scope.renderModelPropertyIndex = archetypeService.getPropertyIndexByAlias(archetypeService.getFieldset(scope).properties, alias);
                     }
                     scope.renderModel = {};
-                    scope.model.value = getFieldsetProperty(scope).value;
+                    scope.model.value = archetypeService.getFieldsetProperty(scope).value;
 
                     //set the config from the prevalues
                     scope.model.config = config;
@@ -210,30 +141,28 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
                         }
                     }
 
-                    //console.log(scope.model.config);
-
                     //some items need an alias
                     scope.model.alias = "archetype-property-" + propertyAlias;
 
                     //watch for changes since there is no two-way binding with the local model.value
                     scope.$watch('model.value', function (newValue, oldValue) {
-                        getFieldsetProperty(scope).value = newValue;
+                        archetypeService.getFieldsetProperty(scope).value = newValue;
 
                         // notify the linker that the property value changed
-                        propertyValueChanged(getFieldset(scope), getFieldsetProperty(scope));
+                        propertyValueChanged(archetypeService.getFieldset(scope), archetypeService.getFieldsetProperty(scope));
                     });
 
                     scope.$on('archetypeFormSubmitting', function (ev, args) {
                         // did the value change (if it did, it most likely did so during the "formSubmitting" event)
-                        var property = getFieldsetProperty(scope);
+                        var property = archetypeService.getFieldsetProperty(scope);
 
                         var currentValue = property.value;
 
                         if (currentValue != scope.model.value) {
-                            getFieldsetProperty(scope).value = scope.model.value;
+                            archetypeService.getFieldsetProperty(scope).value = scope.model.value;
 
                             // notify the linker that the property value changed
-                            propertyValueChanged(getFieldset(scope), getFieldsetProperty(scope));
+                            propertyValueChanged(archetypeService.getFieldset(scope), archetypeService.getFieldsetProperty(scope));
                         }
                     });
 
