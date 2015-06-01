@@ -1,4 +1,4 @@
-var ArchetypeLabels = (function() {
+var Archetype = (function() {
 
     //private vars
     var isEntityLookupLoading = false;

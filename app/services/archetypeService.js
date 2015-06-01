@@ -1,85 +1,72 @@
 angular.module('umbraco.services').factory('archetypeService', function () {
-    //private
-    function executeFunctionByName(functionName, context) {
-        var args = Array.prototype.slice.call(arguments).splice(2);
-
-        var namespaces = functionName.split(".");
-        var func = namespaces.pop();
-
-        for(var i = 0; i < namespaces.length; i++) {
-            context = context[namespaces[i]];
-        }
-
-        if(context && context[func]) {
-            return context[func].apply(this, args);
-        }
-
-        return "";
-    }
 
     //public
     return {
-        getFieldsetTitle: function($scope, fieldsetConfigModel, fieldsetIndex) {
-            if(!fieldsetConfigModel)
-                return "";
-            var fieldset = $scope.model.value.fieldsets[fieldsetIndex];
-            var fieldsetConfig = $scope.getConfigFieldsetByAlias(fieldset.alias);
-            var template = fieldsetConfigModel.labelTemplate;
-
-            if (template.length < 1)
-                return fieldsetConfig.label;
-
-            var rgx = /{{([^)].*)}}/g;
-            var results;
-            var parsedTemplate = template;
-
-            while ((results = rgx.exec(template)) !== null) {
-
-                // split the template in case it consists of multiple property aliases and/or functions
-                var templates = results[0].replace("{{", '').replace("}}", '').split("|");
-                var templateLabelValue = "";
-
-                for(var i = 0; i < templates.length; i++) {
-                    // stop looking for a template label value if a previous template part already yielded a value
-                    if(templateLabelValue != "") {
-                        break;
+        //helper that returns a JS ojbect from 'value' string or the original string
+        jsonOrString: function (value, developerMode, debugLabel){
+            if(value && typeof value == 'string'){
+                try{
+                    if(developerMode == '1'){
+                        console.log("Trying to parse " + debugLabel + ": " + value); 
                     }
-                    
-                    var template = templates[i];
-                    
-                    //test for function
-                    var beginParamsIndexOf = template.indexOf("(");
-                    var endParamsIndexOf = template.indexOf(")");
-
-                    if(beginParamsIndexOf != -1 && endParamsIndexOf != -1)
-                    {
-                        var functionName = template.substring(0, beginParamsIndexOf);
-                        var propertyAlias = template.substring(beginParamsIndexOf + 1, endParamsIndexOf).split(',')[0];
-
-                        var args = {};
-
-                        var beginArgsIndexOf = template.indexOf(',');
-
-                        if(beginArgsIndexOf != -1) {
-
-                            var argsString = template.substring(beginArgsIndexOf + 1, endParamsIndexOf).trim();
-
-                            var normalizedJsonString = argsString.replace(/(\w+)\s*:/g, '"$1":');
-
-                            args = JSON.parse(normalizedJsonString);
-                        }
-
-                        templateLabelValue = executeFunctionByName(functionName, window, $scope.getPropertyValueByAlias(fieldset, propertyAlias), $scope, args);
-                    }
-                    else {
-                        propertyAlias = template;
-                        templateLabelValue = $scope.getPropertyValueByAlias(fieldset, propertyAlias);
-                    }                
+                    value = JSON.parse(value);
                 }
-                parsedTemplate = parsedTemplate.replace(results[0], templateLabelValue);
+                catch(exception)
+                {
+                    if(developerMode == '1'){
+                        console.log("Failed to parse " + debugLabel + "."); 
+                    }
+                }
             }
 
-            return parsedTemplate;
+            if(value && developerMode == '1'){
+                console.log(debugLabel + " post-parsing: ");
+                console.log(value); 
+            }
+
+            return value;
+        },
+        getFieldsetByAlias: function (fieldsets, alias)
+        {
+            return _.find(fieldsets, function(fieldset){
+                return fieldset.alias == alias;
+            });
+        },
+        getPropertyIndexByAlias: function(properties, alias){
+            for (var i in properties)
+            {
+                if (properties[i].alias == alias) {
+                    return i;
+                }
+            }
+        },
+        getPropertyByAlias: function (fieldset, alias){
+            return _.find(fieldset.properties, function(property){
+                return property.alias == alias; 
+            });
+        },
+        getUniquePropertyAlias: function (currentScope, propertyAliasParts) {
+            if (currentScope.hasOwnProperty('fieldsetIndex') && currentScope.hasOwnProperty('property') && currentScope.hasOwnProperty('propertyConfigIndex'))
+            {
+                var currentPropertyAlias = "f" + currentScope.fieldsetIndex + "-" + currentScope.property.alias + "-p" + currentScope.propertyConfigIndex;
+                propertyAliasParts.push(currentPropertyAlias);
+            }
+            else if (currentScope.hasOwnProperty('isPreValue')) // Crappy way to identify this is the umbraco property scope
+            {
+                var umbracoPropertyAlias = currentScope.$parent.$parent.property.alias; // Crappy way to get the umbraco host alias once we identify its scope
+                propertyAliasParts.push(umbracoPropertyAlias);
+            }
+
+            if (currentScope.$parent)
+                this.getUniquePropertyAlias(currentScope.$parent, propertyAliasParts);
+
+            return _.unique(propertyAliasParts).reverse().join("-");
+        },
+        getFieldset: function(scope) {
+            return scope.archetypeRenderModel.fieldsets[scope.fieldsetIndex];
+        },
+        getFieldsetProperty: function (scope) {
+            return this.getFieldset(scope).properties[scope.renderModelPropertyIndex];
         }
     }
 });

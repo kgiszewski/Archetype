@@ -1,4 +1,4 @@
-﻿angular.module("umbraco").controller("Imulus.ArchetypeController", function ($scope, $http, assetsService, angularHelper, notificationsService, $timeout, entityResource, archetypeService) {
+﻿angular.module("umbraco").controller("Imulus.ArchetypeController", function ($scope, $http, assetsService, angularHelper, notificationsService, $timeout, entityResource, archetypeService, archetypeLabelService) {
 
     //$scope.model.value = "";
     $scope.model.hideLabel = $scope.model.config.hideLabel == 1;
@@ -17,14 +17,20 @@
 
     init();
 
-    //hold references to helper resources for the label helpers
+    //hold references to helper resources 
     $scope.resources = {
         entityResource: entityResource
     }
 
+    //hold references to helper services 
+    $scope.services = {
+        archetypeService: archetypeService,
+        archetypeLabelService: archetypeLabelService
+    }
+
     //helper to get $eval the labelTemplate
     $scope.getFieldsetTitle = function (fieldsetConfigModel, fieldsetIndex) {
-        return archetypeService.getFieldsetTitle($scope, fieldsetConfigModel, fieldsetIndex);
+        return archetypeLabelService.getFieldsetTitle($scope, fieldsetConfigModel, fieldsetIndex);
     }
 
     var draggedRteSettings;
