@@ -100,35 +100,31 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
 
                         templateLabelValue = rawValue;
 
-                        //try to match a built-in template if the value is an object or contains html
-                        //THIS IS FLAWED, perhaps we should examine every datatype alias which means we should be caching the original request from the directive!
-                        if(angular.isObject(templateLabelValue) || /<[a-z][\s\S]*>/i.test(templateLabelValue)) {
-                            //determine the type of editor
-                            var propertyConfig = _.find(fieldsetConfigModel.properties, function(property){
-                                return property.alias == propertyAlias;
-                            });
+                        //determine the type of editor
+                        var propertyConfig = _.find(fieldsetConfigModel.properties, function(property){
+                            return property.alias == propertyAlias;
+                        });
 
-                            if(propertyConfig) {
-                            	var datatype = archetypeCacheService.getDatatypeByGuid(propertyConfig.dataTypeGuid);
-                            	
-                            	if(datatype) {
-                            		//console.log(datatype);
+                        if(propertyConfig) {
+                        	var datatype = archetypeCacheService.getDatatypeByGuid(propertyConfig.dataTypeGuid);
+                        	
+                        	if(datatype) {
 
-	                            	//try to get built-in label
-	                            	var label = getNativeLabel(datatype, templateLabelValue, $scope, this);
+                            	//try to get built-in label
+                            	var label = getNativeLabel(datatype, templateLabelValue, $scope, this);
 
-	                            	if(label) {
-                            			templateLabelValue = label;
-                            		}
-                            		else {
-                            			templateLabelValue = templateLabelValue;
-                            		}
-                            	}
-                            }
-                            else {
-                            	return templateLabelValue;
-                            }
+                            	if(label) {
+                        			templateLabelValue = label;
+                        		}
+                        		else {
+                        			templateLabelValue = templateLabelValue;
+                        		}
+                        	}
                         }
+                        else {
+                        	return templateLabelValue;
+                        }
+
                     }                
                 }
                 parsedTemplate = parsedTemplate.replace(results[0], templateLabelValue);

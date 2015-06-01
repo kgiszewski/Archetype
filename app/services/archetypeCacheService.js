@@ -7,16 +7,29 @@ angular.module('umbraco.services').factory('archetypeCacheService', function (ar
     var datatypeCache = [];
 
     return {
-		getDatatypeByGuid: function(guid) {
-        	var cachedDatatype = _.find(datatypeCache, function (dt){
+    	getDataTypeFromCache: function(guid) {
+        	return _.find(datatypeCache, function (dt){
 	            return dt.dataTypeGuid == guid;
 	        });
+    	},
+
+    	addDatatypeToCache: function(datatype, dataTypeGuid) {
+            var cachedDatatype = this.getDataTypeFromCache(dataTypeGuid);
+
+            if(!cachedDatatype) {
+            	datatype.dataTypeGuid = dataTypeGuid;
+            	datatypeCache.push(datatype);
+            }
+    	},
+ 
+		getDatatypeByGuid: function(guid) {
+			var cachedDatatype = this.getDataTypeFromCache(guid);
 
 	        if(cachedDatatype) {
 	            return cachedDatatype;
 	        }
 
-	        //go get it from server
+	        //go get it from server, but this should already be pre-populated from the directive, but I suppose I'll leave this in in case used ad-hoc
 	        if (!isDatatypeLookupLoading) {
 	            isDatatypeLookupLoading = true;
 
@@ -34,6 +47,7 @@ angular.module('umbraco.services').factory('archetypeCacheService', function (ar
 
 	        return null;
         },
+
      	getEntityById: function(scope, id, type) {
 	        var cachedEntity = _.find(entityCache, function (e){
 	            return e.id == id;
