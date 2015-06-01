@@ -1,4 +1,4 @@
-angular.module('umbraco.services').factory('archetypeLabelService', function (archetypePropertyEditorResource) {
+angular.module('umbraco.services').factory('archetypeLabelService', function (archetypeCacheService) {
     //private
 
     var isEntityLookupLoading = false;
@@ -109,7 +109,7 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
                             });
 
                             if(propertyConfig) {
-                            	var datatype = this.getDatatypeByGuid(propertyConfig.dataTypeGuid);
+                            	var datatype = archetypeCacheService.getDatatypeByGuid(propertyConfig.dataTypeGuid);
                             	
                             	if(datatype) {
                             		//console.log(datatype);
@@ -136,58 +136,6 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
 
             return parsedTemplate;
         },
-        getDatatypeByGuid: function(guid) {
-        	var cachedDatatype = _.find(datatypeCache, function (dt){
-	            return dt.dataTypeGuid == guid;
-	        });
-
-	        if(cachedDatatype) {
-	            return cachedDatatype;
-	        }
-
-	        //go get it from server
-	        if (!isDatatypeLookupLoading) {
-	            isDatatypeLookupLoading = true;
-
-	            archetypePropertyEditorResource.getDataType(guid).then(function(datatype) {
-
-	            	datatype.dataTypeGuid = guid;
-
-	                datatypeCache.push(datatype);
-
-	                isDatatypeLookupLoading = false;
-
-	                return datatype;
-	            });
-	        }
-
-	        return null;
-        },
-     	getEntityById: function(scope, id, type) {
-	        var cachedEntity = _.find(entityCache, function (e){
-	            return e.id == id;
-	        });
-
-	        if(cachedEntity) {
-	            return cachedEntity;
-	        }
-
-	        //go get it from server
-	        if (!isEntityLookupLoading) {
-	            isEntityLookupLoading = true;
-
-	            scope.resources.entityResource.getById(id, type).then(function(entity) {
-
-	                entityCache.push(entity);
-
-	                isEntityLookupLoading = false;
-
-	                return entity;
-	            });
-	        }
-
-	        return null;
-	    },
 	    urlPicker: function(value, scope, args) {
 
             if(!args.propertyName) {
@@ -199,13 +147,13 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
             switch (value.type) {
                 case "content":
                     if(value.typeData.contentId) {
-                        entity = this.getEntityById(scope, value.typeData.contentId, "Document");
+                        entity = archetypeCacheService.getEntityById(scope, value.typeData.contentId, "Document");
                     }
                     break;
 
                 case "media":
                     if(value.typeData.mediaId) {
-                        entity = this.getEntityById(scope, value.typeData.mediaId, "Media");
+                        entity = archetypeCacheService.getEntityById(scope, value.typeData.mediaId, "Media");
                     }
                     break;
 
