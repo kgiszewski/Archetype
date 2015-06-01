@@ -29,10 +29,47 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
     			return imulusUrlPicker(value, scope, {});
     		case "Umbraco.TinyMCEv3":
     			return coreTinyMce(value, scope, {});
+            case "Umbraco.MultiNodeTreePicker":
+                return coreMntp(value, scope, datatype);
 
     		default:
     			return "";
     	}
+    }
+
+    function coreMntp(value, scope, args) {
+        var ids = value.split(',');
+        var type = "Document";
+
+        switch(args.preValues[0].value.type) {
+            case 'content':
+                type = 'Document';
+                break;
+            case 'media':
+                type = 'media';
+                break;
+            case 'member':
+                type = 'member';
+                break;
+
+            default:
+                break;
+        }
+
+        var entityArray = [];
+
+        _.each(ids, function(id){
+            if(id) {
+
+                var entity = archetypeCacheService.getEntityById(scope, id, type);
+                
+                if(entity) {
+                    entityArray.push(entity.name);
+                }
+            }
+        });
+
+        return entityArray.join(', ');
     }
 
     function imulusUrlPicker(value, scope, args) {
