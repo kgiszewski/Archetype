@@ -1,4 +1,4 @@
-﻿angular.module("umbraco").controller("Imulus.ArchetypeController", function ($scope, $http, assetsService, angularHelper, notificationsService, $timeout, entityResource, archetypeService, archetypeLabelService) {
+﻿angular.module("umbraco").controller("Imulus.ArchetypeController", function ($scope, $http, assetsService, angularHelper, notificationsService, $timeout, entityResource, archetypeService, archetypeLabelService, archetypeCacheService) {
 
     //$scope.model.value = "";
     $scope.model.hideLabel = $scope.model.config.hideLabel == 1;
@@ -25,7 +25,8 @@
     //hold references to helper services 
     $scope.services = {
         archetypeService: archetypeService,
-        archetypeLabelService: archetypeLabelService
+        archetypeLabelService: archetypeLabelService,
+        archetypeCacheService: archetypeCacheService
     }
 
     //helper to get $eval the labelTemplate
