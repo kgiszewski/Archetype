@@ -1,37 +1,5 @@
 var Archetype = (function() {
 
-    //private vars
-    var isEntityLookupLoading = false;
-    var entityCache = [];
-
-    //private functions
-    function getEntityById(scope, id, type) {
-
-        var cachedEntity = _.find(entityCache, function (e){
-            return e.id == id;
-        });
-
-        if(cachedEntity) {
-            return cachedEntity;
-        }
-
-        //go get it from server
-        if (!isEntityLookupLoading) {
-            isEntityLookupLoading = true;
-
-            scope.resources.entityResource.getById(id, type).then(function(entity) {
-
-                entityCache.push(entity);
-
-                isEntityLookupLoading = false;
-
-                return entity;
-            });
-        }
-
-        return null;
-    }
-
     //public functions
     return {
         Entity: function (value, scope, args) {
@@ -45,7 +13,7 @@ var Archetype = (function() {
                 var id = value.split(",")[0];
 
                 if (id) {
-                    var entity = getEntityById(scope, id, args.entityType);
+                    var entity = scope.services.archetypeLabelService.getEntityById(scope, id, args.entityType);
 
                     if(entity) {
                         return entity[args.propertyName];
@@ -66,13 +34,13 @@ var Archetype = (function() {
             switch (value.type) {
                 case "content":
                     if(value.typeData.contentId) {
-                        entity = getEntityById(scope, value.typeData.contentId, "Document");
+                        entity = scope.services.archetypeLabelService.getEntityById(scope, value.typeData.contentId, "Document");
                     }
                     break;
 
                 case "media":
                     if(value.typeData.mediaId) {
-                        entity = getEntityById(scope, value.typeData.mediaId, "Media");
+                        entity = scope.services.archetypeLabelService.getEntityById(scope, value.typeData.mediaId, "Media");
                     }
                     break;
 

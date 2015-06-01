@@ -114,7 +114,7 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
                     if (!scope.renderModelPropertyIndex)
                     {
                         archetypeService.getFieldset(scope).properties.push(JSON.parse('{"alias": "' + alias + '", "value": "' + defaultValue + '"}'));
-                        scope.renderModelPropertyIndex = getPropertyIndexByAlias(archetypeService.getFieldset(scope).properties, alias);
+                        scope.renderModelPropertyIndex = archetypeService.getPropertyIndexByAlias(archetypeService.getFieldset(scope).properties, alias);
                     }
                     scope.renderModel = {};
                     scope.model.value = archetypeService.getFieldsetProperty(scope).value;

@@ -23,6 +23,18 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
         return "";
     }
 
+    function getNativeLabel(datatype, value, scope, archetypeLabelService) {
+    	switch (datatype.selectedEditor) {
+    		case "Imulus.UrlPicker":
+    			return archetypeLabelService.urlPicker(value, scope, {});
+    		case "Umbraco.TinyMCEv3":
+    			return archetypeLabelService.rte(value, scope, {});
+
+    		default:
+    			return null;
+    	}
+    }
+
 	return {
 		getFieldsetTitle: function($scope, fieldsetConfigModel, fieldsetIndex) {
 
@@ -91,7 +103,7 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
                         var isObject = angular.isObject(templateLabelValue);
 
                         //try to match a built-in template
-                        if(isObject) {
+                        if(isObject || templateLabelValue.indexOf("<p>" != -1)) {
                             //determine the type of editor
                             var propertyConfig = _.find(fieldsetConfigModel.properties, function(property){
                                 return property.alias == propertyAlias;
@@ -101,16 +113,21 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
                             	var datatype = this.getDatatypeByGuid(propertyConfig.dataTypeGuid);
                             	
                             	if(datatype) {
-                            		console.log(datatype);
+                            		//console.log(datatype);
 
 	                            	//try to get built-in label
-	                            	if(datatype.selectedEditor == "Imulus.UrlPicker") {
-                            			templateLabelValue = this.urlPicker(templateLabelValue, $scope, {});
-	                            	}
+	                            	var label = getNativeLabel(datatype, templateLabelValue, $scope, this);
+
+	                            	if(label) {
+                            			templateLabelValue = label;
+                            		}
+                            		else {
+                            			templateLabelValue = templateLabelValue;
+                            		}
                             	}
                             }
                             else {
-                            	return value;
+                            	return templateLabelValue;
                             }
                         }
                     }                
@@ -206,6 +223,14 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
             }
 
             return "";
+        },
+        rte: function (value, scope, args) {
+
+            if(!args.contentLength) {
+                args = {contentLength: 50}
+            }
+
+            return $(value).text().substring(0, args.contentLength);
         }
 	}
 });
