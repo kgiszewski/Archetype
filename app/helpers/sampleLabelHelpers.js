@@ -1,4 +1,4 @@
-var Archetype = (function() {
+var ArchetypeSampleLabelTemplates = (function() {
 
     //public functions
     return {

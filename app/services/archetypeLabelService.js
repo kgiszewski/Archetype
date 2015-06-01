@@ -23,28 +23,80 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
         return "";
     }
 
-    function getNativeLabel(datatype, value, scope, archetypeLabelService) {
+    function getNativeLabel(datatype, value, scope) {
     	switch (datatype.selectedEditor) {
     		case "Imulus.UrlPicker":
-    			return archetypeLabelService.urlPicker(value, scope, {});
+    			return imulusUrlPicker(value, scope, {});
     		case "Umbraco.TinyMCEv3":
-    			return archetypeLabelService.rte(value, scope, {});
+    			return coreTinyMce(value, scope, {});
 
     		default:
-    			return null;
+    			return "";
     	}
     }
 
-	return {
-		getFieldsetTitle: function($scope, fieldsetConfigModel, fieldsetIndex) {
+    function imulusUrlPicker(value, scope, args) {
 
-            //console.log($scope.model.config);
+        if(!args.propertyName) {
+            args = {propertyName: "name"}
+        }
+
+        var entity;
+
+        switch (value.type) {
+            case "content":
+                if(value.typeData.contentId) {
+                    entity = archetypeCacheService.getEntityById(scope, value.typeData.contentId, "Document");
+                }
+                break;
+
+            case "media":
+                if(value.typeData.mediaId) {
+                    entity = archetypeCacheService.getEntityById(scope, value.typeData.mediaId, "Media");
+                }
+                break;
+
+            case "url":
+                return value.typeData.url;
+                
+            default:
+                break;
+
+        }
+
+        if(entity) {
+            return entity[args.propertyName];
+        }
+
+        return "";
+    }
+
+    function coreTinyMce(value, scope, args) {
+
+        if(!args.contentLength) {
+            args = {contentLength: 50}
+        }
+
+        var suffix = "";
+        var strippedText = $(value).text();
+
+        if(strippedText.length > args.contentLength) {
+        	suffix = "…";
+        }
+
+        return strippedText.substring(0, args.contentLength) + suffix;
+    }
+
+	return {
+		getFieldsetTitle: function(scope, fieldsetConfigModel, fieldsetIndex) {
+
+            //console.log(scope.model.config);
 
             if(!fieldsetConfigModel)
                 return "";
 
-            var fieldset = $scope.model.value.fieldsets[fieldsetIndex];
-            var fieldsetConfig = $scope.getConfigFieldsetByAlias(fieldset.alias);
+            var fieldset = scope.model.value.fieldsets[fieldsetIndex];
+            var fieldsetConfig = scope.getConfigFieldsetByAlias(fieldset.alias);
             var template = fieldsetConfigModel.labelTemplate;
 
             if (template.length < 1)
@@ -91,12 +143,12 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
                             args = JSON.parse(normalizedJsonString);
                         }
 
-                        templateLabelValue = executeFunctionByName(functionName, window, $scope.getPropertyValueByAlias(fieldset, propertyAlias), $scope, args);
+                        templateLabelValue = executeFunctionByName(functionName, window, scope.getPropertyValueByAlias(fieldset, propertyAlias), scope, args);
                     }
                     //normal {{foo}} syntax
                     else {
                         propertyAlias = template;
-                        var rawValue = $scope.getPropertyValueByAlias(fieldset, propertyAlias);
+                        var rawValue = scope.getPropertyValueByAlias(fieldset, propertyAlias);
 
                         templateLabelValue = rawValue;
 
@@ -111,7 +163,7 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
                         	if(datatype) {
 
                             	//try to get built-in label
-                            	var label = getNativeLabel(datatype, templateLabelValue, $scope, this);
+                            	var label = getNativeLabel(datatype, templateLabelValue, scope);
 
                             	if(label) {
                         			templateLabelValue = label;
@@ -131,49 +183,6 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
             }
 
             return parsedTemplate;
-        },
-	    urlPicker: function(value, scope, args) {
-
-            if(!args.propertyName) {
-                args = {propertyName: "name"}
-            }
-
-            var entity;
-
-            switch (value.type) {
-                case "content":
-                    if(value.typeData.contentId) {
-                        entity = archetypeCacheService.getEntityById(scope, value.typeData.contentId, "Document");
-                    }
-                    break;
-
-                case "media":
-                    if(value.typeData.mediaId) {
-                        entity = archetypeCacheService.getEntityById(scope, value.typeData.mediaId, "Media");
-                    }
-                    break;
-
-                case "url":
-                    return value.typeData.url;
-                    
-                default:
-                    break;
-
-            }
-
-            if(entity) {
-                return entity[args.propertyName];
-            }
-
-            return "";
-        },
-        rte: function (value, scope, args) {
-
-            if(!args.contentLength) {
-                args = {contentLength: 50}
-            }
-
-            return $(value).text().substring(0, args.contentLength);
         }
 	}
 });
