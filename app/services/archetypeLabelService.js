@@ -100,10 +100,9 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
 
                         templateLabelValue = rawValue;
 
-                        var isObject = angular.isObject(templateLabelValue);
-
-                        //try to match a built-in template
-                        if(isObject || templateLabelValue.indexOf("<p>" != -1)) {
+                        //try to match a built-in template if the value is an object or contains html
+                        //THIS IS FLAWED, perhaps we should examine every datatype alias which means we should be caching the original request from the directive!
+                        if(angular.isObject(templateLabelValue) || /<[a-z][\s\S]*>/i.test(templateLabelValue)) {
                             //determine the type of editor
                             var propertyConfig = _.find(fieldsetConfigModel.properties, function(property){
                                 return property.alias == propertyAlias;
