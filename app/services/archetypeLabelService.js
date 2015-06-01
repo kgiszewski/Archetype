@@ -31,7 +31,8 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
     			return coreTinyMce(value, scope, {});
             case "Umbraco.MultiNodeTreePicker":
                 return coreMntp(value, scope, datatype);
-
+            case "Umbraco.MediaPicker":
+                return coreMediaPicker(value, scope, datatype);
     		default:
     			return "";
     	}
@@ -70,6 +71,18 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
         });
 
         return entityArray.join(', ');
+    }
+
+    function coreMediaPicker(value, scope, args) {
+        if(value) {
+             var entity = archetypeCacheService.getEntityById(scope, value, "media");     
+             
+            if(entity) {
+                return entity.name; 
+            }
+        }
+
+        return "";
     }
 
     function imulusUrlPicker(value, scope, args) {
