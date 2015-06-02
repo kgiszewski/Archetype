@@ -1,4 +1,4 @@
-﻿angular.module("umbraco").controller("Imulus.ArchetypeController", function ($scope, $http, assetsService, angularHelper, notificationsService, $timeout, entityResource, archetypeService, archetypeLabelService, archetypeCacheService, archetypePropertyEditorResource) {
+angular.module("umbraco").controller("Imulus.ArchetypeController", function ($scope, $http, assetsService, angularHelper, notificationsService, $timeout, entityResource, archetypeService, archetypeLabelService, archetypeCacheService, archetypePropertyEditorResource) {
 
     //$scope.model.value = "";
     $scope.model.hideLabel = $scope.model.config.hideLabel == 1;
@@ -36,6 +36,7 @@
     }
 
     var draggedRteSettings;
+    var rteClass = ".mce-tinymce";
 
     //sort config
     $scope.sortableOptions = {
@@ -44,22 +45,30 @@
         handle: ".handle",
         start: function(ev, ui) {
             draggedRteSettings = {};
-            ui.item.parent().find('.mceNoEditor').each(function () {
+            ui.item.parent().find(rteClass).each(function () {
                 // remove all RTEs in the dragged row and save their settings
-                var id = $(this).attr('id');
-                draggedRteSettings[id] = _.findWhere(tinyMCE.editors, { id: id }).settings;
-                tinyMCE.execCommand('mceRemoveEditor', false, id);
+                var $element = $(this);
+                var wrapperId = $element.attr('id');
+                var $textarea = $element.siblings('textarea');
+                var textareaId = $textarea.attr('id');
+
+                draggedRteSettings[textareaId] = _.findWhere(tinyMCE.editors, { id: textareaId }).settings;
+                tinyMCE.execCommand('mceRemoveEditor', false, wrapperId);
             });
         },
         update: function (ev, ui) {
             $scope.setDirty();
         },
         stop: function (ev, ui) {
-            ui.item.parent().find('.mceNoEditor').each(function () {
-                var id = $(this).attr('id');
-                draggedRteSettings[id] = draggedRteSettings[id] || _.findWhere(tinyMCE.editors, { id: id }).settings;
-                tinyMCE.execCommand('mceRemoveEditor', false, id);
-                tinyMCE.init(draggedRteSettings[id]);
+            ui.item.parent().find(rteClass).each(function () {
+                var $element = $(this);
+                var wrapperId = $element.attr('id');
+                var $textarea = $element.siblings('textarea');
+                var textareaId = $textarea.attr('id');
+
+                draggedRteSettings[textareaId] = draggedRteSettings[textareaId] || _.findWhere(tinyMCE.editors, { id: textareaId }).settings;
+                tinyMCE.execCommand('mceRemoveEditor', false, wrapperId);
+                tinyMCE.init(draggedRteSettings[textareaId]);
             });
         }
     };
