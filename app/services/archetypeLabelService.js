@@ -152,14 +152,24 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
             if (template.length < 1)
                 return fieldsetConfig.label;
 
-            var rgx = /{{([^)].*)}}/g;
+            var rgx = /({{(.*?)}})*/g;
             var results;
             var parsedTemplate = template;
 
-            while ((results = rgx.exec(template)) !== null) {
+            var rawMatches = template.match(rgx);
+            
+            var matches = [];
+
+            _.each(rawMatches, function(match){
+                if(match) {
+                    matches.push(match);
+                }
+            });
+
+            _.each(matches, function (match) {
 
                 // split the template in case it consists of multiple property aliases and/or functions
-                var templates = results[0].replace("{{", '').replace("}}", '').split("|");
+                var templates = match.replace("{{", '').replace("}}", '').split("|");
                 var templateLabelValue = "";
 
                 for(var i = 0; i < templates.length; i++) {
@@ -229,8 +239,9 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
 
                     }                
                 }
-                parsedTemplate = parsedTemplate.replace(results[0], templateLabelValue);
-            }
+
+                parsedTemplate = parsedTemplate.replace(match, templateLabelValue);
+            });
 
             return parsedTemplate;
         }
