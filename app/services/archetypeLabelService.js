@@ -1,11 +1,6 @@
 angular.module('umbraco.services').factory('archetypeLabelService', function (archetypeCacheService) {
     //private
 
-    var isEntityLookupLoading = false;
-    var entityCache = [];
-    var isDatatypeLookupLoading = false;
-    var datatypeCache = [];
-
     function executeFunctionByName(functionName, context) {
         var args = Array.prototype.slice.call(arguments).splice(2);
 
@@ -24,6 +19,7 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
     }
 
     function getNativeLabel(datatype, value, scope) {
+
     	switch (datatype.selectedEditor) {
     		case "Imulus.UrlPicker":
     			return imulusUrlPicker(value, scope, {});
@@ -33,9 +29,25 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
                 return coreMntp(value, scope, datatype);
             case "Umbraco.MediaPicker":
                 return coreMediaPicker(value, scope, datatype);
+            case "Umbraco.DropDown":
+                return coreDropdown(value, scope, datatype);
     		default:
     			return "";
     	}
+    }
+
+    function coreDropdown(value, scope, args) {
+
+        if(!value)
+            return "";
+
+        var labelValue = args.preValues[0].value[value].value;
+
+        if(labelValue) {
+            return labelValue;
+        }
+
+        return "";
     }
 
     function coreMntp(value, scope, args) {
@@ -219,7 +231,7 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
 
                         if(propertyConfig) {
                         	var datatype = archetypeCacheService.getDatatypeByGuid(propertyConfig.dataTypeGuid);
-                        	
+
                         	if(datatype) {
 
                             	//try to get built-in label
@@ -240,6 +252,10 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
                     }                
                 }
 
+                if(!templateLabelValue) {
+                    templateLabelValue = "";
+                }
+                
                 parsedTemplate = parsedTemplate.replace(match, templateLabelValue);
             });
 
