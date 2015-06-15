@@ -41,10 +41,10 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
         if(!value)
             return "";
 
-        var labelValue = args.preValues[0].value[value].value;
+        var prevalue = args.preValues[0].value[value];
 
-        if(labelValue) {
-            return labelValue;
+        if(prevalue) {
+            return prevalue.value;
         }
 
         return "";
