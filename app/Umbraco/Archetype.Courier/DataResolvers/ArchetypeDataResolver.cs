@@ -62,7 +62,7 @@ namespace Archetype.Courier.DataResolvers
 					{
 						foreach (var property in config.Fieldsets.SelectMany(x => x.Properties))
 						{
-							item.Dependencies.Add(property.DataTypeGuid.ToString(), ProviderIDCollection.dataTypeItemProviderGuid);
+							item.Dependencies.Add(property.DataTypeGuid.ToString(), ItemProviderIds.dataTypeItemProviderGuid);
 						}
 
 						item.Prevalues[0].Value = JsonConvert.SerializeObject(config, Formatting.None);
@@ -76,7 +76,7 @@ namespace Archetype.Courier.DataResolvers
 			if (propertyData != null && propertyData.Value != null)
 			{
 				var dataType = ExecutionContext.DatabasePersistence.RetrieveItem<DataType>(new ItemIdentifier(propertyData.DataType.ToString(),
-					ProviderIDCollection.dataTypeItemProviderGuid));
+					ItemProviderIds.dataTypeItemProviderGuid));
 
 				//Fetch the Prevalues for the current Property's DataType (if its an 'Archetype config')
 				var prevalue = dataType.Prevalues.FirstOrDefault(x => x.Alias.ToLowerInvariant().Equals("archetypeconfig"));
@@ -94,7 +94,7 @@ namespace Archetype.Courier.DataResolvers
 				if (archetype != null)
 				{
 					// get the `PropertyItemProvider` from the collection.
-					var propertyItemProvider = ItemProviderCollection.Instance.GetProvider(ProviderIDCollection.propertyDataItemProviderGuid, ExecutionContext);
+					var propertyItemProvider = ItemProviderCollection.Instance.GetProvider(ItemProviderIds.propertyDataItemProviderGuid, ExecutionContext);
 
 					foreach (var property in archetype.Fieldsets.SelectMany(x => x.Properties))
 					{
@@ -111,7 +111,7 @@ namespace Archetype.Courier.DataResolvers
 								new ContentProperty
 								{
 									Alias = property.Alias,
-									DataType = ExecutionContext.DatabasePersistence.GetUniqueId(property.DataTypeId, NodeObjectTypes.DataType),
+									DataType = ExecutionContext.DatabasePersistence.GetUniqueId(property.DataTypeId, UmbracoNodeObjectTypeIds.DataType),
 									PropertyEditorAlias = property.PropertyEditorAlias,
 									Value = property.Value
 								}
@@ -157,7 +157,7 @@ namespace Archetype.Courier.DataResolvers
 
 								// (if packaging) add a dependency for the property's data-type
 								if (direction == Direction.Packaging)
-									item.Dependencies.Add(firstDataType.DataType.ToString(), ProviderIDCollection.dataTypeItemProviderGuid);
+									item.Dependencies.Add(firstDataType.DataType.ToString(), ItemProviderIds.dataTypeItemProviderGuid);
 							}
 						}
 					}
@@ -179,7 +179,7 @@ namespace Archetype.Courier.DataResolvers
 				{
 					var dataType = ExecutionContext.DatabasePersistence.RetrieveItem<DataType>(
 						new ItemIdentifier(property.DataTypeGuid.ToString(),
-							ProviderIDCollection.dataTypeItemProviderGuid));
+							ItemProviderIds.dataTypeItemProviderGuid));
 
 					if (dataType == null)
 						continue;
@@ -203,7 +203,7 @@ namespace Archetype.Courier.DataResolvers
 						{
 							propertyInst.DataTypeGuid = property.DataTypeGuid.ToString();
 							propertyInst.DataTypeId = ExecutionContext.DatabasePersistence.GetNodeId(
-								property.DataTypeGuid, NodeObjectTypes.DataType);
+								property.DataTypeGuid, UmbracoNodeObjectTypeIds.DataType);
 							propertyInst.PropertyEditorAlias = property.PropertyEditorAlias;
 						}
 					}
