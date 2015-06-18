@@ -3,6 +3,7 @@ using System.Linq;
 using Archetype.Models;
 using Newtonsoft.Json;
 using Umbraco.Core;
+using Umbraco.Core.Logging;
 using Umbraco.Core.Models;
 using Umbraco.Core.Models.PublishedContent;
 
@@ -42,6 +43,7 @@ namespace Archetype.Extensions
                 }
                 catch (Exception ex)
                 {
+                    LogHelper.Error<ArchetypeHelper>("DeserializeJsonToArchetype", ex);
                 }
 
                 return archetype;
@@ -66,6 +68,7 @@ namespace Archetype.Extensions
                 }
                 catch (Exception ex)
                 {
+                    LogHelper.Error<ArchetypeHelper>("DeserializeJsonToArchetype", ex);
                 }
 
                 return archetype;
