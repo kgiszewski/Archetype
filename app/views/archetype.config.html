@@ -106,8 +106,16 @@
             <input type="checkbox" id="archetypeAdvancedOptionsMultipleFieldsets" ng-model="archetypeConfigRenderModel.enableMultipleFieldsets"/>
         </div>
         <div>
-            <label for="archetypeAdvancedOptionsCollapsing"><archetype-localize key="enableCollapsing">Enable Collapsing?</archetype-localize><small><archetype-localize key="enableCollapsingDescription">Allows multiple types of fieldsets within this archetype.</archetype-localize></small></label>
+            <label for="archetypeAdvancedOptionsCollapsing"><archetype-localize key="enableCollapsing">Enable Collapsing?</archetype-localize><small><archetype-localize key="enableCollapsingDescription">Enable fieldset collapsing.</archetype-localize></small></label>
             <input type="checkbox" id="archetypeAdvancedOptionsCollapsing" ng-model="archetypeConfigRenderModel.enableCollapsing"/>
+        </div>
+                <div>
+            <label for="archetypeAdvancedOptionsCloning"><archetype-localize key="enableCloning">Enable Cloning?</archetype-localize><small><archetype-localize key="enableCloningDescription">Enable fieldset cloning.</archetype-localize></small></label>
+            <input type="checkbox" id="archetypeAdvancedOptionsCloning" ng-model="archetypeConfigRenderModel.enableCloning"/>
+        </div>
+        <div>
+            <label for="archetypeAdvancedOptionsDisabling"><archetype-localize key="enableDisabling">Enable Fieldset Disabling?</archetype-localize><small><archetype-localize key="enableDisablingDescription">Allows fieldsets to be individually enabled/disabled.</archetype-localize></small></label>
+            <input type="checkbox" id="archetypeAdvancedOptionsDisabling" ng-model="archetypeConfigRenderModel.enableDisabling" />
         </div>
         <div>
             <label for="archetypeAdvancedOptionsFieldsetToolbar"><archetype-localize key="hideFieldsetToolbar">Hide Fieldset Toolbar?</archetype-localize><small><archetype-localize key="hideFieldsetToolbarDescription">Hides the fieldset toolbar that appears when more than one fieldset model appears.</archetype-localize></small></label>
@@ -126,8 +134,20 @@
             <input type="text" id="archetypeAdvancedOptionsCustomJs" ng-model="archetypeConfigRenderModel.customJsPath"/>
         </div>
         <div>
-            <label for="archetypeAdvancedOptionsDeveloperMode"><archetype-localize key="toggleDeveloperMode">Toggle Developer Mode</archetype-localize><small><archetype-localize key="toggleDeveloperModeDescription">Toggle Developer Mode</archetype-localize></small></label>
+            <label for="archetypeAdvancedOptionsCustomView"><archetype-localize key="viewFile">View File</archetype-localize><small><archetype-localize key="viewFileDescription">(Optional) Enter a path for a custom view file to be used to render this Archetype.</archetype-localize></small></label>
+            <input type="text" id="archetypeAdvancedOptionsCustomView" ng-model="archetypeConfigRenderModel.customViewPath"/>
+        </div>
+        <div>
+            <label for="archetypeAdvancedOptionsDeepDatatypeRequest"><archetype-localize key="deepDatatypeRequest">Enable Deep Datatype Requests?</archetype-localize><small><archetype-localize key="deepDatatypeRequestDescription">Allows for easier datatype interception at the cost of caching performance.</archetype-localize></small></label>
+            <input type="checkbox" id="archetypeAdvancedOptionsDeepDatatypeRequest" ng-model="archetypeConfigRenderModel.enableDeepDatatypeRequests"/>
+        </div>
+        <div>
+            <label for="archetypeAdvancedOptionsDeveloperMode"><archetype-localize key="toggleDeveloperMode">Enable Developer Mode?</archetype-localize><small><archetype-localize key="toggleDeveloperModeDescription">Toggle Developer Mode</archetype-localize></small></label>
             <input type="checkbox" id="archetypeAdvancedOptionsDeveloperMode" ng-model="archetypeConfigRenderModel.developerMode"/>
+        </div>
+        <div>
+            <label for="archetypeOverrideDefaultConverter"><archetype-localize key="overrideDefaultConverter">Override Default Property Value Converter?</archetype-localize><small><archetype-localize key="overrideDefaultConverterDescription">Check this if you wish to use your own custom property value converter.</archetype-localize></small></label>
+            <input type="checkbox" id="archetypeOverrideDefaultConverter" ng-model="archetypeConfigRenderModel.overrideDefaultPropertyValueConverter" />
         </div>
         <div>
             <label for="archetypeAdvancedOptionsConfigModel"><archetype-localize key="configModel">Config Model</archetype-localize><small><archetype-localize key="configModelDescription">Be careful editing the text below, it controls the schema for this archetype.</archetype-localize></small></label>

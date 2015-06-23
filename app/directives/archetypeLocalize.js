@@ -12,7 +12,7 @@ angular.module("umbraco.directives").directive('archetypeLocalize', function (ar
 
 	return {
 	    restrict: "E",
-	    rep1ace: true,
+	    replace: true,
 	    link: linker,
 	    scope: {
 	    	key: '@'

@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Imulus")]
 [assembly: AssemblyProduct("Archetype")]
-[assembly: AssemblyCopyright("Copyright \xa9 Imulus 2014")]
+[assembly: AssemblyCopyright("MIT Licensed")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

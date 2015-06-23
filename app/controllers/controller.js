@@ -1,4 +1,4 @@
-﻿angular.module("umbraco").controller("Imulus.ArchetypeController", function ($scope, $http, assetsService, angularHelper, notificationsService, $timeout, fileManager) {
+angular.module("umbraco").controller("Imulus.ArchetypeController", function ($scope, $http, assetsService, angularHelper, notificationsService, $timeout, fileManager, entityResource, archetypeService, archetypeLabelService, archetypeCacheService, archetypePropertyEditorResource) {
 
     //$scope.model.value = "";
     $scope.model.hideLabel = $scope.model.config.hideLabel == 1;
@@ -11,51 +11,72 @@
 
     //ini the model
     $scope.model.value = $scope.model.value || getDefaultModel($scope.model.config);
+
+    // store the umbraco property alias to help generate unique IDs.  Hopefully there's a better way to get this in the future :)
+    $scope.umbracoHostPropertyAlias = $scope.$parent.$parent.model.alias;
+
     init();
 
+    //hold references to helper resources 
+    $scope.resources = {
+        entityResource: entityResource,
+        archetypePropertyEditorResource: archetypePropertyEditorResource
+    }
+
+    //hold references to helper services 
+    $scope.services = {
+        archetypeService: archetypeService,
+        archetypeLabelService: archetypeLabelService,
+        archetypeCacheService: archetypeCacheService
+    }
+
     //helper to get $eval the labelTemplate
-    $scope.getFieldsetTitle = function(fieldsetConfigModel, fieldsetIndex) {
-        if(!fieldsetConfigModel)
-            return "";
-        var fieldset = $scope.model.value.fieldsets[fieldsetIndex];
-        var fieldsetConfig = $scope.getConfigFieldsetByAlias(fieldset.alias);
-        var template = fieldsetConfigModel.labelTemplate;
+    $scope.getFieldsetTitle = function (fieldsetConfigModel, fieldsetIndex) {
+        return archetypeLabelService.getFieldsetTitle($scope, fieldsetConfigModel, fieldsetIndex);
+    }
 
-        if (template.length < 1)
-            return fieldsetConfig.label;
-
-        var rgx = /{{(.*?)}}*/g;
-        var results;
-        var parsedTemplate = template;
-
-        while ((results = rgx.exec(template)) !== null) {
-            var propertyAlias = results[1];
-            var propertyValue = $scope.getPropertyValueByAlias(fieldset, propertyAlias);
-            parsedTemplate = parsedTemplate.replace(results[0], propertyValue);
-        }
-
-        return parsedTemplate;
-    };
+    var draggedRteSettings;
+    var rteClass = ".mce-tinymce";
 
     //sort config
     $scope.sortableOptions = {
         axis: 'y',
         cursor: "move",
         handle: ".handle",
+        start: function(ev, ui) {
+            draggedRteSettings = {};
+            ui.item.parent().find(rteClass).each(function () {
+                // remove all RTEs in the dragged row and save their settings
+                var $element = $(this);
+                var wrapperId = $element.attr('id');
+                var $textarea = $element.siblings('textarea');
+                var textareaId = $textarea.attr('id');
+
+                draggedRteSettings[textareaId] = _.findWhere(tinyMCE.editors, { id: textareaId }).settings;
+                tinyMCE.execCommand('mceRemoveEditor', false, wrapperId);
+            });
+        },
         update: function (ev, ui) {
             $scope.setDirty();
         },
         stop: function (ev, ui) {
+            ui.item.parent().find(rteClass).each(function () {
+                var $element = $(this);
+                var wrapperId = $element.attr('id');
+                var $textarea = $element.siblings('textarea');
+                var textareaId = $textarea.attr('id');
 
+                draggedRteSettings[textareaId] = draggedRteSettings[textareaId] || _.findWhere(tinyMCE.editors, { id: textareaId }).settings;
+                tinyMCE.execCommand('mceRemoveEditor', false, wrapperId);
+                tinyMCE.init(draggedRteSettings[textareaId]);
+            });
         }
     };
 
     //handles a fieldset add
     $scope.addRow = function (fieldsetAlias, $index) {
-        if ($scope.canAdd())
-        {
-            if ($scope.model.config.fieldsets)
-            {
+        if ($scope.canAdd()) {
+            if ($scope.model.config.fieldsets) {
                 var newFieldset = getEmptyRenderFieldset($scope.getConfigFieldsetByAlias(fieldsetAlias));
 
                 if (typeof $index != 'undefined')
@@ -79,13 +100,35 @@
             if (confirm('Are you sure you want to remove this?')) {
                 $scope.setDirty();
                 $scope.model.value.fieldsets.splice($index, 1);
+                $scope.$broadcast("archetypeRemoveFieldset", {index: $index});
             }
         }
     }
 
+    $scope.cloneRow = function ($index) {
+        if ($scope.canClone() && typeof $index != 'undefined') {
+            var newFieldset = angular.copy($scope.model.value.fieldsets[$index]);
+
+            if(newFieldset) {
+
+                $scope.model.value.fieldsets.splice($index + 1, 0, newFieldset);
+
+                $scope.setDirty();
+
+                newFieldset.collapse = $scope.model.config.enableCollapsing ? true : false;
+                $scope.focusFieldset(newFieldset);
+            }
+        }
+    }
+
+    $scope.enableDisable = function (fieldset) {
+        fieldset.disabled = !fieldset.disabled;
+        // explicitly set the form as dirty when manipulating the enabled/disabled state of a fieldset
+        $scope.setDirty();
+    }
+
     //helpers for determining if a user can do something
-    $scope.canAdd = function ()
-    {
+    $scope.canAdd = function () {
         if ($scope.model.config.maxFieldsets)
         {
             return countVisible() < $scope.model.config.maxFieldsets;
@@ -95,17 +138,35 @@
     }
 
     //helper that returns if an item can be removed
-    $scope.canRemove = function ()
-    {
+    $scope.canRemove = function () {
         return countVisible() > 1 
             || ($scope.model.config.maxFieldsets == 1 && $scope.model.config.fieldsets.length > 1)
             || $scope.model.config.startWithAddButton;
+    }
+
+    $scope.canClone = function () {
+
+        if (!$scope.model.config.enableCloning) {
+            return false;
+        }
+
+        if ($scope.model.config.maxFieldsets)
+        {
+            return countVisible() < $scope.model.config.maxFieldsets;
+        }
+
+        return true;
     }
 
     //helper that returns if an item can be sorted
     $scope.canSort = function ()
     {
         return countVisible() > 1;
+    }
+
+    //helper that returns if an item can be disabled
+    $scope.canDisable = function () {
+        return $scope.model.config.enableDisabling;
     }
 
     //helpers for determining if the add button should be shown
@@ -201,6 +262,7 @@
 
     // issue 114: handler for file selection
     function setFiles(files) {
+      console.log("set files", files)
         // get all currently selected files from file manager
         var currentFiles = fileManager.getFiles();
         
@@ -230,9 +292,13 @@
                 $scope.model.value.toString = stringify;
             }
         }
+
         // issue 114: re-register handler for files selection and reset the currently selected files on the file manager
         $scope.model.value.setFiles = setFiles;
         fileManager.setFiles($scope.model.alias, []);
+
+        // reset submit watcher counter on save
+        $scope.activeSubmitWatcher = 0;
     });
 
     //helper to count what is visible
@@ -291,6 +357,27 @@
         return (typeof property == 'undefined') ? true : property.isValid;
     }
 
+    //helper to lookup validity when given a fieldset
+    $scope.getFieldsetValidity = function (fieldset) {
+        if (fieldset.isValid == false) {
+            return false;
+        }
+
+        // recursive validation of nested fieldsets
+        var nestedFieldsetsValid = true;
+        _.each(fieldset.properties, function (property) {
+            if (property != null && property.value != null && property.propertyEditorAlias == "Imulus.Archetype") {
+                _.each(property.value.fieldsets, function (inner) {
+                    if ($scope.getFieldsetValidity(inner) == false) {
+                        nestedFieldsetsValid = false;
+                    }
+                });
+            }
+        });
+
+        return nestedFieldsetsValid;
+    }
+
     // helper to force the current form into the dirty state
     $scope.setDirty = function () {
         if($scope.form) {
@@ -310,5 +397,18 @@
     if($scope.model.config.customCssPath)
     {
         assetsService.loadCss($scope.model.config.customCssPath);
+    }
+
+    // submit watcher handling:
+    // because some property editors use the "formSubmitting" event to set/clean up their model.value,
+    // we need to monitor the "formSubmitting" event from a custom property and broadcast our own event
+    // to forcefully update the appropriate model.value's
+    $scope.activeSubmitWatcher = 0;
+    $scope.submitWatcherOnLoad = function () {
+        $scope.activeSubmitWatcher++;
+        return $scope.activeSubmitWatcher;
+    }
+    $scope.submitWatcherOnSubmit = function () {
+        $scope.$broadcast("archetypeFormSubmitting");
     }
 });

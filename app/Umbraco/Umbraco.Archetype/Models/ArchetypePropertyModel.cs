@@ -1,20 +1,21 @@
 using System.Collections.Generic;
 using System.Linq;
+using Archetype.Extensions;
 using Newtonsoft.Json;
 using Umbraco.Core;
-using Umbraco.Core.Models;
 using Umbraco.Core.Models.PublishedContent;
 using Umbraco.Core.PropertyEditors;
 using Umbraco.Web;
 
 namespace Archetype.Models
 {
-    public class ArchetypePropertyModel {
+    public class ArchetypePropertyModel
+    {
         [JsonProperty("alias")]
-        public string Alias { get; internal set; }
+        public string Alias { get; set; }
 
         [JsonProperty("value")]
-        public object Value { get; internal set; }
+        public object Value { get; set; }
 
         [JsonProperty("propertyEditorAlias")]
         public string PropertyEditorAlias { get; internal set; }
@@ -37,7 +38,7 @@ namespace Archetype.Models
 
             // Try Umbraco's PropertyValueConverters
             var converters = UmbracoContext.Current != null ? PropertyValueConvertersResolver.Current.Converters : Enumerable.Empty<IPropertyValueConverter>();
-            if (converters.Any())
+            if (!string.IsNullOrWhiteSpace(this.PropertyEditorAlias) && converters.Any())
             {
                 var convertedAttempt = TryConvertWithPropertyValueConverters<T>(Value, converters);
                 if (convertedAttempt.Success)
@@ -58,7 +59,7 @@ namespace Archetype.Models
 
         private Attempt<T> TryConvertWithPropertyValueConverters<T>(object value, IEnumerable<IPropertyValueConverter> converters)
         {
-            var properyType = CreateDummyPropertyType(DataTypeId, PropertyEditorAlias);
+            var properyType = this.CreateDummyPropertyType();
 
             // In umbraco, there are default value converters that try to convert the 
             // value if all else fails. The problem is, they are also in the list of
@@ -76,6 +77,13 @@ namespace Archetype.Models
                 if (value2 is T)
                     return Attempt<T>.Succeed((T)value2);
 
+                // If ConvertDataToSource failed try ConvertSourceToObject.
+                var value3 = converter.ConvertSourceToObject(properyType, value2, false);
+
+                // If the value is of type T, just return it
+                if (value3 is T)
+                    return Attempt<T>.Succeed((T)value3);
+
                 // Value is not final value type, so try a regular type conversion aswell
                 var convertAttempt = value2.TryConvertTo<T>();
                 if (convertAttempt.Success)
@@ -83,15 +91,6 @@ namespace Archetype.Models
             }
 
             return Attempt<T>.Fail();
-        }
-
-        private PublishedPropertyType CreateDummyPropertyType(int dataTypeId, string propertyEditorAlias)
-        {
-            return new PublishedPropertyType(this.HostContentType,
-                new PropertyType(new DataTypeDefinition(-1, propertyEditorAlias)
-                {
-                    Id = dataTypeId
-                }));
         }
     }
 }

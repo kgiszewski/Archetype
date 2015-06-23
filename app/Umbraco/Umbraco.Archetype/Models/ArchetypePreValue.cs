@@ -20,6 +20,12 @@ namespace Archetype.Models
         [JsonProperty("enableCollapsing")]
         public bool EnableCollapsing { get; set; }
 
+        [JsonProperty("enableCloning")]
+        public bool EnableCloning { get; set; }
+
+        [JsonProperty("enableDisabling")]
+        public bool EnableDisabling { get; set; }
+
         [JsonProperty("hideFieldsetControls")]
         public bool HideFieldsetControls { get; set; }
 
@@ -44,7 +50,16 @@ namespace Archetype.Models
         [JsonProperty("customJsPath")]
         public string CustomJsPath { get; set; }
 
+        [JsonProperty("customViewPath")]
+        public string CustomViewPath { get; set; }
+
+        [JsonProperty("enableDeepDatatypeRequests")]
+        public bool EnableDeepDatatypeRequests { get; set; }
+        
         [JsonProperty("developerMode")]
         public bool DeveloperMode { get; set; }
+
+        [JsonProperty("overrideDefaultPropertyValueConverter")]
+        public bool OverrideDefaultPropertyValueConverter { get; set; }
     }
 }

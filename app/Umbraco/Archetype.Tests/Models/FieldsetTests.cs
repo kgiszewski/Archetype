@@ -35,6 +35,18 @@ namespace Archetype.Tests.Models
         }
 
         [Test]
+        public void Can_Get_Fieldset_Property_Default_Value_By_Alias() 
+		{
+            var converter = new ArchetypeValueConverter();
+            var result = (Archetype.Models.ArchetypeModel)converter.ConvertDataToSource(null, _sampleJson, false);
+
+            var fieldset = result.Fieldsets.First();
+            var propertyValue = fieldset.GetValue<string>("noSuchProperty", "noSuchProperty default value");
+
+            Assert.That(propertyValue == "noSuchProperty default value");
+        }
+
+        [Test]
         public void Can_Convert_Property_Value_Types()
         {
             var converter = new ArchetypeValueConverter();
@@ -45,7 +57,7 @@ namespace Archetype.Tests.Models
             Assert.That(fieldset.GetValue<int>("link") == 3175);
             Assert.That(fieldset.GetValue<bool>("show") == true);
             Assert.That(fieldset.GetValue<string>("blurb") == "A blurb here");
-        }
+        }  
 
         [Test]
         public void Returns_String_When_No_Type_Specified()
@@ -59,6 +71,5 @@ namespace Archetype.Tests.Models
             Assert.That(property is string);
             Assert.That(property == "3175");
         }
-
     }
 }

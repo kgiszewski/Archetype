@@ -31,5 +31,13 @@
 	"properties": "Properties",
 	"labelTemplate": "Label Template",
 	"select": "Select",
-	"icon": "Icon"
+	"icon": "Icon",
+	"enableDisabling": "Enable Fieldset Disabling?",
+	"enableDisablingDescription": "Allows fieldsets to be individually enabled/disabled.",
+	"deepDatatypeRequest":"Enable Deep Datatype Requests?",
+	"deepDatatypeRequestDescription":"Allows for easier datatype interception at the cost of caching performance.",
+    "overrideDefaultConverterDescription":"Check this if you wish to use your own custom property value converter.",
+    "overrideDefaultConverter":"Override Default Property Value Converter?",
+    "enableCloning":"Enable Cloning?",
+ 	"enableCloningDescription":"Enable Fieldset Cloning."
 }

@@ -9,7 +9,7 @@ Install the selected <a href='https://github.com/imulus/Archetype/releases'>rele
 
 
 ## Official Docs ##
-http://imulus.github.io/Archetype
+https://github.com/kgiszewski/ArchetypeManual
 
 Follow us on Twitter https://twitter.com/ArchetypeKit
 

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Archetype.Extensions;
@@ -6,19 +6,18 @@ using ClientDependency.Core;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Umbraco.Core;
+using Umbraco.Core.Logging;
 using Umbraco.Core.Models;
 using Umbraco.Core.Models.Editors;
 using Umbraco.Core.PropertyEditors;
 using Umbraco.Core.Services;
 using Umbraco.Web.PropertyEditors;
-using Umbraco.Core.Logging;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace Archetype.PropertyEditors
 {
 	[PropertyEditorAsset(ClientDependencyType.Javascript, "/App_Plugins/Archetype/js/archetype.js")]
-	[PropertyEditor("Imulus.Archetype", "Archetype", "/App_Plugins/Archetype/views/archetype.html",
-		ValueType = "JSON")]
+	[PropertyEditor(Constants.PropertyEditorAlias, "Archetype", "/App_Plugins/Archetype/views/archetype.html", ValueType = "JSON")]
 	public class ArchetypePropertyEditor : PropertyEditor
 	{
 		#region Pre Value Editor
@@ -53,78 +52,81 @@ namespace Archetype.PropertyEditors
 			protected JsonSerializerSettings _jsonSettings;
 
 			public ArchetypePropertyValueEditor(PropertyValueEditor wrapped)
-				: base(wrapped) { }
+				: base(wrapped)
+			{
+			}
 
 			public override string ConvertDbToString(Property property, PropertyType propertyType, IDataTypeService dataTypeService)
 			{
-				if (property.Value == null || property.Value.ToString() == "")
+				if(property.Value == null || property.Value.ToString() == "")
 					return string.Empty;
 
-			    var archetype = new ArchetypeHelper().DeserializeJsonToArchetype(property.Value.ToString(), propertyType.DataTypeDefinitionId);
+				var archetype = ArchetypeHelper.Instance.DeserializeJsonToArchetype(property.Value.ToString(), propertyType.DataTypeDefinitionId);
 
 				foreach (var fieldset in archetype.Fieldsets)
 				{
-					foreach (var propDef in fieldset.Properties)
+					foreach (var propDef in fieldset.Properties.Where(p => p.DataTypeGuid != null))
 					{
-                        try
-                        {
-						    var dtd = dataTypeService.GetDataTypeDefinitionById(Guid.Parse(propDef.DataTypeGuid));
-						    var propType = new PropertyType(dtd) { Alias = propDef.Alias };
-						    var prop = new Property(propType, propDef.Value);
-						    var propEditor = PropertyEditorResolver.Current.GetByAlias(dtd.PropertyEditorAlias);
-						    propDef.Value = propEditor.ValueEditor.ConvertDbToString(prop, propType, dataTypeService);
-                        }
-                        catch (Exception ex)
-                        {
-                            LogHelper.Error<ArchetypeHelper>(ex.Message, ex);
-                        }
+						try
+						{
+							if(propDef == null || propDef.DataTypeGuid == null) continue;
+							var dtd = ArchetypeHelper.Instance.GetDataTypeByGuid(Guid.Parse(propDef.DataTypeGuid));
+							var propType = new PropertyType(dtd) {Alias = propDef.Alias};
+							var prop = new Property(propType, propDef.Value);
+							var propEditor = PropertyEditorResolver.Current.GetByAlias(dtd.PropertyEditorAlias);
+							propDef.Value = propEditor.ValueEditor.ConvertDbToString(prop, propType, dataTypeService);
+						}
+						catch (Exception ex)
+						{
+							LogHelper.Error<ArchetypePropertyValueEditor>(ex.Message, ex);
+						}
 					}
 				}
 
-                return archetype.SerializeForPersistence();
+				return archetype.SerializeForPersistence();
 			}
 
 			public override object ConvertDbToEditor(Property property, PropertyType propertyType, IDataTypeService dataTypeService)
 			{
-				if (property.Value == null || property.Value.ToString() == "")
+				if(property.Value == null || property.Value.ToString() == "")
 					return string.Empty;
+				;
 
-			    var archetype = new ArchetypeHelper().DeserializeJsonToArchetype(property.Value.ToString(), propertyType.DataTypeDefinitionId);
+				var archetype = ArchetypeHelper.Instance.DeserializeJsonToArchetype(property.Value.ToString(), propertyType.DataTypeDefinitionId);
 
 				foreach (var fieldset in archetype.Fieldsets)
 				{
-					foreach (var propDef in fieldset.Properties)
+					foreach (var propDef in fieldset.Properties.Where(p => p.DataTypeGuid != null))
 					{
-                        try
-                        {
-                            var dtd = dataTypeService.GetDataTypeDefinitionById(Guid.Parse(propDef.DataTypeGuid));
-                            var propType = new PropertyType(dtd) { Alias = propDef.Alias };
-                            var prop = new Property(propType, propDef.Value);
-                            var propEditor = PropertyEditorResolver.Current.GetByAlias(dtd.PropertyEditorAlias);
-                            propDef.Value = propEditor.ValueEditor.ConvertDbToEditor(prop, propType, dataTypeService);
-                        }
-                        catch (Exception ex)
-                        {
-                            LogHelper.Error<ArchetypeHelper>(ex.Message, ex);
-                        }
+						try
+						{
+							var dtd = ArchetypeHelper.Instance.GetDataTypeByGuid(Guid.Parse(propDef.DataTypeGuid));
+							var propType = new PropertyType(dtd) {Alias = propDef.Alias};
+							var prop = new Property(propType, propDef.Value);
+							var propEditor = PropertyEditorResolver.Current.GetByAlias(dtd.PropertyEditorAlias);
+							propDef.Value = propEditor.ValueEditor.ConvertDbToEditor(prop, propType, dataTypeService);
+						}
+						catch (Exception ex)
+						{
+							LogHelper.Error<ArchetypePropertyValueEditor>(ex.Message, ex);
+						}
 					}
 				}
 
 				return archetype;
 			}
-            public override object ConvertEditorToDb(ContentPropertyData editorValue, object currentValue)
+
+			public override object ConvertEditorToDb(ContentPropertyData editorValue, object currentValue)
 			{
-				if (editorValue.Value == null || editorValue.Value.ToString() == "")
+				if(editorValue.Value == null || editorValue.Value.ToString() == "")
 					return string.Empty;
 
-				var helper = new ArchetypeHelper();
 				// attempt to deserialize the current property value as an Archetype
-				var currentArchetype = currentValue != null ? helper.DeserializeJsonToArchetype(currentValue.ToString(), editorValue.PreValues) : null;
-				var archetype = helper.DeserializeJsonToArchetype(editorValue.Value.ToString(), editorValue.PreValues);
+				var currentArchetype = currentValue != null ? ArchetypeHelper.Instance.DeserializeJsonToArchetype(currentValue.ToString(), editorValue.PreValues) : null;
+				var archetype = ArchetypeHelper.Instance.DeserializeJsonToArchetype(editorValue.Value.ToString(), editorValue.PreValues);
 
 				// get all files uploaded via the file manager (if any)
 				var uploadedFiles = editorValue.AdditionalData.ContainsKey("files") ? editorValue.AdditionalData["files"] as IEnumerable<ContentItemFile> : null;
-
 				foreach (var fieldset in archetype.Fieldsets)
 				{
 					// assign an id to the fieldset if it has none (e.g. newly created fieldset)
@@ -133,12 +135,12 @@ namespace Archetype.PropertyEditors
 					var currentFieldset = currentArchetype != null ? currentArchetype.Fieldsets.FirstOrDefault(f => f.Id == fieldset.Id) : null;
 					foreach (var propDef in fieldset.Properties)
 					{
-                        try
-                        {
+						try
+						{
 							// find the corresponding property in the current Archetype value (if any)
 							var currentProperty = currentFieldset != null ? currentFieldset.Properties.FirstOrDefault(p => p.Alias == propDef.Alias) : null;
-						    var dtd = ApplicationContext.Current.Services.DataTypeService.GetDataTypeDefinitionById(Guid.Parse(propDef.DataTypeGuid));
-						    var preValues = ApplicationContext.Current.Services.DataTypeService.GetPreValuesCollectionByDataTypeId(dtd.Id);
+							var dtd = ArchetypeHelper.Instance.GetDataTypeByGuid(Guid.Parse(propDef.DataTypeGuid));
+							var preValues = ApplicationContext.Current.Services.DataTypeService.GetPreValuesCollectionByDataTypeId(dtd.Id);
 
 							var additionalData = new Dictionary<string, object>();
 
@@ -160,20 +162,29 @@ namespace Archetype.PropertyEditors
 									}
 								}
 							}
-
 							var propData = new ContentPropertyData(propDef.Value, preValues, additionalData);
-						    var propEditor = PropertyEditorResolver.Current.GetByAlias(dtd.PropertyEditorAlias);
+							var propEditor = PropertyEditorResolver.Current.GetByAlias(dtd.PropertyEditorAlias);
 							// make sure to send the current property value (if any) to the PE ValueEditor
 							propDef.Value = propEditor.ValueEditor.ConvertEditorToDb(propData, currentProperty != null ? currentProperty.Value : null);
-                        }
-                        catch (Exception ex)
-                        {
-                            LogHelper.Error<ArchetypeHelper>(ex.Message, ex);
-                        }
+						}
+						catch (Exception ex)
+						{
+							LogHelper.Error<ArchetypePropertyValueEditor>(ex.Message, ex);
+						}
 					}
 				}
 
-                return archetype.SerializeForPersistence();
+				return archetype.SerializeForPersistence();
+			}
+
+			internal virtual PropertyEditor GetPropertyEditor(IDataTypeDefinition dtd)
+			{
+				if(dtd.Id != 0)
+					return PropertyEditorResolver.Current.GetByAlias(dtd.PropertyEditorAlias);
+
+				return dtd.PropertyEditorAlias.Equals(Constants.PropertyEditorAlias)
+					? new ArchetypePropertyEditor()
+					: (PropertyEditor) new TextboxPropertyEditor();
 			}
 		}
 

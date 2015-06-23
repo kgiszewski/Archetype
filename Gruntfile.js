@@ -55,9 +55,15 @@ module.exports = function(grunt) {
           'app/controllers/controller.js',
           'app/controllers/config.controller.js',
           'app/directives/archetypeproperty.js',
-          'app/directives/localize.js',
-          'app/services/localization.js',
-          'app/resources/propertyeditor.js'
+          'app/directives/archetypesubmitwatcher.js',
+          'app/directives/archetypecustomview.js',
+          'app/directives/archetypeLocalize.js',
+          'app/services/archetypeLocalizationService.js',
+          'app/helpers/sampleLabelHelpers.js',
+          'app/resources/archetypePropertyEditorResource.js',
+          'app/services/archetypeService.js',
+          'app/services/archetypeLabelService.js',
+          'app/services/archetypeCacheService.js'
         ],
         dest: '<%= basePath %>/js/archetype.js'
       }
@@ -66,12 +72,12 @@ module.exports = function(grunt) {
     copy: {
       html: {
         cwd: 'app/views/',
-        src: ['archetype.html', 'archetype.config.html'],
+        src: ['archetype.html', 'archetype.default.html', 'archetype.config.html'],
         dest: '<%= basePath %>/views',
         expand: true
       },
       dll: {
-        cwd: 'app/Umbraco/Umbraco.Archetype/bin/Release/',
+        cwd: 'app/Umbraco/Umbraco.Archetype/bin/Debug/',
         src: 'Archetype.dll',
         dest: '<%= dest %>/bin/',
         expand: true
@@ -161,10 +167,10 @@ module.exports = function(grunt) {
 
     assemblyinfo: {
       options: {
-        files: ['app/Umbraco/Umbraco.Archetype/Archetype.Umbraco.csproj'],
+        files: ['app/Umbraco/Umbraco.Archetype/Archetype.Umbraco.csproj', 'app/Umbraco/Umbraco.Archetype/Archetype.Courier.csproj'],
         filename: 'VersionInfo.cs',
         info: {
-          version: '<%= (pkgMeta.version.indexOf("-") ? pkgMeta.version.substring(0, pkgMeta.version.indexOf("-")) : pkgMeta.version) %>', 
+          version: '<%= (pkgMeta.version.indexOf("-") > 0 ? pkgMeta.version.substring(0, pkgMeta.version.indexOf("-")) : pkgMeta.version) %>', 
           fileVersion: '<%= pkgMeta.version %>'
         }
       }
@@ -190,15 +196,16 @@ module.exports = function(grunt) {
         stdout: true,
         verbosity: 'quiet',
         maxCpuCount: 4,
+		version: 4.0,
         buildParameters: {
           WarningLevel: 2,
           NoWarn: 1607
         }
       },
       dist: {
-        src: ['app/Umbraco/Umbraco.Archetype/Archetype.Umbraco.csproj'],
+        src: ['app/Umbraco/Umbraco.Archetype/Archetype.Umbraco.csproj','app/Umbraco/Archetype.Courier/Archetype.Courier.csproj'],
         options: {
-          projectConfiguration: 'Release',
+          projectConfiguration: 'Debug',
           targets: ['Clean', 'Rebuild'],
         }
       }

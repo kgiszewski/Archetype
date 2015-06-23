@@ -1,0 +1,65 @@
+<div class="archetypeEditor ng-class:model.config.customCssClass">
+    <textarea class="archetypeDeveloperModel" ng-show="model.config.developerMode" ng-model="model.value"></textarea>
+    <ul ui-sortable="sortableOptions" ng-model="model.value.fieldsets" ng-show="!showAddButton()">
+        <li ng-repeat="fieldset in model.value.fieldsets">
+            <fieldset ng-class="['archetype-fieldset-' + fieldset.alias, (getFieldsetValidity(fieldset) == false ? 'archetypeFieldsetError' : '')]" ng-init="fieldsetConfigModel = getConfigFieldsetByAlias(fieldset.alias)">
+                <div class="archetypeFieldsetLabel" ng-class="{enableCollapsing: model.config.enableCollapsing}">
+                    <div ng-click="focusFieldset(fieldset)" class="label-sub module-label">
+                        <span class="caret" ng-hide="fieldset.collapse || !model.config.enableCollapsing"></span>
+                        <span class="caret caret-right" ng-show="fieldset.collapse && model.config.enableCollapsing"></span>
+                        <label ng-class="{dimmed: fieldset.disabled}">
+                            <i class="fieldsetIcon icon ng-class:fieldsetConfigModel.icon"></i>
+                            <span ng-bind="getFieldsetTitle(fieldsetConfigModel, $index)"></span>
+                        </label>
+                    </div>
+                    <div class="archetypeEditorControls label-sub" ng-hide="model.config.hideFieldsetControls">
+                        <i class="icon icon-add dropdown-toggle" ng-show="canAdd()" data-toggle="{{ model.config.fieldsets.length > 1 ? 'dropdown' : ''}}" ng-click="model.config.fieldsets.length == 1 ? addRow(fieldset.alias, $index) : return"></i>
+                        <ul class="dropdown-menu umb-actions">
+                            <li ng-repeat="fieldsetModel in model.config.fieldsets" ng-click="addRow(fieldsetModel.alias, $parent.$index)">
+                                <a>
+                                    <i class="fieldsetIcon icon ng-class:fieldsetModel.icon"></i>
+                                    <span class="menu-label">{{fieldsetModel.label}}</span>
+                                </a>
+                            </li>
+                        </ul>
+                        <i class="icon icon-documents" ng-click="cloneRow($index)" ng-show="canClone()"></i>
+                        <i class="icon icon-remove" ng-click="removeRow($index)" ng-show="canRemove()"></i>
+                        <i class="icon icon-power" ng-class="{dimmed: fieldset.disabled}" ng-click="enableDisable(fieldset)" ng-show="canDisable()"></i>
+                        <i class="icon icon-navigation handle" ng-show="canSort()"></i>
+                    </div>
+                </div>
+                <div class="archetypeCollapser animate-hide" ng-hide="model.config.enableCollapsing && isCollapsed(fieldset)">
+                    <form class="form-inline">
+                        <div ng-class="[('archetype-property-' + property.alias), (getPropertyValidity($parent.$index, property.alias) === false ? 'archetypePropertyError' : '')]" class="archetypeProperty control-group" ng-repeat="property in fieldsetConfigModel.properties">
+                            <label ng-hide="model.config.hidePropertyLabels == '1'" class="control-label" for="archetype-property-{{model.alias}}-{{$parent.$index}}-{{$index}}">
+                                <span>{{property.label}}</span>
+                                <div class="archetypeFieldsetHelpText" ng-show="property.helpText">
+                                    <small>{{property.helpText}}</small>
+                                </div>
+                            </label>
+
+                            <div ng-class="[(model.config.hidePropertyLabels == '1' ? 'controls-no-label' : 'controls')]">
+                                <archetype-property class="archetypeEditor" property="property" property-editor-alias="model.alias" fieldset-index="$parent.$index" fieldset="fieldset" archetype-config="model.config" property-config-index="$index" archetype-render-model="model.value" umbraco-form="form"></archetype-property>
+                                <archetype-submit-watcher active-submit-watcher="activeSubmitWatcher" load-callback="submitWatcherOnLoad" submit-callback="submitWatcherOnSubmit"></archetype-submit-watcher>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </fieldset>
+        </li>
+    </ul>
+    <div ng-show="showAddButton()">
+        <a class="archetypeAddButton" data-toggle="{{ model.config.fieldsets.length > 1 ? 'dropdown' : ''}}" ng-click="model.config.fieldsets.length == 1 ? addRow(model.config.fieldsets[0].alias, 0) : return" prevent-default>
+            <i class="icon icon-add dropdown-toggle"></i>
+            <localize key="general_add" class="archetypeAddButtonText">Add</localize>
+        </a>
+        <ul class="dropdown-menu umb-actions">
+            <li ng-repeat="fieldsetModel in model.config.fieldsets" ng-click="addRow(fieldsetModel.alias, 0)">
+                <a>
+                    <i class="fieldsetIcon icon ng-class:fieldsetModel.icon"></i>
+                    <span class="menu-label">{{fieldsetModel.label}}</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>

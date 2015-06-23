@@ -65,5 +65,16 @@ namespace Archetype.Api
 
 			return new { selectedEditor = dataTypeDisplay.SelectedEditor, preValues = preValues };
         }
+
+        public object GetByGuid(Guid guid, string contentTypeAlias, string propertyTypeAlias, string archetypeAlias, int nodeId)
+        {
+            var dataType = Services.DataTypeService.GetDataTypeDefinitionById(guid);
+            if (dataType == null)
+            {
+                throw new HttpResponseException(HttpStatusCode.NotFound);
+            }
+            var dataTypeDisplay = Mapper.Map<IDataTypeDefinition, DataTypeDisplay>(dataType);
+            return new { selectedEditor = dataTypeDisplay.SelectedEditor, preValues = dataTypeDisplay.PreValues, contentTypeAlias = contentTypeAlias, propertyTypeAlias = propertyTypeAlias, archetypeAlias = archetypeAlias, nodeId = nodeId };
+        }
     }
 }
