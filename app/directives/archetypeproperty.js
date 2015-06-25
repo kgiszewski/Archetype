@@ -143,6 +143,8 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
 
                     //some items need an alias
                     scope.model.alias = "archetype-property-" + propertyAlias;
+                    //some items also need an id (file upload for example)
+                    scope.model.id = propertyAlias;
 
                     //watch for changes since there is no two-way binding with the local model.value
                     scope.$watch('model.value', function (newValue, oldValue) {
