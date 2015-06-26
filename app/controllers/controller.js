@@ -262,7 +262,6 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
 
     // issue 114: handler for file selection
     function setFiles(files) {
-      console.log("set files", files)
         // get all currently selected files from file manager
         var currentFiles = fileManager.getFiles();
         

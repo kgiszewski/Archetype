@@ -123,6 +123,9 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
                     scope.renderModel = {};
                     scope.model.value = archetypeService.getFieldsetProperty(scope).value;
 
+                    //init the property editor state
+                    archetypeService.getFieldsetProperty(scope).editorState = {};
+
                     //set the config from the prevalues
                     scope.model.config = config;
 
@@ -170,11 +173,11 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
 
                     // issue 114: handle file selection on property editors
                     scope.$on("filesSelected", function (event, args) {
-                        // populate the fileNames collection on the property
+                        // populate the fileNames collection on the property editor state
                         var property = archetypeService.getFieldsetProperty(scope);
-                        property.fileNames = [];
+                        property.editorState.fileNames = [];
                         _.each(args.files, function (item) {
-                            property.fileNames.push(item.name);
+                            property.editorState.fileNames.push(item.name);
                         });
 
                         // remove the files set for this property

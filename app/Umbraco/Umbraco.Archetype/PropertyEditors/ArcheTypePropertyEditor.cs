@@ -90,7 +90,6 @@ namespace Archetype.PropertyEditors
 			{
 				if(property.Value == null || property.Value.ToString() == "")
 					return string.Empty;
-				;
 
 				var archetype = ArchetypeHelper.Instance.DeserializeJsonToArchetype(property.Value.ToString(), propertyType.DataTypeDefinitionId);
 
@@ -152,10 +151,10 @@ namespace Archetype.PropertyEditors
 									// it's a nested Archetype - just pass all uploaded files to the value editor
 									additionalData["files"] = uploadedFiles.ToList();
 								}
-								else if(propDef.FileNames != null && propDef.FileNames.Any())
+								else if (propDef.EditorState != null && propDef.EditorState.FileNames != null && propDef.EditorState.FileNames.Any())
 								{
 									// pass the uploaded files that belongs to this property (if any) to the value editor
-									var propertyFiles = propDef.FileNames.Select(f => uploadedFiles.FirstOrDefault(u => u.FileName == f)).Where(f => f != null).ToList();
+									var propertyFiles = propDef.EditorState.FileNames.Select(f => uploadedFiles.FirstOrDefault(u => u.FileName == f)).Where(f => f != null).ToList();
 									if(propertyFiles.Any())
 									{
 										additionalData["files"] = propertyFiles;

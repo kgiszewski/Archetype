@@ -30,10 +30,10 @@ namespace Archetype.Models
 
         public string SerializeForPersistence()
         {
-            // clear the contents of the property files collections before serializing (it's temporary state data)
-            foreach(var property in Fieldsets.SelectMany(f => f.Properties.Where(p => p.FileNames != null)).ToList())
+            // clear the editor state before serializing (it's temporary state data)
+            foreach(var property in Fieldsets.SelectMany(f => f.Properties.Where(p => p.EditorState != null)).ToList())
             {
-                property.FileNames = null;
+                property.EditorState = null;
             }
 
             var json = JObject.Parse(JsonConvert.SerializeObject(this, new JsonSerializerSettings() { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
