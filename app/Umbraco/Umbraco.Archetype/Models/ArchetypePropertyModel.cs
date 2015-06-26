@@ -26,11 +26,11 @@ namespace Archetype.Models
         [JsonProperty("dataTypeGuid")]
         internal string DataTypeGuid { get; set; }
 
-		// container for temporary editor state from the Umbraco backend
-		[JsonProperty("editorState")]
-		internal UmbracoEditorState EditorState { get; set; }
+        // container for temporary editor state from the Umbraco backend
+        [JsonProperty("editorState")]
+        internal UmbracoEditorState EditorState { get; set; }
 
-		[JsonProperty("hostContentType")]
+        [JsonProperty("hostContentType")]
         internal PublishedContentType HostContentType { get; set; }
 
         public T GetValue<T>()
@@ -93,11 +93,11 @@ namespace Archetype.Models
             return Attempt<T>.Fail();
         }
 
-	    internal class UmbracoEditorState
-	    {
-			// container for the names of any files selected for a property in the Umbraco backend
-			[JsonProperty("fileNames")]
-			public IEnumerable<string> FileNames;
-		}
+        internal class UmbracoEditorState
+        {
+            // container for the names of any files selected for a property in the Umbraco backend
+            [JsonProperty("fileNames")]
+            public IEnumerable<string> FileNames;
+        }
     }
 }
