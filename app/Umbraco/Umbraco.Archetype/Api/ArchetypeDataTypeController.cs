@@ -40,30 +40,7 @@ namespace Archetype.Api
             }
 
             var dataTypeDisplay = Mapper.Map<IDataTypeDefinition, DataTypeDisplay>(dataType);
-
-			// enrich the prevalues with any missing default prevalues for the datatype (e.g. image cropper "focalPoint# prevalue)
-			var preValues = dataTypeDisplay.PreValues.ToList();
-			if(string.IsNullOrEmpty(dataType.PropertyEditorAlias) == false)
-			{
-				// fetch the default prevalues for the datatype
-				var propEditor = PropertyEditorResolver.Current.GetByAlias(dataType.PropertyEditorAlias);
-				if(propEditor != null && propEditor.DefaultPreValues != null && propEditor.DefaultPreValues.Any())
-				{
-					// add any missing prevalues
-					foreach(var missingPreValue in propEditor.DefaultPreValues.Where(p => preValues.Any(pre => pre.Key == p.Key) == false))
-					{
-						var value = missingPreValue.Value;
-						// if the prevalue is a JSON object, deserialize it
-						if(value != null && value.ToString().DetectIsJson())
-						{
-							value = JsonConvert.DeserializeObject(value.ToString());
-						}
-						preValues.Add(new PreValueFieldDisplay { Key = missingPreValue.Key, Value = value });
-					}
-				}
-			}
-
-			return new { selectedEditor = dataTypeDisplay.SelectedEditor, preValues = preValues };
+			return new { selectedEditor = dataTypeDisplay.SelectedEditor, preValues = dataTypeDisplay.PreValues };
         }
 
         public object GetByGuid(Guid guid, string contentTypeAlias, string propertyTypeAlias, string archetypeAlias, int nodeId)
