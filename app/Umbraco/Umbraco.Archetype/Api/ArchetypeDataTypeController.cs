@@ -22,7 +22,7 @@ namespace Archetype.Api
         {
             return
                 global::Umbraco.Core.PropertyEditors.PropertyEditorResolver.Current.PropertyEditors
-                    .Select(x => new {defaultPreValues = x.DefaultPreValues, alias = x.Alias, view = x.ValueEditor.View});
+                    .Select(x => new {defaultPreValues = x.DefaultPreValuesForArchetype(), alias = x.Alias, view = x.ValueEditor.View});
         }
 
         public object GetAll() 
