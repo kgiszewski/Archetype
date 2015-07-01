@@ -144,6 +144,13 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
                         }
                     }
 
+                    //upload datatype hack
+                    if(view.indexOf('fileupload.html') != -1) {
+                        scope.propertyForm = scope.form;
+                        scope.model.validation = {};
+                        scope.model.validation.mandatory = 0;
+                    }
+
                     //some items need an alias
                     scope.model.alias = "archetype-property-" + propertyAlias;
                     //some items also need an id (file upload for example)
