@@ -390,7 +390,7 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
     }
 
     //archetype css
-    assetsService.loadCss("/App_Plugins/Archetype/css/archetype.css");
+    assetsService.loadCss("../App_Plugins/Archetype/css/archetype.css");
 
     //custom css
     if($scope.model.config.customCssPath)
