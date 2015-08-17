@@ -15,8 +15,8 @@ using Umbraco.Web.Models.ContentEditing;
 
 namespace Archetype.PropertyEditors
 {
-	[PropertyEditorAsset(ClientDependencyType.Javascript, "~/App_Plugins/Archetype/js/archetype.js")]
-	[PropertyEditor(Constants.PropertyEditorAlias, "Archetype", "~/App_Plugins/Archetype/views/archetype.html", ValueType = "JSON")]
+	[PropertyEditorAsset(ClientDependencyType.Javascript, "../App_Plugins/Archetype/js/archetype.js")]
+	[PropertyEditor(Constants.PropertyEditorAlias, "Archetype", "../App_Plugins/Archetype/views/archetype.html", ValueType = "JSON")]
 	public class ArchetypePropertyEditor : PropertyEditor
 	{
 		#region Pre Value Editor
@@ -28,7 +28,7 @@ namespace Archetype.PropertyEditors
 
 		internal class ArchetypePreValueEditor : PreValueEditor
 		{
-			[PreValueField("archetypeConfig", "Config", "~/App_Plugins/Archetype/views/archetype.config.html",
+			[PreValueField("archetypeConfig", "Config", "../App_Plugins/Archetype/views/archetype.config.html",
 				Description = "(Required) Describe your Archetype.")]
 			public string Config { get; set; }
 
