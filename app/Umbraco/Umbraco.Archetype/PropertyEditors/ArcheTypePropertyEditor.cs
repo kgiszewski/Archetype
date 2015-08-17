@@ -4,7 +4,6 @@ using System.Linq;
 using Archetype.Extensions;
 using ClientDependency.Core;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Umbraco.Core;
 using Umbraco.Core.Logging;
 using Umbraco.Core.Models;
