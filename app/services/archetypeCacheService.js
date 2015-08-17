@@ -7,7 +7,19 @@ angular.module('umbraco.services').factory('archetypeCacheService', function (ar
     var isDatatypeLookupLoading = false;
     var datatypeCache = [];
 
+    var notificationsCache = [];
+
     return {
+    	addNotification: function(key) {
+    		notificationsCache.push(key);
+    	},
+    	hasBeenNotified: function(key) {
+    		var notification = _.find(notificationsCache, function(value){
+    			return value.toLowerCase() == key.toLowerCase();
+    		});
+
+    		return (typeof notification != 'undefined');
+    	},
     	getDataTypeFromCache: function(guid) {
         	return _.find(datatypeCache, function (dt){
 	            return dt.dataTypeGuid == guid;

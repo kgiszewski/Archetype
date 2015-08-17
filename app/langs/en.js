@@ -7,6 +7,7 @@
 	"toggleAdvancedDescription": "Show advanced options.",
 	"hidePropertyLabels": "Hide Property Labels?",
 	"hidePropertyLabelsDescription": "Hides the property labels.",
+	"minFieldsets": "Min Fieldsets",
 	"maxFieldsets": "Max Fieldsets",
 	"maxFieldsetsDescription": "How many Fieldsets are allowed? Entering '1' will disable the controls. Default is unlimited.",
 	"enableMultipleFieldsets": "Enable Multiple Fieldsets?",
