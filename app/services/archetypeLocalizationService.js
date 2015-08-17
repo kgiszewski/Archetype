@@ -24,7 +24,7 @@ angular.module('umbraco.services').factory('archetypeLocalizationService', funct
         initLocalizedResources:function () {
             var deferred = $q.defer();
             userService.getCurrentUser().then(function(user){
-                $http.get("/App_plugins/Archetype/langs/" + user.locale + ".js", { cache: true }) 
+                $http.get("../App_plugins/Archetype/langs/" + user.locale + ".js", { cache: true }) 
                     .then(function(response){
                         service.resourceFileLoaded = true;
                         service.dictionary = response.data;
