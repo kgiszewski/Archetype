@@ -72,6 +72,7 @@
             .label-sub {
                 padding: 10px 0 4px 0;
                 display: inline-block;
+                min-height: 20px; /* this makes the header clickable when there's no icon and no text */
                 &.module-label {
                     width: 100%;
                 }
@@ -123,10 +124,10 @@
 
             label {
                 margin-bottom: 0;
-                margin-left: 14px;
+                margin-left: 18px;
                 white-space: nowrap;
                 padding: 0;
-                width: ~"calc(100% - 142px)";
+                width: ~"calc(100% - 144px)";
                 position: absolute;
                 span {
                     display: block;
