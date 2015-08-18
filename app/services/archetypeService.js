@@ -100,17 +100,14 @@ angular.module('umbraco.services').factory('archetypeService', function (archety
             property.isValid = true;
             this.setFieldsetValidity(fieldset);
         },
-        validateMinFieldsets: function(scope, ngModelCtrl, notificationsService) {
-            ngModelCtrl.$setValidity('propertyForm', true);
+        validateMinFieldsets: function(scope) {
+            //ngModelCtrl.$setValidity('propertyForm', true);
+            archetypeCacheService.removeInvalidation("minFieldsets");
 
-            //min fieldsets
             if(scope.archetypeConfig.minFieldsets && scope.archetypeRenderModel.fieldsets.length < scope.archetypeConfig.minFieldsets) {
-                ngModelCtrl.$setValidity('propertyForm', false);
-                
-                if(!archetypeCacheService.hasBeenNotified("minFieldsets")) {
-                    notificationsService.error("Error", "Please check your input as it requires at least " + scope.archetypeConfig.minFieldsets + " fieldsets.");
-                    archetypeCacheService.addNotification("minFieldsets");
-                }
+                //ngModelCtrl.$setValidity('propertyForm', false);
+                archetypeCacheService.addInvalidation("minFieldsets");
+                archetypeCacheService.addNotification("minFieldsets");
             }
         }
     }

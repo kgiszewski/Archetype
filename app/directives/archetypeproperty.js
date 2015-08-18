@@ -114,6 +114,11 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
                         archetypeService.propertyValueChanged(archetypeService.getFieldset(scope), archetypeService.getFieldsetProperty(scope));
                     });
 
+                    scope.$on('formSubmitting', function(ev, args){
+                        archetypeCacheService.clearInvalidations();
+                        archetypeCacheService.clearNotifications();
+                    });
+
                     scope.$on('archetypeFormSubmitting', function (ev, args) {
                         // validate all fieldset properties
                         _.each(scope.fieldset.properties, function (property) {
@@ -135,6 +140,10 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
                             // notify the linker that the property value changed
                             archetypeService.propertyValueChanged(archetypeService.getFieldset(scope), archetypeService.getFieldsetProperty(scope));
                         }
+
+                        archetypeService.validateMinFieldsets(scope);
+
+                        archetypeCacheService.notifyEditor();
                     });
 
                     // issue 114: handle file selection on property editors
@@ -162,11 +171,11 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
 
                         scope.archetypeRenderModel.fieldsets.length = args.visible;
 
-                        archetypeService.validateMinFieldsets(scope, ngModelCtrl, notificationsService);
+                        archetypeService.validateMinFieldsets(scope);
                     });
 
                     scope.$on("archetypeAddFieldset", function (ev, args) {
-                        archetypeService.validateMinFieldsets(scope, ngModelCtrl, notificationsService);
+                        archetypeService.validateMinFieldsets(scope);
                     });
 
                     element.html(data).show();

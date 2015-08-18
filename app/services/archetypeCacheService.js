@@ -1,4 +1,4 @@
-angular.module('umbraco.services').factory('archetypeCacheService', function (archetypePropertyEditorResource) {
+angular.module('umbraco.services').factory('archetypeCacheService', function (archetypePropertyEditorResource, notificationsService) {
     //private
 
     var isEntityLookupLoading = false;
@@ -7,19 +7,78 @@ angular.module('umbraco.services').factory('archetypeCacheService', function (ar
     var isDatatypeLookupLoading = false;
     var datatypeCache = [];
 
-    var notificationsCache = [];
+    var notificationQueue = [];
+    var notificationCache = [];
+
+    var invalidationCache = [];
+
+    function findItem(array, item) {
+		return _.find(array, function(value){
+			return value == item;
+		});
+    }
 
     return {
-    	addNotification: function(key) {
-    		notificationsCache.push(key);
-    	},
-    	hasBeenNotified: function(key) {
-    		var notification = _.find(notificationsCache, function(value){
-    			return value.toLowerCase() == key.toLowerCase();
-    		});
+    	notifyEditor: function() {
+    		console.log("queue-v");
+    		console.log(notificationQueue);
+    		console.log("sent-v");
+    		console.log(notificationCache);
 
-    		return (typeof notification != 'undefined');
+    		if(this.shouldBeNotified("minFieldsets") && !this.hasBeenNotified("minFieldsets")) {
+    			notificationsService.error("Error", "Some of your properties do not contain enough fieldsets.");
+
+    			this.removeNotification("minFieldsets");
+
+    			notificationCache.push("minFieldsets");
+    		}
     	},
+
+    	clearInvalidations: function() {
+    		invalidationCache = [];
+    	},
+
+    	addInvalidation: function(key) {
+    		if(!this.hasBeenInvalidated(invalidationCache, key)) {
+    			invalidationCache.push(key);
+    		}
+    	},
+
+    	removeInvalidation: function(key) {
+    		invalidationCache = _.reject(invalidationCache, function(value){
+    			return value == key;
+    		});
+    	},
+
+    	hasBeenInvalidated: function(key) {
+    		return (typeof findItem(invalidationCache, key) != 'undefined');
+    	},
+
+    	clearNotifications: function() {
+    		notificationCache = [];
+    		
+    	},
+
+    	addNotification: function(key) {
+    		if(!this.shouldBeNotified(key) && !this.hasBeenNotified(notificationCache, key)) {
+    			notificationQueue.push(key);
+    		}
+    	},
+
+    	removeNotification: function(key) {
+    		notificationQueue = _.reject(notificationQueue, function(value){
+    			return value == key;
+    		});
+    	},
+
+    	shouldBeNotified: function(key) {
+			return (typeof findItem(notificationQueue, key) != 'undefined');
+    	},
+
+    	hasBeenNotified: function(key) {
+			return (typeof findItem(notificationCache, key) != 'undefined');
+    	},
+
     	getDataTypeFromCache: function(guid) {
         	return _.find(datatypeCache, function (dt){
 	            return dt.dataTypeGuid == guid;
