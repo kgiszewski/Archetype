@@ -13,7 +13,7 @@
                         </label>
                     </div>
                     <div class="archetypeEditorControls label-sub" ng-hide="model.config.hideFieldsetControls">
-                        <i class="icon icon-add dropdown-toggle" ng-show="canAdd()" ng-click="openFieldsetPicker($index, $event)"></i>
+                        <i class="icon icon-add" ng-show="canAdd()" ng-click="openFieldsetPicker($index, $event)"></i>
                         <i class="icon icon-navigation handle" ng-show="canSort()"></i>
                         <i class="icon icon-documents" ng-click="cloneRow($index)" ng-show="canClone()"></i>
                         <i class="icon icon-power" ng-click="enableDisable(fieldset)" ng-show="canDisable()"></i>
@@ -42,7 +42,7 @@
     </ul>
     <div ng-show="showAddButton()">
         <a class="archetypeAddButton" ng-click="openFieldsetPicker(0, $event)" prevent-default>
-            <i class="icon icon-add dropdown-toggle"></i>
+            <i class="icon icon-add"></i>
             <archetype-localize key="addFieldset">Add an item</archetype-localize>
         </a>
     </div>
