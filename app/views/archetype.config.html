@@ -98,6 +98,10 @@
             <input type="checkbox" id="archetypeAdvancedOptionsHideLabels" ng-model="archetypeConfigRenderModel.hidePropertyLabels"/>
         </div>
         <div>
+            <label for="archetypeAdvancedOptionsMinFieldsets"><archetype-localize key="minFieldsets">Min Fieldsets</archetype-localize><small><archetype-localize key="minFieldsetsDescription">How many Fieldsets are required? Leaving blank will disable the control. Default is unlimited.</archetype-localize></small></label>
+            <input type="number" id="archetypeAdvancedOptionsMinFieldsets" class="archetypeMinFieldsets" ng-model="archetypeConfigRenderModel.minFieldsets"/>
+        </div>
+        <div>
             <label for="archetypeAdvancedOptionsMaxFieldsets"><archetype-localize key="maxFieldsets">Max Fieldsets</archetype-localize><small><archetype-localize key="maxFieldsetsDescription">How many Fieldsets are allowed? Entering '1' will disable the controls. Default is unlimited.</archetype-localize></small></label>
             <input type="number" id="archetypeAdvancedOptionsMaxFieldsets" class="archetypeMaxFieldsets" ng-model="archetypeConfigRenderModel.maxFieldsets"/>
         </div>

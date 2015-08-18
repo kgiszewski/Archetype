@@ -88,7 +88,10 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
                     $scope.model.value.fieldsets.push(newFieldset);
                 }
             }
+
             $scope.setDirty();
+
+            $scope.$broadcast("archetypeAddFieldset", {index: $index, visible: countVisible()});
 
             newFieldset.collapse = $scope.model.config.enableCollapsing ? true : false;
             $scope.focusFieldset(newFieldset);
@@ -100,7 +103,7 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
             if (confirm('Are you sure you want to remove this?')) {
                 $scope.setDirty();
                 $scope.model.value.fieldsets.splice($index, 1);
-                $scope.$broadcast("archetypeRemoveFieldset", {index: $index});
+                $scope.$broadcast("archetypeRemoveFieldset", {index: $index, visible: countVisible()});
             }
         }
     }
@@ -364,6 +367,7 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
 
         // recursive validation of nested fieldsets
         var nestedFieldsetsValid = true;
+
         _.each(fieldset.properties, function (property) {
             if (property != null && property.value != null && property.propertyEditorAlias == "Imulus.Archetype") {
                 _.each(property.value.fieldsets, function (inner) {
@@ -403,10 +407,12 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
     // we need to monitor the "formSubmitting" event from a custom property and broadcast our own event
     // to forcefully update the appropriate model.value's
     $scope.activeSubmitWatcher = 0;
+
     $scope.submitWatcherOnLoad = function () {
         $scope.activeSubmitWatcher++;
         return $scope.activeSubmitWatcher;
     }
+
     $scope.submitWatcherOnSubmit = function () {
         $scope.$broadcast("archetypeFormSubmitting");
     }
