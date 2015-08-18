@@ -104,7 +104,7 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
 
     //ini the properties
     _.each($scope.archetypeConfigRenderModel.fieldsets, function(fieldset){
-            $scope.focusProperty(fieldset.properties);
+        $scope.focusProperty(fieldset.properties);
     });
 
     //setup JSON.stringify helpers
