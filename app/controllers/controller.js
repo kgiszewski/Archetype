@@ -15,6 +15,11 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
     // store the umbraco property alias to help generate unique IDs.  Hopefully there's a better way to get this in the future :)
     $scope.umbracoHostPropertyAlias = $scope.$parent.$parent.model.alias;
 
+    $scope.overlayMenu = {
+        show: false,
+        style: {}
+    };
+
     init();
 
     //hold references to helper resources 
@@ -74,6 +79,54 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
     };
 
     //handles a fieldset add
+    $scope.openFieldsetPicker = function ($index, event) {
+        if ($scope.canAdd() == false) {
+            return;
+        }
+
+        $scope.overlayMenu.fieldsets = [];
+        _.each($scope.model.config.fieldsets, function (fieldset) {
+            var icon = fieldset.icon;
+            $scope.overlayMenu.fieldsets.push({
+                alias: fieldset.alias,
+                label: fieldset.label,
+                icon: (fieldset.icon || "icon-document-dashed-line") // default icon if none is chosen
+            });
+            $scope.overlayMenu.index = $index;
+        });
+
+        // sanity check
+        if ($scope.overlayMenu.fieldsets.length == 0) {
+            return;
+        }
+        if ($scope.overlayMenu.fieldsets.length == 1) {
+            // only one fieldset type - no need to display the picker
+            $scope.addRow($scope.overlayMenu.fieldsets[0].alias, $index);
+            return;
+        }
+
+        // calculate overlay position
+        // - yeah... it's jQuery (ungh!) but that's how the Grid does it.
+        var offset = $(event.target).offset();
+        var scrollTop = $(event.target).closest(".umb-panel-body").scrollTop();
+        if (offset.top < 400) {
+            $scope.overlayMenu.style.top = 300 + scrollTop;
+        }
+        else {
+            $scope.overlayMenu.style.top = offset.top - 150 + scrollTop;
+        }
+        $scope.overlayMenu.show = true;
+    };
+
+    $scope.closeFieldsetPicker = function () {
+        $scope.overlayMenu.show = false;
+    };
+    
+    $scope.pickFieldset = function (fieldsetAlias, $index) {
+        $scope.closeFieldsetPicker();
+        $scope.addRow(fieldsetAlias, $index);
+    };    
+    
     $scope.addRow = function (fieldsetAlias, $index) {
         if ($scope.canAdd()) {
             if ($scope.model.config.fieldsets) {

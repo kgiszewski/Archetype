@@ -70,7 +70,7 @@
             min-height: 42px;
 
             .label-sub {
-                padding: 8px 0 4px 0;
+                padding: 10px 0 4px 0;
                 display: inline-block;
                 &.module-label {
                     width: 100%;
@@ -134,7 +134,9 @@
                     text-overflow: ellipsis;
                 }
                 &.dimmed {
-                    color: #d9d9d9;
+                    i, span {
+                        color: #d9d9d9 !important;
+                    }
                 }
             }
 
@@ -224,6 +226,10 @@
         span {
             color: #343434;
         }
+    }
+
+    .fieldsetPicker .icon {
+        color: #333;
     }
 }
 
