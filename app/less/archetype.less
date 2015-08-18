@@ -23,19 +23,25 @@
     }
 
     .icon {
-        color: #333;
+        color: #ddd;
+        padding: 2px;
+        font-size: 16px;
+        &:hover {
+            color: #333;
+        }
     }
 
     .fieldsetIcon {
         float: left;
-        padding-right: 4px;
+        padding: 0 4px 0 0;
+        color: #333;
+        vertical-align: text-bottom;
     }
 
     fieldset {
-        border: 1px solid #dddddd;
+        border-bottom: 1px dashed #dddddd;
         padding: 0;
         margin-bottom: 5px;
-        background-color: #f1f1f1;
         clear: both;
         display: inline-block;
         width: 100%;
@@ -103,13 +109,13 @@
             }
 
             .caret {
-                margin: 8px 1px 0 15px;
+                margin: 8px 1px 0 2px;
                 position: absolute;
 
                 &.caret-right {
                     border-bottom: 4px solid transparent;
                     border-top: 4px solid transparent;
-                    border-left: 4px solid #000000;
+                    border-left: 4px solid #ddd;
                     content: "";
                     margin-top: 6px;
                 }
@@ -117,10 +123,10 @@
 
             label {
                 margin-bottom: 0;
-                margin-left: 38px;
+                margin-left: 14px;
                 white-space: nowrap;
                 padding: 0;
-                width: ~"calc(100% - 132px)";
+                width: ~"calc(100% - 142px)";
                 position: absolute;
                 span {
                     display: block;
@@ -137,6 +143,12 @@
                 position: absolute;
                 right: 15px;
                 top: 0;
+            }
+            
+            &:hover {
+                .caret-right {
+                    border-left-color: #333;
+                }
             }
         }
 
@@ -157,9 +169,8 @@
         .archetypeCollapser {
             clear: both;
             height: 100%;
-            padding-top: 12px;
+            padding: 12px 0 0 20px;
             background-color: #fff;
-            border-top: 1px solid silver;
             border-radius: 0 0 0 5px;
 
             form {
