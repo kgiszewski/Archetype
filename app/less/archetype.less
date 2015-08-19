@@ -208,13 +208,25 @@
         border: 1px solid #b94a48;
     }
 
-    .archetypeAddButton:hover {
-        text-decoration: none;
-        cursor: pointer;
-
-        .archetypeAddButtonText {
-            text-decoration: underline;
+    .archetypeAddButton {
+        color: #ddd;
+        .icon {
+            vertical-align: text-top;
         }
+        &:hover {
+            color: #333;
+            text-decoration: none;
+            cursor: pointer;
+
+            .archetypeAddButtonText {
+                text-decoration: underline;
+            }
+
+            .icon {
+                color: #333;
+            }
+        }
+
     }
 
     .multiPropertyTextbox {
