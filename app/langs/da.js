@@ -1,6 +1,7 @@
 {
 	"label": "Label",
 	"alias": "Alias",
+	"addFieldset": "Tilføj et element",
 	"hideFieldsetControls": "Skjul fieldsets?",
 	"hideFieldsetControlsDescription": "Skjuler kontrollerne tilføj/fjern/sortér.",
 	"toggleAdvanced": "Slå avancerede muligheder til/fra",
