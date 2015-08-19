@@ -73,11 +73,27 @@
             min-height: 42px;
 
             .label-sub {
-                padding: 10px 0 4px 0;
+                padding: 8px 0 8px 0;
                 display: inline-block;
                 min-height: 20px; /* this makes the header clickable when there's no icon and no text */
                 &.module-label {
                     width: 100%;
+                }
+                &:hover {
+                    cursor: pointer;
+    
+                    label  {
+                        span {
+                            text-decoration: underline;
+                        }
+                        &:hover {
+                            cursor: pointer;
+                        }
+                    }
+                    
+                    .caret-right {
+                        border-left-color: #333;
+                    }
                 }
             }
 
@@ -97,19 +113,6 @@
 
             label:hover {
                 cursor: default;
-            }
-
-            &.enableCollapsing:hover {
-                cursor: pointer;
-
-                label  {
-                    span {
-                        text-decoration: underline;
-                    }
-                    &:hover {
-                        cursor: pointer;
-                    }
-                }
             }
 
             .caret {
@@ -152,9 +155,6 @@
             }
             
             &:hover {
-                .caret-right {
-                    border-left-color: #333;
-                }
             }
         }
 
