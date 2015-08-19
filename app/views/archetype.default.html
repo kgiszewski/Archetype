@@ -47,7 +47,7 @@
         </a>
     </div>
     <div class="usky-grid fieldsetPicker" ng-if="overlayMenu.show">
-        <div class="cell-tools-menu" ng-style="overlayMenu.style" delayed-mouseleave="closeFieldsetPicker()">
+        <div class="cell-tools-menu" ng-style="overlayMenu.style" delayed-mouseleave="closeFieldsetPicker()" archetype-click-outside="closeFieldsetPicker()">
             <h5>
                 <archetype-localize key="addFieldset">Add an item</archetype-localize>
             </h5>

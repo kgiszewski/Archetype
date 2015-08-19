@@ -58,6 +58,7 @@ module.exports = function(grunt) {
           'app/directives/archetypesubmitwatcher.js',
           'app/directives/archetypecustomview.js',
           'app/directives/archetypeLocalize.js',
+          'app/directives/archetypeclickoutside.js',
           'app/services/archetypeLocalizationService.js',
           'app/helpers/sampleLabelHelpers.js',
           'app/resources/archetypePropertyEditorResource.js',
