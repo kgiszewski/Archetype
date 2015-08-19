@@ -35,7 +35,6 @@ namespace Archetype.Models
 
         public T GetValue<T>()
         {
-
             // Try Umbraco's PropertyValueConverters
             var converters = UmbracoContext.Current != null ? PropertyValueConvertersResolver.Current.Converters : Enumerable.Empty<IPropertyValueConverter>();
             if (!string.IsNullOrWhiteSpace(this.PropertyEditorAlias) && converters.Any())

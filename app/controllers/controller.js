@@ -141,9 +141,13 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
                     $scope.model.value.fieldsets.push(newFieldset);
                 }
             }
+
             $scope.setDirty();
 
+            $scope.$broadcast("archetypeAddFieldset", {index: $index, visible: countVisible()});
+
             newFieldset.collapse = $scope.model.config.enableCollapsing ? true : false;
+            
             $scope.focusFieldset(newFieldset);
         }
     }

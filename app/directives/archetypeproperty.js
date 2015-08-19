@@ -40,64 +40,12 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
 
                 var mergedConfig = _.extend(defaultConfigObj, config);
 
-                loadView(pathToView, mergedConfig, defaultValue, alias, propertyAlias, scope, element, ngModelCtrl, propertyValueChanged);
+                loadView(pathToView, mergedConfig, defaultValue, alias, propertyAlias, scope, element, ngModelCtrl, configFieldsetModel);
             });
         });
-
-        scope.$on("archetypeFormSubmitting", function (ev, args) {
-            // validate all fieldset properties
-            _.each(scope.fieldset.properties, function (property) {
-                validateProperty(scope.fieldset, property);
-            });
-
-            var validationKey = "validation-f" + scope.fieldsetIndex;
-            ngModelCtrl.$setValidity(validationKey, scope.fieldset.isValid);
-        });
-
-        scope.$on("archetypeRemoveFieldset", function (ev, args) {
-            var validationKey = "validation-f" + args.index;
-            ngModelCtrl.$setValidity(validationKey, true);
-        });
-
-
-        // called when the value of any property in a fieldset changes
-        function propertyValueChanged(fieldset, property) {
-            // it's the Umbraco way to hide the invalid state when altering an invalid property, even if the new value isn't valid either
-            property.isValid = true;
-            setFieldsetValidity(fieldset);
-        }
-
-        // validate a property in a fieldset
-        function validateProperty(fieldset, property) {
-            var propertyConfig = archetypeService.getPropertyByAlias(configFieldsetModel, property.alias);
-            if (propertyConfig) {
-                // use property.value !== property.value to check for NaN values on numeric inputs
-                if (propertyConfig.required && (property.value == null || property.value === "" || property.value !== property.value)) {
-                    property.isValid = false;
-                }
-                // issue 116: RegEx validate property value
-                // Only validate the property value if anything has been entered - RegEx is considered a supplement to "required".
-                if (property.isValid == true && propertyConfig.regEx && property.value) {
-                    var regEx = new RegExp(propertyConfig.regEx);
-                    if (regEx.test(property.value) == false) {
-                        property.isValid = false;
-                    }
-                }
-            }
-
-            setFieldsetValidity(fieldset);
-        }
-
-        function setFieldsetValidity(fieldset) {
-            // mark the entire fieldset as invalid if there are any invalid properties in the fieldset, otherwise mark it as valid
-            fieldset.isValid =
-                _.find(fieldset.properties, function (property) {
-                    return property.isValid == false
-                }) == null;
-        }
     }
 
-    function loadView(view, config, defaultValue, alias, propertyAlias, scope, element, ngModelCtrl, propertyValueChanged) {
+    function loadView(view, config, defaultValue, alias, propertyAlias, scope, element, ngModelCtrl, configFieldsetModel) {
         if (view)
         {
             $http.get(view, { cache: true }).success(function (data) {
@@ -120,6 +68,7 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
                         archetypeService.getFieldset(scope).properties.push(JSON.parse('{"alias": "' + alias + '", "value": "' + defaultValue + '"}'));
                         scope.renderModelPropertyIndex = archetypeService.getPropertyIndexByAlias(archetypeService.getFieldset(scope).properties, alias);
                     }
+
                     scope.renderModel = {};
                     scope.model.value = archetypeService.getFieldsetProperty(scope).value;
 
@@ -158,13 +107,23 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
 
                     //watch for changes since there is no two-way binding with the local model.value
                     scope.$watch('model.value', function (newValue, oldValue) {
+                        
                         archetypeService.getFieldsetProperty(scope).value = newValue;
 
                         // notify the linker that the property value changed
-                        propertyValueChanged(archetypeService.getFieldset(scope), archetypeService.getFieldsetProperty(scope));
+                        archetypeService.propertyValueChanged(archetypeService.getFieldset(scope), archetypeService.getFieldsetProperty(scope));
                     });
 
                     scope.$on('archetypeFormSubmitting', function (ev, args) {
+                        // validate all fieldset properties
+                        _.each(scope.fieldset.properties, function (property) {
+                            archetypeService.validateProperty(scope.fieldset, property, configFieldsetModel);
+                        });
+
+                        var validationKey = "validation-f" + scope.fieldsetIndex;
+
+                        ngModelCtrl.$setValidity(validationKey, scope.fieldset.isValid);
+
                         // did the value change (if it did, it most likely did so during the "formSubmitting" event)
                         var property = archetypeService.getFieldsetProperty(scope);
 
@@ -174,7 +133,7 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
                             archetypeService.getFieldsetProperty(scope).value = scope.model.value;
 
                             // notify the linker that the property value changed
-                            propertyValueChanged(archetypeService.getFieldset(scope), archetypeService.getFieldsetProperty(scope));
+                            archetypeService.propertyValueChanged(archetypeService.getFieldset(scope), archetypeService.getFieldsetProperty(scope));
                         }
                     });
 
@@ -182,7 +141,9 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
                     scope.$on("filesSelected", function (event, args) {
                         // populate the fileNames collection on the property editor state
                         var property = archetypeService.getFieldsetProperty(scope);
+
                         property.editorState.fileNames = [];
+
                         _.each(args.files, function (item) {
                             property.editorState.fileNames.push(item.name);
                         });
@@ -193,6 +154,11 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
 
                         // now tell the containing Archetype to pick up the selected files
                         scope.archetypeRenderModel.setFiles(args.files);
+                    });
+
+                    scope.$on("archetypeRemoveFieldset", function (ev, args) {
+                        var validationKey = "validation-f" + args.index;
+                        ngModelCtrl.$setValidity(validationKey, true);
                     });
 
                     element.html(data).show();
