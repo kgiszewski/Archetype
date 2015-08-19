@@ -140,7 +140,7 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
         }
 
         var suffix = "";
-        var strippedText = $(value).text();
+        var strippedText = $("<div/>").html(value).text();
 
         if(strippedText.length > args.contentLength) {
         	suffix = "…";
