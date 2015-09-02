@@ -74,6 +74,10 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
                 draggedRteSettings[textareaId] = draggedRteSettings[textareaId] || _.findWhere(tinyMCE.editors, { id: textareaId }).settings;
                 tinyMCE.execCommand('mceRemoveEditor', false, wrapperId);
                 tinyMCE.init(draggedRteSettings[textareaId]);
+
+                $element.siblings(rteClass).each(function() {
+                    $(this).remove();
+                });
             });
         }
     };
