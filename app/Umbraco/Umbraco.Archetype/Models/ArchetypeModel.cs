@@ -30,15 +30,9 @@ namespace Archetype.Models
 
         public string SerializeForPersistence()
         {
-            // clear the editor state before serializing (it's temporary state data)
-            foreach(var property in Fieldsets.SelectMany(f => f.Properties.Where(p => p.EditorState != null)).ToList())
-            {
-                property.EditorState = null;
-            }
-
             var json = JObject.Parse(JsonConvert.SerializeObject(this, new JsonSerializerSettings() { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
 
-            var propertiesToRemove = new String[] { "propertyEditorAlias", "dataTypeId", "dataTypeGuid", "hostContentType" };
+            var propertiesToRemove = new String[] { "propertyEditorAlias", "dataTypeId", "dataTypeGuid", "hostContentType", "editorState" };
 
             json.Descendants().OfType<JProperty>()
               .Where(p => propertiesToRemove.Contains(p.Name))
