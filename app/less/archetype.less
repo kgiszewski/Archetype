@@ -7,6 +7,11 @@
         .cell-tools-menu {
             height: 385px;
         }
+        &.withGroups {
+            .cell-tools-menu {
+                height: 415px;
+            }
+        }
     }
 
     .open {
@@ -259,13 +264,33 @@
             vertical-align: top;  
             height: 90px;        
         }
+        ul.groups {
+            display: block;
+            margin: 0;
+            padding: 4px;
+            li {
+                width: auto;
+                margin: 0;
+                padding: 0 20px;
+                font-weight: bold;
+                a {
+                    color: #d9d9d9;
+                    cursor: pointer;
+                }
+                &.active a, a:hover {
+                    color: #999;
+                    text-decoration: none;
+                }
+            }
+        }
     }
 }
 
 .archetypeEditor, .archetypeConfig {
     .archetypeEditorControls {
         float: right;
-
+    }
+    .archetypeEditorControls, .archetypeFieldsetGroups {
         i {
             cursor: pointer;
             &.handle {
@@ -361,6 +386,22 @@
         }
     }
 
+    .archetypeFieldsetGroups {
+        padding: 0 10px;
+        margin-bottom: 20px;
+        ul {
+            padding: 0;
+            margin: 0;
+
+            li {
+                margin-bottom: 10px;
+                input {
+                    vertical-align: middle;
+                }
+
+            }
+        }
+    }
     .archetypeAdvancedOptions {
         margin-top: 15px;
         div {

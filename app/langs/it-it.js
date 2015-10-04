@@ -40,5 +40,9 @@
     "overrideDefaultConverterDescription":"Check this if you wish to use your own custom property value converter.",
     "overrideDefaultConverter":"Override Default Property Value Converter?",
     "enableCloning":"Enable Cloning?",
- 	"enableCloningDescription":"Enable Fieldset Cloning."
+ 	"enableCloningDescription":"Enable Fieldset Cloning.",
+  "fieldsetGroups":"Fieldset groups",
+  "fieldsetGroupsDescription":"If you have a lot of fieldsets to choose from, you may want to consider grouping them in the fieldset picker. Once you have created your groups here, a group picker will be displayed in the fieldset editor and you can assign your fieldsets to their respective groups.",
+  "fieldsetGroupName":"Name",
+  "addFieldsetGroup":"Add group"
 }

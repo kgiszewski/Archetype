@@ -38,6 +38,9 @@ namespace Archetype.Models
         [JsonProperty("fieldsets")]
         public IEnumerable<ArchetypePreValueFieldset> Fieldsets { get; set; }
 
+        [JsonProperty("fieldsetGroups")]
+        public IEnumerable<ArchetypePreValueFieldsetGroup> FieldsetGroups { get; set; }
+
         [JsonProperty("hidePropertyLabels")]
         public bool HidePropertyLabels { get; set; }
 

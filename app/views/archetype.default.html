@@ -46,13 +46,20 @@
             <archetype-localize key="addFieldset">Add an item</archetype-localize>
         </a>
     </div>
-    <div class="usky-grid fieldsetPicker" ng-if="overlayMenu.show">
+    <div class="usky-grid fieldsetPicker" ng-class="{withGroups: overlayMenu.fieldsetGroups.length > 1}" ng-if="overlayMenu.show">
         <div class="cell-tools-menu" ng-style="overlayMenu.style" delayed-mouseleave="closeFieldsetPicker()" archetype-click-outside="closeFieldsetPicker()">
             <h5>
                 <archetype-localize key="addFieldset">Add an item</archetype-localize>
             </h5>
+            <ul class="groups" ng-show="overlayMenu.fieldsetGroups.length > 1">
+                <li ng-repeat="fieldsetGroup in overlayMenu.fieldsetGroups" ng-class="{active: fieldsetGroup == overlayMenu.activeFieldsetGroup}">
+                    <a ng-click="overlayMenu.activeFieldsetGroup = fieldsetGroup">
+                        {{fieldsetGroup.name}}
+                    </a>
+                </li>
+            </ul>
             <ul class="elements">
-                <li ng-repeat="fieldset in overlayMenu.fieldsets">
+                <li ng-repeat="fieldset in overlayMenu.activeFieldsetGroup.fieldsets">
                     <a ng-click="pickFieldset(fieldset.alias, overlayMenu.index)" href>
                         <i class="icon {{fieldset.icon}}"></i>
                         {{fieldset.label}}
