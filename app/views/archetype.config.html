@@ -89,7 +89,7 @@
     </div>
 
     <div class="archetypeAdvancedOptions" ng-show="archetypeConfigRenderModel.showAdvancedOptions">
-        <div class="archetypeFieldsetGroups">
+        <div class="archetypeFieldsetGroups" ng-show="archetypeConfigRenderModel.enableMultipleFieldsets">
             <h4><archetype-localize key="fieldsetGroups">Fieldset groups</archetype-localize></h4>
             <p><archetype-localize key="fieldsetGroupsDescription">If you have a lot of fieldsets to choose from, you may want to consider grouping them in the fieldset picker. Once you have created your groups here, a group picker will be displayed in the fieldset editor and you can assign your fieldsets to their respective groups.</archetype-localize></p>
             <ul ui-sortable="sortableOptions" ng-model="archetypeConfigRenderModel.fieldsetGroups">
