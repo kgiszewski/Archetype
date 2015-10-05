@@ -111,7 +111,7 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
         $scope.overlayMenu.fieldsetGroups = [];
         if ($scope.model.config.fieldsetGroups && $scope.model.config.fieldsetGroups.length > 0) {
             _.each($scope.model.config.fieldsetGroups, function (fieldsetGroup) {
-                $scope.overlayMenu.fieldsetGroups.push({ name: fieldsetGroup.name, fieldsets: $filter("filter")(allFieldsets, { group: fieldsetGroup.name }) });
+                $scope.overlayMenu.fieldsetGroups.push({ name: fieldsetGroup.name, fieldsets: $filter("filter")(allFieldsets, { group: fieldsetGroup.name }, true) });
             })
         }
         else {
