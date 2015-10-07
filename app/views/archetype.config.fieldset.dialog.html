@@ -46,5 +46,14 @@
             <label ng-click="addFieldsetGroup($index)"><i class="icon icon-add"></i> <archetype-localize key="addFieldsetGroup">Add group</archetype-localize></label>
             <hr/>
         </div>
+        <div class="btn-toolbar umb-btn-toolbar pull-right">
+            <a href="" ng-click="close()" class="btn btn-link">
+                <localize key="general_cancel" class="ng-isolate-scope ng-scope">Cancel</localize>
+            </a>
+
+            <button class="btn btn-primary" ng-click="apply()">
+                <archetype-localize key="button_apply">Apply</archetype-localize>
+            </button>
+        </div>
     </div>
 </div>

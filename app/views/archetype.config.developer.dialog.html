@@ -14,5 +14,16 @@
             <label for="archetypeAdvancedOptionsConfigModel"><archetype-localize key="configModel">Config Model</archetype-localize><small><archetype-localize key="configModelDescription">Be careful editing the text below, it controls the schema for this archetype.</archetype-localize></small></label>
             <textarea class="archetypeDeveloperModel" id="archetypeAdvancedOptionsConfigModel" ng-model="model"></textarea>
         </div>
+
+        <div class="btn-toolbar umb-btn-toolbar pull-right">
+            <a href="" ng-click="close()" class="btn btn-link">
+                <localize key="general_cancel" class="ng-isolate-scope ng-scope">Cancel</localize>
+            </a>
+
+            <button class="btn btn-primary" ng-click="apply()">
+                <archetype-localize key="button_apply">Apply</archetype-localize>
+            </button>
+
+        </div>
     </div>
 </div>

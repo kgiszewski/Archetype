@@ -1,5 +1,5 @@
 angular.module('umbraco').controller('ArchetypeConfigOptionsController', function ($scope) {
-	$scope.model = $scope.dialogData;
+	$scope.model = angular.copy($scope.dialogData);
 
     //handles a fieldset group add
     $scope.addFieldsetGroup = function () {
@@ -9,5 +9,9 @@ angular.module('umbraco').controller('ArchetypeConfigOptionsController', functio
     //handles a fieldset group removal
     $scope.removeFieldsetGroup = function ($index) {
         $scope.model.fieldsetGroups.splice($index, 1);
+    }
+
+    $scope.apply = function(index) {
+        $scope.submit($scope.model);
     }
 });

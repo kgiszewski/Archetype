@@ -16,5 +16,14 @@
             <label for="archetypeAdvancedOptionsCustomView"><archetype-localize key="viewFile">View File</archetype-localize><small><archetype-localize key="viewFileDescription">(Optional) Enter a path for a custom view file to be used to render this Archetype.</archetype-localize></small></label>
             <input type="text" id="archetypeAdvancedOptionsCustomView" ng-model="model.customViewPath"/>
         </div>
+        <div class="btn-toolbar umb-btn-toolbar pull-right">
+            <a href="" ng-click="close()" class="btn btn-link">
+                <localize key="general_cancel" class="ng-isolate-scope ng-scope">Cancel</localize>
+            </a>
+
+            <button class="btn btn-primary" ng-click="apply()">
+                <archetype-localize key="button_apply">Apply</archetype-localize>
+            </button>
+        </div>
     </div>
 </div>
