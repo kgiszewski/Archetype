@@ -1,4 +1,6 @@
 <div class="archetypeConfig" ng-controller="Imulus.ArchetypeConfigController">
+    <h2>Archetype</h2>
+    <p>Lorem</p>
     <ul class="archetypeFieldsets" ui-sortable="sortableOptions" ng-model="archetypeConfigRenderModel.fieldsets">
         <li ng-repeat="fieldset in archetypeConfigRenderModel.fieldsets" ng-hide="fieldset.remove">
             <div class="archetypeFieldsetWrapper" >
@@ -83,7 +85,7 @@
 
     <div class="archetypeOptions">
         <div>
-            <button class="btn btn-default" ng-click="showOptions($event, '../App_Plugins/archetype/views/archetype.config.fieldset.dialog.html')">Fieldset Options</button>
+            <button class="btn btn-default" ng-click="showOptions($event, '../App_Plugins/archetype/views/archetype.config.fieldset.dialog.html')">Global Fieldset Options</button>
             <button class="btn btn-default" ng-click="showOptions($event, '../App_Plugins/archetype/views/archetype.config.stylescript.dialog.html')">Custom Style/Script Options</button>
             <button class="btn btn-default" ng-click="showOptions($event, '../App_Plugins/archetype/views/archetype.config.developer.dialog.html')">Developer Options</button>
         </div>
