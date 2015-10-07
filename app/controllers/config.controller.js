@@ -302,6 +302,8 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
     $scope.showOptions = function ($event, template) {
         $event.preventDefault();
 
+        dialogService.closeAll();
+
         dialogService.open({
             template: template,
             show: true,
