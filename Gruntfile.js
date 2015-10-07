@@ -14,12 +14,23 @@ module.exports = function(grunt) {
       version: {
         files: {
           "app/controllers/controller_versioned.js": "app/controllers/controller.js",
-          "app/less/archetype_versioned.less": "app/less/archetype.less"
+          "app/less/archetype_versioned.less": "app/less/archetype.less",
+          "app/views/archetype.config.developer.dialog_versioned.html": "app/views/archetype.config.developer.dialog.html",
+          "app/views/archetype.config.stylescript.dialog_versioned.html": "app/views/archetype.config.stylescript.dialog.html",
+          "app/views/archetype.config.fieldset.dialog_versioned.html": "app/views/archetype.config.fieldset.dialog.html",
+          "app/views/archetype.config_versioned.html": "app/views/archetype.config.html",
+          "app/views/archetype_versioned.html": "app/views/archetype.html",
+          "app/views/archetype.default_versioned.html": "app/views/archetype.default.html",
+          
         },
         options: {
           replacements: [{
             pattern: /{{VERSION}}/g,
             replacement: '/* Version <%= pkgMeta.version %> */'
+          },
+          {
+            pattern: /{{VERSION_HTML}}/g,
+            replacement: '<!-- Version <%= pkgMeta.version %> -->'
           }]
         }
       }
@@ -91,9 +102,19 @@ module.exports = function(grunt) {
     copy: {
       html: {
         cwd: 'app/views/',
-        src: ['archetype.html', 'archetype.default.html', 'archetype.config.html', 'archetype.config.fieldset.dialog.html', 'archetype.config.stylescript.dialog.html', 'archetype.config.developer.dialog.html'],
-        dest: '<%= basePath %>/views',
-        expand: true
+        src: [
+            'archetype_versioned.html', 
+            'archetype.default_versioned.html', 
+            'archetype.config_versioned.html', 
+            'archetype.config.fieldset.dialog_versioned.html', 
+            'archetype.config.stylescript.dialog_versioned.html', 
+            'archetype.config.developer.dialog_versioned.html'
+        ],
+        dest: '<%= basePath %>/views/',
+        expand: true,
+        rename: function(dest, src) {
+            return dest + src.replace('_versioned','');
+          }
       },
       assets: {
         cwd: 'assets/',
