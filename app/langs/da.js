@@ -40,5 +40,9 @@
     "overrideDefaultConverterDescription":"Check this if you wish to use your own custom property value converter.",
     "overrideDefaultConverter":"Override Default Property Value Converter?",
     "enableCloning":"Enable Cloning?",
- 	"enableCloningDescription":"Enable Fieldset Cloning."    
+ 	"enableCloningDescription":"Enable Fieldset Cloning.",
+  "fieldsetGroups":"Fieldset-grupper",
+  "fieldsetGroupsDescription":"Hvis du har mange fieldsets, skal du måske overveje at gruppere dem i fieldset-vælgeren. Når du først har defineret dine grupper her, vil en gruppe-vælger dukke op i fieldset-editoren, og du kan derefter vælge grupper for alle dine fieldsets.",
+  "fieldsetGroupName":"Navn",
+  "addFieldsetGroup":"Tilføj gruppe"    
 }

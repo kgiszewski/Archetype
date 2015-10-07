@@ -1,4 +1,4 @@
-angular.module("umbraco").controller("Imulus.ArchetypeController", function ($scope, $http, assetsService, angularHelper, notificationsService, $timeout, fileManager, entityResource, archetypeService, archetypeLabelService, archetypeCacheService, archetypePropertyEditorResource) {
+angular.module("umbraco").controller("Imulus.ArchetypeController", function ($scope, $http, $filter, assetsService, angularHelper, notificationsService, $timeout, fileManager, entityResource, archetypeService, archetypeLabelService, archetypeCacheService, archetypePropertyEditorResource) {
 
     //$scope.model.value = "";
     $scope.model.hideLabel = $scope.model.config.hideLabel == 1;
@@ -76,26 +76,37 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
             return;
         }
 
-        $scope.overlayMenu.fieldsets = [];
+        var allFieldsets = [];
         _.each($scope.model.config.fieldsets, function (fieldset) {
             var icon = fieldset.icon;
-            $scope.overlayMenu.fieldsets.push({
+            allFieldsets.push({
                 alias: fieldset.alias,
                 label: fieldset.label,
-                icon: (fieldset.icon || "icon-document-dashed-line") // default icon if none is chosen
+                icon: (fieldset.icon || "icon-document-dashed-line"), // default icon if none is chosen
+                group: fieldset.group ? fieldset.group.name : null
             });
-            $scope.overlayMenu.index = $index;
         });
-
         // sanity check
-        if ($scope.overlayMenu.fieldsets.length == 0) {
+        if (allFieldsets == 0) {
             return;
         }
-        if ($scope.overlayMenu.fieldsets.length == 1) {
+        if (allFieldsets.length == 1) {
             // only one fieldset type - no need to display the picker
-            $scope.addRow($scope.overlayMenu.fieldsets[0].alias, $index);
+            $scope.addRow(allFieldsets[0].alias, $index);
             return;
         }
+
+        $scope.overlayMenu.fieldsetGroups = [];
+        if ($scope.model.config.fieldsetGroups && $scope.model.config.fieldsetGroups.length > 0) {
+            _.each($scope.model.config.fieldsetGroups, function (fieldsetGroup) {
+                $scope.overlayMenu.fieldsetGroups.push({ name: fieldsetGroup.name, fieldsets: $filter("filter")(allFieldsets, { group: fieldsetGroup.name }, true) });
+            })
+        }
+        else {
+            $scope.overlayMenu.fieldsetGroups.push({ name: "", fieldsets: allFieldsets });
+        }
+        $scope.overlayMenu.index = $index;
+        $scope.overlayMenu.activeFieldsetGroup = $scope.overlayMenu.fieldsetGroups[0];
 
         // calculate overlay position
         // - yeah... it's jQuery (ungh!) but that's how the Grid does it.
