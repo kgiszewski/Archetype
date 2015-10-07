@@ -234,16 +234,6 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
         }
     }
 
-    //handles a fieldset group add
-    $scope.addFieldsetGroup = function () {
-        $scope.archetypeConfigRenderModel.fieldsetGroups.push({ name: "" });
-    }
-
-    //handles a fieldset group removal
-    $scope.removeFieldsetGroup = function ($index) {
-        $scope.archetypeConfigRenderModel.fieldsetGroups.splice($index, 1);
-    }
-
     //helper to ini the render model
     function initConfigRenderModel()
     {

@@ -1,16 +1,13 @@
 <div class="umb-dialog archetype-dialog archetypeConfig" ng-controller="ArchetypeConfigOptionsController">
-    <div class="umb-dialog-body" auto-scale="90">
+    <div class="umb-dialog-body archetypeAdvancedOptions" auto-scale="90">
         <div>
-            <label for="archetypeAdvancedOptionsDeepDatatypeRequest"><archetype-localize key="deepDatatypeRequest">Enable Deep Datatype Requests?</archetype-localize><small><archetype-localize key="deepDatatypeRequestDescription">Allows for easier datatype interception at the cost of caching performance.</archetype-localize></small></label>
-            <input type="checkbox" id="archetypeAdvancedOptionsDeepDatatypeRequest" ng-model="model.enableDeepDatatypeRequests"/>
+            <label for="archetypeAdvancedOptionsDeepDatatypeRequest"><input type="checkbox" id="archetypeAdvancedOptionsDeepDatatypeRequest" ng-model="model.enableDeepDatatypeRequests"/><archetype-localize key="deepDatatypeRequest">Enable Deep Datatype Requests?</archetype-localize><small><archetype-localize key="deepDatatypeRequestDescription">Allows for easier datatype interception at the cost of caching performance.</archetype-localize></small></label>
         </div>
         <div>
-            <label for="archetypeAdvancedOptionsDeveloperMode"><archetype-localize key="toggleDeveloperMode">Enable Developer Mode?</archetype-localize><small><archetype-localize key="toggleDeveloperModeDescription">Toggle Developer Mode</archetype-localize></small></label>
-            <input type="checkbox" id="archetypeAdvancedOptionsDeveloperMode" ng-model="model.developerMode"/>
+            <label for="archetypeAdvancedOptionsDeveloperMode"><input type="checkbox" id="archetypeAdvancedOptionsDeveloperMode" ng-model="model.developerMode"/><archetype-localize key="toggleDeveloperMode">Enable Developer Mode?</archetype-localize><small><archetype-localize key="toggleDeveloperModeDescription">Toggle Developer Mode</archetype-localize></small></label>
         </div>
         <div>
-            <label for="archetypeOverrideDefaultConverter"><archetype-localize key="overrideDefaultConverter">Override Default Property Value Converter?</archetype-localize><small><archetype-localize key="overrideDefaultConverterDescription">Check this if you wish to use your own custom property value converter.</archetype-localize></small></label>
-            <input type="checkbox" id="archetypeOverrideDefaultConverter" ng-model="model.overrideDefaultPropertyValueConverter" />
+            <label for="archetypeOverrideDefaultConverter"><input type="checkbox" id="archetypeOverrideDefaultConverter" ng-model="model.overrideDefaultPropertyValueConverter" /><archetype-localize key="overrideDefaultConverter">Override Default Property Value Converter?</archetype-localize><small><archetype-localize key="overrideDefaultConverterDescription">Check this if you wish to use your own custom property value converter.</archetype-localize></small></label>
         </div>
 
         <div>
