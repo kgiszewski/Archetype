@@ -37,7 +37,6 @@
             <ul ui-sortable="sortableOptions" ng-model="model.fieldsetGroups">
                 <li ng-repeat="fieldsetGroup in model.fieldsetGroups">
                     <div>
-                        <label for="archetypeFieldsetGroupName_{{$index}}"><archetype-localize key="fieldsetGroupName">Name</archetype-localize></label>
                         <input id="archetypeFieldsetGroupName_{{$index}}" type="text" ng-model="fieldsetGroup.name" />
                         <i class="icon icon-delete" ng-click="removeFieldsetGroup($index)"></i>
                         <i class="icon icon-navigation handle" ng-show="model.fieldsetGroups.length > 1"></i>
