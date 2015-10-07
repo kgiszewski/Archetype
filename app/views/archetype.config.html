@@ -1,6 +1,7 @@
 <div class="archetypeConfig" ng-controller="Imulus.ArchetypeConfigController">
-    <h2>Archetype</h2>
-    <p>Lorem</p>
+    <h2 class="archetype-headline"><img src="../App_Plugins/Archetype/assets/logo_50.png"/>Archetype</h2>
+    <p>At a minimum your Archetype needs at least one fieldset with at least one property. You can configure it to allow for multiple types of fieldsets within a single Archetype and you can even add another Archetype as a property. Please use the link below for the full manual:</p>
+    <p><a href="https://github.com/kgiszewski/ArchetypeManual" target="_blank">Archetype Manual</a></p>
     <ul class="archetypeFieldsets" ui-sortable="sortableOptions" ng-model="archetypeConfigRenderModel.fieldsets">
         <li ng-repeat="fieldset in archetypeConfigRenderModel.fieldsets" ng-hide="fieldset.remove">
             <div class="archetypeFieldsetWrapper" >
@@ -85,9 +86,9 @@
 
     <div class="archetypeOptions">
         <div>
-            <button class="btn btn-default" ng-click="showOptions($event, '../App_Plugins/archetype/views/archetype.config.fieldset.dialog.html')">Global Fieldset Options</button>
-            <button class="btn btn-default" ng-click="showOptions($event, '../App_Plugins/archetype/views/archetype.config.stylescript.dialog.html')">Custom Style/Script Options</button>
-            <button class="btn btn-default" ng-click="showOptions($event, '../App_Plugins/archetype/views/archetype.config.developer.dialog.html')">Developer Options</button>
+            <button class="btn btn-default" ng-click="showOptions($event, '../App_Plugins/archetype/views/archetype.config.fieldset.dialog.html')"><archetype-localize key="global_fieldset_options">Global Fieldset Options</archetype-localize></button>
+            <button class="btn btn-default" ng-click="showOptions($event, '../App_Plugins/archetype/views/archetype.config.stylescript.dialog.html')"><archetype-localize key="custom_style_script_options">Custom Style/Script Options</archetype-localize></button>
+            <button class="btn btn-default" ng-click="showOptions($event, '../App_Plugins/archetype/views/archetype.config.developer.dialog.html')"><archetype-localize key="developer_options">Developer Options</archetype-localize></button>
         </div>
     </div>
 </div>
