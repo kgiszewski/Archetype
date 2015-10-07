@@ -1,13 +1,30 @@
 module.exports = function(grunt) {
   require('load-grunt-tasks')(grunt);
-  var path = require('path')
-
+  var path = require('path');
+  
+  grunt.loadNpmTasks('grunt-string-replace');
+  
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     pkgMeta: grunt.file.readJSON('config/meta.json'),
     dest: grunt.option('target') || 'dist',
     basePath: path.join('<%= dest %>', 'App_Plugins', '<%= pkgMeta.name %>'),
 
+    'string-replace': {
+      version: {
+        files: {
+          "app/controllers/controller_versioned.js": "app/controllers/controller.js",
+          "app/less/archetype_versioned.less": "app/less/archetype.less"
+        },
+        options: {
+          replacements: [{
+            pattern: /{{VERSION}}/g,
+            replacement: '/* Version <%= pkgMeta.version %> */'
+          }]
+        }
+      }
+    },
+    
     watch: {
       options: {
         spawn: false,
@@ -16,7 +33,7 @@ module.exports = function(grunt) {
 
       less: {
         files: ['app/**/*.less'],
-        tasks: ['less:dist']
+        tasks: ['string-replace', 'less:dist']
       },
 
       js: {
@@ -41,7 +58,7 @@ module.exports = function(grunt) {
           paths: ["app/less", "lib/less", "vendor"],
         },
         files: {
-          '<%= basePath %>/css/archetype.css': 'app/less/archetype.less',
+          '<%= basePath %>/css/archetype.css': 'app/less/archetype_versioned.less',
         }
       }
     },
@@ -52,7 +69,7 @@ module.exports = function(grunt) {
       },
       dist: {
         src: [
-          'app/controllers/controller.js',
+          'app/controllers/controller_versioned.js',
           'app/controllers/config.controller.js',
           'app/controllers/config.dialog.controller.js',
           'app/directives/archetypeproperty.js',
@@ -221,7 +238,7 @@ module.exports = function(grunt) {
 
   });
 
-  grunt.registerTask('default', ['clean', 'less', 'concat', 'assemblyinfo', 'msbuild:dist', 'copy:dll', 'copy:assets', 'copy:config', 'copy:html']);
+  grunt.registerTask('default', ['clean', 'string-replace', 'less', 'concat', 'assemblyinfo', 'msbuild:dist', 'copy:dll', 'copy:assets', 'copy:config', 'copy:html']);
 
   grunt.registerTask('nuget',   ['clean:tmp', 'default', 'copy:nuget', 'template:nuspec', 'nugetpack', 'clean:tmp']);
   grunt.registerTask('umbraco', ['clean:tmp', 'default', 'copy:umbraco', 'umbracoPackage', 'clean:tmp']);
