@@ -11,6 +11,12 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
     //ini the model
     $scope.model.value = $scope.model.value || defaultFieldsetConfigModel;
 
+    $scope.dllVersion = "";
+
+    archetypePropertyEditorResource.getDllVersion().then(function(data){
+        $scope.dllVersion = data.dllVersion;
+    });
+
     //ini the render model
     initConfigRenderModel();
 
