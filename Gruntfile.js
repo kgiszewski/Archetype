@@ -54,6 +54,7 @@ module.exports = function(grunt) {
         src: [
           'app/controllers/controller.js',
           'app/controllers/config.controller.js',
+          'app/controllers/config.dialog.controller.js',
           'app/directives/archetypeproperty.js',
           'app/directives/archetypesubmitwatcher.js',
           'app/directives/archetypecustomview.js',
@@ -73,7 +74,7 @@ module.exports = function(grunt) {
     copy: {
       html: {
         cwd: 'app/views/',
-        src: ['archetype.html', 'archetype.default.html', 'archetype.config.html'],
+        src: ['archetype.html', 'archetype.default.html', 'archetype.config.html', 'archetype.config.fieldset.dialog.html', 'archetype.config.stylescript.dialog.html', 'archetype.config.developer.dialog.html'],
         dest: '<%= basePath %>/views',
         expand: true
       },

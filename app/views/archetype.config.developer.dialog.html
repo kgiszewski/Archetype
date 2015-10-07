@@ -1,0 +1,21 @@
+<div class="umb-dialog archetype-dialog archetypeConfig" ng-controller="ArchetypeConfigOptionsController">
+    <div class="umb-dialog-body" auto-scale="90">
+        <div>
+            <label for="archetypeAdvancedOptionsDeepDatatypeRequest"><archetype-localize key="deepDatatypeRequest">Enable Deep Datatype Requests?</archetype-localize><small><archetype-localize key="deepDatatypeRequestDescription">Allows for easier datatype interception at the cost of caching performance.</archetype-localize></small></label>
+            <input type="checkbox" id="archetypeAdvancedOptionsDeepDatatypeRequest" ng-model="model.enableDeepDatatypeRequests"/>
+        </div>
+        <div>
+            <label for="archetypeAdvancedOptionsDeveloperMode"><archetype-localize key="toggleDeveloperMode">Enable Developer Mode?</archetype-localize><small><archetype-localize key="toggleDeveloperModeDescription">Toggle Developer Mode</archetype-localize></small></label>
+            <input type="checkbox" id="archetypeAdvancedOptionsDeveloperMode" ng-model="model.developerMode"/>
+        </div>
+        <div>
+            <label for="archetypeOverrideDefaultConverter"><archetype-localize key="overrideDefaultConverter">Override Default Property Value Converter?</archetype-localize><small><archetype-localize key="overrideDefaultConverterDescription">Check this if you wish to use your own custom property value converter.</archetype-localize></small></label>
+            <input type="checkbox" id="archetypeOverrideDefaultConverter" ng-model="model.overrideDefaultPropertyValueConverter" />
+        </div>
+
+        <div>
+            <label for="archetypeAdvancedOptionsConfigModel"><archetype-localize key="configModel">Config Model</archetype-localize><small><archetype-localize key="configModelDescription">Be careful editing the text below, it controls the schema for this archetype.</archetype-localize></small></label>
+            <textarea class="archetypeDeveloperModel" id="archetypeAdvancedOptionsConfigModel" ng-model="model"></textarea>
+        </div>
+    </div>
+</div>

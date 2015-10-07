@@ -309,6 +309,19 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
         $scope.model.value.fieldsets = fieldsets;
     }
 
+    $scope.showOptions = function ($event, template) {
+        $event.preventDefault();
+
+        dialogService.open({
+            template: template,
+            show: true,
+            callback: function(data) {
+                $scope.archetypeConfigRenderModel = data;
+            },
+            dialogData: $scope.archetypeConfigRenderModel
+        });
+    }
+
     //archetype css
     assetsService.loadCss("../App_Plugins/Archetype/css/archetype.css");
 });
