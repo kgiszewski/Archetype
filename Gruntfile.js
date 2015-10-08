@@ -47,12 +47,12 @@ module.exports = function(grunt) {
 
       js: {
         files: ['app/**/*.js'],
-        tasks: ['concat:dist']
+        tasks: ['string-replace', 'concat:dist']
       },
 
       html: {
         files: ['app/**/*.html'],
-        tasks: ['copy:html']
+        tasks: ['string-replace', 'copy:html']
       },
 
       dll: {
@@ -166,31 +166,30 @@ module.exports = function(grunt) {
     },
 
     nugetpack: {
-    	dist: {
-    		src: 'tmp/nuget/package.nuspec',
-    		dest: 'pkg'
-    	}
+        dist: {
+            src: 'tmp/nuget/package.nuspec',
+            dest: 'pkg'
+        }
     },
 
     template: {
-    	'nuspec': {
-			'options': {
-    			'data': { 
-            name: '<%= pkgMeta.name %>',
-    				version: '<%= pkgMeta.version %>',
-            url: '<%= pkgMeta.url %>',
-            license: '<%= pkgMeta.license %>',
-            licenseUrl: '<%= pkgMeta.licenseUrl %>',
-            author: '<%= pkgMeta.author %>',
-            authorUrl: '<%= pkgMeta.authorUrl %>',
-
-    				files: [{ path: 'tmp/nuget/**', target: 'content/App_Plugins/Archetype'}]
-	    		}
-    		},
-    		'files': { 
-    			'tmp/nuget/package.nuspec': ['config/package.nuspec']
-    		}
-    	}
+        'nuspec': {
+            'options': {
+                'data': { 
+                    name: '<%= pkgMeta.name %>',
+                    version: '<%= pkgMeta.version %>',
+                    url: '<%= pkgMeta.url %>',
+                    license: '<%= pkgMeta.license %>',
+                    licenseUrl: '<%= pkgMeta.licenseUrl %>',
+                    author: '<%= pkgMeta.author %>',
+                    authorUrl: '<%= pkgMeta.authorUrl %>',
+                    files: [{ path: 'tmp/nuget/**', target: 'content/App_Plugins/Archetype'}]
+                }
+            },
+            'files': { 
+                'tmp/nuget/package.nuspec': ['config/package.nuspec']
+            }
+        }
     },
 
     umbracoPackage: {
@@ -211,7 +210,26 @@ module.exports = function(grunt) {
 
     clean: {
       build: '<%= grunt.config("basePath").substring(0, 4) == "dist" ? "dist/**/*" : "null" %>',
-      tmp: ['tmp']
+      tmp: ['tmp'],
+      html: [
+        'app/views/*.html',
+        '!app/views/archetype.html', 
+        '!app/views/archetype.default.html', 
+        '!app/views/archetype.config.html', 
+        '!app/views/archetype.config.fieldset.dialog.html', 
+        '!app/views/archetype.config.stylescript.dialog.html', 
+        '!app/views/archetype.config.developer.dialog.html'
+        ],
+      js: [
+        'app/controllers/*.js',
+        '!app/controllers/controller.js',
+        '!app/controllers/config.controller.js',
+        '!app/controllers/config.dialog.controller.js'
+      ],
+      less: [
+        'app/less/*.less',
+        '!app/less/archetype.less'
+      ]
     },
 
     assemblyinfo: {
@@ -230,7 +248,7 @@ module.exports = function(grunt) {
         src: ['<%= grunt.option("target") %>\\Web.config']
       }
     },
-
+    
     jshint: {
       options: {
         jshintrc: '.jshintrc'
@@ -245,7 +263,7 @@ module.exports = function(grunt) {
         stdout: true,
         verbosity: 'quiet',
         maxCpuCount: 4,
-		version: 4.0,
+        version: 4.0,
         buildParameters: {
           WarningLevel: 2,
           NoWarn: 1607
@@ -259,10 +277,9 @@ module.exports = function(grunt) {
         }
       }
     }
-
   });
 
-  grunt.registerTask('default', ['clean', 'string-replace', 'less', 'concat', 'assemblyinfo', 'msbuild:dist', 'copy:dll', 'copy:assets', 'copy:config', 'copy:html']);
+  grunt.registerTask('default', ['clean', 'string-replace', 'less', 'concat', 'assemblyinfo', 'msbuild:dist', 'copy:dll', 'copy:assets', 'copy:config', 'clean:html', 'clean:js', 'clean:less']);
 
   grunt.registerTask('nuget',   ['clean:tmp', 'default', 'copy:nuget', 'template:nuspec', 'nugetpack', 'clean:tmp']);
   grunt.registerTask('umbraco', ['clean:tmp', 'default', 'copy:umbraco', 'umbracoPackage', 'clean:tmp']);
