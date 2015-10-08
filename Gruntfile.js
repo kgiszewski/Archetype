@@ -60,6 +60,11 @@ module.exports = function(grunt) {
       dll: {
         files: ['app/Umbraco/**/*.dll'],
         tasks: ['copy:dll']
+      },
+      
+      assets: {
+        files: ['assets/*.*'],
+        tasks: ['copy:assets']
       }
     },
 

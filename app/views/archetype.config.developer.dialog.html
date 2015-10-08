@@ -1,6 +1,6 @@
 {{VERSION_HTML}}
-<div class="umb-dialog archetype-dialog archetypeConfig" ng-controller="ArchetypeConfigOptionsController">
-    <div class="umb-dialog-body archetypeAdvancedOptions" auto-scale="90">
+<div class="umb-panel archetype-dialog archetypeConfig" ng-controller="ArchetypeConfigOptionsController">
+    <div class="umb-panel-body no-header with-footer umb-scrollable archetypeAdvancedOptions">
         <h3><archetype-localize key="developer_options">Developer Options</archetype-localize></h3>
         <div>
             <label for="archetypeAdvancedOptionsDeepDatatypeRequest"><input type="checkbox" id="archetypeAdvancedOptionsDeepDatatypeRequest" ng-model="model.enableDeepDatatypeRequests"/><archetype-localize key="deepDatatypeRequest">Enable Deep Datatype Requests?</archetype-localize><small><archetype-localize key="deepDatatypeRequestDescription">Allows for easier datatype interception at the cost of caching performance.</archetype-localize></small></label>
@@ -16,15 +16,18 @@
             <label for="archetypeAdvancedOptionsConfigModel"><archetype-localize key="configModel">Config Model</archetype-localize><small><archetype-localize key="configModelDescription">Be careful editing the text below, it controls the schema for this archetype.</archetype-localize></small></label>
             <textarea class="archetypeDeveloperModel" id="archetypeAdvancedOptionsConfigModel" ng-model="model"></textarea>
         </div>
+    </div>
+    <div class="umb-panel-footer">
+        <div class="umb-el-wrap umb-panel-buttons">
+            <div class="btn-toolbar umb-btn-toolbar pull-right">
+                <a href="" ng-click="close()" class="btn btn-link">
+                    <localize key="general_cancel" class="ng-isolate-scope ng-scope">Cancel</localize>
+                </a>
 
-        <div class="btn-toolbar umb-btn-toolbar pull-right">
-            <a href="" ng-click="close()" class="btn btn-link">
-                <localize key="general_cancel" class="ng-isolate-scope ng-scope">Cancel</localize>
-            </a>
-
-            <button class="btn btn-primary" ng-click="apply()">
-                <archetype-localize key="button_apply">Apply</archetype-localize>
-            </button>
+                <button class="btn btn-primary" ng-click="apply()">
+                    <archetype-localize key="button_apply">Apply</archetype-localize>
+                </button>
+            </div>
         </div>
     </div>
 </div>
