@@ -1,25 +1,26 @@
 {{VERSION_HTML}}
-<div class="umb-dialog archetype-dialog archetypeConfig" ng-controller="ArchetypeConfigOptionsController">
-    <div class="umb-dialog-body archetypeAdvancedOptions" auto-scale="90">
+<div class="umb-panel archetype-dialog archetypeConfig" ng-controller="ArchetypeConfigOptionsController">
+    <div class="umb-panel-body no-header with-footer umb-scrollable archetypeAdvancedOptions">
         <h3><archetype-localize key="global_fieldset_options">Global Fieldset Options</archetype-localize></h3>
         <div>
             <label for="archetypeAdvancedOptionsStartWithAddButton"><input type="checkbox" id="archetypeAdvancedOptionsStartWithAddButton" ng-model="model.startWithAddButton"/><archetype-localize key="startWithAddButton">Start With Add Button?</archetype-localize><small><archetype-localize key="startWithAddButtonDescription">Empty property shows an add button instead of providing a default fieldset.</archetype-localize></small></label>
         </div>
-
-        <div>
-            <label for="archetypeAdvancedOptionsHideControls"><input type="checkbox" id="archetypeAdvancedOptionsHideControls" ng-model="model.hideFieldsetControls"/><archetype-localize key="hideFieldsetControls">Hide Fieldset Controls?</archetype-localize><small><archetype-localize key="hideFieldsetControlsDescription">Hides the fieldset add/remove/sort controls.</archetype-localize></small></label>
-        </div>
         <div>
             <label for="archetypeAdvancedOptionsHideLabels"><input type="checkbox" id="archetypeAdvancedOptionsHideLabels" ng-model="model.hidePropertyLabels"/><archetype-localize key="hidePropertyLabels">Hide Property Labels?</archetype-localize><small><archetype-localize key="hidePropertyLabelsDescription">Hides the property labels.</archetype-localize></small></label>       
+        </div>
+        <div>
+            <label for="archetypeAdvancedOptionsCollapsing"><input type="checkbox" id="archetypeAdvancedOptionsCollapsing" ng-model="model.enableCollapsing"/><archetype-localize key="enableCollapsing">Enable Collapsing?</archetype-localize><small><archetype-localize key="enableCollapsingDescription">Enable fieldset collapsing.</archetype-localize></small></label>
         </div>
         <div>
             <label for="archetypeAdvancedOptionsMaxFieldsets"><archetype-localize key="maxFieldsets">Max Fieldsets</archetype-localize><small><archetype-localize key="maxFieldsetsDescription">How many Fieldsets are allowed? Entering '1' will disable the controls. Default is unlimited.</archetype-localize></small></label>
             <input type="number" id="archetypeAdvancedOptionsMaxFieldsets" class="archetypeMaxFieldsets" ng-model="model.maxFieldsets"/>
         </div>
 
+        <h4><archetype-localize key="fieldsetControls">Fieldset controls</archetype-localize></h4>
         <div>
-            <label for="archetypeAdvancedOptionsCollapsing"><input type="checkbox" id="archetypeAdvancedOptionsCollapsing" ng-model="model.enableCollapsing"/><archetype-localize key="enableCollapsing">Enable Collapsing?</archetype-localize><small><archetype-localize key="enableCollapsingDescription">Enable fieldset collapsing.</archetype-localize></small></label>
+            <label for="archetypeAdvancedOptionsHideControls"><input type="checkbox" id="archetypeAdvancedOptionsHideControls" ng-model="model.hideFieldsetControls"/><archetype-localize key="hideFieldsetControls">Hide Fieldset Controls?</archetype-localize><small><archetype-localize key="hideFieldsetControlsDescription">Hides the fieldset add/remove/sort controls.</archetype-localize></small></label>
         </div>
+
         <div>
             <label for="archetypeAdvancedOptionsCloning"><input type="checkbox" id="archetypeAdvancedOptionsCloning" ng-model="model.enableCloning"/><archetype-localize key="enableCloning">Enable Cloning?</archetype-localize><small><archetype-localize key="enableCloningDescription">Enable fieldset cloning.</archetype-localize></small></label>
         </div>
@@ -29,33 +30,40 @@
         <div>
             <label for="archetypeAdvancedOptionsFieldsetToolbar"><input type="checkbox" id="archetypeAdvancedOptionsFieldsetToolbar" ng-model="model.hideFieldsetToolbar"/><archetype-localize key="hideFieldsetToolbar">Hide Fieldset Toolbar?</archetype-localize><small><archetype-localize key="hideFieldsetToolbarDescription">Hides the fieldset toolbar that appears when more than one fieldset model appears.</archetype-localize></small></label>
         </div>
+        
+        <h4><archetype-localize key="multipleFieldsets">Multiple fieldsets</archetype-localize></h4>
         <div>
             <label for="archetypeAdvancedOptionsMultipleFieldsets"><input type="checkbox" id="archetypeAdvancedOptionsMultipleFieldsets" ng-model="model.enableMultipleFieldsets"/><archetype-localize key="enableMultipleFieldsets">Enable Multiple Fieldsets?</archetype-localize><small><archetype-localize key="enableMultipleFieldsetsDescription">Allows multiple types of fieldsets within this archetype.</archetype-localize></small></label>
         </div>
 
-        <div class="archetypeFieldsetGroups" ng-show="model.enableMultipleFieldsets">
-            <h4><archetype-localize key="fieldsetGroups">Fieldset groups</archetype-localize></h4>
+        <div ng-show="model.enableMultipleFieldsets">
+            <label><archetype-localize key="fieldsetGroups">Fieldset groups</archetype-localize></label>
             <small><archetype-localize key="fieldsetGroupsDescription">If you have a lot of fieldsets to choose from, you may want to consider grouping them in the fieldset picker. Once you have created your groups here, a group picker will be displayed in the fieldset editor and you can assign your fieldsets to their respective groups.</archetype-localize></small>
-            <ul ui-sortable="sortableOptions" ng-model="model.fieldsetGroups">
-                <li ng-repeat="fieldsetGroup in model.fieldsetGroups">
-                    <div>
-                        <input id="archetypeFieldsetGroupName_{{$index}}" type="text" ng-model="fieldsetGroup.name" />
-                        <i class="icon icon-delete" ng-click="removeFieldsetGroup($index)"></i>
-                        <i class="icon icon-navigation handle" ng-show="model.fieldsetGroups.length > 1"></i>
-                    </div>
-                </li>
-            </ul>
-            <label ng-click="addFieldsetGroup($index)"><i class="icon icon-add"></i> <archetype-localize key="addFieldsetGroup">Add group</archetype-localize></label>
-            <hr/>
+            <div class="archetypeFieldsetGroups">
+              <ul ui-sortable="sortableOptions" ng-model="model.fieldsetGroups">
+                  <li ng-repeat="fieldsetGroup in model.fieldsetGroups">
+                      <div>
+                          <input id="archetypeFieldsetGroupName_{{$index}}" type="text" ng-model="fieldsetGroup.name" />
+                          <i class="icon icon-delete" ng-click="removeFieldsetGroup($index)"></i>
+                          <i class="icon icon-navigation handle" ng-show="model.fieldsetGroups.length > 1"></i>
+                      </div>
+                  </li>
+              </ul>
+              <label ng-click="addFieldsetGroup($index)"><i class="icon icon-add"></i> <archetype-localize key="addFieldsetGroup">Add fieldset group</archetype-localize></label>
+            </div>
         </div>
-        <div class="btn-toolbar umb-btn-toolbar pull-right">
-            <a href="" ng-click="close()" class="btn btn-link">
-                <localize key="general_cancel" class="ng-isolate-scope ng-scope">Cancel</localize>
-            </a>
+    </div>
+    <div class="umb-panel-footer">
+        <div class="umb-el-wrap umb-panel-buttons">
+            <div class="btn-toolbar umb-btn-toolbar pull-right">
+                <a href="" ng-click="close()" class="btn btn-link">
+                    <localize key="general_cancel" class="ng-isolate-scope ng-scope">Cancel</localize>
+                </a>
 
-            <button class="btn btn-primary" ng-click="apply()">
-                <archetype-localize key="button_apply">Apply</archetype-localize>
-            </button>
+                <button class="btn btn-primary" ng-click="apply()">
+                    <archetype-localize key="button_apply">Apply</archetype-localize>
+                </button>
+            </div>
         </div>
     </div>
 </div>
