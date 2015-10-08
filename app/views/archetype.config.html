@@ -17,6 +17,10 @@
                         <label for="archetypeFieldAlias_{{$index}}"><archetype-localize key="alias">Alias</archetype-localize></label>
                         <input type="text" id="archetypeFieldAlias_{{$index}}" ng-model="fieldset.alias" on-keyup="markAliasDirty(this)" required/>
                     </div>
+                    <div class="archetypeFieldsetOption" ng-show="archetypeConfigRenderModel.fieldsetGroups.length">
+                        <label for="archetypeFieldsetGroup_{{$index}}"><archetype-localize key="fieldsetGroup">Group</archetype-localize></label>
+                        <select id="archetypeFieldsetGroup_{{$index}}" ng-model="fieldset.group" ng-options="fieldsetGroup as fieldsetGroup.name for fieldsetGroup in archetypeConfigRenderModel.fieldsetGroups"></select>
+                    </div>
                     <div class="archetypeFieldsetOption">
                         <label for="archetypeFieldLabelTemplate_{{$index}}"><archetype-localize key="labelTemplate">Label Template</archetype-localize></label>
                         <input type="text" id="archetypeFieldLabelTemplate_{{$index}}" ng-model="fieldset.labelTemplate" />
@@ -85,6 +89,22 @@
     </div>
 
     <div class="archetypeAdvancedOptions" ng-show="archetypeConfigRenderModel.showAdvancedOptions">
+        <div class="archetypeFieldsetGroups" ng-show="archetypeConfigRenderModel.enableMultipleFieldsets">
+            <h4><archetype-localize key="fieldsetGroups">Fieldset groups</archetype-localize></h4>
+            <p><archetype-localize key="fieldsetGroupsDescription">If you have a lot of fieldsets to choose from, you may want to consider grouping them in the fieldset picker. Once you have created your groups here, a group picker will be displayed in the fieldset editor and you can assign your fieldsets to their respective groups.</archetype-localize></p>
+            <ul ui-sortable="sortableOptions" ng-model="archetypeConfigRenderModel.fieldsetGroups">
+                <li ng-repeat="fieldsetGroup in archetypeConfigRenderModel.fieldsetGroups">
+                    <div>
+                        <label for="archetypeFieldsetGroupName_{{$index}}"><archetype-localize key="fieldsetGroupName">Name</archetype-localize></label>
+                        <input id="archetypeFieldsetGroupName_{{$index}}" type="text" ng-model="fieldsetGroup.name" />
+                        <i class="icon icon-delete" ng-click="removeFieldsetGroup($index)"></i>
+                        <i class="icon icon-navigation handle" ng-show="archetypeConfigRenderModel.fieldsetGroups.length > 1"></i>
+                    </div>
+                </li>
+            </ul>
+            <label ng-click="addFieldsetGroup($index)"><i class="icon icon-add"></i> <archetype-localize key="addFieldsetGroup">Add group</archetype-localize></label>
+            <hr/>
+        </div>
         <div>
             <label for="archetypeAdvancedOptionsStartWithAddButton"><archetype-localize key="startWithAddButton">Start With Add Button?</archetype-localize><small><archetype-localize key="startWithAddButtonDescription">Empty property shows an add button instead of providing a default fieldset.</archetype-localize></small></label>
             <input type="checkbox" id="archetypeAdvancedOptionsStartWithAddButton" ng-model="archetypeConfigRenderModel.startWithAddButton"/>

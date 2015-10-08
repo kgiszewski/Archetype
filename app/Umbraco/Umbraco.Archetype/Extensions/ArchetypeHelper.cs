@@ -68,7 +68,7 @@ namespace Archetype.Extensions
                 }
                 catch (Exception ex)
                 {
-                    LogHelper.Error<ArchetypeHelper>("DeserializeJsonToArchetype", ex);
+                    LogHelper.Error<ArchetypeHelper>(string.Format("DeserializeJsonToArchetype Error DatatypeId=>{0} SourceJson=>{1}", dataTypeId, sourceJson), ex);
                 }
 
                 return archetype;

@@ -25,5 +25,8 @@ namespace Archetype.Models
 
         [JsonProperty("properties")]
         public IEnumerable<ArchetypePreValueProperty> Properties { get; set; }
+
+        [JsonProperty("group")]
+        public ArchetypePreValueFieldsetGroup Group { get; set; }
     }
 }
