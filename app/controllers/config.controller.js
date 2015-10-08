@@ -11,6 +11,12 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
     //ini the model
     $scope.model.value = $scope.model.value || defaultFieldsetConfigModel;
 
+    $scope.dllVersion = "";
+
+    archetypePropertyEditorResource.getDllVersion().then(function(data){
+        $scope.dllVersion = data.dllVersion;
+    });
+
     //ini the render model
     initConfigRenderModel();
 
@@ -234,16 +240,6 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
         }
     }
 
-    //handles a fieldset group add
-    $scope.addFieldsetGroup = function () {
-        $scope.archetypeConfigRenderModel.fieldsetGroups.push({ name: "" });
-    }
-
-    //handles a fieldset group removal
-    $scope.removeFieldsetGroup = function ($index) {
-        $scope.archetypeConfigRenderModel.fieldsetGroups.splice($index, 1);
-    }
-
     //helper to ini the render model
     function initConfigRenderModel()
     {
@@ -307,6 +303,21 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
         });
 
         $scope.model.value.fieldsets = fieldsets;
+    }
+
+    $scope.showOptions = function ($event, template) {
+        $event.preventDefault();
+
+        dialogService.closeAll();
+
+        dialogService.open({
+            template: template,
+            show: true,
+            callback: function(data) {
+                $scope.archetypeConfigRenderModel = data;
+            },
+            dialogData: $scope.archetypeConfigRenderModel
+        });
     }
 
     //archetype css

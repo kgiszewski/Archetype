@@ -1,13 +1,41 @@
 module.exports = function(grunt) {
   require('load-grunt-tasks')(grunt);
-  var path = require('path')
-
+  var path = require('path');
+  
+  grunt.loadNpmTasks('grunt-string-replace');
+  
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     pkgMeta: grunt.file.readJSON('config/meta.json'),
     dest: grunt.option('target') || 'dist',
     basePath: path.join('<%= dest %>', 'App_Plugins', '<%= pkgMeta.name %>'),
 
+    'string-replace': {
+      version: {
+        files: {
+          "app/controllers/controller_versioned.js": "app/controllers/controller.js",
+          "app/less/archetype_versioned.less": "app/less/archetype.less",
+          "app/views/archetype.config.developer.dialog_versioned.html": "app/views/archetype.config.developer.dialog.html",
+          "app/views/archetype.config.stylescript.dialog_versioned.html": "app/views/archetype.config.stylescript.dialog.html",
+          "app/views/archetype.config.fieldset.dialog_versioned.html": "app/views/archetype.config.fieldset.dialog.html",
+          "app/views/archetype.config_versioned.html": "app/views/archetype.config.html",
+          "app/views/archetype_versioned.html": "app/views/archetype.html",
+          "app/views/archetype.default_versioned.html": "app/views/archetype.default.html",
+          
+        },
+        options: {
+          replacements: [{
+            pattern: /{{VERSION}}/g,
+            replacement: '/* Version <%= pkgMeta.version %> */'
+          },
+          {
+            pattern: /{{VERSION_HTML}}/g,
+            replacement: '<!-- Version <%= pkgMeta.version %> -->'
+          }]
+        }
+      }
+    },
+    
     watch: {
       options: {
         spawn: false,
@@ -16,7 +44,7 @@ module.exports = function(grunt) {
 
       less: {
         files: ['app/**/*.less'],
-        tasks: ['less:dist']
+        tasks: ['string-replace', 'less:dist']
       },
 
       js: {
@@ -41,7 +69,7 @@ module.exports = function(grunt) {
           paths: ["app/less", "lib/less", "vendor"],
         },
         files: {
-          '<%= basePath %>/css/archetype.css': 'app/less/archetype.less',
+          '<%= basePath %>/css/archetype.css': 'app/less/archetype_versioned.less',
         }
       }
     },
@@ -52,8 +80,9 @@ module.exports = function(grunt) {
       },
       dist: {
         src: [
-          'app/controllers/controller.js',
+          'app/controllers/controller_versioned.js',
           'app/controllers/config.controller.js',
+          'app/controllers/config.dialog.controller.js',
           'app/directives/archetypeproperty.js',
           'app/directives/archetypesubmitwatcher.js',
           'app/directives/archetypecustomview.js',
@@ -73,8 +102,24 @@ module.exports = function(grunt) {
     copy: {
       html: {
         cwd: 'app/views/',
-        src: ['archetype.html', 'archetype.default.html', 'archetype.config.html'],
-        dest: '<%= basePath %>/views',
+        src: [
+            'archetype_versioned.html', 
+            'archetype.default_versioned.html', 
+            'archetype.config_versioned.html', 
+            'archetype.config.fieldset.dialog_versioned.html', 
+            'archetype.config.stylescript.dialog_versioned.html', 
+            'archetype.config.developer.dialog_versioned.html'
+        ],
+        dest: '<%= basePath %>/views/',
+        expand: true,
+        rename: function(dest, src) {
+            return dest + src.replace('_versioned','');
+          }
+      },
+      assets: {
+        cwd: 'assets/',
+        src: ['logo_50.png'],
+        dest: '<%= basePath %>/assets',
         expand: true
       },
       dll: {
@@ -214,7 +259,7 @@ module.exports = function(grunt) {
 
   });
 
-  grunt.registerTask('default', ['clean', 'less', 'concat', 'assemblyinfo', 'msbuild:dist', 'copy:dll', 'copy:config', 'copy:html']);
+  grunt.registerTask('default', ['clean', 'string-replace', 'less', 'concat', 'assemblyinfo', 'msbuild:dist', 'copy:dll', 'copy:assets', 'copy:config', 'copy:html']);
 
   grunt.registerTask('nuget',   ['clean:tmp', 'default', 'copy:nuget', 'template:nuspec', 'nugetpack', 'clean:tmp']);
   grunt.registerTask('umbraco', ['clean:tmp', 'default', 'copy:umbraco', 'umbracoPackage', 'clean:tmp']);

@@ -1,16 +1,16 @@
 using System.Collections.Generic;
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Web.Http;
 using AutoMapper;
 using Umbraco.Core.Models;
 using Umbraco.Web.Models.ContentEditing;
 using Umbraco.Web.Mvc;
 using Umbraco.Web.Editors;
-using Umbraco.Core.PropertyEditors;
 using Archetype.Extensions;
-using Newtonsoft.Json;
 
 namespace Archetype.Api
 {
@@ -52,6 +52,19 @@ namespace Archetype.Api
             }
             var dataTypeDisplay = Mapper.Map<IDataTypeDefinition, DataTypeDisplay>(dataType);
             return new { selectedEditor = dataTypeDisplay.SelectedEditor, preValues = dataTypeDisplay.PreValues, contentTypeAlias = contentTypeAlias, propertyTypeAlias = propertyTypeAlias, archetypeAlias = archetypeAlias, nodeId = nodeId };
+        }
+
+        public object GetDllVersion()
+        {
+            return new {dllVersion = _version()};
+        }
+
+        private string _version()
+        {
+            var asm = Assembly.GetExecutingAssembly();
+            var fvi = FileVersionInfo.GetVersionInfo(asm.Location);
+
+            return fvi.FileVersion;
         }
     }
 }
