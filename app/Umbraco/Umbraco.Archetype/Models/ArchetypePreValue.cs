@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace Archetype.Models
@@ -12,6 +13,7 @@ namespace Archetype.Models
         public bool StartWithAddButton { get; set; }
 
         [JsonProperty("hideFieldsetToolbar")]
+        [Obsolete("This value is no longer used but is kept to prevent breaking changes.")]
         public bool HideFieldsetToolbar { get; set; }
 
         [JsonProperty("enableMultipleFieldsets")]

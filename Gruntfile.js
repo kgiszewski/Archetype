@@ -2,8 +2,6 @@ module.exports = function(grunt) {
   require('load-grunt-tasks')(grunt);
   var path = require('path');
   
-  grunt.loadNpmTasks('grunt-string-replace');
-  
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     pkgMeta: grunt.file.readJSON('config/meta.json'),
@@ -123,7 +121,7 @@ module.exports = function(grunt) {
       },
       assets: {
         cwd: 'assets/',
-        src: ['logo_50.png'],
+        src: ['*.*'],
         dest: '<%= basePath %>/assets',
         expand: true
       },
