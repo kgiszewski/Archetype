@@ -1,3 +1,4 @@
+{{VERSION_HTML}}
 <div class="archetypeEditor ng-class:model.config.customCssClass">
     <textarea class="archetypeDeveloperModel" ng-show="model.config.developerMode" ng-model="model.value"></textarea>
     <ul ui-sortable="sortableOptions" ng-model="model.value.fieldsets" ng-show="!showAddButton()">
@@ -13,19 +14,11 @@
                         </label>
                     </div>
                     <div class="archetypeEditorControls label-sub" ng-hide="model.config.hideFieldsetControls">
-                        <i class="icon icon-add dropdown-toggle" ng-show="canAdd()" data-toggle="{{ model.config.fieldsets.length > 1 ? 'dropdown' : ''}}" ng-click="model.config.fieldsets.length == 1 ? addRow(fieldset.alias, $index) : return"></i>
-                        <ul class="dropdown-menu umb-actions">
-                            <li ng-repeat="fieldsetModel in model.config.fieldsets" ng-click="addRow(fieldsetModel.alias, $parent.$index)">
-                                <a>
-                                    <i class="fieldsetIcon icon ng-class:fieldsetModel.icon"></i>
-                                    <span class="menu-label">{{fieldsetModel.label}}</span>
-                                </a>
-                            </li>
-                        </ul>
-                        <i class="icon icon-documents" ng-click="cloneRow($index)" ng-show="canClone()"></i>
-                        <i class="icon icon-remove" ng-click="removeRow($index)" ng-show="canRemove()"></i>
-                        <i class="icon icon-power" ng-class="{dimmed: fieldset.disabled}" ng-click="enableDisable(fieldset)" ng-show="canDisable()"></i>
+                        <i class="icon icon-add" ng-show="canAdd()" ng-click="openFieldsetPicker($index, $event)"></i>
                         <i class="icon icon-navigation handle" ng-show="canSort()"></i>
+                        <i class="icon icon-documents" ng-click="cloneRow($index)" ng-show="canClone()"></i>
+                        <i class="icon icon-power" ng-click="enableDisable(fieldset)" ng-show="canDisable()"></i>
+                        <i class="icon icon-delete" ng-click="removeRow($index)" ng-show="canRemove()"></i>
                     </div>
                 </div>
                 <div class="archetypeCollapser animate-hide" ng-hide="model.config.enableCollapsing && isCollapsed(fieldset)">
@@ -49,17 +42,31 @@
         </li>
     </ul>
     <div ng-show="showAddButton()">
-        <a class="archetypeAddButton" data-toggle="{{ model.config.fieldsets.length > 1 ? 'dropdown' : ''}}" ng-click="model.config.fieldsets.length == 1 ? addRow(model.config.fieldsets[0].alias, 0) : return" prevent-default>
-            <i class="icon icon-add dropdown-toggle"></i>
-            <localize key="general_add" class="archetypeAddButtonText">Add</localize>
+        <a class="archetypeAddButton" ng-click="openFieldsetPicker(0, $event)" prevent-default>
+            <i class="icon icon-add"></i>
+            <archetype-localize key="addFieldset">Add an item</archetype-localize>
         </a>
-        <ul class="dropdown-menu umb-actions">
-            <li ng-repeat="fieldsetModel in model.config.fieldsets" ng-click="addRow(fieldsetModel.alias, 0)">
-                <a>
-                    <i class="fieldsetIcon icon ng-class:fieldsetModel.icon"></i>
-                    <span class="menu-label">{{fieldsetModel.label}}</span>
-                </a>
-            </li>
-        </ul>
+    </div>
+    <div class="usky-grid fieldsetPicker" ng-class="{withGroups: overlayMenu.fieldsetGroups.length > 1}" ng-if="overlayMenu.show">
+        <div class="cell-tools-menu" ng-style="overlayMenu.style" delayed-mouseleave="closeFieldsetPicker()" archetype-click-outside="closeFieldsetPicker()">
+            <h5>
+                <archetype-localize key="addFieldset">Add an item</archetype-localize>
+            </h5>
+            <ul class="groups" ng-show="overlayMenu.fieldsetGroups.length > 1">
+                <li ng-repeat="fieldsetGroup in overlayMenu.fieldsetGroups" ng-class="{active: fieldsetGroup == overlayMenu.activeFieldsetGroup}">
+                    <a ng-click="overlayMenu.activeFieldsetGroup = fieldsetGroup">
+                        {{fieldsetGroup.name}}
+                    </a>
+                </li>
+            </ul>
+            <ul class="elements">
+                <li ng-repeat="fieldset in overlayMenu.activeFieldsetGroup.fieldsets">
+                    <a ng-click="pickFieldset(fieldset.alias, overlayMenu.index)" href>
+                        <i class="icon {{fieldset.icon}}"></i>
+                        {{fieldset.label}}
+                    </a>
+                </li>
+            </ul>
+        </div>
     </div>
 </div>

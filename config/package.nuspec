@@ -12,7 +12,7 @@
         <iconUrl>http://github.com/imulus/archetype/raw/master/assets/logo.png</iconUrl>
         <licenseUrl><%= licenseUrl %></licenseUrl>
         <dependencies>
-            <dependency id="UmbracoCms.Core" version="7.1.6" />
+            <dependency id="UmbracoCms.Core" version="7.2.2" />
         </dependencies>
     </metadata>
 </package>

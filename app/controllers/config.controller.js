@@ -5,11 +5,17 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
 
     //define empty items
     var newPropertyModel = '{"alias": "", "remove": false, "collapse": false, "label": "", "helpText": "", "dataTypeGuid": "0cc0eba1-9960-42c9-bf9b-60e150b429ae", "value": ""}';
-    var newFieldsetModel = '{"alias": "", "remove": false, "collapse": false, "labelTemplate": "", "icon": "", "label": "", "properties": [' + newPropertyModel + ']}';
-    var defaultFieldsetConfigModel = JSON.parse('{"showAdvancedOptions": false, "startWithAddButton": false, "hideFieldsetToolbar": false, "enableMultipleFieldsets": false, "hideFieldsetControls": false, "hidePropertyLabel": false, "maxFieldsets": null, "enableCollapsing": true, "enableCloning": false, "enableDisabling": true, "enableDeepDatatypeRequests": false, "fieldsets": [' + newFieldsetModel + ']}');
+    var newFieldsetModel = '{"alias": "", "remove": false, "collapse": false, "labelTemplate": "", "icon": "", "label": "", "properties": [' + newPropertyModel + '], "group": null}';
+    var defaultFieldsetConfigModel = JSON.parse('{"showAdvancedOptions": false, "startWithAddButton": false, "hideFieldsetToolbar": false, "enableMultipleFieldsets": false, "hideFieldsetControls": false, "hidePropertyLabel": false, "maxFieldsets": null, "enableCollapsing": true, "enableCloning": false, "enableDisabling": true, "enableDeepDatatypeRequests": false, "fieldsets": [' + newFieldsetModel + '], "fieldsetGroups": []}');
 
     //ini the model
     $scope.model.value = $scope.model.value || defaultFieldsetConfigModel;
+
+    $scope.dllVersion = "";
+
+    archetypePropertyEditorResource.getDllVersion().then(function(data){
+        $scope.dllVersion = data.dllVersion;
+    });
 
     //ini the render model
     initConfigRenderModel();
@@ -238,8 +244,18 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
     function initConfigRenderModel()
     {
         $scope.archetypeConfigRenderModel = $scope.model.value;
+        if (!$scope.archetypeConfigRenderModel.fieldsetGroups) {
+            $scope.archetypeConfigRenderModel.fieldsetGroups = [];
+        }
 
-        _.each($scope.archetypeConfigRenderModel.fieldsets, function(fieldset){
+        _.each($scope.archetypeConfigRenderModel.fieldsets, function(fieldset) {
+
+            if (fieldset.group) {
+                // tie the fieldset group back up to the actual group object, not the clone that's been persisted
+                fieldset.group = _.find($scope.archetypeConfigRenderModel.fieldsetGroups, function(fieldsetGroup) {
+                    return fieldsetGroup.name == fieldset.group.name;
+                })
+            }
 
             fieldset.remove = false;
             if (fieldset.alias.length > 0)
@@ -287,6 +303,21 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
         });
 
         $scope.model.value.fieldsets = fieldsets;
+    }
+
+    $scope.showOptions = function ($event, template) {
+        $event.preventDefault();
+
+        dialogService.closeAll();
+
+        dialogService.open({
+            template: template,
+            show: true,
+            callback: function(data) {
+                $scope.archetypeConfigRenderModel = data;
+            },
+            dialogData: $scope.archetypeConfigRenderModel
+        });
     }
 
     //archetype css

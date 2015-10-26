@@ -31,6 +31,11 @@ angular.module('umbraco.resources').factory('archetypePropertyEditorResource', f
 
                 return "";
             });
+        },
+        getDllVersion: function() {
+            return umbRequestHelper.resourcePromise(
+                $http.get("backoffice/ArchetypeApi/ArchetypeDataType/GetDllVersion", { cache: true }), 'Failed to retrieve dll version'
+            );
         }
     }
 }); 

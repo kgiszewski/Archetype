@@ -239,6 +239,7 @@
     <Compile Include="Models\ArchetypeModel.cs" />
     <Compile Include="Models\ArchetypePreValue.cs" />
     <Compile Include="Models\ArchetypePreValueFieldset.cs" />
+    <Compile Include="Models\ArchetypePreValueFieldsetGroup.cs" />
     <Compile Include="Models\ArchetypePreValueProperty.cs" />
     <Compile Include="Models\ArchetypeFieldsetModel.cs" />
     <Compile Include="Models\ArchetypePropertyModel.cs" />

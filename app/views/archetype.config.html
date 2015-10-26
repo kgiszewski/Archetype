@@ -1,4 +1,8 @@
+{{VERSION_HTML}}
 <div class="archetypeConfig" ng-controller="Imulus.ArchetypeConfigController">
+    <h2 class="archetype-headline"><img src="../App_Plugins/Archetype/assets/logo_50.png"/>Archetype<small>{{dllVersion}}</small><a href="https://twitter.com/archetypekit" target="_blank"><img src="../App_Plugins/Archetype/assets/twitter.png"/></a></h2>
+    <p>At a minimum your Archetype needs at least one fieldset with at least one property. You can configure it to allow for multiple types of fieldsets within a single Archetype and you can even add another Archetype as a property. Please use the link below for the full manual:</p>
+    <p><a class="manual-link" href="https://github.com/kgiszewski/ArchetypeManual" target="_blank">Archetype Manual</a></p>
     <ul class="archetypeFieldsets" ui-sortable="sortableOptions" ng-model="archetypeConfigRenderModel.fieldsets">
         <li ng-repeat="fieldset in archetypeConfigRenderModel.fieldsets" ng-hide="fieldset.remove">
             <div class="archetypeFieldsetWrapper" >
@@ -16,6 +20,10 @@
                     <div class="archetypeFieldsetOption">
                         <label for="archetypeFieldAlias_{{$index}}"><archetype-localize key="alias">Alias</archetype-localize></label>
                         <input type="text" id="archetypeFieldAlias_{{$index}}" ng-model="fieldset.alias" on-keyup="markAliasDirty(this)" required/>
+                    </div>
+                    <div class="archetypeFieldsetOption" ng-show="archetypeConfigRenderModel.fieldsetGroups.length">
+                        <label for="archetypeFieldsetGroup_{{$index}}"><archetype-localize key="fieldsetGroup">Group</archetype-localize></label>
+                        <select id="archetypeFieldsetGroup_{{$index}}" ng-model="fieldset.group" ng-options="fieldsetGroup as fieldsetGroup.name for fieldsetGroup in archetypeConfigRenderModel.fieldsetGroups"></select>
                     </div>
                     <div class="archetypeFieldsetOption">
                         <label for="archetypeFieldLabelTemplate_{{$index}}"><archetype-localize key="labelTemplate">Label Template</archetype-localize></label>
@@ -79,79 +87,9 @@
 
     <div class="archetypeOptions">
         <div>
-            <label for="archetypeOptionsToggle"><archetype-localize key="toggleAdvanced">Toggle Advanced Options</archetype-localize><small><archetype-localize key="toggleAdvancedDescription">Show advanced options.</archetype-localize></small></label>
-            <input type="checkbox" id="archetypeOptionsToggle" ng-model="archetypeConfigRenderModel.showAdvancedOptions"/>
-        </div>
-    </div>
-
-    <div class="archetypeAdvancedOptions" ng-show="archetypeConfigRenderModel.showAdvancedOptions">
-        <div>
-            <label for="archetypeAdvancedOptionsStartWithAddButton"><archetype-localize key="startWithAddButton">Start With Add Button?</archetype-localize><small><archetype-localize key="startWithAddButtonDescription">Empty property shows an add button instead of providing a default fieldset.</archetype-localize></small></label>
-            <input type="checkbox" id="archetypeAdvancedOptionsStartWithAddButton" ng-model="archetypeConfigRenderModel.startWithAddButton"/>
-        </div>
-        <div>
-            <label for="archetypeAdvancedOptionsHideControls"><archetype-localize key="hideFieldsetControls">Hide Fieldset Controls?</archetype-localize><small><archetype-localize key="hideFieldsetControlsDescription">Hides the fieldset add/remove/sort controls.</archetype-localize></small></label>
-            <input type="checkbox" id="archetypeAdvancedOptionsHideControls" ng-model="archetypeConfigRenderModel.hideFieldsetControls"/>
-        </div>
-        <div>
-            <label for="archetypeAdvancedOptionsHideLabels"><archetype-localize key="hidePropertyLabels">Hide Property Labels?</archetype-localize><small><archetype-localize key="hidePropertyLabelsDescription">Hides the property labels.</archetype-localize></small></label>
-            <input type="checkbox" id="archetypeAdvancedOptionsHideLabels" ng-model="archetypeConfigRenderModel.hidePropertyLabels"/>
-        </div>
-        <div>
-            <label for="archetypeAdvancedOptionsMaxFieldsets"><archetype-localize key="maxFieldsets">Max Fieldsets</archetype-localize><small><archetype-localize key="maxFieldsetsDescription">How many Fieldsets are allowed? Entering '1' will disable the controls. Default is unlimited.</archetype-localize></small></label>
-            <input type="number" id="archetypeAdvancedOptionsMaxFieldsets" class="archetypeMaxFieldsets" ng-model="archetypeConfigRenderModel.maxFieldsets"/>
-        </div>
-        <div>
-            <label for="archetypeAdvancedOptionsMultipleFieldsets"><archetype-localize key="enableMultipleFieldsets">Enable Multiple Fieldsets?</archetype-localize><small><archetype-localize key="enableMultipleFieldsetsDescription">Allows multiple types of fieldsets within this archetype.</archetype-localize></small></label>
-            <input type="checkbox" id="archetypeAdvancedOptionsMultipleFieldsets" ng-model="archetypeConfigRenderModel.enableMultipleFieldsets"/>
-        </div>
-        <div>
-            <label for="archetypeAdvancedOptionsCollapsing"><archetype-localize key="enableCollapsing">Enable Collapsing?</archetype-localize><small><archetype-localize key="enableCollapsingDescription">Enable fieldset collapsing.</archetype-localize></small></label>
-            <input type="checkbox" id="archetypeAdvancedOptionsCollapsing" ng-model="archetypeConfigRenderModel.enableCollapsing"/>
-        </div>
-                <div>
-            <label for="archetypeAdvancedOptionsCloning"><archetype-localize key="enableCloning">Enable Cloning?</archetype-localize><small><archetype-localize key="enableCloningDescription">Enable fieldset cloning.</archetype-localize></small></label>
-            <input type="checkbox" id="archetypeAdvancedOptionsCloning" ng-model="archetypeConfigRenderModel.enableCloning"/>
-        </div>
-        <div>
-            <label for="archetypeAdvancedOptionsDisabling"><archetype-localize key="enableDisabling">Enable Fieldset Disabling?</archetype-localize><small><archetype-localize key="enableDisablingDescription">Allows fieldsets to be individually enabled/disabled.</archetype-localize></small></label>
-            <input type="checkbox" id="archetypeAdvancedOptionsDisabling" ng-model="archetypeConfigRenderModel.enableDisabling" />
-        </div>
-        <div>
-            <label for="archetypeAdvancedOptionsFieldsetToolbar"><archetype-localize key="hideFieldsetToolbar">Hide Fieldset Toolbar?</archetype-localize><small><archetype-localize key="hideFieldsetToolbarDescription">Hides the fieldset toolbar that appears when more than one fieldset model appears.</archetype-localize></small></label>
-            <input type="checkbox" id="archetypeAdvancedOptionsFieldsetToolbar" ng-model="archetypeConfigRenderModel.hideFieldsetToolbar"/>
-        </div>
-        <div>
-            <label for="archetypeAdvancedOptionsCustomClass"><archetype-localize key="customWrapperClass">Custom Wrapper Class</archetype-localize><small><archetype-localize key="customWrapperClassDescription">(Optional) Enter a custom CSS class that will be applied to the wrapper div.</archetype-localize></small></label>
-            <input type="text" id="archetypeAdvancedOptionsCustomClass" ng-model="archetypeConfigRenderModel.customCssClass"/>
-        </div>
-        <div>
-            <label for="archetypeAdvancedOptionsCustomCss"><archetype-localize key="cssFile">CSS File</archetype-localize><small><archetype-localize key="cssFileDescription">(Optional) Enter a path for a custom CSS file to be included on the page.</archetype-localize></small></label>
-            <input type="text" id="archetypeAdvancedOptionsCustomCss" ng-model="archetypeConfigRenderModel.customCssPath"/>
-        </div>
-        <div>
-            <label for="archetypeAdvancedOptionsCustomJs"><archetype-localize key="jsFile">JS File</archetype-localize><small><archetype-localize key="jsFileDescription">(Optional) Enter a path for a custom JS file to be included on the page.</archetype-localize></small></label>
-            <input type="text" id="archetypeAdvancedOptionsCustomJs" ng-model="archetypeConfigRenderModel.customJsPath"/>
-        </div>
-        <div>
-            <label for="archetypeAdvancedOptionsCustomView"><archetype-localize key="viewFile">View File</archetype-localize><small><archetype-localize key="viewFileDescription">(Optional) Enter a path for a custom view file to be used to render this Archetype.</archetype-localize></small></label>
-            <input type="text" id="archetypeAdvancedOptionsCustomView" ng-model="archetypeConfigRenderModel.customViewPath"/>
-        </div>
-        <div>
-            <label for="archetypeAdvancedOptionsDeepDatatypeRequest"><archetype-localize key="deepDatatypeRequest">Enable Deep Datatype Requests?</archetype-localize><small><archetype-localize key="deepDatatypeRequestDescription">Allows for easier datatype interception at the cost of caching performance.</archetype-localize></small></label>
-            <input type="checkbox" id="archetypeAdvancedOptionsDeepDatatypeRequest" ng-model="archetypeConfigRenderModel.enableDeepDatatypeRequests"/>
-        </div>
-        <div>
-            <label for="archetypeAdvancedOptionsDeveloperMode"><archetype-localize key="toggleDeveloperMode">Enable Developer Mode?</archetype-localize><small><archetype-localize key="toggleDeveloperModeDescription">Toggle Developer Mode</archetype-localize></small></label>
-            <input type="checkbox" id="archetypeAdvancedOptionsDeveloperMode" ng-model="archetypeConfigRenderModel.developerMode"/>
-        </div>
-        <div>
-            <label for="archetypeOverrideDefaultConverter"><archetype-localize key="overrideDefaultConverter">Override Default Property Value Converter?</archetype-localize><small><archetype-localize key="overrideDefaultConverterDescription">Check this if you wish to use your own custom property value converter.</archetype-localize></small></label>
-            <input type="checkbox" id="archetypeOverrideDefaultConverter" ng-model="archetypeConfigRenderModel.overrideDefaultPropertyValueConverter" />
-        </div>
-        <div>
-            <label for="archetypeAdvancedOptionsConfigModel"><archetype-localize key="configModel">Config Model</archetype-localize><small><archetype-localize key="configModelDescription">Be careful editing the text below, it controls the schema for this archetype.</archetype-localize></small></label>
-            <textarea class="archetypeDeveloperModel" id="archetypeAdvancedOptionsConfigModel" ng-model="archetypeConfigRenderModel"></textarea>
+            <button class="btn btn-default" ng-click="showOptions($event, '../App_Plugins/archetype/views/archetype.config.fieldset.dialog.html')"><archetype-localize key="global_fieldset_options">Global Fieldset Options</archetype-localize></button>
+            <button class="btn btn-default" ng-click="showOptions($event, '../App_Plugins/archetype/views/archetype.config.stylescript.dialog.html')"><archetype-localize key="custom_style_script_options">Custom Style/Script Options</archetype-localize></button>
+            <button class="btn btn-default" ng-click="showOptions($event, '../App_Plugins/archetype/views/archetype.config.developer.dialog.html')"><archetype-localize key="developer_options">Developer Options</archetype-localize></button>
         </div>
     </div>
 </div>
