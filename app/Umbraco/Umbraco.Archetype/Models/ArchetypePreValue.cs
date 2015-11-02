@@ -4,6 +4,9 @@ using Newtonsoft.Json;
 
 namespace Archetype.Models
 {
+    /// <summary>
+    /// Model that represents the configured Archetype options.
+    /// </summary>
     public class ArchetypePreValue
     {
         [JsonProperty("showAdvancedOptions")]

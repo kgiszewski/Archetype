@@ -1,5 +1,8 @@
 ﻿namespace Archetype
 {
+    /// <summary>
+    /// Archetype constants.
+    /// </summary>
     public static class Constants
     {
         public const string PropertyEditorAlias = "Imulus.Archetype";

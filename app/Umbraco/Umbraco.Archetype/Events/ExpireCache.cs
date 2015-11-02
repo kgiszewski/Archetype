@@ -1,18 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Umbraco.Core;
+﻿using Umbraco.Core;
 using Umbraco.Core.Models;
 using Umbraco.Core.Services;
-using Umbraco.Web;
 
 namespace Archetype.Events
 {
     public class ExpireCache : ApplicationEventHandler
     {
-
+        /// <summary>
+        /// Registers our ExpirePreValueCache handler on app starting.
+        /// </summary>
+        /// <param name="umbracoApplication"></param>
+        /// <param name="applicationContext"></param>
         protected override void ApplicationStarting(UmbracoApplicationBase umbracoApplication, ApplicationContext applicationContext)
         {
             base.ApplicationStarting(umbracoApplication, applicationContext);
@@ -20,6 +18,11 @@ namespace Archetype.Events
             DataTypeService.Saved += ExpirePreValueCache;
         }
 
+        /// <summary>
+        /// Expires the pre value cache when a datatype is saved.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="Umbraco.Core.Events.SaveEventArgs{IDataTypeDefinition}"/> instance containing the event data.</param>
         void ExpirePreValueCache(IDataTypeService sender, global::Umbraco.Core.Events.SaveEventArgs<IDataTypeDefinition> e)
         {
             foreach (var dataType in e.SavedEntities)

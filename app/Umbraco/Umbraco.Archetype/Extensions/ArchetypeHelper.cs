@@ -9,6 +9,9 @@ using Umbraco.Core.Models.PublishedContent;
 
 namespace Archetype.Extensions
 {
+    /// <summary>
+    /// Helper class that handles several Archetype related interactions.
+    /// </summary>
     public class ArchetypeHelper
     {
         protected JsonSerializerSettings _jsonSettings;
@@ -18,6 +21,9 @@ namespace Archetype.Extensions
 
         internal static ArchetypeHelper Instance { get { return _instance; } }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ArchetypeHelper"/> class.
+        /// </summary>
         internal ArchetypeHelper()
         {
             var dcr = new Newtonsoft.Json.Serialization.DefaultContractResolver();
@@ -27,8 +33,20 @@ namespace Archetype.Extensions
             _app = ApplicationContext.Current;
         }
 
+        /// <summary>
+        /// Gets the json serializer settings.
+        /// </summary>
+        /// <value>
+        /// The json serializer settings.
+        /// </value>
         internal JsonSerializerSettings JsonSerializerSettings { get { return _jsonSettings; } }
 
+        /// <summary>
+        /// Deserializes the JSON to archetype.
+        /// </summary>
+        /// <param name="sourceJson">The source JSON.</param>
+        /// <param name="dataTypePreValues">The data type pre values.</param>
+        /// <returns></returns>
         internal ArchetypeModel DeserializeJsonToArchetype(string sourceJson, PreValueCollection dataTypePreValues)
         {
             try
@@ -54,6 +72,13 @@ namespace Archetype.Extensions
             }
         }
 
+        /// <summary>
+        /// Deserializes the JSON to archetype.
+        /// </summary>
+        /// <param name="sourceJson">The source JSON.</param>
+        /// <param name="dataTypeId">The data type identifier.</param>
+        /// <param name="hostContentType">Type of the host content.</param>
+        /// <returns></returns>
         internal ArchetypeModel DeserializeJsonToArchetype(string sourceJson, int dataTypeId, PublishedContentType hostContentType = null)
         {
             try
@@ -79,6 +104,11 @@ namespace Archetype.Extensions
             }
         }
 
+        /// <summary>
+        /// Determines whether datatypeId has had it's PVC overridden.
+        /// </summary>
+        /// <param name="dataTypeId">The data type identifier.</param>
+        /// <returns></returns>
         internal bool IsPropertyValueConverterOverridden(int dataTypeId)
         {
             var prevalues = GetArchetypePreValueFromDataTypeId(dataTypeId);
@@ -88,6 +118,11 @@ namespace Archetype.Extensions
             return prevalues.OverrideDefaultPropertyValueConverter;
         }
 
+        /// <summary>
+        /// Gets the archetype pre value from data type identifier.
+        /// </summary>
+        /// <param name="dataTypeId">The data type identifier.</param>
+        /// <returns></returns>
         private ArchetypePreValue GetArchetypePreValueFromDataTypeId(int dataTypeId)
         {
             return _app.ApplicationCache.RuntimeCache.GetCacheItem(
@@ -108,6 +143,11 @@ namespace Archetype.Extensions
                 }) as ArchetypePreValue;
         }
 
+        /// <summary>
+        /// Gets the archetype pre value from pre values collection.
+        /// </summary>
+        /// <param name="dataTypePreValues">The data type pre values.</param>
+        /// <returns></returns>
         private ArchetypePreValue GetArchetypePreValueFromPreValuesCollection(PreValueCollection dataTypePreValues)
         {
             var preValueAsString = dataTypePreValues.PreValuesAsDictionary.First().Value.Value;
@@ -115,6 +155,11 @@ namespace Archetype.Extensions
             return preValue;
         }
 
+        /// <summary>
+        /// Gets the data type by unique identifier.
+        /// </summary>
+        /// <param name="guid">The unique identifier.</param>
+        /// <returns></returns>
         internal IDataTypeDefinition GetDataTypeByGuid(Guid guid)
         {
             return (IDataTypeDefinition)ApplicationContext.Current.ApplicationCache.RuntimeCache.GetCacheItem(
