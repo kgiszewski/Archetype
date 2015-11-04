@@ -261,6 +261,7 @@
     <Compile Include="Models\FieldsetTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PropertyValueConverter\PropertyValueConverterTests.cs" />
+    <Compile Include="PublishedContent\ArchetypePublishedContentTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

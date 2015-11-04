@@ -2,6 +2,7 @@ using Archetype.Models;
 using Umbraco.Core;
 using Umbraco.Core.Models;
 using Umbraco.Core.Models.PublishedContent;
+using Umbraco.Core.PropertyEditors;
 
 namespace Archetype.Extensions
 {
@@ -27,6 +28,11 @@ namespace Archetype.Extensions
         /// <returns></returns>
         internal static PublishedPropertyType CreateDummyPropertyType(this ArchetypePropertyModel prop)
         {
+            // We need to check if `PropertyValueConvertersResolver` exists,
+            // otherwise `PublishedPropertyType` will throw an exception outside of the Umbraco context.; e.g. unit-tests.
+            if (!PropertyValueConvertersResolver.HasCurrent)
+                return null;
+
             return new PublishedPropertyType(prop.HostContentType, new PropertyType(new DataTypeDefinition(-1, prop.PropertyEditorAlias) { Id = prop.DataTypeId }));
         }
     }
