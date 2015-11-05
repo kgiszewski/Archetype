@@ -53,30 +53,13 @@ namespace Archetype.Models
         {
             get
             {
-                if (_property == null || _rawValue == null)
-                {
-                    return false;
-                }
-
-                return !string.IsNullOrEmpty(_rawValue.ToString());
+                return _rawValue != null && !string.IsNullOrEmpty(_rawValue.ToString());
             }
         }
 
         public string PropertyTypeAlias
         {
-            get
-            {
-                if (_propertyType != null && !string.IsNullOrWhiteSpace(_propertyType.PropertyTypeAlias))
-                {
-                    return _propertyType.PropertyTypeAlias;
-                }
-                else if (_property != null)
-                {
-                    return _property.Alias;
-                }
-
-                return null;
-            }
+            get { return _property.Alias; }
         }
 
         public object Value

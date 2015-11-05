@@ -11,9 +11,7 @@ namespace Archetype.Models
     {
         private ArchetypeFieldsetModel _fieldset;
 
-        private bool _initialized;
-
-        private IPublishedProperty[] _properties;
+        private readonly Dictionary<string, IPublishedProperty> _properties;
 
         public ArchetypePublishedContent(ArchetypeFieldsetModel fieldset)
         {
@@ -22,7 +20,11 @@ namespace Archetype.Models
 
             _fieldset = fieldset;
 
-            this.Initialize();
+            _properties = fieldset.Properties
+                .ToDictionary(
+                    x => x.Alias,
+                    x => new ArchetypePublishedProperty(x) as IPublishedProperty,
+                    StringComparer.InvariantCultureIgnoreCase);
         }
 
         internal ArchetypeFieldsetModel ArchetypeFieldset
@@ -77,7 +79,8 @@ namespace Archetype.Models
 
         public IPublishedProperty GetProperty(string alias, bool recurse)
         {
-            return Properties.FirstOrDefault(x => x.PropertyTypeAlias.InvariantEquals(alias));
+            IPublishedProperty property;
+            return _properties.TryGetValue(alias, out property) ? property : null;
         }
 
         public IPublishedProperty GetProperty(string alias)
@@ -122,15 +125,7 @@ namespace Archetype.Models
 
         public ICollection<IPublishedProperty> Properties
         {
-            get
-            {
-                if (_initialized == false)
-                {
-                    this.Initialize();
-                }
-
-                return _properties;
-            }
+            get { return _properties.Values; }
         }
 
         public int SortOrder
@@ -183,24 +178,6 @@ namespace Archetype.Models
                     ? null
                     : property.Value;
             }
-        }
-
-        private void Initialize()
-        {
-            if (_fieldset == null)
-            {
-                return;
-            }
-
-            if (_fieldset.Properties != null)
-            {
-                _properties = _fieldset.Properties
-                    .Select(x => new ArchetypePublishedProperty(x))
-                    .Cast<IPublishedProperty>()
-                    .ToArray();
-            }
-
-            _initialized = true;
         }
     }
 }
