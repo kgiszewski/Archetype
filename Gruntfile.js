@@ -193,18 +193,19 @@ module.exports = function(grunt) {
     },
 
     umbracoPackage: {
-      options: {
-        name: "<%= pkgMeta.name %>",
-        version: '<%= pkgMeta.version %>',
-        url: '<%= pkgMeta.url %>',
-        license: '<%= pkgMeta.license %>',
-        licenseUrl: '<%= pkgMeta.licenseUrl %>',
-        author: '<%= pkgMeta.author %>',
-        authorUrl: '<%= pkgMeta.authorUrl %>',
-        manifest: 'config/package.xml',
-        readme: 'config/readme.txt',
-        sourceDir: 'tmp/umbraco',
-        outputDir: 'pkg',
+      dist: {
+        src: 'tmp/umbraco',
+        dest: 'pkg',
+        options: {
+          name: "<%= pkgMeta.name %>",
+          version: '<%= pkgMeta.version %>',
+          url: '<%= pkgMeta.url %>',
+          license: '<%= pkgMeta.license %>',
+          licenseUrl: '<%= pkgMeta.licenseUrl %>',
+          author: '<%= pkgMeta.author %>',
+          authorUrl: '<%= pkgMeta.authorUrl %>',
+          readme: '<%= grunt.file.read("config/readme.txt") %>'
+        }
       }
     },
 
