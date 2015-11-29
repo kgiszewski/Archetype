@@ -1,4 +1,4 @@
-﻿/* TODO: clean this up */
+﻿{{VERSION}}
 
 .archetypeEditor {
     width: 98%;
@@ -306,6 +306,29 @@
 .archetypeConfig {
     margin-bottom: 20px;
 
+    .archetype-headline {
+
+        img {
+            margin-right: 5px;
+        }
+
+        small {
+            margin-left: 5px;
+        }
+        
+        a {
+            float: right;
+            
+            img {
+                width: 35px;
+            }
+        }
+    }
+
+    .manual-link {
+        color: blue;
+    }
+
     ul {
         list-style: none;
     }
@@ -387,22 +410,30 @@
     }
 
     .archetypeAdvancedOptions {
-        margin-top: 15px;
-        div {
-            margin-bottom: 10px;
-        }
         label {
-            width: 400px;
+            width: 100%;
         }
+
+        input[type=checkbox] {
+            margin-top: 0;
+            margin-right: 2px;
+        }
+
+        small {
+            color: #b3b3b3;
+        }
+
         .archetypeFieldsetGroups {
             padding: 0 10px;
             margin-bottom: 20px;
+
             ul {
                 padding: 0;
                 margin: 0;
+                margin-top: 15px;
 
                 li {
-                    margin-bottom: 10px;
+
                     label {
                         width: 120px;
                     }
@@ -446,4 +477,8 @@
 .ui-sortable-placeholder {
     visibility: visible !important;
     background-color:   #d0e7f1 !important;
+}
+
+.archetype-dialog {
+    margin: 10px;
 }

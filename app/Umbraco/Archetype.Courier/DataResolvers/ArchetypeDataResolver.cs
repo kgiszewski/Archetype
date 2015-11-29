@@ -13,6 +13,9 @@ using Umbraco.Courier.ItemProviders;
 
 namespace Archetype.Courier.DataResolvers
 {
+    /// <summary>
+    /// Lee Kelleher's implementation of Courier's PropertyDataResolverProvider for Archetype.
+    /// </summary>
 	public class ArchetypeDataResolver : PropertyDataResolverProvider
 	{
 		private enum Direction
@@ -21,6 +24,12 @@ namespace Archetype.Courier.DataResolvers
 			Packaging
 		}
 
+        /// <summary>
+        /// Gets the editor alias.
+        /// </summary>
+        /// <value>
+        /// The editor alias.
+        /// </value>
 		public override string EditorAlias
 		{
 			get
@@ -29,26 +38,48 @@ namespace Archetype.Courier.DataResolvers
 			}
 		}
 
+        /// <summary>
+        /// Extractings the type of the data.
+        /// </summary>
+        /// <param name="item">The item.</param>
 		public override void ExtractingDataType(DataType item)
 		{
 			// No longer need to extract the DataType (int) Ids as Archetype now references the Guid [LK]
 		}
 
+        /// <summary>
+        /// Extractings the property.
+        /// </summary>
+        /// <param name="item">The item.</param>
+        /// <param name="propertyData">The property data.</param>
 		public override void ExtractingProperty(Item item, ContentProperty propertyData)
 		{
 			ReplacePropertyDataIds(item, propertyData, Direction.Extracting);
 		}
 
+        /// <summary>
+        /// Packagings the type of the data.
+        /// </summary>
+        /// <param name="item">The item.</param>
 		public override void PackagingDataType(DataType item)
 		{
 			AddDataTypeDependencies(item);
 		}
 
+        /// <summary>
+        /// Packages the property.
+        /// </summary>
+        /// <param name="item">The item.</param>
+        /// <param name="propertyData">The property data.</param>
 		public override void PackagingProperty(Item item, ContentProperty propertyData)
 		{
 			ReplacePropertyDataIds(item, propertyData, Direction.Packaging);
 		}
 
+        /// <summary>
+        /// Adds the datatype dependencies.
+        /// </summary>
+        /// <param name="item">The item.</param>
 		private void AddDataTypeDependencies(DataType item)
 		{
 			if (item.Prevalues != null && item.Prevalues.Count > 0)
@@ -71,6 +102,12 @@ namespace Archetype.Courier.DataResolvers
 			}
 		}
 
+        /// <summary>
+        /// Replaces the property data Ids.
+        /// </summary>
+        /// <param name="item">The item.</param>
+        /// <param name="propertyData">The property data.</param>
+        /// <param name="direction">The direction.</param>
 		private void ReplacePropertyDataIds(Item item, ContentProperty propertyData, Direction direction)
 		{
 			if (propertyData != null && propertyData.Value != null)
@@ -168,6 +205,10 @@ namespace Archetype.Courier.DataResolvers
 			}
 		}
 
+        /// <summary>
+        /// Retrieves the additional properties.
+        /// </summary>
+        /// <param name="preValue">The pre value.</param>
 		private void RetrieveAdditionalProperties(ref ArchetypePreValue preValue)
 		{
 			if (preValue == null)
@@ -189,6 +230,11 @@ namespace Archetype.Courier.DataResolvers
 			}
 		}
 
+        /// <summary>
+        /// Retrieves the additional properties.
+        /// </summary>
+        /// <param name="archetype">The archetype.</param>
+        /// <param name="preValue">The pre value.</param>
 		private void RetrieveAdditionalProperties(ref ArchetypeModel archetype, ArchetypePreValue preValue)
 		{
 			foreach (var fieldset in preValue.Fieldsets)

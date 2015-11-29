@@ -17,6 +17,9 @@ tmp/
 pkg/*.nupkg
 pkg/*.zip
 
+*_versioned*
+
+
 [Dd]ebug/
 [Bb]uild/
 [Rr]elease/

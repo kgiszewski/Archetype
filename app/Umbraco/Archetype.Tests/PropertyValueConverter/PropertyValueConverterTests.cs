@@ -1,22 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Archetype.PropertyConverters;
-using Moq;
 using NUnit.Framework;
-using Umbraco.Core.Models.PublishedContent;
 
 namespace Archetype.Tests.PropertyValueConverter
 {
+    /// <summary>
+    /// Tests designed to test the PVC.
+    /// </summary>
     [TestFixture]
     public class PropertyValueConverterTests
     {
-
         private string _sampleJson;
 
+        /// <summary>
+        /// Sets up the test to use JSON data.
+        /// </summary>
         [SetUp]
         public void SetUp()
         {

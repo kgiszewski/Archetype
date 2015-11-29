@@ -15,17 +15,27 @@ using Umbraco.Web.Models.ContentEditing;
 
 namespace Archetype.PropertyEditors
 {
+    /// <summary>
+    /// C# representation of the property editor. This is often done with package manifest instead.
+    /// </summary>
 	[PropertyEditorAsset(ClientDependencyType.Javascript, "../App_Plugins/Archetype/js/archetype.js")]
 	[PropertyEditor(Constants.PropertyEditorAlias, "Archetype", "../App_Plugins/Archetype/views/archetype.html", ValueType = "JSON")]
 	public class ArchetypePropertyEditor : PropertyEditor
 	{
 		#region Pre Value Editor
 
+        /// <summary>
+        /// Creates a pre value editor instance
+        /// </summary>
+        /// <returns></returns>
 		protected override PreValueEditor CreatePreValueEditor()
 		{
 			return new ArchetypePreValueEditor();
 		}
 
+        /// <summary>
+        /// Class that represents the prevalue editor. This is often done with a package manifest instead.
+        /// </summary>
 		internal class ArchetypePreValueEditor : PreValueEditor
 		{
 			[PreValueField("archetypeConfig", "Config", "../App_Plugins/Archetype/views/archetype.config.html",
@@ -41,11 +51,18 @@ namespace Archetype.PropertyEditors
 
 		#region Value Editor
 
+        /// <summary>
+        /// Creates a value editor instance
+        /// </summary>
+        /// <returns></returns>
 		protected override PropertyValueEditor CreateValueEditor()
 		{
 			return new ArchetypePropertyValueEditor(base.CreateValueEditor());
 		}
 
+        /// <summary>
+        /// Class that represents the actual data editor. This is often done with a package manifest instead.
+        /// </summary>
 		internal class ArchetypePropertyValueEditor : PropertyValueEditorWrapper
 		{
 			protected JsonSerializerSettings _jsonSettings;
@@ -55,6 +72,13 @@ namespace Archetype.PropertyEditors
 			{
 			}
 
+            /// <summary>
+            /// Converts the property value for use in the front-end cache
+            /// </summary>
+            /// <param name="property"></param>
+            /// <param name="propertyType"></param>
+            /// <param name="dataTypeService"></param>
+            /// <returns></returns>
 			public override string ConvertDbToString(Property property, PropertyType propertyType, IDataTypeService dataTypeService)
 			{
 				if(property.Value == null || property.Value.ToString() == "")
@@ -85,6 +109,17 @@ namespace Archetype.PropertyEditors
 				return archetype.SerializeForPersistence();
 			}
 
+            /// <summary>
+            /// A method used to format the database value to a value that can be used by the editor
+            /// </summary>
+            /// <param name="property"></param>
+            /// <param name="propertyType"></param>
+            /// <param name="dataTypeService"></param>
+            /// <returns></returns>
+            /// <remarks>
+            /// The object returned will automatically be serialized into json notation. For most property editors
+            /// the value returned is probably just a string but in some cases a json structure will be returned.
+            /// </remarks>
 			public override object ConvertDbToEditor(Property property, PropertyType propertyType, IDataTypeService dataTypeService)
 			{
 				if(property.Value == null || property.Value.ToString() == "")
@@ -114,6 +149,19 @@ namespace Archetype.PropertyEditors
 				return archetype;
 			}
 
+            /// <summary>
+            /// A method to deserialize the string value that has been saved in the content editor
+            /// to an object to be stored in the database.
+            /// </summary>
+            /// <param name="editorValue"></param>
+            /// <param name="currentValue">The current value that has been persisted to the database for this editor. This value may be usesful for
+            /// how the value then get's deserialized again to be re-persisted. In most cases it will probably not be used.</param>
+            /// <returns></returns>
+            /// <remarks>
+            /// By default this will attempt to automatically convert the string value to the value type supplied by ValueType.
+            /// If overridden then the object returned must match the type supplied in the ValueType, otherwise persisting the
+            /// value to the DB will fail when it tries to validate the value type.
+            /// </remarks>
 			public override object ConvertEditorToDb(ContentPropertyData editorValue, object currentValue)
 			{
 				if(editorValue.Value == null || editorValue.Value.ToString() == "")
@@ -175,6 +223,11 @@ namespace Archetype.PropertyEditors
 				return archetype.SerializeForPersistence();
 			}
 
+            /// <summary>
+            /// Gets the property editor.
+            /// </summary>
+            /// <param name="dtd">The DTD.</param>
+            /// <returns></returns>
 			internal virtual PropertyEditor GetPropertyEditor(IDataTypeDefinition dtd)
 			{
 				if(dtd.Id != 0)

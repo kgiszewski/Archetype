@@ -1,3 +1,4 @@
+{{VERSION_HTML}}
 <div class="archetypeEditor ng-class:model.config.customCssClass">
     <textarea class="archetypeDeveloperModel" ng-show="model.config.developerMode" ng-model="model.value"></textarea>
     <ul ui-sortable="sortableOptions" ng-model="model.value.fieldsets" ng-show="!showAddButton()">
@@ -20,7 +21,7 @@
                         <i class="icon icon-delete" ng-click="removeRow($index)" ng-show="canRemove()"></i>
                     </div>
                 </div>
-                <div class="archetypeCollapser animate-hide" ng-hide="model.config.enableCollapsing && isCollapsed(fieldset)">
+                <div class="archetypeCollapser animate-hide" ng-hide="model.config.enableCollapsing && isCollapsed(fieldset)" ng-if="!isCollapsed(fieldset)">
                     <form class="form-inline">
                         <div ng-class="[('archetype-property-' + property.alias), (getPropertyValidity($parent.$index, property.alias) === false ? 'archetypePropertyError' : '')]" class="archetypeProperty control-group" ng-repeat="property in fieldsetConfigModel.properties">
                             <label ng-hide="model.config.hidePropertyLabels == '1'" class="control-label" for="archetype-property-{{model.alias}}-{{$parent.$index}}-{{$index}}">

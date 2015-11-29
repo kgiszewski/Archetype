@@ -1,21 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Archetype.PropertyConverters;
 using NUnit.Framework;
 
 namespace Archetype.Tests.Models
 {
-
+    /// <summary>
+    /// Tests designed for the fieldsets.
+    /// </summary>
     [TestFixture]
     public class FieldsetTests
     {
-
         private string _sampleJson;
 
+        /// <summary>
+        /// Sets up the test to use sample JSON data.
+        /// </summary>
         [SetUp]
         public void SetUp()
         {

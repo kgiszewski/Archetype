@@ -5,6 +5,9 @@ using Umbraco.Core.PropertyEditors;
 
 namespace Archetype.Extensions
 {
+    /// <summary>
+    /// PropertyEditor extensions.
+    /// </summary>
 	public static class PropertyEditorExtensions
     {
 		/// <summary>

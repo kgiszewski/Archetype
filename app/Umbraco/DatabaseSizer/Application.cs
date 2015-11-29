@@ -4,6 +4,10 @@ using Umbraco.Core.Logging;
 
 namespace DatabaseSizer
 {
+    /// <summary>
+    /// A now obsolete project that handled an Umbraco core limitation.
+    /// </summary>
+    [Obsolete("This project is now obsolete with 7.2.2+")]
     public class Application : ApplicationEventHandler
     {
         protected override void ApplicationStarted(UmbracoApplicationBase umbracoApplication, ApplicationContext applicationContext)
