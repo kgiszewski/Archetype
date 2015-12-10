@@ -99,6 +99,13 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
                         scope.model.validation = {};
                         scope.model.validation.mandatory = 0;
                     }
+					
+                    //colorpicker datatype hack
+                    if (view.indexOf('colorpicker.html') != -1) {
+                        scope.propertyForm = scope.form;
+                        scope.model.validation = {};
+                        scope.model.validation.mandatory = 0;
+                    }
 
                     //some items need an alias
                     scope.model.alias = "archetype-property-" + propertyAlias;
