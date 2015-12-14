@@ -115,14 +115,16 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
                     });
 
                     scope.$on('archetypeFormSubmitting', function (ev, args) {
-                        // validate all fieldset properties
-                        _.each(scope.fieldset.properties, function (property) {
-                            archetypeService.validateProperty(scope.fieldset, property, configFieldsetModel);
-                        });
+                        if(args.action !== 'save') {
+                            // validate all fieldset properties
+                            _.each(scope.fieldset.properties, function (property) {
+                                archetypeService.validateProperty(scope.fieldset, property, configFieldsetModel);
+                            });
 
-                        var validationKey = "validation-f" + scope.fieldsetIndex;
+                            var validationKey = "validation-f" + scope.fieldsetIndex;
 
-                        ngModelCtrl.$setValidity(validationKey, scope.fieldset.isValid);
+                            ngModelCtrl.$setValidity(validationKey, scope.fieldset.isValid);
+                        }
 
                         // did the value change (if it did, it most likely did so during the "formSubmitting" event)
                         var property = archetypeService.getFieldsetProperty(scope);
