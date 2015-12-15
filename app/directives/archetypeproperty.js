@@ -93,15 +93,8 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
                         }
                     }
 
-                    //upload datatype hack
-                    if(view.indexOf('fileupload.html') != -1) {
-                        scope.propertyForm = scope.form;
-                        scope.model.validation = {};
-                        scope.model.validation.mandatory = 0;
-                    }
-					
-                    //colorpicker datatype hack
-                    if (view.indexOf('colorpicker.html') != -1) {
+                    //upload, colorpicker datatype hack
+                    if(view.indexOf('fileupload.html') != -1 || view.indexOf('colorpicker.html') != -1) {
                         scope.propertyForm = scope.form;
                         scope.model.validation = {};
                         scope.model.validation.mandatory = 0;
