@@ -15,6 +15,8 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
 
     // store the umbraco property alias to help generate unique IDs.  Hopefully there's a better way to get this in the future :)
     $scope.umbracoHostPropertyAlias = $scope.$parent.$parent.model.alias;
+    
+    $scope.isDebuggingEnabled = Umbraco.Sys.ServerVariables.isDebuggingEnabled;
 
     $scope.overlayMenu = {
         show: false,
