@@ -125,7 +125,7 @@ module.exports = function(grunt) {
         expand: true
       },
       dll: {
-        cwd: 'app/Umbraco/Umbraco.Archetype/bin/Debug/',
+        cwd: 'app/Umbraco/Umbraco.Archetype/bin/Release/',
         src: 'Archetype.dll',
         dest: '<%= dest %>/bin/',
         expand: true
@@ -155,7 +155,7 @@ module.exports = function(grunt) {
             expand: true
           },
           {
-            cwd: 'app/Umbraco/Archetype.Courier/bin/release/',
+            cwd: 'app/Umbraco/Archetype.Courier/bin/Release/',
             src: ['Archetype.Courier.dll'],
             dest: 'tmp/nuget_courier/lib/net40',
             expand: true
@@ -308,7 +308,7 @@ module.exports = function(grunt) {
       dist: {
         src: ['app/Umbraco/Umbraco.Archetype/Archetype.Umbraco.csproj','app/Umbraco/Archetype.Courier/Archetype.Courier.csproj'],
         options: {
-          projectConfiguration: 'Debug',
+          projectConfiguration: 'Release',
           targets: ['Clean', 'Rebuild'],
         }
       }
