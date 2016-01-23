@@ -18,8 +18,7 @@ module.exports = function(grunt) {
           "app/views/archetype.config.fieldset.dialog_versioned.html": "app/views/archetype.config.fieldset.dialog.html",
           "app/views/archetype.config_versioned.html": "app/views/archetype.config.html",
           "app/views/archetype_versioned.html": "app/views/archetype.html",
-          "app/views/archetype.default_versioned.html": "app/views/archetype.default.html",
-          
+          "app/views/archetype.default_versioned.html": "app/views/archetype.default.html"
         },
         options: {
           replacements: [{
@@ -126,7 +125,7 @@ module.exports = function(grunt) {
         expand: true
       },
       dll: {
-        cwd: 'app/Umbraco/Umbraco.Archetype/bin/Debug/',
+        cwd: 'app/Umbraco/Umbraco.Archetype/bin/Release/',
         src: 'Archetype.dll',
         dest: '<%= dest %>/bin/',
         expand: true
@@ -152,7 +151,13 @@ module.exports = function(grunt) {
           {
             cwd: '<%= dest %>/bin',
             src: ['*.dll'],
-            dest: 'tmp/nuget/lib/net40',
+            dest: 'tmp/nuget_binaries/lib/net40',
+            expand: true
+          },
+          {
+            cwd: 'app/Umbraco/Archetype.Courier/bin/Release/',
+            src: ['Archetype.Courier.dll'],
+            dest: 'tmp/nuget_courier/lib/net40',
             expand: true
           }
         ]
@@ -169,6 +174,14 @@ module.exports = function(grunt) {
         dist: {
             src: 'tmp/nuget/package.nuspec',
             dest: 'pkg'
+        },
+        dist_binaries: {
+            src: 'tmp/nuget_binaries/package_binaries.nuspec',
+            dest: 'pkg'
+        },
+        dist_courier: {
+            src: 'tmp/nuget_courier/package_courier.nuspec',
+            dest: 'pkg'
         }
     },
 
@@ -182,29 +195,61 @@ module.exports = function(grunt) {
                     license: '<%= pkgMeta.license %>',
                     licenseUrl: '<%= pkgMeta.licenseUrl %>',
                     author: '<%= pkgMeta.author %>',
-                    authorUrl: '<%= pkgMeta.authorUrl %>',
-                    files: [{ path: 'tmp/nuget/**', target: 'content/App_Plugins/Archetype'}]
+                    authorUrl: '<%= pkgMeta.authorUrl %>'
                 }
             },
             'files': { 
                 'tmp/nuget/package.nuspec': ['config/package.nuspec']
             }
+        },
+        'nuspec_binaries': {
+            'options': {
+                'data': { 
+                    name: '<%= pkgMeta.name %>.Binaries',
+                    version: '<%= pkgMeta.version %>',
+                    url: '<%= pkgMeta.url %>',
+                    license: '<%= pkgMeta.license %>',
+                    licenseUrl: '<%= pkgMeta.licenseUrl %>',
+                    author: '<%= pkgMeta.author %>',
+                    authorUrl: '<%= pkgMeta.authorUrl %>'
+                }
+            },
+            'files': { 
+                'tmp/nuget_binaries/package_binaries.nuspec': ['config/package_binaries.nuspec']
+            }
+        },
+        'nuspec_courier': {
+            'options': {
+                'data': { 
+                    name: '<%= pkgMeta.name %>.Courier',
+                    version: '<%= pkgMeta.version %>',
+                    url: '<%= pkgMeta.url %>',
+                    license: '<%= pkgMeta.license %>',
+                    licenseUrl: '<%= pkgMeta.licenseUrl %>',
+                    author: '<%= pkgMeta.author %>',
+                    authorUrl: '<%= pkgMeta.authorUrl %>'
+                }
+            },
+            'files': { 
+                'tmp/nuget_courier/package_courier.nuspec': ['config/package_courier.nuspec']
+            }
         }
     },
 
     umbracoPackage: {
-      options: {
-        name: "<%= pkgMeta.name %>",
-        version: '<%= pkgMeta.version %>',
-        url: '<%= pkgMeta.url %>',
-        license: '<%= pkgMeta.license %>',
-        licenseUrl: '<%= pkgMeta.licenseUrl %>',
-        author: '<%= pkgMeta.author %>',
-        authorUrl: '<%= pkgMeta.authorUrl %>',
-        manifest: 'config/package.xml',
-        readme: 'config/readme.txt',
-        sourceDir: 'tmp/umbraco',
-        outputDir: 'pkg',
+      dist: {
+        src: 'tmp/umbraco',
+        dest: 'pkg',
+        options: {
+          name: "<%= pkgMeta.name %>",
+          version: '<%= pkgMeta.version %>',
+          url: '<%= pkgMeta.url %>',
+          license: '<%= pkgMeta.license %>',
+          licenseUrl: '<%= pkgMeta.licenseUrl %>',
+          author: '<%= pkgMeta.author %>',
+          authorUrl: '<%= pkgMeta.authorUrl %>',
+          readme: '<%= grunt.file.read("config/readme.txt") %>'
+        }
       }
     },
 
@@ -248,15 +293,6 @@ module.exports = function(grunt) {
         src: ['<%= grunt.option("target") %>\\Web.config']
       }
     },
-    
-    jshint: {
-      options: {
-        jshintrc: '.jshintrc'
-      },
-      src: {
-        src: ['app/**/*.js', 'lib/**/*.js']
-      }
-    },
 
     msbuild: {
       options: {
@@ -272,7 +308,7 @@ module.exports = function(grunt) {
       dist: {
         src: ['app/Umbraco/Umbraco.Archetype/Archetype.Umbraco.csproj','app/Umbraco/Archetype.Courier/Archetype.Courier.csproj'],
         options: {
-          projectConfiguration: 'Debug',
+          projectConfiguration: 'Release',
           targets: ['Clean', 'Rebuild'],
         }
       }
@@ -280,8 +316,7 @@ module.exports = function(grunt) {
   });
 
   grunt.registerTask('default', ['clean', 'string-replace', 'less', 'concat', 'assemblyinfo', 'msbuild:dist', 'copy:dll', 'copy:assets', 'copy:html', 'copy:config', 'clean:html', 'clean:js', 'clean:less']);
-
-  grunt.registerTask('nuget',   ['clean:tmp', 'default', 'copy:nuget', 'template:nuspec', 'nugetpack', 'clean:tmp']);
-  grunt.registerTask('umbraco', ['clean:tmp', 'default', 'copy:umbraco', 'umbracoPackage', 'clean:tmp']);
-  grunt.registerTask('package', ['clean:tmp', 'default', 'copy:nuget', 'template:nuspec', 'nugetpack', 'copy:umbraco', 'umbracoPackage', 'clean:tmp']);
+  grunt.registerTask('nuget',   ['copy:nuget', 'template:nuspec', 'template:nuspec_binaries', 'template:nuspec_courier', 'nugetpack']);
+  grunt.registerTask('umbraco', ['copy:umbraco', 'umbracoPackage']);
+  grunt.registerTask('package', ['clean:tmp', 'default', 'nuget', 'copy:umbraco', 'umbracoPackage', 'clean:tmp']);
 };

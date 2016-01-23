@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Umbraco.Core.Logging;
 
 namespace Archetype.Models
 {
@@ -48,22 +47,6 @@ namespace Archetype.Models
         /// <returns></returns>
         public string SerializeForPersistence()
         {
-            //clean out any properties with a null datatype
-            foreach (var fieldset in Fieldsets)
-            {
-                var properties = fieldset.Properties.ToList();
-
-                foreach (var property in fieldset.Properties)
-                {
-                    if (property.DataTypeGuid == null)
-                    {
-                        properties.Remove(property);
-                    }
-                }
-
-                fieldset.Properties = properties;
-            }
-
             var json = JObject.Parse(JsonConvert.SerializeObject(this, new JsonSerializerSettings() { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
 
             var propertiesToRemove = new String[] { "propertyEditorAlias", "dataTypeId", "dataTypeGuid", "hostContentType", "editorState" };
