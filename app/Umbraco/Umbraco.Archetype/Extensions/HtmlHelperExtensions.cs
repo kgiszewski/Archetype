@@ -13,6 +13,56 @@ namespace Archetype.Extensions
     public static class HtmlHelperExtensions
     {
         /// <summary>
+        /// Renders a single archtype partial from a fieldset
+        /// </summary>
+        /// <param name="htmlHelper">The HTML helper.</param>
+        /// <param name="fieldsetModel">The fieldset model.</param>
+        /// <returns></returns>
+        public static IHtmlString RenderArchetypePartial(this HtmlHelper htmlHelper, ArchetypeFieldsetModel fieldsetModel)
+        {
+            return RenderPartial(htmlHelper, fieldsetModel, null, null);
+        }
+
+        /// <summary>
+        /// Renders the fieldset partial
+        /// </summary>
+        /// <param name="htmlHelper">The HTML helper.</param>
+        /// <param name="fieldsetModel"></param>
+        /// <param name="partialPath">The partial path.</param>
+        /// <param name="viewDataDictionary">The view data dictionary.</param>
+        /// <returns></returns>
+        private static IHtmlString RenderPartial(HtmlHelper htmlHelper, ArchetypeFieldsetModel fieldsetModel, string partialPath, ViewDataDictionary viewDataDictionary)
+        {
+            var context = HttpContext.Current;
+
+            if (fieldsetModel == null || context == null)
+            {
+                return new HtmlString("");
+            }
+
+            var sb = new StringBuilder();
+
+            var pathToPartials = "~/Views/Partials/Archetype/";
+            if (!string.IsNullOrEmpty(partialPath))
+            {
+                pathToPartials = partialPath;
+            }
+
+            var partial = pathToPartials + fieldsetModel.Alias + ".cshtml";
+
+            if (System.IO.File.Exists(context.Server.MapPath(partial)))
+            {
+                sb.AppendLine(htmlHelper.Partial(partial, fieldsetModel, viewDataDictionary).ToString());
+            }
+            else
+            {
+                LogHelper.Info<ArchetypeModel>(string.Format("The partial for {0} could not be found.  Please create a partial with that name or rename your alias.", context.Server.MapPath(partial)));
+            }
+
+            return new HtmlString(sb.ToString());
+        }
+
+        /// <summary>
         /// Renders the archetype partials.
         /// </summary>
         /// <param name="htmlHelper">The HTML helper.</param>
@@ -72,31 +122,11 @@ namespace Archetype.Extensions
         {
             var context = HttpContext.Current;
 
-            if (archetypeModel == null || context == null)
-            {
-                return new HtmlString("");
-            }
-
             var sb = new StringBuilder();
-
-            var pathToPartials = "~/Views/Partials/Archetype/";
-            if (!string.IsNullOrEmpty(partialPath))
-            {
-                pathToPartials = partialPath;
-            }
 
             foreach (var fieldsetModel in archetypeModel)
             {
-                var partial = pathToPartials + fieldsetModel.Alias + ".cshtml";
-
-                if (System.IO.File.Exists(context.Server.MapPath(partial)))
-                {
-                    sb.AppendLine(htmlHelper.Partial(partial, fieldsetModel, viewDataDictionary).ToString());
-                }
-                else
-                {
-                    LogHelper.Info<ArchetypeModel>(string.Format("The partial for {0} could not be found.  Please create a partial with that name or rename your alias.", context.Server.MapPath(partial)));
-                }
+                sb.AppendLine(RenderPartial(htmlHelper, fieldsetModel, partialPath, viewDataDictionary).ToString());
             }
 
             return new HtmlString(sb.ToString());
