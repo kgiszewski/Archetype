@@ -16,9 +16,12 @@ namespace Archetype.Models
 
             this.ArchetypeModel = archetype;
 
+            var count = archetype.Fieldsets.Count();
+
             _items = archetype.Fieldsets
                 .Where(x => x.Disabled == false)
-                .Select(x => new ArchetypePublishedContent(x));
+                .Select(x => new ArchetypePublishedContent(x, this))
+                .ToArray();
         }
 
         internal ArchetypeModel ArchetypeModel { get; private set; }

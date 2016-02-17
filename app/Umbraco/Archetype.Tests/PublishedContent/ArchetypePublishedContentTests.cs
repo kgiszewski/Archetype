@@ -91,5 +91,66 @@ namespace Archetype.Tests.PublishedContent
 
             Assert.Throws<ArgumentNullException>(code);
         }
+
+        [Test]
+        public void ArchetypePublishedContent_GetIndex()
+        {
+            var contentSet = _archetype.ToPublishedContentSet();
+            var i = 0;
+
+            foreach (var content in contentSet)
+            {
+                Assert.AreEqual(content.GetIndex(), i);
+                i++;
+            }
+        }
+
+        [Test]
+        public void ArchetypePublishedContentSet_IsFirstIsLast()
+        {
+            var contentSet = _archetype.ToPublishedContentSet();
+
+            foreach (var content in contentSet)
+            {
+                var value = content.GetPropertyValue<string>("boxHeadline");
+
+                Assert.That(value == "Box 1 Title", Is.EqualTo(content.IsFirst()));
+                Assert.That(value == "Another Box", Is.EqualTo(content.IsLast()));
+            }
+        }
+
+        [Test]
+        public void ArchetypePublishedContentSet_PreviousNext()
+        {
+            var contentSet = _archetype.ToPublishedContentSet();
+            var list = contentSet.ToList();
+
+            Assert.That(list.Count, Is.EqualTo(2));
+
+            var first = list[0];
+            var last = list[1];
+
+            var next = first.Next();
+            Assert.AreEqual(next, last);
+
+            var prev = last.Previous();
+            Assert.AreEqual(prev, first);
+        }
+
+        [Test, ExpectedException(typeof(NullReferenceException))]
+        public void ArchetypePublishedContentSet_Siblings()
+        {
+            var contentSet = _archetype.ToPublishedContentSet();
+            var content = contentSet.FirstOrDefault();
+
+            var siblings = content.Siblings();
+            Assert.That(siblings, Is.Not.Null);
+
+            var following = content.FollowingSibling();
+            Assert.That(following, Is.Not.Null);
+
+            var preceding = content.PrecedingSibling();
+            Assert.That(preceding, Is.Not.Null);
+        }
     }
 }
