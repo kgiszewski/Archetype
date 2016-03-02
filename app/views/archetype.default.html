@@ -10,7 +10,7 @@
                         <span class="caret caret-right" ng-show="fieldset.collapse && model.config.enableCollapsing"></span>
                         <label ng-class="{dimmed: fieldset.disabled}">
                             <i class="fieldsetIcon icon ng-class:fieldsetConfigModel.icon"></i>
-                            <span ng-bind="getFieldsetTitle(fieldsetConfigModel, $index)"></span>
+                            <span ng-bind-html-unsafe="getFieldsetTitle(fieldsetConfigModel, $index)"></span>
                         </label>
                     </div>
                     <div class="archetypeEditorControls label-sub" ng-hide="model.config.hideFieldsetControls">
