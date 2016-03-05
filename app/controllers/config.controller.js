@@ -314,7 +314,6 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
             template: template,
             show: true,
             callback: function(data) {
-                $scope.archetypeConfigRenderModel = data;
             },
             dialogData: $scope.archetypeConfigRenderModel
         });
