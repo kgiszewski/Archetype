@@ -7,11 +7,17 @@ Archetype
 ## Installation
 Install the selected <a href='https://github.com/imulus/Archetype/releases'>release</a> through the Umbraco package installer or via <a href='http://www.nuget.org/packages/Archetype/'>NuGet</a>.
 
-
 ## Official Docs ##
 https://github.com/kgiszewski/ArchetypeManual
 
 Follow us on Twitter https://twitter.com/ArchetypeKit
+
+##Core Team##
+* Kevin Giszewski (founder) - University of Notre Dame
+* Tom Fulton (founder) - Tonic - http://hellotonic.com/
+* Lee Kelleher - Umbrella - http://www.umbrellainc.co.uk/
+* Matt Brailsford - The Outfield - http://www.theoutfield.co.uk/
+* Kenn Jacobsen - Vertica - http://kennjacobsen.dk/
 
 ## Contribute ##
 
