@@ -13,14 +13,23 @@ namespace Archetype.Extensions
     public static class HtmlHelperExtensions
     {
         /// <summary>
-        /// Renders a single archtype partial from a fieldset
+        /// Renders the partials based on the model, partial path and given viewdata dictionary.
         /// </summary>
         /// <param name="htmlHelper">The HTML helper.</param>
-        /// <param name="fieldsetModel">The fieldset model.</param>
+        /// <param name="archetypeModel">The archetype model.</param>
+        /// <param name="partialPath">The partial path.</param>
+        /// <param name="viewDataDictionary">The view data dictionary.</param>
         /// <returns></returns>
-        public static IHtmlString RenderArchetypePartial(this HtmlHelper htmlHelper, ArchetypeFieldsetModel fieldsetModel)
+        private static IHtmlString _renderPartials(this HtmlHelper htmlHelper, ArchetypeModel archetypeModel, string partialPath, ViewDataDictionary viewDataDictionary)
         {
-            return RenderPartial(htmlHelper, fieldsetModel, null, null);
+            var sb = new StringBuilder();
+
+            foreach (var fieldsetModel in archetypeModel)
+            {
+                sb.AppendLine(_renderPartial(htmlHelper, fieldsetModel, partialPath, viewDataDictionary).ToString());
+            }
+
+            return new HtmlString(sb.ToString());
         }
 
         /// <summary>
@@ -31,7 +40,7 @@ namespace Archetype.Extensions
         /// <param name="partialPath">The partial path.</param>
         /// <param name="viewDataDictionary">The view data dictionary.</param>
         /// <returns></returns>
-        private static IHtmlString RenderPartial(HtmlHelper htmlHelper, ArchetypeFieldsetModel fieldsetModel, string partialPath, ViewDataDictionary viewDataDictionary)
+        private static IHtmlString _renderPartial(HtmlHelper htmlHelper, ArchetypeFieldsetModel fieldsetModel, string partialPath, ViewDataDictionary viewDataDictionary)
         {
             var context = HttpContext.Current;
 
@@ -42,13 +51,15 @@ namespace Archetype.Extensions
 
             var sb = new StringBuilder();
 
+            //default
             var pathToPartials = "~/Views/Partials/Archetype/";
+
             if (!string.IsNullOrEmpty(partialPath))
             {
                 pathToPartials = partialPath;
             }
 
-            var partial = pathToPartials + fieldsetModel.Alias + ".cshtml";
+            var partial = string.Format("{0}{1}.cshtml", pathToPartials, fieldsetModel.Alias);
 
             if (System.IO.File.Exists(context.Server.MapPath(partial)))
             {
@@ -63,6 +74,42 @@ namespace Archetype.Extensions
         }
 
         /// <summary>
+        /// Renders a single archtype partial from a fieldset
+        /// </summary>
+        /// <param name="htmlHelper">The HTML helper.</param>
+        /// <param name="fieldsetModel">The fieldset model.</param>
+        /// <returns></returns>
+        public static IHtmlString RenderArchetypePartial(this HtmlHelper htmlHelper, ArchetypeFieldsetModel fieldsetModel)
+        {
+            return _renderPartial(htmlHelper, fieldsetModel, null, null);
+        }
+
+        /// <summary>
+        /// Renders the archetype partial.
+        /// </summary>
+        /// <param name="htmlHelper">The HTML helper.</param>
+        /// <param name="fieldsetModel">The fieldset model.</param>
+        /// <param name="partialView">The partial view.</param>
+        /// <returns></returns>
+        public static IHtmlString RenderArchetypePartial(this HtmlHelper htmlHelper, ArchetypeFieldsetModel fieldsetModel, string partialView)
+        {
+            return _renderPartial(htmlHelper, fieldsetModel, partialView, null);
+        }
+
+        /// <summary>
+        /// Renders the archetype partial.
+        /// </summary>
+        /// <param name="htmlHelper">The HTML helper.</param>
+        /// <param name="fieldsetModel">The fieldset model.</param>
+        /// <param name="partialView">The partial view.</param>
+        /// <param name="viewDataDictionary">The view data dictionary.</param>
+        /// <returns></returns>
+        public static IHtmlString RenderArchetypePartial(this HtmlHelper htmlHelper, ArchetypeFieldsetModel fieldsetModel, string partialView, ViewDataDictionary viewDataDictionary)
+        {
+            return _renderPartial(htmlHelper, fieldsetModel, partialView, viewDataDictionary);
+        }
+
+        /// <summary>
         /// Renders the archetype partials.
         /// </summary>
         /// <param name="htmlHelper">The HTML helper.</param>
@@ -70,7 +117,7 @@ namespace Archetype.Extensions
         /// <returns></returns>
         public static IHtmlString RenderArchetypePartials(this HtmlHelper htmlHelper, ArchetypeModel archetypeModel)
         {
-            return RenderPartials(htmlHelper, archetypeModel, null, null);
+            return _renderPartials(htmlHelper, archetypeModel, null, null);
         }
 
         /// <summary>
@@ -82,7 +129,7 @@ namespace Archetype.Extensions
         /// <returns></returns>
         public static IHtmlString RenderArchetypePartials(this HtmlHelper htmlHelper, ArchetypeModel archetypeModel, string partialPath)
         {
-            return RenderPartials(htmlHelper, archetypeModel, partialPath, null);
+            return _renderPartials(htmlHelper, archetypeModel, partialPath, null);
         }
 
         /// <summary>
@@ -94,7 +141,7 @@ namespace Archetype.Extensions
         /// <returns></returns>
         public static IHtmlString RenderArchetypePartials(this HtmlHelper htmlHelper, ArchetypeModel archetypeModel, ViewDataDictionary viewDataDictionary)
         {
-            return RenderPartials(htmlHelper, archetypeModel, null, viewDataDictionary);
+            return _renderPartials(htmlHelper, archetypeModel, null, viewDataDictionary);
         }
 
         /// <summary>
@@ -107,29 +154,7 @@ namespace Archetype.Extensions
         /// <returns></returns>
         public static IHtmlString RenderArchetypePartials(this HtmlHelper htmlHelper, ArchetypeModel archetypeModel, string partialPath, ViewDataDictionary viewDataDictionary)
         {
-            return htmlHelper.RenderPartials(archetypeModel, partialPath, viewDataDictionary);
-        }
-
-        /// <summary>
-        /// Renders the partials based on the model, partial path and given viewdata dictionary.
-        /// </summary>
-        /// <param name="htmlHelper">The HTML helper.</param>
-        /// <param name="archetypeModel">The archetype model.</param>
-        /// <param name="partialPath">The partial path.</param>
-        /// <param name="viewDataDictionary">The view data dictionary.</param>
-        /// <returns></returns>
-        private static IHtmlString RenderPartials(this HtmlHelper htmlHelper, ArchetypeModel archetypeModel, string partialPath, ViewDataDictionary viewDataDictionary)
-        {
-            var context = HttpContext.Current;
-
-            var sb = new StringBuilder();
-
-            foreach (var fieldsetModel in archetypeModel)
-            {
-                sb.AppendLine(RenderPartial(htmlHelper, fieldsetModel, partialPath, viewDataDictionary).ToString());
-            }
-
-            return new HtmlString(sb.ToString());
+            return htmlHelper._renderPartials(archetypeModel, partialPath, viewDataDictionary);
         }
     }
 }
