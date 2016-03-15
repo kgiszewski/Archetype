@@ -31,6 +31,8 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
                 return coreMediaPicker(value, scope, datatype);
             case "Umbraco.DropDown":
                 return coreDropdown(value, scope, datatype);
+    	    case "RJP.MultiUrlPicker":
+    	        return rjpMultiUrlPicker(value, scope, {});
     		default:
     			return "";
     	}
@@ -149,6 +151,18 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
         return strippedText.substring(0, args.contentLength) + suffix;
     }
 
+	function rjpMultiUrlPicker(values, scope, args) {
+        var names = [];
+
+        _.each(values, function (value) {
+            if (value.name) {
+                names.push(value.name);
+            }
+        });
+
+        return names.join(", ");
+    }
+	
 	return {
 		getFieldsetTitle: function(scope, fieldsetConfigModel, fieldsetIndex) {
 
