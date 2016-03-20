@@ -45,8 +45,11 @@
   "fieldsetGroupsDescription":"Hvis du har mange fieldsets, skal du måske overveje at gruppere dem i fieldset-vælgeren. Når du først har defineret dine grupper her, vil en gruppe-vælger dukke op i fieldset-editoren, og du kan derefter vælge grupper for alle dine fieldsets.",
   "fieldsetGroupName":"Navn",
   "addFieldsetGroup":"Tilføj gruppe",
+  "enablePublishing": "Aktivér fieldset-publicering?",
+  "enablePublishingDescription": "Tillad automatisk udgivelse og udløb for fieldsets",
   "publish": "Publicering",
   "publishHelpText": "Konfigurér udgivelses- og udløbsdato for dette element",
   "publishReleaseDate": "Udgivelsesdato",
-  "publishExpireDate": "Udløbsdato"
+  "publishExpireDate": "Udløbsdato",
+  "settings": "Indstillinger"
 }

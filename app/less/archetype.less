@@ -64,6 +64,17 @@
         vertical-align: text-bottom;
     }
 
+    .caret {
+        margin: 8px 1px 0 2px;
+        &.caret-right {
+            border-bottom: 4px solid transparent;
+            border-top: 4px solid transparent;
+            border-left: 4px solid #ddd;
+            content: "";
+            margin-top: 6px;
+        }
+    }
+
     fieldset {
         border-bottom: 1px dashed #dddddd;
         padding: 0;
@@ -152,16 +163,7 @@
             }
 
             .caret {
-                margin: 8px 1px 0 2px;
                 position: absolute;
-
-                &.caret-right {
-                    border-bottom: 4px solid transparent;
-                    border-top: 4px solid transparent;
-                    border-left: 4px solid #ddd;
-                    content: "";
-                    margin-top: 6px;
-                }
             }
 
             label {
@@ -307,6 +309,30 @@
                     text-decoration: none;
                 }
             }
+        }
+    }
+
+    .settingsWrapper {
+        &:hover {
+            caret {
+                background-color: #333;
+            }
+        }
+        .settingsHeader {
+            &:hover {
+                cursor: pointer;
+                label {
+                    text-decoration: underline;
+                }
+
+                .caret-right {
+                    border-left-color: #333;
+                }
+            }
+        }
+        .settings {
+            padding: 14px;
+            background-color: #f8f8f8;
         }
     }
 }

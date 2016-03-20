@@ -265,40 +265,15 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
         if ($scope.canPublish() == false) {
             return false;
         }
-        // disabled state takes precedence over publishing
-        if (fieldset.disabled) {
-            return false;
+        if ($scope.canDisable()) {
+            // disabled state takes precedence over publishing
+            if (fieldset.disabled) {
+                return false;
+            }
+            return $scope.isDisabledByPublishing(fieldset);
         }
-        return $scope.isDisabledByPublishing(fieldset);
+        return true;
     }
-
-    //$scope.isDisabled = function(fieldset) {
-    //    if (fieldset.disabled) {
-    //        return true;
-    //    }
-    //    return $scope.isDisabledByPublishing(fieldset);
-    //}
-
-    //$scope.disabledIcon = function(fieldset) {
-    //    if ($scope.isDisabledByPublishing(fieldset)) {
-    //        return "icon-time";
-    //    }
-    //    return "icon-power";
-    //}
-
-    //$scope.hasPublishingPending = function (fieldset) {
-    //    if ($scope.canPublish() === false) {
-    //        return false;
-    //    }
-    //    if (fieldset.expireDateModel && fieldset.expireDateModel.value) {
-    //        // pending expiry?
-    //        return moment(fieldset.expireDateModel.value) > moment();
-    //    }
-    //    if (fieldset.releaseDateModel && fieldset.releaseDateModel.value) {
-    //        // pending release?
-    //        return moment(fieldset.releaseDateModel.value) > moment();
-    //    }
-    //}
 
     $scope.isDisabledByPublishing = function (fieldset) {
         if ($scope.canPublish() === false) {
@@ -321,17 +296,7 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
         if (fieldset.disabled) {
             return true;
         }
-        if ($scope.canPublish() === false) {
-            return false;
-        }
-        if (fieldset.expireDateModel && fieldset.expireDateModel.value) {
-            // expired?
-            return moment() > moment(fieldset.expireDateModel.value);
-        }
-        if (fieldset.releaseDateModel && fieldset.releaseDateModel.value) {
-            // pending release?
-            return moment(fieldset.releaseDateModel.value) > moment();
-        }
+        return $scope.isDisabledByPublishing(fieldset);
     }
 
     //helper, ini the render model from the server (model.value)
