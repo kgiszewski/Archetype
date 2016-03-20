@@ -284,8 +284,6 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
         if (fieldset.expireDateModel && fieldset.expireDateModel.value) {
             // an expired release affects the fieldset
             return moment() > moment(fieldset.expireDateModel.value);
-            // this fieldset is either expired or will expire - both cases affects the fieldset
-            //return true;
         }
         if (fieldset.releaseDateModel && fieldset.releaseDateModel.value) {
             // a pending release affects the fieldset
