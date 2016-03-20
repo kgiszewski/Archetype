@@ -11,14 +11,17 @@ namespace Archetype.Models
     {
         private ArchetypeFieldsetModel _fieldset;
 
+        private IEnumerable<IPublishedContent> _parent;
+
         private readonly Dictionary<string, IPublishedProperty> _properties;
 
-        public ArchetypePublishedContent(ArchetypeFieldsetModel fieldset)
+        public ArchetypePublishedContent(ArchetypeFieldsetModel fieldset, ArchetypePublishedContentSet parent = null)
         {
             if (fieldset == null)
                 throw new ArgumentNullException("fieldset");
 
             _fieldset = fieldset;
+            _parent = parent ?? Enumerable.Empty<IPublishedContent>();
 
             _properties = fieldset.Properties
                 .ToDictionary(
@@ -39,7 +42,7 @@ namespace Archetype.Models
 
         public IEnumerable<IPublishedContent> ContentSet
         {
-            get { return Enumerable.Empty<IPublishedContent>(); }
+            get { return _parent; }
         }
 
         public PublishedContentType ContentType
@@ -74,7 +77,7 @@ namespace Archetype.Models
 
         public int GetIndex()
         {
-            return default(int);
+            return _parent.IndexOf(this);
         }
 
         public IPublishedProperty GetProperty(string alias, bool recurse)
