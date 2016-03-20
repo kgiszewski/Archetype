@@ -135,6 +135,17 @@ namespace Archetype.Models
             return Properties.FirstOrDefault(p => p.Alias.InvariantEquals(propertyAlias));
         }
 
+		/// <summary>
+		/// Is this fieldset disabled, either explicitly or by other means?
+		/// </summary>
+		/// <returns>true if this fieldset is disabled, false otherwise</returns>
+	    internal bool IsDisabled()
+	    {
+		    return Disabled
+		           || (ReleaseDate.HasValue && ReleaseDate > DateTime.Now)
+		           || (ExpireDate.HasValue && DateTime.Now > ExpireDate);
+	    }
+
         #endregion
     }
 }
