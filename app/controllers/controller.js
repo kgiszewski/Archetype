@@ -442,6 +442,7 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
         // reset submit watcher counter on save
         $scope.activeSubmitWatcher = 0;
 
+        // create properties needed for the backoffice to work (data that is not serialized to DB)
         addCustomProperties();
     });
 
