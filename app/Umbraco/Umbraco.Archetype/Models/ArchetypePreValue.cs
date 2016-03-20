@@ -31,6 +31,9 @@ namespace Archetype.Models
         [JsonProperty("enableDisabling")]
         public bool EnableDisabling { get; set; }
 
+		[JsonProperty("enablePublishing")]
+		public bool EnablePublishing { get; set; }
+
         [JsonProperty("hideFieldsetControls")]
         public bool HideFieldsetControls { get; set; }
 

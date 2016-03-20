@@ -23,6 +23,12 @@ namespace Archetype.Models
         [JsonProperty("id")]
         public Guid Id { get; set; }
 
+		[JsonProperty("releaseDate")]
+		public DateTime? ReleaseDate { get; set; }
+
+		[JsonProperty("expireDate")]
+		public DateTime? ExpireDate { get; set; }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ArchetypeFieldsetModel"/> class.
         /// </summary>

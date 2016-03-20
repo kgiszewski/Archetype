@@ -239,18 +239,129 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
             ///&& $scope.model.config.fieldsets.length == 1;
     }
 
+    //helper that returns if an item can use publishing
+    $scope.canPublish = function () {
+        return $scope.model.config.enablePublishing;
+    }
+
+    //helper that returns if the "misc fieldset configuration" section should be visible
+    $scope.canConfigure = function () {
+        // currently the only thing in the "misc fieldset configuration" section is the publishing setup
+        return $scope.canPublish();
+    }
+
+    $scope.showDisableIcon = function (fieldset) {
+        if ($scope.canDisable() == false) {
+            return false;
+        }
+        // disabled state takes precedence over publishing
+        if (fieldset.disabled) {
+            return true;
+        }
+        return $scope.isDisabledByPublishing(fieldset) == false;
+    }
+
+    $scope.showPublishingIcon = function (fieldset) {
+        if ($scope.canPublish() == false) {
+            return false;
+        }
+        // disabled state takes precedence over publishing
+        if (fieldset.disabled) {
+            return false;
+        }
+        return $scope.isDisabledByPublishing(fieldset);
+    }
+
+    //$scope.isDisabled = function(fieldset) {
+    //    if (fieldset.disabled) {
+    //        return true;
+    //    }
+    //    return $scope.isDisabledByPublishing(fieldset);
+    //}
+
+    //$scope.disabledIcon = function(fieldset) {
+    //    if ($scope.isDisabledByPublishing(fieldset)) {
+    //        return "icon-time";
+    //    }
+    //    return "icon-power";
+    //}
+
+    //$scope.hasPublishingPending = function (fieldset) {
+    //    if ($scope.canPublish() === false) {
+    //        return false;
+    //    }
+    //    if (fieldset.expireDateModel && fieldset.expireDateModel.value) {
+    //        // pending expiry?
+    //        return moment(fieldset.expireDateModel.value) > moment();
+    //    }
+    //    if (fieldset.releaseDateModel && fieldset.releaseDateModel.value) {
+    //        // pending release?
+    //        return moment(fieldset.releaseDateModel.value) > moment();
+    //    }
+    //}
+
+    $scope.isDisabledByPublishing = function (fieldset) {
+        if ($scope.canPublish() === false) {
+            return false;
+        }
+        if (fieldset.expireDateModel && fieldset.expireDateModel.value) {
+            // an expired release affects the fieldset
+            return moment() > moment(fieldset.expireDateModel.value);
+            // this fieldset is either expired or will expire - both cases affects the fieldset
+            //return true;
+        }
+        if (fieldset.releaseDateModel && fieldset.releaseDateModel.value) {
+            // a pending release affects the fieldset
+            return moment(fieldset.releaseDateModel.value) > moment();
+        }
+        return false;
+    }
+
+    $scope.isDisabled = function(fieldset) {
+        if (fieldset.disabled) {
+            return true;
+        }
+        if ($scope.canPublish() === false) {
+            return false;
+        }
+        if (fieldset.expireDateModel && fieldset.expireDateModel.value) {
+            // expired?
+            return moment() > moment(fieldset.expireDateModel.value);
+        }
+        if (fieldset.releaseDateModel && fieldset.releaseDateModel.value) {
+            // pending release?
+            return moment(fieldset.releaseDateModel.value) > moment();
+        }
+    }
+
     //helper, ini the render model from the server (model.value)
     function init() {
         $scope.model.value = removeNulls($scope.model.value);
-        addDefaultProperties($scope.model.value.fieldsets);
+        addDefaultProperties();
     }
 
-    function addDefaultProperties(fieldsets)
+    function addDefaultProperties()
     {
-        _.each(fieldsets, function (fieldset)
+        _.each($scope.model.value.fieldsets, function (fieldset)
         {
             fieldset.collapse = false;
             fieldset.isValid = true;
+        });
+    }
+
+    function addCustomProperties() {
+        _.each($scope.model.value.fieldsets, function (fieldset) {
+            // create models for publish configuration
+            fieldset.releaseDateModel = {
+                alias: _.uniqueId("archetypeReleaseDate_"),
+                view: "datepicker",
+                value: fieldset.releaseDate
+            };
+            fieldset.expireDateModel = {
+                alias: _.uniqueId("archetypeExpireDate_"),
+                view: "datepicker",
+                value: fieldset.expireDate
+            };
         });
     }
 
@@ -361,6 +472,8 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
 
         // reset submit watcher counter on save
         $scope.activeSubmitWatcher = 0;
+
+        addCustomProperties();
     });
 
     //helper to count what is visible
@@ -471,6 +584,12 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
         return $scope.activeSubmitWatcher;
     }
     $scope.submitWatcherOnSubmit = function () {
+        _.each($scope.model.value.fieldsets, function(fieldset) {
+            // extract the publish configuration from the fieldsets
+            fieldset.releaseDate = fieldset.releaseDateModel.value;
+            fieldset.expireDate = fieldset.expireDateModel.value;
+        });
+        console.log("submitWatcherOnSubmit", $scope.model.value.fieldsets);
         $scope.$broadcast("archetypeFormSubmitting");
     }
 });

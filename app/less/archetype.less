@@ -43,6 +43,18 @@
         &.icon-delete:hover {
             color: #b94a48;
         }
+        &.icon-disabled {
+            cursor: default;
+            &:hover {
+                color: #ddd;
+            }
+        }
+        &.icon-active {
+            color: #333;
+            &:hover {
+                color: #333;
+            }
+        }
     }
 
     .fieldsetIcon {
@@ -75,6 +87,19 @@
                     color: #d9d9d9;
                 }
 
+            }
+            
+            .publishOptions {
+                .publishDate {
+                    display: inline-block;
+                    vertical-align: top;
+                    margin-right: 20px;
+                    
+                    label {
+                        padding: 0 !important;
+                        margin: 0 !important;
+                    }
+                }
             }
         }
 

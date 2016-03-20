@@ -8,7 +8,7 @@
                     <div ng-click="focusFieldset(fieldset)" class="label-sub module-label">
                         <span class="caret" ng-hide="fieldset.collapse || !model.config.enableCollapsing"></span>
                         <span class="caret caret-right" ng-show="fieldset.collapse && model.config.enableCollapsing"></span>
-                        <label ng-class="{dimmed: fieldset.disabled}">
+                        <label ng-class="{dimmed: isDisabled(fieldset)}">
                             <i class="fieldsetIcon icon ng-class:fieldsetConfigModel.icon"></i>
                             <span ng-bind="getFieldsetTitle(fieldsetConfigModel, $index)"></span>
                         </label>
@@ -17,7 +17,8 @@
                         <i class="icon icon-add" ng-show="canAdd()" ng-click="openFieldsetPicker($index, $event)"></i>
                         <i class="icon icon-navigation handle" ng-show="canSort()"></i>
                         <i class="icon icon-documents" ng-click="cloneRow($index)" ng-show="canClone()"></i>
-                        <i class="icon icon-power" ng-click="enableDisable(fieldset)" ng-show="canDisable()"></i>
+                        <i class="icon icon-power" ng-class="{'icon-active': fieldset.disabled}" ng-click="enableDisable(fieldset)" ng-show="showDisableIcon(fieldset)"></i>
+                        <i class="icon icon-time icon-disabled" ng-class="{'icon-active': isDisabledByPublishing(fieldset)}" ng-show="showPublishingIcon(fieldset)"></i>
                         <i class="icon icon-delete" ng-click="removeRow($index)" ng-show="canRemove()"></i>
                     </div>
                 </div>
@@ -34,6 +35,32 @@
                             <div ng-class="[(model.config.hidePropertyLabels == '1' ? 'controls-no-label' : 'controls')]">
                                 <archetype-property class="archetypeEditor" property="property" property-editor-alias="model.alias" fieldset-index="$parent.$index" fieldset="fieldset" archetype-config="model.config" property-config-index="$index" archetype-render-model="model.value" umbraco-form="form"></archetype-property>
                                 <archetype-submit-watcher active-submit-watcher="activeSubmitWatcher" load-callback="submitWatcherOnLoad" submit-callback="submitWatcherOnSubmit"></archetype-submit-watcher>
+                            </div>
+                        </div>
+                        <div class="archetypeProperty control-group" ng-show="canConfigure()">
+                            <!-- misc fieldset configuration goes below this line -->
+                            <hr />
+                            <div ng-show="canPublish()">
+                                <label ng-hide="model.config.hidePropertyLabels == '1'" class="control-label">
+                                    <span><archetype-localize key="publish">Publishing</archetype-localize></span>
+                                    <div class="archetypeFieldsetHelpText">
+                                        <small><archetype-localize key="publishHelpText">Configure automatic publishing and/or unpublishing of this item</archetype-localize></small>
+                                    </div>
+                                </label>
+                                <div class="publishOptions" ng-class="[(model.config.hidePropertyLabels == '1' ? 'controls-no-label' : 'controls')]">
+                                    <div class="publishDate">
+                                        <label for="{{fieldset.releaseDateModel.alias}}">
+                                            <archetype-localize key="publishReleaseDate">Publish at</archetype-localize>
+                                        </label>
+                                        <umb-editor model="fieldset.releaseDateModel"></umb-editor>
+                                    </div>
+                                    <div class="publishDate">
+                                        <label for="{{fieldset.expireDateModel.alias}}">
+                                            <archetype-localize key="publishExpireDate">Unpublish at</archetype-localize>
+                                        </label>
+                                        <umb-editor model="fieldset.expireDateModel"></umb-editor>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </form>
