@@ -589,7 +589,6 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
             fieldset.releaseDate = fieldset.releaseDateModel.value;
             fieldset.expireDate = fieldset.expireDateModel.value;
         });
-        console.log("submitWatcherOnSubmit", $scope.model.value.fieldsets);
         $scope.$broadcast("archetypeFormSubmitting");
     }
 });

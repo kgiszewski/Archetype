@@ -125,7 +125,7 @@ module.exports = function(grunt) {
         expand: true
       },
       dll: {
-        cwd: 'app/Umbraco/Umbraco.Archetype/bin/Debug/',
+        cwd: 'app/Umbraco/Umbraco.Archetype/bin/Release/',
         src: 'Archetype.dll',
         dest: '<%= dest %>/bin/',
         expand: true
