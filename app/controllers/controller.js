@@ -148,6 +148,8 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
                 }
             }
 
+            addCustomPropertiesToFieldset(newFieldset);
+
             $scope.setDirty();
 
             $scope.$broadcast("archetypeAddFieldset", {index: $index, visible: countVisible()});
@@ -316,18 +318,22 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
 
     function addCustomProperties() {
         _.each($scope.model.value.fieldsets, function (fieldset) {
-            // create models for publish configuration
-            fieldset.releaseDateModel = {
-                alias: _.uniqueId("archetypeReleaseDate_"),
-                view: "datepicker",
-                value: fieldset.releaseDate
-            };
-            fieldset.expireDateModel = {
-                alias: _.uniqueId("archetypeExpireDate_"),
-                view: "datepicker",
-                value: fieldset.expireDate
-            };
+            addCustomPropertiesToFieldset(fieldset);
         });
+    }
+
+    function addCustomPropertiesToFieldset(fieldset) {
+        // create models for publish configuration
+        fieldset.releaseDateModel = {
+            alias: _.uniqueId("archetypeReleaseDate_"),
+            view: "datepicker",
+            value: fieldset.releaseDate
+        };
+        fieldset.expireDateModel = {
+            alias: _.uniqueId("archetypeExpireDate_"),
+            view: "datepicker",
+            value: fieldset.expireDate
+        };
     }
 
     //helper to get the correct fieldset from config
