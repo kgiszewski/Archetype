@@ -362,8 +362,10 @@
 
     .archetypeFieldsetOption {
         margin-bottom: 15px;
+        margin-right: 15px;
         input[type=text]{
-            max-width: 300px;
+            max-width: 100%;
+            width: 100%;
         }
     }
 
@@ -374,15 +376,20 @@
         height: 130px;
     }
 
-    .archetypeOptions label{
-        width: 400px;
+    .archetypeOptions {
+        .btn {
+            margin-bottom: 5px;
+        }
+
+        label{
+            width: 400px;
+        }
     }
 
     .archetypePropertiesWrapper {
         border: 1px solid #ddd;
         padding: 8px;
         margin: -40px 10px 10px 140px;
-        max-width: 475px;
 
         ul {
             padding: 0;
@@ -395,12 +402,13 @@
             background-color: #eee;
 
             input[type=text] {
-                max-width: 190px;
-                width: auto;
+                max-width: 100%;
+                width: 100%;
             }
 
             select {
-                max-width: 160px;
+                max-width: 100%;
+                width: 100%;
             }
         }
 
@@ -411,6 +419,10 @@
 
     .archetypeAdvancedOptions {
         label {
+            width: 100%;
+        }
+        
+        input[type=text] {
             width: 100%;
         }
 
@@ -460,8 +472,10 @@
 
     .archetypePropertyCollapser {
         margin-top: 10px;
+        
         div {
             margin-bottom: 10px;
+            margin-right: 15px;
         }
     }
 
