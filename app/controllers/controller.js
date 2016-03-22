@@ -470,7 +470,7 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
         $scope.activeSubmitWatcher++;
         return $scope.activeSubmitWatcher;
     }
-    $scope.submitWatcherOnSubmit = function () {
-        $scope.$broadcast("archetypeFormSubmitting");
+    $scope.submitWatcherOnSubmit = function (args) {
+        $scope.$broadcast("archetypeFormSubmitting", args);
     }
 });
