@@ -557,13 +557,13 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
         $scope.activeSubmitWatcher++;
         return $scope.activeSubmitWatcher;
     }
-    $scope.submitWatcherOnSubmit = function () {
+    $scope.submitWatcherOnSubmit = function (args) {
         _.each($scope.model.value.fieldsets, function(fieldset) {
             // extract the publish configuration from the fieldsets (and convert local datetimes to UTC)
             fieldset.releaseDate = toUtc(fieldset.releaseDateModel.value);
             fieldset.expireDate = toUtc(fieldset.expireDateModel.value);
         });
-        $scope.$broadcast("archetypeFormSubmitting");
+        $scope.$broadcast("archetypeFormSubmitting", args);
     }
 
     function toUtc(date) {
