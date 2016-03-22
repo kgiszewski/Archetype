@@ -281,6 +281,8 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
         if ($scope.canPublish() === false) {
             return false;
         }
+        // NOTE: all comparison is done in local datetime
+        //       - that's fine because the selected local datetimes will be converted to UTC datetimes when submitted
         if (fieldset.expireDateModel && fieldset.expireDateModel.value) {
             // an expired release affects the fieldset
             return moment() > moment(fieldset.expireDateModel.value);
@@ -321,16 +323,18 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
     }
 
     function addCustomPropertiesToFieldset(fieldset) {
-        // create models for publish configuration
+
+        // create models for publish configuration (utilizing the built-in datepicker data type)
+        // NOTE: all datetimes must be converted from UTC to local
         fieldset.releaseDateModel = {
             alias: _.uniqueId("archetypeReleaseDate_"),
             view: "datepicker",
-            value: fieldset.releaseDate
+            value: fromUtc(fieldset.releaseDate)
         };
         fieldset.expireDateModel = {
             alias: _.uniqueId("archetypeExpireDate_"),
             view: "datepicker",
-            value: fieldset.expireDate
+            value: fromUtc(fieldset.expireDate)
         };
     }
 
@@ -555,10 +559,24 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
     }
     $scope.submitWatcherOnSubmit = function () {
         _.each($scope.model.value.fieldsets, function(fieldset) {
-            // extract the publish configuration from the fieldsets
-            fieldset.releaseDate = fieldset.releaseDateModel.value;
-            fieldset.expireDate = fieldset.expireDateModel.value;
+            // extract the publish configuration from the fieldsets (and convert local datetimes to UTC)
+            fieldset.releaseDate = toUtc(fieldset.releaseDateModel.value);
+            fieldset.expireDate = toUtc(fieldset.expireDateModel.value);
         });
         $scope.$broadcast("archetypeFormSubmitting");
+    }
+
+    function toUtc(date) {
+        if (!date) {
+            return null;
+        }
+        return moment(date, "YYYY-MM-DD HH:mm:ss").utc().toDate();
+    }
+
+    function fromUtc(date) {
+        if (!date) {
+            return null;
+        }
+        return moment(moment.utc(date).toDate()).format("YYYY-MM-DD HH:mm:ss")
     }
 });

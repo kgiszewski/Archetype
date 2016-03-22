@@ -142,8 +142,8 @@ namespace Archetype.Models
 	    internal bool IsDisabled()
 	    {
 		    return Disabled
-		           || (ReleaseDate.HasValue && ReleaseDate > DateTime.Now)
-		           || (ExpireDate.HasValue && DateTime.Now > ExpireDate);
+		           || (ReleaseDate.HasValue && ReleaseDate > DateTime.UtcNow)
+				   || (ExpireDate.HasValue && DateTime.UtcNow > ExpireDate);
 	    }
 
         #endregion

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Archetype.Extensions;
+using Archetype.Models;
 using ClientDependency.Core;
 using Newtonsoft.Json;
 using Umbraco.Core;
@@ -175,6 +176,10 @@ namespace Archetype.PropertyEditors
 				var uploadedFiles = editorValue.AdditionalData.ContainsKey("files") ? editorValue.AdditionalData["files"] as IEnumerable<ContentItemFile> : null;
 				foreach (var fieldset in archetype.Fieldsets)
 				{
+					// make sure the publishing dates are in UTC
+					fieldset.ReleaseDate = EnsureUtcDate(fieldset.ReleaseDate);
+					fieldset.ExpireDate = EnsureUtcDate(fieldset.ExpireDate);
+
 					// assign an id to the fieldset if it has none (e.g. newly created fieldset)
 					fieldset.Id = fieldset.Id == Guid.Empty ? Guid.NewGuid() : fieldset.Id;
 					// find the corresponding fieldset in the current Archetype value (if any)
@@ -236,6 +241,20 @@ namespace Archetype.PropertyEditors
 				return dtd.PropertyEditorAlias.Equals(Constants.PropertyEditorAlias)
 					? new ArchetypePropertyEditor()
 					: (PropertyEditor) new TextboxPropertyEditor();
+			}
+
+			/// <summary>
+			/// Ensures that a datetime is in UTC
+			/// </summary>
+			/// <param name="dateTime">The datetime</param>
+			/// <returns>The datetime in UTC (or null if it's not set)</returns>
+			private DateTime? EnsureUtcDate(DateTime? dateTime)
+			{
+				if(dateTime.HasValue == false || dateTime.Value.Kind == DateTimeKind.Utc)
+				{
+					return dateTime;
+				}
+				return new DateTime(dateTime.Value.Ticks, DateTimeKind.Utc);
 			}
 		}
 
