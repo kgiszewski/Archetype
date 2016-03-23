@@ -304,20 +304,20 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
     //helper, ini the render model from the server (model.value)
     function init() {
         $scope.model.value = removeNulls($scope.model.value);
-        addDefaultProperties();
+        addDefaultProperties($scope.model.value.fieldsets);
     }
 
-    function addDefaultProperties()
+    function addDefaultProperties(fieldsets)
     {
-        _.each($scope.model.value.fieldsets, function (fieldset)
+        _.each(fieldsets, function (fieldset)
         {
             fieldset.collapse = false;
             fieldset.isValid = true;
         });
     }
 
-    function addCustomProperties() {
-        _.each($scope.model.value.fieldsets, function (fieldset) {
+    function addCustomProperties(fieldsets) {
+        _.each(fieldsets, function (fieldset) {
             addCustomPropertiesToFieldset(fieldset);
         });
     }
@@ -447,7 +447,7 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
         $scope.activeSubmitWatcher = 0;
 
         // create properties needed for the backoffice to work (data that is not serialized to DB)
-        addCustomProperties();
+        addCustomProperties($scope.model.value.fieldsets);
     });
 
     //helper to count what is visible
