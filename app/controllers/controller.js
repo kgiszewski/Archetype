@@ -336,6 +336,12 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
             view: "datepicker",
             value: fromUtc(fieldset.expireDate)
         };
+        // create model for allowed member groups
+        fieldset.allowedMemberGroupsModel = {
+            alias: _.uniqueId("archetypeAllowedMemberGroups_"),
+            view: "membergrouppicker",
+            value: fieldset.allowedMemberGroups
+        };
     }
 
     //helper to get the correct fieldset from config
@@ -562,6 +568,8 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
             // extract the publish configuration from the fieldsets (and convert local datetimes to UTC)
             fieldset.releaseDate = toUtc(fieldset.releaseDateModel.value);
             fieldset.expireDate = toUtc(fieldset.expireDateModel.value);
+            // extract the allowed member groups 
+            fieldset.allowedMemberGroups = fieldset.allowedMemberGroupsModel.value;
         });
         $scope.$broadcast("archetypeFormSubmitting", args);
     }

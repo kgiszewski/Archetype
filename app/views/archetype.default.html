@@ -47,7 +47,7 @@
                             </div>
                             <div class="settings" ng-show="showSettings">
                                 <!-- misc fieldset settings go here -->
-                                <div ng-show="canPublish()">
+                                <div ng-show="canPublish()" class="control-group">
                                     <label ng-hide="model.config.hidePropertyLabels == '1'" class="control-label">
                                         <span><archetype-localize key="publish">Publishing</archetype-localize></span>
                                         <div class="archetypeFieldsetHelpText">
@@ -67,6 +67,17 @@
                                             </label>
                                             <umb-editor model="fieldset.expireDateModel"></umb-editor>
                                         </div>
+                                    </div>
+                                </div>
+                                <div class="control-group allowedGroups">
+                                    <label ng-hide="model.config.hidePropertyLabels == '1'" class="control-label">
+                                        <span><archetype-localize key="allowedGroups">Allowed groups</archetype-localize></span>
+                                        <div class="archetypeFieldsetHelpText">
+                                            <small><archetype-localize key="allowedGroupsHelpText">Limit access to this fieldset by choosing the groups that should have access. Leave empty to allow all groups.</archetype-localize></small>
+                                        </div>
+                                    </label>
+                                    <div ng-class="[(model.config.hidePropertyLabels == '1' ? 'controls-no-label' : 'controls')]">
+                                        <umb-editor model="fieldset.allowedGroupsModel"></umb-editor>
                                     </div>
                                 </div>
                             </div>
