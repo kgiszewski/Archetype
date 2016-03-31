@@ -13,7 +13,7 @@ https://github.com/kgiszewski/ArchetypeManual
 Follow us on Twitter https://twitter.com/ArchetypeKit
 
 ##Core Team##
-* Kevin Giszewski (founder) - University of Notre Dame - https://kevin.giszewski.com/
+* Kevin Giszewski (founder/project lead) - University of Notre Dame - https://kevin.giszewski.com/
 * Tom Fulton (founder) - Tonic - http://hellotonic.com/
 * Lee Kelleher - Umbrella - http://www.umbrellainc.co.uk/
 * Matt Brailsford - The Outfield - http://www.theoutfield.co.uk/
