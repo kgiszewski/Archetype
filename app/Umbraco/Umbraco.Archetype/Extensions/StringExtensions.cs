@@ -1,8 +1,15 @@
 namespace Archetype.Extensions
 {
+    /// <summary>
+    /// String extensions.
+    /// </summary>
     public static class StringExtensions
     {
-        //lifted from the core as it is marked 'internal'
+        /// <summary>
+        /// Detects if the input string is JSON.
+        /// </summary>
+        /// <param name="input">The input.</param>
+        /// <returns></returns>
         public static bool DetectIsJson(this string input)
         {
             input = input.Trim();

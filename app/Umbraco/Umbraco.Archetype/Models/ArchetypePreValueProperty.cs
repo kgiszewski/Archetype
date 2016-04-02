@@ -3,6 +3,9 @@ using Newtonsoft.Json;
 
 namespace Archetype.Models
 {
+    /// <summary>
+    /// Model that represents a configured property on an Archetype fieldset.
+    /// </summary>
     public class ArchetypePreValueProperty
     {
         [JsonProperty("alias")]

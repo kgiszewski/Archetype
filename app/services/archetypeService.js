@@ -1,5 +1,4 @@
 angular.module('umbraco.services').factory('archetypeService', function () {
-
     //public
     return {
         //helper that returns a JS ojbect from 'value' string or the original string
@@ -67,6 +66,39 @@ angular.module('umbraco.services').factory('archetypeService', function () {
         },
         getFieldsetProperty: function (scope) {
             return this.getFieldset(scope).properties[scope.renderModelPropertyIndex];
+        },
+        setFieldsetValidity: function (fieldset) {
+            // mark the entire fieldset as invalid if there are any invalid properties in the fieldset, otherwise mark it as valid
+            fieldset.isValid =
+                _.find(fieldset.properties, function (property) {
+                    return property.isValid == false
+                }) == null;
+        },
+        validateProperty: function (fieldset, property, configFieldsetModel) {
+            var propertyConfig = this.getPropertyByAlias(configFieldsetModel, property.alias);
+
+            if (propertyConfig) {
+                // use property.value !== property.value to check for NaN values on numeric inputs
+                if (propertyConfig.required && (property.value == null || property.value === "" || property.value !== property.value)) {
+                    property.isValid = false;
+                }
+                // issue 116: RegEx validate property value
+                // Only validate the property value if anything has been entered - RegEx is considered a supplement to "required".
+                if (property.isValid == true && propertyConfig.regEx && property.value) {
+                    var regEx = new RegExp(propertyConfig.regEx);
+                    if (regEx.test(property.value) == false) {
+                        property.isValid = false;
+                    }
+                }
+            }
+
+            this.setFieldsetValidity(fieldset);
+        },
+        // called when the value of any property in a fieldset changes
+        propertyValueChanged: function (fieldset, property) {
+            // it's the Umbraco way to hide the invalid state when altering an invalid property, even if the new value isn't valid either
+            property.isValid = true;
+            this.setFieldsetValidity(fieldset);
         }
     }
 });

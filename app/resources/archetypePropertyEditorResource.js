@@ -3,24 +3,24 @@ angular.module('umbraco.resources').factory('archetypePropertyEditorResource', f
         getAllDataTypes: function() {
             // Hack - grab DataTypes from Tree API, as `dataTypeService.getAll()` isn't implemented yet
             return umbRequestHelper.resourcePromise(
-                $http.get("/umbraco/backoffice/ArchetypeApi/ArchetypeDataType/GetAll"), 'Failed to retrieve datatypes from tree service'
+                $http.get("backoffice/ArchetypeApi/ArchetypeDataType/GetAll"), 'Failed to retrieve datatypes from tree service'
             );
         },
         getDataType: function (guid, useDeepDatatypeLookup, contentTypeAlias, propertyTypeAlias, archetypeAlias, nodeId) {
             if(useDeepDatatypeLookup) {
             	return umbRequestHelper.resourcePromise(
-            		$http.get("/umbraco/backoffice/ArchetypeApi/ArchetypeDataType/GetByGuid?guid=" + guid + "&contentTypeAlias=" + contentTypeAlias + "&propertyTypeAlias=" + propertyTypeAlias + "&archetypeAlias=" + archetypeAlias + "&nodeId=" + nodeId), 'Failed to retrieve datatype'
+            		$http.get("backoffice/ArchetypeApi/ArchetypeDataType/GetByGuid?guid=" + guid + "&contentTypeAlias=" + contentTypeAlias + "&propertyTypeAlias=" + propertyTypeAlias + "&archetypeAlias=" + archetypeAlias + "&nodeId=" + nodeId), 'Failed to retrieve datatype'
         		);
             }
             else {
                 return umbRequestHelper.resourcePromise(
-                    $http.get("/umbraco/backoffice/ArchetypeApi/ArchetypeDataType/GetByGuid?guid=" + guid , { cache: true }), 'Failed to retrieve datatype'
+                    $http.get("backoffice/ArchetypeApi/ArchetypeDataType/GetByGuid?guid=" + guid , { cache: true }), 'Failed to retrieve datatype'
                 );
             }
         },
         getPropertyEditorMapping: function(alias) {
             return umbRequestHelper.resourcePromise(
-                $http.get("/umbraco/backoffice/ArchetypeApi/ArchetypeDataType/GetAllPropertyEditors", { cache: true }), 'Failed to retrieve datatype mappings'
+                $http.get("backoffice/ArchetypeApi/ArchetypeDataType/GetAllPropertyEditors", { cache: true }), 'Failed to retrieve datatype mappings'
             ).then(function (data) {
                 var result = _.find(data, function(d) {
                     return d.alias === alias;
@@ -31,6 +31,11 @@ angular.module('umbraco.resources').factory('archetypePropertyEditorResource', f
 
                 return "";
             });
+        },
+        getDllVersion: function() {
+            return umbRequestHelper.resourcePromise(
+                $http.get("backoffice/ArchetypeApi/ArchetypeDataType/GetDllVersion", { cache: true }), 'Failed to retrieve dll version'
+            );
         }
     }
 }); 

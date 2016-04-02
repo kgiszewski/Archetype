@@ -1,8 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace Archetype.Models
 {
+    /// <summary>
+    /// Model that represents the configured Archetype options.
+    /// </summary>
     public class ArchetypePreValue
     {
         [JsonProperty("showAdvancedOptions")]
@@ -12,6 +16,7 @@ namespace Archetype.Models
         public bool StartWithAddButton { get; set; }
 
         [JsonProperty("hideFieldsetToolbar")]
+        [Obsolete("This value is no longer used but is kept to prevent breaking changes.")]
         public bool HideFieldsetToolbar { get; set; }
 
         [JsonProperty("enableMultipleFieldsets")]
@@ -37,6 +42,9 @@ namespace Archetype.Models
 
         [JsonProperty("fieldsets")]
         public IEnumerable<ArchetypePreValueFieldset> Fieldsets { get; set; }
+
+        [JsonProperty("fieldsetGroups")]
+        public IEnumerable<ArchetypePreValueFieldsetGroup> FieldsetGroups { get; set; }
 
         [JsonProperty("hidePropertyLabels")]
         public bool HidePropertyLabels { get; set; }

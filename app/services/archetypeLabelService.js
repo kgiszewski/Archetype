@@ -1,11 +1,6 @@
 angular.module('umbraco.services').factory('archetypeLabelService', function (archetypeCacheService) {
     //private
 
-    var isEntityLookupLoading = false;
-    var entityCache = [];
-    var isDatatypeLookupLoading = false;
-    var datatypeCache = [];
-
     function executeFunctionByName(functionName, context) {
         var args = Array.prototype.slice.call(arguments).splice(2);
 
@@ -24,6 +19,7 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
     }
 
     function getNativeLabel(datatype, value, scope) {
+
     	switch (datatype.selectedEditor) {
     		case "Imulus.UrlPicker":
     			return imulusUrlPicker(value, scope, {});
@@ -33,9 +29,27 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
                 return coreMntp(value, scope, datatype);
             case "Umbraco.MediaPicker":
                 return coreMediaPicker(value, scope, datatype);
+            case "Umbraco.DropDown":
+                return coreDropdown(value, scope, datatype);
+    	    case "RJP.MultiUrlPicker":
+    	        return rjpMultiUrlPicker(value, scope, {});
     		default:
     			return "";
     	}
+    }
+
+    function coreDropdown(value, scope, args) {
+
+        if(!value)
+            return "";
+
+        var prevalue = args.preValues[0].value[value];
+
+        if(prevalue) {
+            return prevalue.value;
+        }
+
+        return "";
     }
 
     function coreMntp(value, scope, args) {
@@ -128,7 +142,7 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
         }
 
         var suffix = "";
-        var strippedText = $(value).text();
+        var strippedText = $("<div/>").html(value).text();
 
         if(strippedText.length > args.contentLength) {
         	suffix = "…";
@@ -137,6 +151,18 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
         return strippedText.substring(0, args.contentLength) + suffix;
     }
 
+	function rjpMultiUrlPicker(values, scope, args) {
+        var names = [];
+
+        _.each(values, function (value) {
+            if (value.name) {
+                names.push(value.name);
+            }
+        });
+
+        return names.join(", ");
+    }
+	
 	return {
 		getFieldsetTitle: function(scope, fieldsetConfigModel, fieldsetIndex) {
 
@@ -152,14 +178,24 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
             if (template.length < 1)
                 return fieldsetConfig.label;
 
-            var rgx = /{{([^)].*)}}/g;
+            var rgx = /({{(.*?)}})*/g;
             var results;
             var parsedTemplate = template;
 
-            while ((results = rgx.exec(template)) !== null) {
+            var rawMatches = template.match(rgx);
+            
+            var matches = [];
+
+            _.each(rawMatches, function(match){
+                if(match) {
+                    matches.push(match);
+                }
+            });
+
+            _.each(matches, function (match) {
 
                 // split the template in case it consists of multiple property aliases and/or functions
-                var templates = results[0].replace("{{", '').replace("}}", '').split("|");
+                var templates = match.replace("{{", '').replace("}}", '').split("|");
                 var templateLabelValue = "";
 
                 for(var i = 0; i < templates.length; i++) {
@@ -209,7 +245,7 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
 
                         if(propertyConfig) {
                         	var datatype = archetypeCacheService.getDatatypeByGuid(propertyConfig.dataTypeGuid);
-                        	
+
                         	if(datatype) {
 
                             	//try to get built-in label
@@ -229,8 +265,13 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
 
                     }                
                 }
-                parsedTemplate = parsedTemplate.replace(results[0], templateLabelValue);
-            }
+
+                if(!templateLabelValue) {
+                    templateLabelValue = "";
+                }
+                
+                parsedTemplate = parsedTemplate.replace(match, templateLabelValue);
+            });
 
             return parsedTemplate;
         }

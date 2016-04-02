@@ -9,6 +9,9 @@ using Umbraco.Web;
 
 namespace Archetype.Models
 {
+    /// <summary>
+    /// Model that represents a stored property in Archetype.
+    /// </summary>
     public class ArchetypePropertyModel
     {
         [JsonProperty("alias")]
@@ -26,12 +29,20 @@ namespace Archetype.Models
         [JsonProperty("dataTypeGuid")]
         internal string DataTypeGuid { get; set; }
 
+        // container for temporary editor state from the Umbraco backend
+        [JsonProperty("editorState")]
+        internal UmbracoEditorState EditorState { get; set; }
+
         [JsonProperty("hostContentType")]
         internal PublishedContentType HostContentType { get; set; }
 
+        /// <summary>
+        /// Gets the value based on the type given.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
         public T GetValue<T>()
         {
-
             // Try Umbraco's PropertyValueConverters
             var converters = UmbracoContext.Current != null ? PropertyValueConvertersResolver.Current.Converters : Enumerable.Empty<IPropertyValueConverter>();
             if (!string.IsNullOrWhiteSpace(this.PropertyEditorAlias) && converters.Any())
@@ -53,6 +64,13 @@ namespace Archetype.Models
             return default(T);
         }
 
+        /// <summary>
+        /// Tries to convert the value with property value converters.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="value">The value.</param>
+        /// <param name="converters">The converters.</param>
+        /// <returns></returns>
         private Attempt<T> TryConvertWithPropertyValueConverters<T>(object value, IEnumerable<IPropertyValueConverter> converters)
         {
             var properyType = this.CreateDummyPropertyType();
@@ -87,6 +105,16 @@ namespace Archetype.Models
             }
 
             return Attempt<T>.Fail();
+        }
+
+        /// <summary>
+        /// Model that represents the current UmbracoEditorState
+        /// </summary>
+        internal class UmbracoEditorState
+        {
+            // container for the names of any files selected for a property in the Umbraco backend
+            [JsonProperty("fileNames")]
+            public IEnumerable<string> FileNames;
         }
     }
 }

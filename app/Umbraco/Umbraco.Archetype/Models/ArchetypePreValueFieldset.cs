@@ -3,6 +3,9 @@ using Newtonsoft.Json;
 
 namespace Archetype.Models
 {
+    /// <summary>
+    /// Model that represents configured Archetype fieldsets.
+    /// </summary>
     public class ArchetypePreValueFieldset
     {
         [JsonProperty("alias")]
@@ -25,5 +28,8 @@ namespace Archetype.Models
 
         [JsonProperty("properties")]
         public IEnumerable<ArchetypePreValueProperty> Properties { get; set; }
+
+        [JsonProperty("group")]
+        public ArchetypePreValueFieldsetGroup Group { get; set; }
     }
 }

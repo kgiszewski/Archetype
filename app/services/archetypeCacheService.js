@@ -3,6 +3,7 @@ angular.module('umbraco.services').factory('archetypeCacheService', function (ar
 
     var isEntityLookupLoading = false;
     var entityCache = [];
+
     var isDatatypeLookupLoading = false;
     var datatypeCache = [];
 
