@@ -313,9 +313,13 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
         dialogService.open({
             template: template,
             show: true,
-            callback: function(data) {
+            callback: function (data) {
+                // replace the entire render model if it was changed (in developer options)
+                if (data.model && data.modelChanged) {
+                    $scope.archetypeConfigRenderModel = data.model;
+                }
             },
-            dialogData: $scope.archetypeConfigRenderModel
+            dialogData: { model: $scope.archetypeConfigRenderModel }
         });
     }
 

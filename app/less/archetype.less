@@ -33,30 +33,6 @@
         margin-left: 0;
     }
 
-    .icon {
-        color: #ddd;
-        padding: 2px;
-        font-size: 16px;
-        &:hover {
-            color: #333;
-        }
-        &.icon-delete:hover {
-            color: #b94a48;
-        }
-        &.icon-disabled {
-            cursor: default;
-            &:hover {
-                color: #ddd;
-            }
-        }
-        &.icon-active {
-            color: #333;
-            &:hover {
-                color: #333;
-            }
-        }
-    }
-
     .fieldsetIcon {
         float: left;
         padding: 0 4px 0 0;
@@ -190,6 +166,30 @@
                 position: absolute;
                 right: 15px;
                 top: 0;
+
+                .icon {
+                    color: #ddd;
+                    padding: 2px;
+                    font-size: 16px;
+                    &:hover {
+                        color: #333;
+                    }
+                    &.icon-delete:hover {
+                        color: #b94a48;
+                    }
+                    &.icon-disabled {
+                        cursor: default;
+                        &:hover {
+                            color: #ddd;
+                        }
+                    }
+                    &.icon-active {
+                        color: #333;
+                        &:hover {
+                            color: #333;
+                        }
+                    }
+                }
             }
             
             &:hover {
