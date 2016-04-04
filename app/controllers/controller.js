@@ -583,10 +583,6 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
         });
     });
 
-    // we need to hook into this event for saving back the custom properties, because of the lazy loading of property editors 
-    $scope.$on("formSubmitting", function(ev, args) {
-    });
-
     function toUtc(date) {
         if (!date) {
             return null;
