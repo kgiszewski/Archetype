@@ -69,15 +69,15 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="control-group allowedGroups">
+                                <div ng-show="canUseMemberGroups()" class="control-group allowedGroups">
                                     <label ng-hide="model.config.hidePropertyLabels == '1'" class="control-label">
-                                        <span><archetype-localize key="allowedGroups">Allowed groups</archetype-localize></span>
+                                        <span><archetype-localize key="allowedMemberGroups">Allowed member groups</archetype-localize></span>
                                         <div class="archetypeFieldsetHelpText">
-                                            <small><archetype-localize key="allowedGroupsHelpText">Limit access to this fieldset by choosing the groups that should have access. Leave empty to allow all groups.</archetype-localize></small>
+                                            <small><archetype-localize key="allowedMemberGroupsHelpText">Choose the member groups that should be allowed to see this item. Leave empty to allow all member groups.</archetype-localize></small>
                                         </div>
                                     </label>
                                     <div ng-class="[(model.config.hidePropertyLabels == '1' ? 'controls-no-label' : 'controls')]">
-                                        <umb-editor model="fieldset.allowedGroupsModel"></umb-editor>
+                                        <umb-editor model="fieldset.allowedMemberGroupsModel"></umb-editor>
                                     </div>
                                 </div>
                             </div>

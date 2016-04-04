@@ -246,10 +246,14 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
         return $scope.model.config.enablePublishing;
     }
 
+    $scope.canUseMemberGroups = function() {
+        return $scope.model.config.enableMemberGroups;
+    }
+
     //helper that returns if the "misc fieldset configuration" section should be visible
     $scope.canConfigure = function () {
-        // currently the only thing in the "misc fieldset configuration" section is the publishing setup
-        return $scope.canPublish();
+        // currently the "misc fieldset configuration" section contains the publishing and the member groups setup
+        return $scope.canPublish() || $scope.canUseMemberGroups();
     }
 
     $scope.showDisableIcon = function (fieldset) {
@@ -573,6 +577,10 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
         });
         $scope.$broadcast("archetypeFormSubmitting", args);
     }
+
+    // we need to hook into this event for saving back the custom properties, because of the lazy loading of property editors 
+    $scope.$on("formSubmitting", function(ev, args) {
+    });
 
     function toUtc(date) {
         if (!date) {
