@@ -568,15 +568,20 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
         return $scope.activeSubmitWatcher;
     }
     $scope.submitWatcherOnSubmit = function (args) {
-        _.each($scope.model.value.fieldsets, function(fieldset) {
+        $scope.$broadcast("archetypeFormSubmitting", args);
+    }
+
+    // we need to hook into this event to save the custom fieldset properties because the lazy loading 
+    // of property editors means that the submitWatcherOnSubmit won't necessarily be fired
+    $scope.$on("formSubmitting", function(ev, args) {
+        _.each($scope.model.value.fieldsets, function (fieldset) {
             // extract the publish configuration from the fieldsets (and convert local datetimes to UTC)
             fieldset.releaseDate = toUtc(fieldset.releaseDateModel.value);
             fieldset.expireDate = toUtc(fieldset.expireDateModel.value);
             // extract the allowed member groups 
             fieldset.allowedMemberGroups = fieldset.allowedMemberGroupsModel.value;
         });
-        $scope.$broadcast("archetypeFormSubmitting", args);
-    }
+    });
 
     // we need to hook into this event for saving back the custom properties, because of the lazy loading of property editors 
     $scope.$on("formSubmitting", function(ev, args) {
