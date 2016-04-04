@@ -23,6 +23,12 @@ namespace Archetype.Models
         [JsonProperty("id")]
         public Guid Id { get; set; }
 
+        [JsonProperty("releaseDate")]
+        public DateTime? ReleaseDate { get; set; }
+
+        [JsonProperty("expireDate")]
+        public DateTime? ExpireDate { get; set; }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ArchetypeFieldsetModel"/> class.
         /// </summary>
@@ -127,6 +133,17 @@ namespace Archetype.Models
         private ArchetypePropertyModel GetProperty(string propertyAlias)
         {
             return Properties.FirstOrDefault(p => p.Alias.InvariantEquals(propertyAlias));
+        }
+
+        /// <summary>
+        /// Is this fieldset disabled, either explicitly or by other means?
+        /// </summary>
+        /// <returns>true if this fieldset is disabled, false otherwise</returns>
+        internal bool IsDisabled()
+        {
+            return Disabled
+                   || (ReleaseDate.HasValue && ReleaseDate > DateTime.UtcNow)
+                   || (ExpireDate.HasValue && DateTime.UtcNow > ExpireDate);
         }
 
         #endregion

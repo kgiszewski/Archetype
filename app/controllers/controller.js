@@ -148,6 +148,8 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
                 }
             }
 
+            addCustomPropertiesToFieldset(newFieldset);
+
             $scope.setDirty();
 
             $scope.$broadcast("archetypeAddFieldset", {index: $index, visible: countVisible()});
@@ -239,6 +241,66 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
             ///&& $scope.model.config.fieldsets.length == 1;
     }
 
+    //helper that returns if an item can use publishing
+    $scope.canPublish = function () {
+        return $scope.model.config.enablePublishing;
+    }
+
+    //helper that returns if the "misc fieldset configuration" section should be visible
+    $scope.canConfigure = function () {
+        // currently the only thing in the "misc fieldset configuration" section is the publishing setup
+        return $scope.canPublish();
+    }
+
+    $scope.showDisableIcon = function (fieldset) {
+        if ($scope.canDisable() == false) {
+            return false;
+        }
+        // disabled state takes precedence over publishing
+        if (fieldset.disabled) {
+            return true;
+        }
+        return $scope.isDisabledByPublishing(fieldset) == false;
+    }
+
+    $scope.showPublishingIcon = function (fieldset) {
+        if ($scope.canPublish() == false) {
+            return false;
+        }
+        if ($scope.canDisable()) {
+            // disabled state takes precedence over publishing
+            if (fieldset.disabled) {
+                return false;
+            }
+            return $scope.isDisabledByPublishing(fieldset);
+        }
+        return true;
+    }
+
+    $scope.isDisabledByPublishing = function (fieldset) {
+        if ($scope.canPublish() === false) {
+            return false;
+        }
+        // NOTE: all comparison is done in local datetime
+        //       - that's fine because the selected local datetimes will be converted to UTC datetimes when submitted
+        if (fieldset.expireDateModel && fieldset.expireDateModel.value) {
+            // an expired release affects the fieldset
+            return moment() > moment(fieldset.expireDateModel.value);
+        }
+        if (fieldset.releaseDateModel && fieldset.releaseDateModel.value) {
+            // a pending release affects the fieldset
+            return moment(fieldset.releaseDateModel.value) > moment();
+        }
+        return false;
+    }
+
+    $scope.isDisabled = function(fieldset) {
+        if (fieldset.disabled) {
+            return true;
+        }
+        return $scope.isDisabledByPublishing(fieldset);
+    }
+
     //helper, ini the render model from the server (model.value)
     function init() {
         $scope.model.value = removeNulls($scope.model.value);
@@ -252,6 +314,28 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
             fieldset.collapse = false;
             fieldset.isValid = true;
         });
+    }
+
+    function addCustomProperties(fieldsets) {
+        _.each(fieldsets, function (fieldset) {
+            addCustomPropertiesToFieldset(fieldset);
+        });
+    }
+
+    function addCustomPropertiesToFieldset(fieldset) {
+
+        // create models for publish configuration (utilizing the built-in datepicker data type)
+        // NOTE: all datetimes must be converted from UTC to local
+        fieldset.releaseDateModel = {
+            alias: _.uniqueId("archetypeReleaseDate_"),
+            view: "datepicker",
+            value: fromUtc(fieldset.releaseDate)
+        };
+        fieldset.expireDateModel = {
+            alias: _.uniqueId("archetypeExpireDate_"),
+            view: "datepicker",
+            value: fromUtc(fieldset.expireDate)
+        };
     }
 
     //helper to get the correct fieldset from config
@@ -361,6 +445,9 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
 
         // reset submit watcher counter on save
         $scope.activeSubmitWatcher = 0;
+
+        // create properties needed for the backoffice to work (data that is not serialized to DB)
+        addCustomProperties($scope.model.value.fieldsets);
     });
 
     //helper to count what is visible
@@ -471,6 +558,25 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
         return $scope.activeSubmitWatcher;
     }
     $scope.submitWatcherOnSubmit = function (args) {
+        _.each($scope.model.value.fieldsets, function(fieldset) {
+            // extract the publish configuration from the fieldsets (and convert local datetimes to UTC)
+            fieldset.releaseDate = toUtc(fieldset.releaseDateModel.value);
+            fieldset.expireDate = toUtc(fieldset.expireDateModel.value);
+        });
         $scope.$broadcast("archetypeFormSubmitting", args);
+    }
+
+    function toUtc(date) {
+        if (!date) {
+            return null;
+        }
+        return moment(date, "YYYY-MM-DD HH:mm:ss").utc().toDate();
+    }
+
+    function fromUtc(date) {
+        if (!date) {
+            return null;
+        }
+        return moment(moment.utc(date).toDate()).format("YYYY-MM-DD HH:mm:ss")
     }
 });
