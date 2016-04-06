@@ -76,6 +76,8 @@
             </fieldset>
         </li>
     </ul>
+    <!-- add a submit watcher to make sure the saveCustomFieldsetProperties gets called after formSubmitting -->
+    <archetype-submit-watcher submit-callback="saveCustomFieldsetProperties" force-submit-callback="true"></archetype-submit-watcher>
     <div ng-show="showAddButton()">
         <a class="archetypeAddButton" ng-click="openFieldsetPicker(0, $event)" prevent-default>
             <i class="icon icon-add"></i>

@@ -561,15 +561,13 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
         $scope.$broadcast("archetypeFormSubmitting", args);
     }
 
-    // we need to hook into this event to save the custom fieldset properties because the lazy loading 
-    // of property editors means that the submitWatcherOnSubmit won't necessarily be fired
-    $scope.$on("formSubmitting", function(ev, args) {
+    $scope.saveCustomFieldsetProperties = function () {
         _.each($scope.model.value.fieldsets, function (fieldset) {
             // extract the publish configuration from the fieldsets (and convert local datetimes to UTC)
             fieldset.releaseDate = toUtc(fieldset.releaseDateModel.value);
             fieldset.expireDate = toUtc(fieldset.expireDateModel.value);
         });
-    });
+    }
 
     function toUtc(date) {
         if (!date) {
