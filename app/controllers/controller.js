@@ -277,19 +277,19 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
         return true;
     }
 
-    $scope.isDisabledByPublishing = function (fieldset) {
+    $scope.isDisabledByPublishing = function(fieldset) {
         if ($scope.canPublish() === false) {
             return false;
         }
         // NOTE: all comparison is done in local datetime
         //       - that's fine because the selected local datetimes will be converted to UTC datetimes when submitted
-        if (fieldset.expireDateModel && fieldset.expireDateModel.value) {
+        if (fieldset.expireDateModel && fieldset.expireDateModel.value && (moment() > moment(fieldset.expireDateModel.value))) {
             // an expired release affects the fieldset
-            return moment() > moment(fieldset.expireDateModel.value);
+            return true;
         }
-        if (fieldset.releaseDateModel && fieldset.releaseDateModel.value) {
+        if (fieldset.releaseDateModel && fieldset.releaseDateModel.value && (moment(fieldset.releaseDateModel.value) > moment())) {
             // a pending release affects the fieldset
-            return moment(fieldset.releaseDateModel.value) > moment();
+            return true;
         }
         return false;
     }
@@ -317,13 +317,15 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
     }
 
     function addCustomProperties(fieldsets) {
-        _.each(fieldsets, function (fieldset) {
-            addCustomPropertiesToFieldset(fieldset);
+        // make sure we have loaded moment.js before using it
+        assetsService.loadJs("lib/moment/moment-with-locales.js").then(function() {
+            _.each(fieldsets, function(fieldset) {
+                addCustomPropertiesToFieldset(fieldset);
+            });
         });
     }
 
     function addCustomPropertiesToFieldset(fieldset) {
-
         // create models for publish configuration (utilizing the built-in datepicker data type)
         // NOTE: all datetimes must be converted from UTC to local
         fieldset.releaseDateModel = {
