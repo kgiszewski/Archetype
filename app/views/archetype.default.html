@@ -70,7 +70,7 @@
                                         <archetype-submit-watcher active-submit-watcher="activeSubmitWatcher" load-callback="submitWatcherOnLoad" submit-callback="submitWatcherOnSubmit"></archetype-submit-watcher>
                                     </div>
                                 </div>
-                                <div ng-show="canUseMemberGroups()" class="control-group allowedGroups">
+                                <div ng-if="fieldset.allowedMemberGroupsModel" ng-show="canUseMemberGroups()" class="control-group allowedGroups">
                                     <label ng-hide="model.config.hidePropertyLabels == '1'" class="control-label">
                                         <span><archetype-localize key="allowedMemberGroups">Allowed member groups</archetype-localize></span>
                                         <div class="archetypeFieldsetHelpText">
