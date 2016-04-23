@@ -6,8 +6,7 @@
             <fieldset ng-class="['archetype-fieldset-' + fieldset.alias, (getFieldsetValidity(fieldset) == false ? 'archetypeFieldsetError' : '')]" ng-init="fieldsetConfigModel = getConfigFieldsetByAlias(fieldset.alias)">
                 <div class="archetypeFieldsetLabel" ng-class="{enableCollapsing: model.config.enableCollapsing}">
                     <div ng-click="focusFieldset(fieldset)" class="label-sub module-label">
-                        <span class="caret" ng-hide="fieldset.collapse || !model.config.enableCollapsing"></span>
-                        <span class="caret caret-right" ng-show="fieldset.collapse && model.config.enableCollapsing"></span>
+                        <span class="caret" ng-class="{'caret-right': isCollapsed(fieldset)}" ng-show="model.config.enableCollapsing"></span>
                         <label ng-class="{dimmed: isDisabled(fieldset)}">
                             <i class="fieldsetIcon icon ng-class:fieldsetConfigModel.icon"></i>
                             <span ng-bind="getFieldsetTitle(fieldsetConfigModel, $index)"></span>
@@ -22,7 +21,7 @@
                         <i class="icon icon-delete" ng-click="removeRow($index)" ng-show="canRemove()"></i>
                     </div>
                 </div>
-                <div class="archetypeCollapser animate-hide" ng-hide="model.config.enableCollapsing && isCollapsed(fieldset)" ng-if="!isCollapsed(fieldset)">
+                <div class="archetypeCollapser animate-hide" ng-hide="model.config.enableCollapsing && isCollapsed(fieldset)" ng-if="isLoaded(fieldset)">
                     <form class="form-inline">
                         <div ng-class="[('archetype-property-' + property.alias), (getPropertyValidity($parent.$index, property.alias) === false ? 'archetypePropertyError' : '')]" class="archetypeProperty control-group" ng-repeat="property in fieldsetConfigModel.properties">
                             <label ng-hide="model.config.hidePropertyLabels == '1'" class="control-label" for="archetype-property-{{model.alias}}-f{{$parent.$index}}-{{property.alias}}-p{{$index}}" ng-attr-title="{{ isDebuggingEnabled || model.config.developerMode ? property.alias : null }}">
@@ -47,7 +46,7 @@
                             </div>
                             <div class="settings" ng-show="showSettings">
                                 <!-- misc fieldset settings go here -->
-                                <div ng-show="canPublish()">
+                                <div ng-if="fieldset.releaseDateModel" ng-show="canPublish()">
                                     <label ng-hide="model.config.hidePropertyLabels == '1'" class="control-label">
                                         <span><archetype-localize key="publish">Publishing</archetype-localize></span>
                                         <div class="archetypeFieldsetHelpText">
@@ -67,6 +66,8 @@
                                             </label>
                                             <umb-editor model="fieldset.expireDateModel"></umb-editor>
                                         </div>
+                                        <!-- we need a submit watcher here to make sure the publish dates are saved back to their models -->
+                                        <archetype-submit-watcher active-submit-watcher="activeSubmitWatcher" load-callback="submitWatcherOnLoad" submit-callback="submitWatcherOnSubmit"></archetype-submit-watcher>
                                     </div>
                                 </div>
                             </div>
@@ -76,8 +77,6 @@
             </fieldset>
         </li>
     </ul>
-    <!-- add a submit watcher to make sure the saveCustomFieldsetProperties gets called after formSubmitting -->
-    <archetype-submit-watcher submit-callback="saveCustomFieldsetProperties" force-submit-callback="true"></archetype-submit-watcher>
     <div ng-show="showAddButton()">
         <a class="archetypeAddButton" ng-click="openFieldsetPicker(0, $event)" prevent-default>
             <i class="icon icon-add"></i>
