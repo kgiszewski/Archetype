@@ -51,6 +51,7 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
         axis: 'y',
         cursor: "move",
         handle: ".handle",
+        connectWith: ".archetypeSortable",
         start: function(ev, ui) {
             draggedRteSettings = {};
             $(rteClass, ui.item.parent()).each(function () {
