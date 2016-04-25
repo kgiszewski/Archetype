@@ -483,7 +483,7 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
     });
 
     //helper to count what is visible
-    function countVisible(targetScope)
+    function countVisible()
     {
         return $scope.model.value.fieldsets.length;
     }
