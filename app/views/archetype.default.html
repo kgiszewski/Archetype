@@ -1,7 +1,17 @@
 {{VERSION_HTML}}
 <div class="archetypeEditor ng-class:model.config.customCssClass">
     <textarea class="archetypeDeveloperModel" ng-show="model.config.developerMode" ng-model="model.value"></textarea>
-    <ul ui-sortable="sortableOptions" class="archetypeSortable" ng-model="model.value.fieldsets" ng-show="!showAddButton()">
+
+    <!-- "Add" button. -->
+    <div ng-show="showAddButton()">
+        <a class="archetypeAddButton" ng-click="openFieldsetPicker(0, $event)" prevent-default>
+            <i class="icon icon-add"></i>
+            <archetype-localize key="addFieldset">Add an item</archetype-localize>
+        </a>
+    </div>
+
+    <!-- Fieldsets. -->
+    <ul ui-sortable="sortableOptions" class="archetypeSortable" ng-class="{archetypeEmpty: model.value.fieldsets.length === 0}" ng-model="model.value.fieldsets">
         <li ng-repeat="fieldset in model.value.fieldsets">
             <fieldset ng-class="['archetype-fieldset-' + fieldset.alias, (getFieldsetValidity(fieldset) == false ? 'archetypeFieldsetError' : '')]" ng-init="fieldsetConfigModel = getConfigFieldsetByAlias(fieldset.alias)">
                 <div class="archetypeFieldsetLabel" ng-class="{enableCollapsing: model.config.enableCollapsing}">
@@ -76,12 +86,8 @@
             </fieldset>
         </li>
     </ul>
-    <div ng-show="showAddButton()">
-        <a class="archetypeAddButton" ng-click="openFieldsetPicker(0, $event)" prevent-default>
-            <i class="icon icon-add"></i>
-            <archetype-localize key="addFieldset">Add an item</archetype-localize>
-        </a>
-    </div>
+
+    <!- Fieldset picker. -->
     <div class="usky-grid fieldsetPicker" ng-class="{withGroups: overlayMenu.fieldsetGroups.length > 1}" ng-if="overlayMenu.show">
         <div class="cell-tools-menu" ng-style="overlayMenu.style" delayed-mouseleave="closeFieldsetPicker()" archetype-click-outside="closeFieldsetPicker()">
             <h5>

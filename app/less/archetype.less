@@ -336,6 +336,12 @@
             overflow: hidden;
         }
     }
+
+    // Necessary to ensure empty lists can be dropped onto when sorting nested fieldsets.
+    .archetypeSortable.archetypeEmpty {
+        min-height: 42px;
+        border: 1px dashed #dddddd;
+    }
 }
 
 .archetypeEditor, .archetypeConfig {

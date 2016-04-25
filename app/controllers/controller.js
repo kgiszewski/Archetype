@@ -62,7 +62,34 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
             });
         },
         update: function (ev, ui) {
+
+            // Variables.
+            var targetScope = ui.item.sortable.droptarget.scope();
+            var sourceScope = ui.item.scope();
+            var sameScope = sourceScope === targetScope;
+
+            // Special constraints for when moving between Archetypes.
+            if (sourceScope && !sameScope) {
+
+                // Variables.
+                var canRemove = sourceScope.canRemove();
+                var canAdd = targetScope.canAdd();
+                var inRange = canRemove && canAdd;
+                //TODO: Need to set compatibility based on config.
+                var isCompatible = true;
+                var canUpdate = inRange && isCompatible;
+
+                // If update isn't allowed, cancel the drag operation.
+                if (!canUpdate) {
+                    ui.item.sortable.cancel();
+                    return;
+                }
+
+            }
+
+            // Set scope dirty.
             $scope.setDirty();
+
         },
         stop: function (ev, ui) {
             $(rteClass, ui.item.parent()).each(function () {
@@ -197,18 +224,20 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
     $scope.canAdd = function () {
         if ($scope.model.config.maxFieldsets)
         {
-            return countVisible() < $scope.model.config.maxFieldsets;
+            var visibleCount = countVisible();
+            var maxFieldsets = $scope.model.config.maxFieldsets;
+            return visibleCount < maxFieldsets;
         }
 
         return true;
-    }
+    };
 
     //helper that returns if an item can be removed
     $scope.canRemove = function () {
         return countVisible() > 1 
             || ($scope.model.config.maxFieldsets == 1 && $scope.model.config.fieldsets.length > 1)
             || $scope.model.config.startWithAddButton;
-    }
+    };
 
     $scope.canClone = function () {
 
@@ -227,7 +256,9 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
     //helper that returns if an item can be sorted
     $scope.canSort = function ()
     {
-        return countVisible() > 1;
+        // This is now always true, because sorting can now be done with
+        // nested fieldsets.
+        return true;
     }
 
     //helper that returns if an item can be disabled
@@ -452,7 +483,7 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
     });
 
     //helper to count what is visible
-    function countVisible()
+    function countVisible(targetScope)
     {
         return $scope.model.value.fieldsets.length;
     }
