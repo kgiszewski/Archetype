@@ -5,7 +5,7 @@ angular.module("umbraco.directives").directive('archetypeSubmitWatcher', functio
 
         scope.$on("formSubmitting", function (ev, args) {
             // on the "formSubmitting" event, call the submit callback on scope to notify the Archetype controller to do it's magic
-            if (id == scope.activeSubmitWatcher || scope.forceSubmitCallback) {
+            if (id == scope.activeSubmitWatcher) {
                 scope.submitCallback(args);
             }
         });
@@ -19,8 +19,7 @@ angular.module("umbraco.directives").directive('archetypeSubmitWatcher', functio
         scope: {
             loadCallback: '=',
             submitCallback: '=',
-            activeSubmitWatcher: '=',
-            forceSubmitCallback: '='
+            activeSubmitWatcher: '='
         }
     }
 });

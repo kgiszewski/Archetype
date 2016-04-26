@@ -364,6 +364,12 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
         return fieldset.collapse;
     }
 
+    // added to track loaded fieldsets 
+    $scope.loadedFieldsets = [];
+    $scope.isLoaded = function (fieldset) {
+        return $scope.loadedFieldsets.indexOf(fieldset) >= 0;
+    }
+
     //helper for expanding/collapsing fieldsets
     $scope.focusFieldset = function(fieldset){
         fixDisableSelection();
@@ -386,12 +392,14 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
         if(!fieldset && $scope.model.value.fieldsets.length == 1)
         {
             $scope.model.value.fieldsets[0].collapse = false;
+            $scope.loadedFieldsets.push($scope.model.value.fieldsets[0]);
             return;
         }
 
         if(iniState && fieldset)
         {
             fieldset.collapse = !iniState;
+            $scope.loadedFieldsets.push(fieldset);
         }
     }
 
@@ -447,6 +455,9 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
 
         // reset submit watcher counter on save
         $scope.activeSubmitWatcher = 0;
+
+        // init loaded fieldsets tracking
+        $scope.loadedFieldsets = _.where($scope.model.value.fieldsets, { collapse: false });
 
         // create properties needed for the backoffice to work (data that is not serialized to DB)
         addCustomProperties($scope.model.value.fieldsets);
@@ -563,13 +574,15 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
         $scope.$broadcast("archetypeFormSubmitting", args);
     }
 
-    $scope.saveCustomFieldsetProperties = function () {
+    // we'll use our own "archetypeFormSubmitting" event to save custom properties, as at least some 
+    // of the editors store their values back to the model on the core "formSubmitting" event
+    $scope.$on("archetypeFormSubmitting", function (ev, args) {
         _.each($scope.model.value.fieldsets, function (fieldset) {
             // extract the publish configuration from the fieldsets (and convert local datetimes to UTC)
             fieldset.releaseDate = toUtc(fieldset.releaseDateModel.value);
             fieldset.expireDate = toUtc(fieldset.expireDateModel.value);
         });
-    }
+    });
 
     function toUtc(date) {
         if (!date) {
