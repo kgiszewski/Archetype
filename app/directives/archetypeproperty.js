@@ -93,9 +93,11 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
                         }
                     }
 
-                    //upload, colorpicker datatype hack
-                    if(view.indexOf('fileupload.html') != -1 || view.indexOf('colorpicker.html') != -1) {
+                    //hacks for various built-in datatyps including upload, colorpicker and tags
+                    if (!scope.propertyForm) {
                         scope.propertyForm = scope.form;
+                    }
+                    if (!scope.model.validation) {
                         scope.model.validation = {};
                         scope.model.validation.mandatory = 0;
                     }
