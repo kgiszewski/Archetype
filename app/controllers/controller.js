@@ -72,11 +72,13 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
             if (sourceScope && !sameScope) {
 
                 // Variables.
+                var targetFieldsets = targetScope.model.config.fieldsets;
+                var index = ui.item.sortable.index;
+                var properties = sourceScope.model.value.fieldsets[index].properties;
                 var canRemove = sourceScope.canRemove();
                 var canAdd = targetScope.canAdd();
                 var inRange = canRemove && canAdd;
-                //TODO: Need to set compatibility based on config.
-                var isCompatible = true;
+                var isCompatible = propertiesMatchAnyFieldset(properties, targetFieldsets);
                 var canUpdate = inRange && isCompatible;
 
                 // If update isn't allowed, cancel the drag operation.
@@ -100,6 +102,64 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
             });
         }
     };
+
+    // Checks if the specified properties match all of the properties in any of
+    // the specified fieldsets.
+    function propertiesMatchAnyFieldset(properties, fieldsets) {
+
+        // Loop through fieldsets to find a match.
+        for (var i = 0; i < fieldsets.length; i++) {
+            var fieldset = fieldsets[i];
+
+            // Confirm that this configured fielset contains exactly
+            // the same properties as those that were supplied.
+            var valid =
+                // Does this fieldset have all the properties?
+                arePropertiesSubset(properties, fieldset.properties) &&
+                // Does the property array have all the fieldset properties?
+                arePropertiesSubset(fieldset.properties, properties);
+
+            // Match found?
+            if (valid) {
+                return true;
+            }
+
+        }
+
+        // No match found.
+        return false;
+
+    }
+
+    // Confirms that an array of properties is a subset of another array of properties.
+    function arePropertiesSubset(subset, superset) {
+
+        // Loop through the subset of properties.
+        for (var j = 0; j < subset.length; j++) {
+            var subProperty = subset[j];
+            var matchedProp = false;
+
+            // Loop through the superset to find a matching property from the subset.
+            for (var k = 0; k < superset.length; k++) {
+                var superProperty = superset[k];
+                if (superProperty.alias === subProperty.alias &&
+                    superProperty.dataTypeGuid === subProperty.dataTypeGuid) {
+                    matchedProp = true;
+                    break;
+                }
+            }
+
+            // If no matching property could be found, the array is not a subset.
+            if (!matchedProp) {
+                return false;
+            }
+
+        }
+
+        // The array is a subset.
+        return true;
+
+    }
 
     //handles a fieldset add
     $scope.openFieldsetPicker = function ($index, event) {
