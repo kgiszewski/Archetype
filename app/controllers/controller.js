@@ -78,7 +78,7 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
                 var canRemove = sourceScope.canRemove();
                 var canAdd = targetScope.canAdd();
                 var inRange = canRemove && canAdd;
-                var isCompatible = propertiesMatchAnyFieldset(properties, targetFieldsets);
+                var isCompatible = inRange && propertiesMatchAnyFieldset(properties, targetFieldsets);
                 var canUpdate = inRange && isCompatible;
 
                 // If update isn't allowed, cancel the drag operation.
