@@ -73,16 +73,14 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
 
                 // Variables.
                 var targetFieldsets = targetScope.model.config.fieldsets;
-                var index = ui.item.sortable.index;
-                var properties = sourceScope.model.value.fieldsets[index].properties;
+                var model = sourceScope.fieldsetConfigModel;
                 var canRemove = sourceScope.canRemove();
                 var canAdd = targetScope.canAdd();
-                var inRange = canRemove && canAdd;
-                var isCompatible = inRange && propertiesMatchAnyFieldset(properties, targetFieldsets);
-                var canUpdate = inRange && isCompatible;
+                var valid = canRemove && canAdd;
+                valid = valid && modelMatchesAnyFieldset(model, targetFieldsets);
 
                 // If update isn't allowed, cancel the drag operation.
-                if (!canUpdate) {
+                if (!valid) {
                     ui.item.sortable.cancel();
                     return;
                 }
@@ -103,9 +101,11 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
         }
     };
 
-    // Checks if the specified properties match all of the properties in any of
-    // the specified fieldsets.
-    function propertiesMatchAnyFieldset(properties, fieldsets) {
+    // Checks if the specified model's properties match all of the properties in any of
+    // the specified fieldsets, while also checking if the fieldset aliases match.
+    // This is an indicator of the compatibility of a fieldset model with a collection
+    // of fieldset configurations.
+    function modelMatchesAnyFieldset(model, fieldsets) {
 
         // Loop through fieldsets to find a match.
         for (var i = 0; i < fieldsets.length; i++) {
@@ -114,10 +114,12 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
             // Confirm that this configured fielset contains exactly
             // the same properties as those that were supplied.
             var valid =
+                // Does the alias match?
+                model.alias === fieldset.alias &&
                 // Does this fieldset have all the properties?
-                arePropertiesSubset(properties, fieldset.properties) &&
+                arePropertiesSubset(model.properties, fieldset.properties) &&
                 // Does the property array have all the fieldset properties?
-                arePropertiesSubset(fieldset.properties, properties);
+                arePropertiesSubset(fieldset.properties, model.properties);
 
             // Match found?
             if (valid) {
