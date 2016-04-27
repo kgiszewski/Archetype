@@ -100,7 +100,7 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
         }
     };
 
-    // Enable cross-fieldset dragging?
+    // Enable cross-archetype dragging?
     if ($scope.model.config.enableCrossDragging) {
         $scope.sortableOptions.connectWith = ".archetypeSortable";
     }
