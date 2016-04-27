@@ -34,6 +34,9 @@ namespace Archetype.Models
         [JsonProperty("enablePublishing")]
         public bool EnablePublishing { get; set; }
 
+        [JsonProperty("enableCrossDragging")]
+        public bool EnableCrossDragging { get; set; }
+
         [JsonProperty("hideFieldsetControls")]
         public bool HideFieldsetControls { get; set; }
 

@@ -51,7 +51,6 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
         axis: 'y',
         cursor: "move",
         handle: ".handle",
-        connectWith: ".archetypeSortable",
         start: function(ev, ui) {
             draggedRteSettings = {};
             $(rteClass, ui.item.parent()).each(function () {
@@ -100,6 +99,11 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
             });
         }
     };
+
+    // Enable cross-fieldset dragging?
+    if ($scope.model.config.enableCrossDragging) {
+        $scope.sortableOptions.connectWith = ".archetypeSortable";
+    }
 
     // Checks if the specified model's properties match all of the properties in any of
     // the specified fieldsets, while also checking if the fieldset aliases match.

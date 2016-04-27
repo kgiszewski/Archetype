@@ -41,6 +41,8 @@
     "overrideDefaultConverter":"Override Default Property Value Converter?",
     "enableCloning":"Enable Cloning?",
  	"enableCloningDescription":"Enable Fieldset Cloning.",
+	"enableCrossDragging":"Enable Cross-Fieldset Dragging?",
+	"enableCrossDraggingDescription":"Allows fieldsets to be dragged into other Archetypes.",
   "fieldsetGroups":"Fieldset groups",
   "fieldsetGroupsDescription":"If you have a lot of fieldsets to choose from, you may want to consider grouping them in the fieldset picker. Once you have created your groups here, a group picker will be displayed in the fieldset editor and you can assign your fieldsets to their respective groups.",
   "fieldsetGroupName":"Name",
