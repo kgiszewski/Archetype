@@ -277,19 +277,19 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
         return true;
     }
 
-    $scope.isDisabledByPublishing = function (fieldset) {
+    $scope.isDisabledByPublishing = function(fieldset) {
         if ($scope.canPublish() === false) {
             return false;
         }
         // NOTE: all comparison is done in local datetime
         //       - that's fine because the selected local datetimes will be converted to UTC datetimes when submitted
-        if (fieldset.expireDateModel && fieldset.expireDateModel.value) {
+        if (fieldset.expireDateModel && fieldset.expireDateModel.value && (moment() > moment(fieldset.expireDateModel.value))) {
             // an expired release affects the fieldset
-            return moment() > moment(fieldset.expireDateModel.value);
+            return true;
         }
-        if (fieldset.releaseDateModel && fieldset.releaseDateModel.value) {
+        if (fieldset.releaseDateModel && fieldset.releaseDateModel.value && (moment(fieldset.releaseDateModel.value) > moment())) {
             // a pending release affects the fieldset
-            return moment(fieldset.releaseDateModel.value) > moment();
+            return true;
         }
         return false;
     }
@@ -317,13 +317,15 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
     }
 
     function addCustomProperties(fieldsets) {
-        _.each(fieldsets, function (fieldset) {
-            addCustomPropertiesToFieldset(fieldset);
+        // make sure we have loaded moment.js before using it
+        assetsService.loadJs("lib/moment/moment-with-locales.js").then(function() {
+            _.each(fieldsets, function(fieldset) {
+                addCustomPropertiesToFieldset(fieldset);
+            });
         });
     }
 
     function addCustomPropertiesToFieldset(fieldset) {
-
         // create models for publish configuration (utilizing the built-in datepicker data type)
         // NOTE: all datetimes must be converted from UTC to local
         fieldset.releaseDateModel = {
@@ -362,6 +364,12 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
         return fieldset.collapse;
     }
 
+    // added to track loaded fieldsets 
+    $scope.loadedFieldsets = [];
+    $scope.isLoaded = function (fieldset) {
+        return $scope.loadedFieldsets.indexOf(fieldset) >= 0;
+    }
+
     //helper for expanding/collapsing fieldsets
     $scope.focusFieldset = function(fieldset){
         fixDisableSelection();
@@ -384,12 +392,14 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
         if(!fieldset && $scope.model.value.fieldsets.length == 1)
         {
             $scope.model.value.fieldsets[0].collapse = false;
+            $scope.loadedFieldsets.push($scope.model.value.fieldsets[0]);
             return;
         }
 
         if(iniState && fieldset)
         {
             fieldset.collapse = !iniState;
+            $scope.loadedFieldsets.push(fieldset);
         }
     }
 
@@ -445,6 +455,9 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
 
         // reset submit watcher counter on save
         $scope.activeSubmitWatcher = 0;
+
+        // init loaded fieldsets tracking
+        $scope.loadedFieldsets = _.where($scope.model.value.fieldsets, { collapse: false });
 
         // create properties needed for the backoffice to work (data that is not serialized to DB)
         addCustomProperties($scope.model.value.fieldsets);
@@ -558,13 +571,18 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
         return $scope.activeSubmitWatcher;
     }
     $scope.submitWatcherOnSubmit = function (args) {
-        _.each($scope.model.value.fieldsets, function(fieldset) {
+        $scope.$broadcast("archetypeFormSubmitting", args);
+    }
+
+    // we'll use our own "archetypeFormSubmitting" event to save custom properties, as at least some 
+    // of the editors store their values back to the model on the core "formSubmitting" event
+    $scope.$on("archetypeFormSubmitting", function (ev, args) {
+        _.each($scope.model.value.fieldsets, function (fieldset) {
             // extract the publish configuration from the fieldsets (and convert local datetimes to UTC)
             fieldset.releaseDate = toUtc(fieldset.releaseDateModel.value);
             fieldset.expireDate = toUtc(fieldset.expireDateModel.value);
         });
-        $scope.$broadcast("archetypeFormSubmitting", args);
-    }
+    });
 
     function toUtc(date) {
         if (!date) {
