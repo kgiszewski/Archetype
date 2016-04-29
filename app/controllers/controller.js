@@ -322,10 +322,11 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
     //helper that returns if an item can be sorted
     $scope.canSort = function ()
     {
-        // This is now always true, because sorting can now be done with
-        // nested fieldsets.
-        return true;
-    }
+        // Sorting can occur if there are multiple fieldsets, or if there is only one
+        // fieldset that can be removed (in which case it can be sorted into an entirely
+        // different Archetype).
+        return countVisible() > 1 || $scope.canRemove();
+    };
 
     //helper that returns if an item can be disabled
     $scope.canDisable = function () {
