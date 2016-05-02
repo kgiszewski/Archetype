@@ -43,9 +43,6 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
         return archetypeLabelService.getFieldsetTitle($scope, fieldsetConfigModel, fieldsetIndex);
     }
 
-    var draggedRteSettings;
-    var rteClass = ".umb-rte textarea";
-
     //sort config
     $scope.sortableOptions = {
         axis: 'y',
@@ -53,13 +50,7 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
         handle: ".handle",
         tolerance: "pointer",
         start: function(ev, ui) {
-            draggedRteSettings = {};
-            $(rteClass, ui.item.parent()).each(function () {
-                var id = $(this).attr("id");
-                draggedRteSettings[id] = _.findWhere(tinyMCE.editors, { id: id }).settings;
-                tinymce.execCommand('mceRemoveEditor', false, id);
-                $(this).css("visibility", "hidden");
-            });
+            archetypeService.removeEditors(ui.item.parent());
         },
         update: function (ev, ui) {
 
@@ -119,12 +110,7 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
 
         },
         stop: function (ev, ui) {
-            $(rteClass, ui.item.parent()).each(function () {
-                var id = $(this).attr("id");
-                draggedRteSettings[id] = draggedRteSettings[id] || _.findWhere(tinyMCE.editors, { id: id }).settings;
-                tinyMCE.execCommand("mceRemoveEditor", false, id);
-                tinyMCE.init(draggedRteSettings[id]);
-            });
+            archetypeService.restoreEditors(ui.item.parent());
         }
     };
 

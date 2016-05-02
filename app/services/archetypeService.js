@@ -1,4 +1,10 @@
 angular.module('umbraco.services').factory('archetypeService', function () {
+
+    // Variables.
+    var draggedRteSettings;
+    var draggedRteArchetype;
+    var rteClass = ".umb-rte textarea";
+
     //public
     return {
         //helper that returns a JS ojbect from 'value' string or the original string
@@ -99,6 +105,45 @@ angular.module('umbraco.services').factory('archetypeService', function () {
             // it's the Umbraco way to hide the invalid state when altering an invalid property, even if the new value isn't valid either
             property.isValid = true;
             this.setFieldsetValidity(fieldset);
+        },
+        // This removes the rich text editors in an Archetype (e.g., during a drag operation).
+        // Typically, the editors will be restored after the drag completes.
+        removeEditors: function (element) {
+            draggedRteSettings = {};
+            draggedRteArchetype = element;
+
+            // Process each RTE in this Archetype.
+            $(rteClass, element).each(function () {
+
+                // Store RTE settings (so they can be restored later).
+                var id = $(this).attr("id");
+                draggedRteSettings[id] = _.findWhere(tinyMCE.editors, { id: id }).settings;
+
+                // Remove/hide the RTE.
+                tinymce.execCommand('mceRemoveEditor', false, id);
+                $(this).css("visibility", "hidden");
+
+            });
+        },
+        // This restores the rich text editors in an Archetype (e.g., after a drop drop operation).
+        restoreEditors: function(element) {
+
+            // Variables.
+            var bothElements = element.add(draggedRteArchetype);
+
+            // Process each RTE in both Archetypes.
+            $(rteClass, bothElements).each(function () {
+
+                // Ensure there are stored settings for the editor (either previously, or the new ones).
+                var id = $(this).attr("id");
+                draggedRteSettings[id] = draggedRteSettings[id] || _.findWhere(tinyMCE.editors, { id: id }).settings;
+
+                // Remove and reinitialize the editor.
+                tinyMCE.execCommand("mceRemoveEditor", false, id);
+                tinyMCE.init(draggedRteSettings[id]);
+
+            });
+
         }
     }
 });
