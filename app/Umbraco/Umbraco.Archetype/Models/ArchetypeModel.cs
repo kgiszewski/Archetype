@@ -32,7 +32,7 @@ namespace Archetype.Models
         /// </returns>
         public IEnumerator<ArchetypeFieldsetModel> GetEnumerator()
         {
-            return this.Fieldsets.Where(f => f.Disabled == false).GetEnumerator();
+            return this.Fieldsets.Where(f => f.IsDisabled() == false).GetEnumerator();
         }
 
         //possibly obsolete?

@@ -40,6 +40,17 @@
         vertical-align: text-bottom;
     }
 
+    .caret {
+        margin: 8px 1px 0 2px;
+        &.caret-right {
+            border-bottom: 4px solid transparent;
+            border-top: 4px solid transparent;
+            border-left: 4px solid #ddd;
+            content: "";
+            margin-top: 6px;
+        }
+    }
+
     fieldset {
         border-bottom: 1px dashed #dddddd;
         padding: 0;
@@ -63,6 +74,19 @@
                     color: #d9d9d9;
                 }
 
+            }
+            
+            .publishOptions {
+                .publishDate {
+                    display: inline-block;
+                    vertical-align: top;
+                    margin-right: 20px;
+                    
+                    label {
+                        padding: 0 !important;
+                        margin: 0 !important;
+                    }
+                }
             }
         }
 
@@ -115,16 +139,7 @@
             }
 
             .caret {
-                margin: 8px 1px 0 2px;
                 position: absolute;
-
-                &.caret-right {
-                    border-bottom: 4px solid transparent;
-                    border-top: 4px solid transparent;
-                    border-left: 4px solid #ddd;
-                    content: "";
-                    margin-top: 6px;
-                }
             }
 
             label {
@@ -162,8 +177,19 @@
                     &.icon-delete:hover {
                         color: #b94a48;
                     }
+                    &.icon-disabled {
+                        cursor: default;
+                        &:hover {
+                            color: #ddd;
+                        }
+                    }
+                    &.icon-active {
+                        color: #333;
+                        &:hover {
+                            color: #333;
+                        }
+                    }
                 }
-
             }
             
             &:hover {
@@ -285,6 +311,34 @@
             }
         }
     }
+
+    .settingsWrapper {
+        &:hover {
+            caret {
+                background-color: #333;
+            }
+        }
+        .settingsHeader {
+            label {
+                display: inline-block;
+            }
+            &:hover {
+                cursor: pointer;
+                label {
+                    text-decoration: underline;
+                }
+
+                .caret-right {
+                    border-left-color: #333;
+                }
+            }
+        }
+        .settings {
+            padding: 14px;
+            background-color: #f8f8f8;
+            overflow: hidden;
+        }
+    }
 }
 
 .archetypeEditor, .archetypeConfig {
@@ -340,6 +394,7 @@
 
     label {
         width: 120px;
+        padding-left: 0;
     }
 
     .archetypeEditorControls {
