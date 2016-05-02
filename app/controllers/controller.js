@@ -51,6 +51,7 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
         axis: 'y',
         cursor: "move",
         handle: ".handle",
+        tolerance: "pointer",
         start: function(ev, ui) {
             draggedRteSettings = {};
             $(rteClass, ui.item.parent()).each(function () {
@@ -66,8 +67,11 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
             var targetScope = ui.item.sortable.droptarget.scope();
             var sourceScope = ui.item.scope();
             var sameScope = sourceScope === targetScope;
+            var sourceIndex = ui.item.sortable.index;
 
             // Special constraints for when moving between Archetypes.
+            // If sourceScope is populated, we are in the first of the two updates (when
+            // moving between lists, ui-sortable calls the update function twice).
             if (sourceScope && !sameScope) {
 
                 // Variables.
@@ -84,6 +88,30 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
                     return;
                 }
 
+                // Clear the validations for this item.
+                clearValidations(ui.item);
+
+                // Reset "isValid" on the properties and fieldsets.
+                //TODO: Make this recursive?
+                var fieldsets = $scope.model.value.fieldsets;
+                if (fieldsets.length) {
+                    var fieldset = fieldsets[sourceIndex];
+                    for (var i = 0; i < fieldset.properties.length; i++) {
+                        archetypeService.propertyValueChanged(fieldset, fieldset.properties[i]);
+                    }
+                }
+
+                // Move the activated fieldset to the target Archetype.
+                var loadedIndex = $scope.loadedFieldsets.indexOf(fieldset);
+                if (loadedIndex >= 0) {
+                    $scope.loadedFieldsets.splice(loadedIndex, 1);
+                }
+                if (targetScope.loadedFieldsets.indexOf(fieldset) < 0) {
+                    targetScope.loadedFieldsets.push(fieldset);
+                }
+
+                // TODO: Do I need to clear more errors on the source fieldset?
+
             }
 
             // Set scope dirty.
@@ -99,6 +127,18 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
             });
         }
     };
+
+    // Clears the Angular validations in an Archetype.
+    //TODO: Maybe just clear the errors for the specific fieldset being moved?
+    function clearValidations(el) {
+        var scope = el.scope();
+        var cont = el.controller("ngModel");
+        var err = cont.$error;
+        var keys = Object.keys(err);
+        for (var i = 0; i < keys.length; i++) {
+            cont.$setValidity(keys[i], true);
+        }
+    }
 
     // Enable cross-archetype dragging?
     if ($scope.model.config.enableCrossDragging) {
@@ -696,4 +736,22 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
         }
         return moment(moment.utc(date).toDate()).format("YYYY-MM-DD HH:mm:ss")
     }
+
+    // Serializes and deserializes an item to return a snapshot of that item (e.g., so it is not
+    // changed before being inspected). Useful when troubleshooting.
+    // Modified from: http://stackoverflow.com/a/11616993/2052963
+    function jsonSnapshot(item) {
+        var cache = [];
+        var stringItem = JSON.stringify(item, function(key, value) {
+            if (typeof value === "object" && value !== null) {
+                if (cache.indexOf(value) !== -1) {
+                    return "[Removed Circular Reference Item]";
+                }
+                cache.push(value);
+            }
+            return value;
+        });
+        return JSON.parse(stringItem);
+    }
+
 });
