@@ -136,6 +136,8 @@ angular.module('umbraco.services').factory('archetypeService', function () {
 
                 // Ensure there are stored settings for the editor (either previously, or the new ones).
                 var id = $(this).attr("id");
+                //TODO: Sometimes this RTE isn't found, which causes an error. Question is, where did this new ID
+                //TODO: come from?
                 draggedRteSettings[id] = draggedRteSettings[id] || _.findWhere(tinyMCE.editors, { id: id }).settings;
 
                 // Remove and reinitialize the editor.

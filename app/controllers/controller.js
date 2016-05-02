@@ -110,7 +110,7 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
 
         },
         stop: function (ev, ui) {
-            archetypeService.restoreEditors(ui.item.parent());
+            archetypeService.restoreEditors(ui.item.sortable.droptarget.parent());
         }
     };
 
