@@ -146,21 +146,21 @@ namespace Archetype.Models
         internal bool IsAvailable()
         {
 			// explicitly disabled or implicitly disabled through publishing?
-			var disabled = Disabled
+	        var disabled = Disabled
                    || (ReleaseDate.HasValue && ReleaseDate > DateTime.UtcNow)
                    || (ExpireDate.HasValue && DateTime.UtcNow > ExpireDate);
 	        if(disabled)
 	        {
-				// yes - the fieldset is not available
+	            // yes - the fieldset is not available
 		        return false;
 	        }
-			// limitation on member group access?
+	        // limitation on member group access?
 	        if(string.IsNullOrEmpty(AllowedMemberGroups))
 	        {
-				// no - the fieldset is available
-				return true;
+	            // no - the fieldset is available
+		        return true;
 	        }
-			// maybe - the fieldset is available if the current member is a member of the configured member groups
+	        // maybe - the fieldset is available if the current member is a member of the configured member groups
 	        var currentUserGroups = Roles.GetRolesForUser() ?? new string[0];
 	        return currentUserGroups.ContainsAny(AllowedMemberGroups.Split(','));
         }

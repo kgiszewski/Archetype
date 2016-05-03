@@ -34,10 +34,10 @@ namespace Archetype.Models
         [JsonProperty("enablePublishing")]
         public bool EnablePublishing { get; set; }
 
-		[JsonProperty("enableMemberGroups")]
-		public bool EnableMemberGroups { get; set; }
+        [JsonProperty("enableMemberGroups")]
+        public bool EnableMemberGroups { get; set; }
 
-		[JsonProperty("hideFieldsetControls")]
+        [JsonProperty("hideFieldsetControls")]
         public bool HideFieldsetControls { get; set; }
 
         [JsonProperty("hidePropertyLabel")]
