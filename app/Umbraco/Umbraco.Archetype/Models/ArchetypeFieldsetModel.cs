@@ -152,13 +152,13 @@ namespace Archetype.Models
 	        if(disabled)
 	        {
 	            // yes - the fieldset is not available
-		        return false;
+	            return false;
 	        }
 	        // limitation on member group access?
 	        if(string.IsNullOrEmpty(AllowedMemberGroups))
 	        {
 	            // no - the fieldset is available
-		        return true;
+	            return true;
 	        }
 	        // maybe - the fieldset is available if the current member is a member of the configured member groups
 	        var currentUserGroups = Roles.GetRolesForUser() ?? new string[0];
