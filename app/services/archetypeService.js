@@ -1,9 +1,9 @@
 angular.module('umbraco.services').factory('archetypeService', function () {
 
     // Variables.
-    var draggedRteSettings;
     var draggedRteArchetype;
     var rteClass = ".umb-rte textarea";
+    var editorSettings = {};
 
     //public
     return {
@@ -106,43 +106,69 @@ angular.module('umbraco.services').factory('archetypeService', function () {
             property.isValid = true;
             this.setFieldsetValidity(fieldset);
         },
-        // This removes the rich text editors in an Archetype (e.g., during a drag operation).
+        // This stores the rich text editors in all Archetypes (e.g., during a drag operation).
         // Typically, the editors will be restored after the drag completes.
-        removeEditors: function (element) {
-            draggedRteSettings = {};
+        storeEditors: function (element) {
+
+            // Variables.
+            var self = this;
             draggedRteArchetype = element;
 
-            // Process each RTE in this Archetype.
-            $(rteClass, element).each(function () {
+            // Empty the stored settings.
+            editorSettings = {};
 
-                // Store RTE settings (so they can be restored later).
+            // For fast lookups, store each editor by the element ID.
+            var editorsById = {};
+            for (var i = 0; i < tinyMCE.editors.length; i++) {
+                var tempEditor = tinyMCE.editors[i];
+                editorsById[tempEditor.id] = tempEditor;
+            }
+
+            // Process each rich text editor.
+            $(rteClass).each(function() {
+
+                // Variables.
                 var id = $(this).attr("id");
-                draggedRteSettings[id] = _.findWhere(tinyMCE.editors, { id: id }).settings;
+                var editor = editorsById[id];
 
-                // Remove/hide the RTE.
-                tinymce.execCommand('mceRemoveEditor', false, id);
-                $(this).css("visibility", "hidden");
+                // Get the property's temporary ID.
+                var scope = angular.element(this).scope().$parent;
+                var property = self.getFieldsetProperty(scope);
+                var tempId = property.editorState.temporaryId;
+
+                // Store the editor settings by the temporary ID?
+                if (editor && editor.settings) {
+                    editorSettings[tempId] = editor.settings;
+                }
 
             });
+
         },
-        // This restores the rich text editors in an Archetype (e.g., after a drop drop operation).
+        // This restores the rich text editors in the specified Archetype
+        // (e.g., after a drop drop operation).
         restoreEditors: function(element) {
 
             // Variables.
-            var bothElements = element.add(draggedRteArchetype);
+            var bothElements = element
+                ? element.add(draggedRteArchetype)
+                : draggedRteArchetype;
+            var self = this;
 
             // Process each RTE in both Archetypes.
             $(rteClass, bothElements).each(function () {
 
-                // Ensure there are stored settings for the editor (either previously, or the new ones).
+                // Variables.
                 var id = $(this).attr("id");
-                //TODO: Sometimes this RTE isn't found, which causes an error. Question is, where did this new ID
-                //TODO: come from?
-                draggedRteSettings[id] = draggedRteSettings[id] || _.findWhere(tinyMCE.editors, { id: id }).settings;
+
+                // Get the stored editor settings.
+                var scope = angular.element(this).scope().$parent;
+                var property = self.getFieldsetProperty(scope);
+                var tempId = property.editorState.temporaryId;
+                var settings = editorSettings[tempId];
 
                 // Remove and reinitialize the editor.
                 tinyMCE.execCommand("mceRemoveEditor", false, id);
-                tinyMCE.init(draggedRteSettings[id]);
+                tinyMCE.init(settings);
 
             });
 

@@ -50,7 +50,7 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
         handle: ".handle",
         tolerance: "pointer",
         start: function(ev, ui) {
-            archetypeService.removeEditors(ui.item.parent());
+            archetypeService.storeEditors(ui.item.parent());
         },
         update: function (ev, ui) {
 
@@ -110,7 +110,12 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
 
         },
         stop: function (ev, ui) {
-            archetypeService.restoreEditors(ui.item.sortable.droptarget.parent());
+            var parent = null;
+            var target = ui.item.sortable.droptarget;
+            if (target) {
+                parent = target.parent();
+            }
+            archetypeService.restoreEditors(parent);
         }
     };
 
