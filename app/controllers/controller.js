@@ -81,6 +81,7 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
 
                 // Clear the validations for this item.
                 clearValidations(ui.item.parent());
+                clearValidations(ui.item.sortable.droptarget);
 
                 // Reset "isValid" on the properties and fieldsets.
                 var markValid = function(fieldset) {
@@ -94,13 +95,18 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
                         }
                     });
                 };
-                var fieldsets = $scope.model.value.fieldsets;
-                _.each(fieldsets, function (fieldset) {
-                    markValid(fieldset);
+                var fieldsetGroups = [
+                    $scope.model.value.fieldsets,
+                    targetScope.model.value.fieldsets
+                ];
+                _.each(fieldsetGroups, function(fieldsets) {
+                    _.each(fieldsets, function (fieldset) {
+                        markValid(fieldset);
+                    });
                 });
 
                 // Move the activated fieldset to the target Archetype.
-                var movedFieldset = fieldsets[sourceIndex];
+                var movedFieldset = $scope.model.value.fieldsets[sourceIndex];
                 var loadedIndex = $scope.loadedFieldsets.indexOf(movedFieldset);
                 if (loadedIndex >= 0) {
                     $scope.loadedFieldsets.splice(loadedIndex, 1);
@@ -108,8 +114,6 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
                         targetScope.loadedFieldsets.push(movedFieldset);
                     }
                 }
-
-                // TODO: Do I need to clear more errors on the source fieldset?
 
             }
 
