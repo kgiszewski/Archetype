@@ -80,7 +80,7 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
                 }
 
                 // Clear the validations for this item.
-                clearValidations(ui.item);
+                clearValidations(ui.item.parent());
 
                 // Reset "isValid" on the properties and fieldsets.
                 var markValid = function(fieldset) {
@@ -128,15 +128,17 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
     };
 
     // Clears the Angular validations in an Archetype.
-    //TODO: Maybe just clear the errors for the specific fieldset being moved?
     function clearValidations(el) {
-        var scope = el.scope();
-        var cont = el.controller("ngModel");
-        var err = cont.$error;
-        var keys = Object.keys(err);
-        for (var i = 0; i < keys.length; i++) {
-            cont.$setValidity(keys[i], true);
-        }
+        var combined = $(".archetypeSortable", el).add(el);
+        combined.each(function(index, item) {
+            var $item = angular.element(item);
+            var cont = $item.controller("ngModel");
+            var err = cont.$error;
+            var keys = Object.keys(err);
+            for (var i = 0; i < keys.length; i++) {
+                cont.$setValidity(keys[i], true);
+            }
+        });
     }
 
     // Enable cross-archetype dragging?
