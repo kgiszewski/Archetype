@@ -83,22 +83,30 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
                 clearValidations(ui.item);
 
                 // Reset "isValid" on the properties and fieldsets.
-                //TODO: Make this recursive?
+                var markValid = function(fieldset) {
+                    _.each(fieldset.properties, function (property) {
+                        //TODO: Find a better way to make everything valid.
+                        archetypeService.propertyValueChanged(fieldset, property);
+                        if (property != null && property.value != null && property.propertyEditorAlias === "Imulus.Archetype") {
+                            _.each(property.value.fieldsets, function (inner) {
+                                markValid(inner);
+                            });
+                        }
+                    });
+                };
                 var fieldsets = $scope.model.value.fieldsets;
-                if (fieldsets.length) {
-                    var fieldset = fieldsets[sourceIndex];
-                    for (var i = 0; i < fieldset.properties.length; i++) {
-                        archetypeService.propertyValueChanged(fieldset, fieldset.properties[i]);
-                    }
-                }
+                _.each(fieldsets, function (fieldset) {
+                    markValid(fieldset);
+                });
 
                 // Move the activated fieldset to the target Archetype.
-                var loadedIndex = $scope.loadedFieldsets.indexOf(fieldset);
+                var movedFieldset = fieldsets[sourceIndex];
+                var loadedIndex = $scope.loadedFieldsets.indexOf(movedFieldset);
                 if (loadedIndex >= 0) {
                     $scope.loadedFieldsets.splice(loadedIndex, 1);
-                }
-                if (targetScope.loadedFieldsets.indexOf(fieldset) < 0) {
-                    targetScope.loadedFieldsets.push(fieldset);
+                    if (targetScope.loadedFieldsets.indexOf(movedFieldset) < 0) {
+                        targetScope.loadedFieldsets.push(movedFieldset);
+                    }
                 }
 
                 // TODO: Do I need to clear more errors on the source fieldset?
