@@ -681,7 +681,7 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
 
         // Recursive validation of nested fieldsets.
         recurseFieldsets(function(item) {
-            if (!item.isValid) {
+            if (item.isValid === false) {
                 valid = false;
             }
         }, [fieldset]);
