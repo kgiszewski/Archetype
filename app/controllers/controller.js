@@ -84,25 +84,15 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
                 clearValidations(ui.item.sortable.droptarget);
 
                 // Reset "isValid" on the properties and fieldsets.
-                var markValid = function(fieldset) {
-                    _.each(fieldset.properties, function (property) {
-                        //TODO: Find a better way to make everything valid.
-                        archetypeService.propertyValueChanged(fieldset, property);
-                        if (property != null && property.value != null && property.propertyEditorAlias === "Imulus.Archetype") {
-                            _.each(property.value.fieldsets, function (inner) {
-                                markValid(inner);
-                            });
-                        }
-                    });
-                };
                 var fieldsetGroups = [
                     $scope.model.value.fieldsets,
                     targetScope.model.value.fieldsets
                 ];
                 _.each(fieldsetGroups, function(fieldsets) {
-                    _.each(fieldsets, function (fieldset) {
-                        markValid(fieldset);
-                    });
+                    recurseProperties(function(property, fieldset) {
+                        //TODO: Find a better way to make everything valid.
+                        archetypeService.propertyValueChanged(fieldset, property);
+                    }, fieldsets);
                 });
 
                 // Move the activated fieldset to the target Archetype.
@@ -314,6 +304,13 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
             var newFieldset = angular.copy($scope.model.value.fieldsets[$index]);
 
             if(newFieldset) {
+
+                // Regenerate the temporary ID on each nested fieldset.
+                // This is done because no two fieldsets should have the same
+                // temporary ID.
+                recurseProperties(function(property) {
+                    archetypeService.ensureTemporaryId(property, true);
+                }, [newFieldset]);
 
                 $scope.model.value.fieldsets.splice($index + 1, 0, newFieldset);
 
@@ -665,24 +662,21 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
 
     //helper to lookup validity when given a fieldset
     $scope.getFieldsetValidity = function (fieldset) {
-        if (fieldset.isValid == false) {
-            return false;
-        }
 
-        // recursive validation of nested fieldsets
-        var nestedFieldsetsValid = true;
-        _.each(fieldset.properties, function (property) {
-            if (property != null && property.value != null && property.propertyEditorAlias == "Imulus.Archetype") {
-                _.each(property.value.fieldsets, function (inner) {
-                    if ($scope.getFieldsetValidity(inner) == false) {
-                        nestedFieldsetsValid = false;
-                    }
-                });
+        // Variables.
+        var valid = true;
+
+        // Recursive validation of nested fieldsets.
+        recurseFieldsets(function(item) {
+            if (!item.isValid) {
+                valid = false;
             }
-        });
+        }, [fieldset]);
 
-        return nestedFieldsetsValid;
-    }
+        // Were all the nested fieldsets valid?
+        return valid;
+
+    };
 
     // helper to force the current form into the dirty state
     $scope.setDirty = function () {
@@ -757,6 +751,30 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
             return value;
         });
         return JSON.parse(stringItem);
+    }
+
+    // Recursively processes each Archetype fieldset.
+    function recurseFieldsets(fn, fieldsets) {
+        if (!fieldsets || !fieldsets.length) {
+            return;
+        }
+        _.each(fieldsets, function(fieldset) {
+            fn(fieldset);
+            _.each(fieldset.properties, function (property) {
+                if (property != null && property.value != null && property.propertyEditorAlias === "Imulus.Archetype") {
+                    recurseFieldsets(property.value.fieldsets);
+                }
+            });
+        });
+    }
+
+    // Recursively processes each Archetype fieldset property.
+    function recurseProperties(fn, fieldsets) {
+        recurseFieldsets(function(fieldset) {
+            _.each(fieldset.properties, function (property) {
+                fn(property, fieldset);
+            });
+        }, fieldsets);
     }
 
 });

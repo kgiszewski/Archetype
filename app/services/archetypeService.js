@@ -172,6 +172,17 @@ angular.module('umbraco.services').factory('archetypeService', function () {
 
             });
 
+        },
+        // Ensures the specified property has a temporary ID in its editor state,
+        // optionally forcing one to be regenerated (if specified).
+        ensureTemporaryId: function(property, regenerateId) {
+            if (!property.editorState) {
+                property.editorState = {};
+            }
+            var editorState = property.editorState;
+            if (!editorState.temporaryId || regenerateId) {
+                editorState.temporaryId = _.uniqueId("property-temp-id-");
+            }
         }
     }
 });

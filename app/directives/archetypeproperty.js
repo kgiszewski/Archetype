@@ -76,10 +76,10 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
                     // from any prior initializations).
                     var fieldsetProperty = archetypeService.getFieldsetProperty(scope);
                     var oldState = fieldsetProperty.editorState;
-                    fieldsetProperty.editorState = {};
-                    fieldsetProperty.editorState.temporaryId = oldState
-                        ? oldState.temporaryId
-                        : _.uniqueId("property-temp-id-");
+                    archetypeService.ensureTemporaryId(fieldsetProperty);
+                    if (oldState) {
+                        fieldsetProperty.editorState.temporaryId = oldState.temporaryId;
+                    }
 
                     //set the config from the prevalues
                     scope.model.config = config;
