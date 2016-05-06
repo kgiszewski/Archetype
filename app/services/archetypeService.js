@@ -110,6 +110,11 @@ angular.module('umbraco.services').factory('archetypeService', function () {
         // Typically, the editors will be restored after the drag completes.
         storeEditors: function (element) {
 
+            // If there are not tinyMCE editors, this may be undefined.
+            if (typeof tinyMCE === "undefined") {
+                return;
+            }
+
             // Variables.
             var self = this;
             draggedRteArchetype = element;
@@ -147,6 +152,11 @@ angular.module('umbraco.services').factory('archetypeService', function () {
         // This restores the rich text editors in the specified Archetype
         // (e.g., after a drop drop operation).
         restoreEditors: function(element) {
+
+            // If there are not tinyMCE editors, this may be undefined.
+            if (typeof tinyMCE === "undefined") {
+                return;
+            }
 
             // Variables.
             var bothElements = element
