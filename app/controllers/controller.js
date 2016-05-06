@@ -1,6 +1,9 @@
 {{VERSION}}
 angular.module("umbraco").controller("Imulus.ArchetypeController", function ($scope, $http, $filter, assetsService, angularHelper, notificationsService, $timeout, fileManager, entityResource, archetypeService, archetypeLabelService, archetypeCacheService, archetypePropertyEditorResource) {
 
+    // Variables.
+    var draggedParent;
+
     //$scope.model.value = "";
     $scope.model.hideLabel = $scope.model.config.hideLabel == 1;
 
@@ -51,6 +54,10 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
         tolerance: "pointer",
         start: function(ev, ui) {
             archetypeService.storeEditors(ui.item.parent());
+            $scope.$apply(function() {
+                draggedParent = ui.item.parent();
+                draggedParent.scope().doingSort = true;
+            });
         },
         update: function (ev, ui) {
 
@@ -112,6 +119,7 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
 
         },
         stop: function (ev, ui) {
+            draggedParent.scope().doingSort = false;
             var parent = null;
             var target = ui.item.sortable.droptarget;
             if (target) {
@@ -368,6 +376,11 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
         // fieldset that can be removed (in which case it can be sorted into an entirely
         // different Archetype).
         return countVisible() > 1 || $scope.canRemove();
+    };
+
+    //helper that returns if an item is the last and it's being sorted.
+    $scope.sortingLastItem = function() {
+        return $scope.doingSort && $scope.model.value.fieldsets.length <= 1;
     };
 
     //helper that returns if an item can be disabled

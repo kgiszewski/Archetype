@@ -11,7 +11,7 @@
     </div>
 
     <!-- Fieldsets. -->
-    <ul ui-sortable="sortableOptions" class="archetypeSortable" ng-class="{archetypeEmpty: model.value.fieldsets.length === 0}" ng-model="model.value.fieldsets">
+    <ul ui-sortable="sortableOptions" class="archetypeSortable" ng-class="{archetypeEmpty: model.value.fieldsets.length === 0 || sortingLastItem()}" ng-model="model.value.fieldsets">
         <li ng-repeat="fieldset in model.value.fieldsets">
             <fieldset ng-class="['archetype-fieldset-' + fieldset.alias, (getFieldsetValidity(fieldset) == false ? 'archetypeFieldsetError' : '')]" ng-init="fieldsetConfigModel = getConfigFieldsetByAlias(fieldset.alias)">
                 <div class="archetypeFieldsetLabel" ng-class="{enableCollapsing: model.config.enableCollapsing}">
