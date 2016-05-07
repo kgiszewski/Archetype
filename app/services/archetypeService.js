@@ -4,6 +4,7 @@ angular.module('umbraco.services').factory('archetypeService', function () {
     var draggedRteArchetype;
     var rteClass = ".umb-rte textarea";
     var editorSettings = {};
+    var disabledSortables = [];
 
     //public
     return {
@@ -199,6 +200,17 @@ angular.module('umbraco.services').factory('archetypeService', function () {
             if (!editorState.temporaryId || regenerateId) {
                 editorState.temporaryId = _.uniqueId("property-temp-id-");
             }
+        },
+        // Remembers a sortable that has been disabled (so it can be enabled later).
+        rememberDisabledSortable: function(sortable) {
+            disabledSortables.push(sortable);
+        },
+        // Enables all of the sortables that were disabled.
+        enableSortables: function() {
+            _.each(disabledSortables, function(sortable) {
+                sortable.enable();
+            });
+            disabledSortables = [];
         }
     }
 });

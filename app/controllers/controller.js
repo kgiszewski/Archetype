@@ -52,6 +52,34 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
         cursor: "move",
         handle: ".handle",
         tolerance: "pointer",
+        activate: function(ev, ui) {
+
+            // Variables.
+            var parentItem = ui.item.parent();
+            var thisElement = parentItem[0];
+            var targetElement = ev.target;
+            var targetItem = angular.element(targetElement);
+
+            // The source of the drag can always be dropped back onto.
+            if (targetElement === thisElement) {
+                return;
+            }
+
+            // Variables.
+            var sourceScope = ui.item.scope();
+            var targetScope = targetItem.scope();
+            var valid = canMove(sourceScope, targetScope);
+
+            // If the sortable can't be moved to the target Archetype, disable
+            // the target Archetype's sortable temporarily.
+            if (!valid) {
+                var targetSortable = targetItem.sortable("instance");
+                targetSortable.disable();
+                parentItem.sortable("refresh");
+                archetypeService.rememberDisabledSortable(targetSortable);
+            }
+
+        },
         start: function(ev, ui) {
             archetypeService.storeEditors(ui.item.parent());
             $scope.$apply(function() {
@@ -73,12 +101,7 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
             if (sourceScope && !sameScope) {
 
                 // Variables.
-                var targetFieldsets = targetScope.model.config.fieldsets;
-                var model = sourceScope.fieldsetConfigModel;
-                var canRemove = sourceScope.canRemove();
-                var canAdd = targetScope.canAdd();
-                var valid = canRemove && canAdd;
-                valid = valid && modelMatchesAnyFieldset(model, targetFieldsets);
+                var valid = canMove(sourceScope, targetScope);
 
                 // If update isn't allowed, cancel the drag operation.
                 if (!valid) {
@@ -119,13 +142,21 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
 
         },
         stop: function (ev, ui) {
+
+            // Done sorting.
             draggedParent.scope().doingSort = false;
+
+            // Enable disabled sortables.
+            archetypeService.enableSortables();
+
+            // Restore rich text editors.
             var parent = null;
             var target = ui.item.sortable.droptarget;
             if (target) {
                 parent = target.parent();
             }
             archetypeService.restoreEditors(parent);
+
         }
     };
 
@@ -145,7 +176,7 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
 
     // Enable cross-archetype dragging?
     if ($scope.model.config.enableCrossDragging) {
-        $scope.sortableOptions.connectWith = ".archetypeSortable";
+        $scope.sortableOptions.connectWith = ".archetypeSortable:not(.invalid)";
     }
 
     // Checks if the specified model's properties match all of the properties in any of
@@ -788,6 +819,19 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
                 fn(property, fieldset);
             });
         }, fieldsets);
+    }
+
+    // Indicates whether or not the fieldset can be moved between the source and target scope.
+    // The source scope is the scope of the fieldset being dragged.
+    // The target scope is the scope of the Archetype to drop into.
+    function canMove(sourceScope, targetScope) {
+        var targetFieldsets = targetScope.model.config.fieldsets;
+        var model = sourceScope.fieldsetConfigModel;
+        var canRemove = sourceScope.canRemove();
+        var canAdd = targetScope.canAdd();
+        var valid = canRemove && canAdd;
+        valid = valid && modelMatchesAnyFieldset(model, targetFieldsets);
+        return valid;
     }
 
 });
