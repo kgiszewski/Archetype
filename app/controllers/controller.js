@@ -120,8 +120,8 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
                 ];
                 _.each(fieldsetGroups, function(fieldsets) {
                     recurseProperties(function(property, fieldset) {
-                        //TODO: Find a better way to make everything valid.
-                        archetypeService.propertyValueChanged(fieldset, property);
+                        property.isValid = true;
+                        fieldset.isValid = true;
                     }, fieldsets);
                 });
 
@@ -806,7 +806,7 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
             fn(fieldset);
             _.each(fieldset.properties, function (property) {
                 if (property != null && property.value != null && property.propertyEditorAlias === "Imulus.Archetype") {
-                    recurseFieldsets(property.value.fieldsets);
+                    recurseFieldsets(fn, property.value.fieldsets);
                 }
             });
         });
