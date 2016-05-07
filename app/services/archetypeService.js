@@ -50,7 +50,7 @@ angular.module('umbraco.services').factory('archetypeService', function () {
                 return property.alias == alias; 
             });
         },
-        getUniquePropertyAlias: function (currentScope, propertyAliasParts) {
+        getUniquePropertyAlias: function (currentScope, propertyAliasParts, excludeUniqueId) {
             if (currentScope.hasOwnProperty('fieldsetIndex') && currentScope.hasOwnProperty('property') && currentScope.hasOwnProperty('propertyConfigIndex'))
             {
                 var currentPropertyAlias = "f" + currentScope.fieldsetIndex + "-" + currentScope.property.alias + "-p" + currentScope.propertyConfigIndex;
@@ -63,9 +63,15 @@ angular.module('umbraco.services').factory('archetypeService', function () {
             }
 
             if (currentScope.$parent)
-                this.getUniquePropertyAlias(currentScope.$parent, propertyAliasParts);
+                this.getUniquePropertyAlias(currentScope.$parent, propertyAliasParts, true);
 
-            return _.unique(propertyAliasParts).reverse().join("-");
+            var reversed = _.unique(propertyAliasParts).reverse();
+
+            if (!excludeUniqueId) {
+                reversed.push(_.uniqueId("u-"));
+            }
+
+            return reversed.join("-");
         },
         getFieldset: function(scope) {
             return scope.archetypeRenderModel.fieldsets[scope.fieldsetIndex];
