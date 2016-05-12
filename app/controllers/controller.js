@@ -73,7 +73,7 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
             // If the sortable can't be moved to the target Archetype, disable
             // the target Archetype's sortable temporarily.
             if (!valid) {
-                var targetSortable = targetItem.sortable("instance");
+                var targetSortable = getSortableWidgetInstance(targetItem);
                 targetSortable.disable();
                 parentItem.sortable("refresh");
                 archetypeService.rememberDisabledSortable(targetSortable);
@@ -832,6 +832,20 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
         var valid = canRemove && canAdd;
         valid = valid && modelMatchesAnyFieldset(model, targetFieldsets);
         return valid;
+    }
+
+    // This is an alternative to: element.sortable("instance")
+    // Workaround for this issue: https://github.com/imulus/Archetype/pull/356#issuecomment-218527910
+    // Snagged from this pull request: https://github.com/angular-ui/ui-sortable/pull/319
+    // More technical details here: https://github.com/angular-ui/ui-sortable/issues/316
+    function getSortableWidgetInstance(element) {
+        // this is a fix to support jquery-ui prior to v1.11.x
+        // otherwise we should be using `element.sortable('instance')`
+        var data = element.data('ui-sortable');
+        if (data && typeof data === 'object' && data.widgetFullName === 'ui-sortable') {
+            return data;
+        }
+        return null;
     }
 
 });
