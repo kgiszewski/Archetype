@@ -19,7 +19,7 @@ namespace Archetype.Models
             var count = archetype.Fieldsets.Count();
 
             _items = archetype.Fieldsets
-                .Where(x => x.IsDisabled() == false)
+                .Where(x => x.IsAvailable())
                 .Select(x => new ArchetypePublishedContent(x, this))
                 .ToArray();
         }

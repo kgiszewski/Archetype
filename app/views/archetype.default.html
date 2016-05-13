@@ -56,7 +56,7 @@
                             </div>
                             <div class="settings" ng-show="showSettings">
                                 <!-- misc fieldset settings go here -->
-                                <div ng-if="fieldset.releaseDateModel" ng-show="canPublish()">
+                                <div ng-if="fieldset.releaseDateModel" ng-show="canPublish()" class="control-group">
                                     <label ng-hide="model.config.hidePropertyLabels == '1'" class="control-label">
                                         <span><archetype-localize key="publish">Publishing</archetype-localize></span>
                                         <div class="archetypeFieldsetHelpText">
@@ -79,6 +79,19 @@
                                         <!-- we need a submit watcher here to make sure the publish dates are saved back to their models -->
                                         <archetype-submit-watcher active-submit-watcher="activeSubmitWatcher" load-callback="submitWatcherOnLoad" submit-callback="submitWatcherOnSubmit"></archetype-submit-watcher>
                                     </div>
+                                </div>
+                                <div ng-if="fieldset.allowedMemberGroupsModel" ng-show="canUseMemberGroups()" class="control-group allowedGroups">
+                                    <label ng-hide="model.config.hidePropertyLabels == '1'" class="control-label">
+                                        <span><archetype-localize key="allowedMemberGroups">Allowed member groups</archetype-localize></span>
+                                        <div class="archetypeFieldsetHelpText">
+                                            <small><archetype-localize key="allowedMemberGroupsHelpText">Choose the member groups that should be allowed to see this item. Leave empty to allow all member groups.</archetype-localize></small>
+                                        </div>
+                                    </label>
+                                    <div ng-class="[(model.config.hidePropertyLabels == '1' ? 'controls-no-label' : 'controls')]">
+                                        <umb-editor model="fieldset.allowedMemberGroupsModel"></umb-editor>
+                                    </div>
+                                    <!-- we need a submit watcher here to make sure the allowed member groups are saved back to the model -->
+                                    <archetype-submit-watcher active-submit-watcher="activeSubmitWatcher" load-callback="submitWatcherOnLoad" submit-callback="submitWatcherOnSubmit"></archetype-submit-watcher>
                                 </div>
                             </div>
                         </div>

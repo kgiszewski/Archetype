@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
@@ -36,6 +36,9 @@ namespace Archetype.Models
 
         [JsonProperty("enableCrossDragging")]
         public bool EnableCrossDragging { get; set; }
+        
+        [JsonProperty("enableMemberGroups")]
+        public bool EnableMemberGroups { get; set; }
 
         [JsonProperty("hideFieldsetControls")]
         public bool HideFieldsetControls { get; set; }

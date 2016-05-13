@@ -51,5 +51,9 @@
   "publishHelpText": "Konfigurér udgivelses- og udløbsdato for dette element",
   "publishReleaseDate": "Udgivelsesdato",
   "publishExpireDate": "Udløbsdato",
-  "settings": "Indstillinger"
+  "settings": "Indstillinger",
+  "enableMemberGroups": "Aktivér medlems-grupper",
+  "enableMemerGroupsDescription": "Tillad at fieldsets kun vises for specifikke medlems-grupper",
+  "allowedMemberGroups": "Tilladte medlems-grupper",
+  "allowedMemberGroupsHelpText": "Vælg de medlems-grupper, der skal kunne se dette element. Hvis der ikke er valgt nogen, kan alle se elementet."
 }

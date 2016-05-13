@@ -431,10 +431,14 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
         return $scope.model.config.enablePublishing;
     }
 
+    $scope.canUseMemberGroups = function() {
+        return $scope.model.config.enableMemberGroups;
+    }
+
     //helper that returns if the "misc fieldset configuration" section should be visible
     $scope.canConfigure = function () {
-        // currently the only thing in the "misc fieldset configuration" section is the publishing setup
-        return $scope.canPublish();
+        // currently the "misc fieldset configuration" section contains the publishing and the member groups setup
+        return $scope.canPublish() || $scope.canUseMemberGroups();
     }
 
     $scope.showDisableIcon = function (fieldset) {
@@ -522,6 +526,12 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
             alias: _.uniqueId("archetypeExpireDate_"),
             view: "datepicker",
             value: fromUtc(fieldset.expireDate)
+        };
+        // create model for allowed member groups
+        fieldset.allowedMemberGroupsModel = {
+            alias: _.uniqueId("archetypeAllowedMemberGroups_"),
+            view: "membergrouppicker",
+            value: fieldset.allowedMemberGroups
         };
     }
 
@@ -763,6 +773,8 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
             // extract the publish configuration from the fieldsets (and convert local datetimes to UTC)
             fieldset.releaseDate = toUtc(fieldset.releaseDateModel.value);
             fieldset.expireDate = toUtc(fieldset.expireDateModel.value);
+            // extract the allowed member groups 
+            fieldset.allowedMemberGroups = fieldset.allowedMemberGroupsModel.value;
         });
     });
 

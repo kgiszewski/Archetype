@@ -98,7 +98,7 @@ namespace Archetype.Models
 
         public bool IsDraft
         {
-            get { return _fieldset.IsDisabled(); }
+            get { return _fieldset.IsAvailable() == false; }
         }
 
         public PublishedItemType ItemType

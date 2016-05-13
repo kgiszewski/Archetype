@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Web.Security;
 using Newtonsoft.Json;
 using Umbraco.Core;
 using System;
@@ -28,6 +29,9 @@ namespace Archetype.Models
 
         [JsonProperty("expireDate")]
         public DateTime? ExpireDate { get; set; }
+
+        [JsonProperty("allowedMemberGroups")]
+        public string AllowedMemberGroups { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ArchetypeFieldsetModel"/> class.
@@ -139,11 +143,26 @@ namespace Archetype.Models
         /// Is this fieldset disabled, either explicitly or by other means?
         /// </summary>
         /// <returns>true if this fieldset is disabled, false otherwise</returns>
-        internal bool IsDisabled()
+        internal bool IsAvailable()
         {
-            return Disabled
+			// explicitly disabled or implicitly disabled through publishing?
+	        var disabled = Disabled
                    || (ReleaseDate.HasValue && ReleaseDate > DateTime.UtcNow)
                    || (ExpireDate.HasValue && DateTime.UtcNow > ExpireDate);
+	        if(disabled)
+	        {
+	            // yes - the fieldset is not available
+	            return false;
+	        }
+	        // limitation on member group access?
+	        if(string.IsNullOrEmpty(AllowedMemberGroups))
+	        {
+	            // no - the fieldset is available
+	            return true;
+	        }
+	        // maybe - the fieldset is available if the current member is a member of the configured member groups
+	        var currentUserGroups = Roles.GetRolesForUser() ?? new string[0];
+	        return currentUserGroups.ContainsAny(AllowedMemberGroups.Split(','));
         }
 
         #endregion
