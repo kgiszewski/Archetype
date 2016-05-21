@@ -323,6 +323,11 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
             $scope.$broadcast("archetypeAddFieldset", {index: $index, visible: countVisible()});
 
             newFieldset.collapse = $scope.model.config.enableCollapsing ? true : false;
+
+            // If the fieldset is not collapsed, it should be instantly loaded.
+            if (!newFieldset.collapse) {
+                $scope.loadedFieldsets.push(newFieldset);
+            }
             
             $scope.focusFieldset(newFieldset);
         }
@@ -356,6 +361,12 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
                 $scope.setDirty();
 
                 newFieldset.collapse = $scope.model.config.enableCollapsing ? true : false;
+
+                // If the fieldset is not collapsed, it should be instantly loaded.
+                if (!newFieldset.collapse) {
+                    $scope.loadedFieldsets.push(newFieldset);
+                }
+
                 $scope.focusFieldset(newFieldset);
             }
         }
@@ -554,10 +565,10 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
     {
         if(typeof fieldset.collapse === "undefined")
         {
-            fieldset.collapse = true;
+            fieldset.collapse = $scope.model.config.enableCollapsing ? true : false;
         }
         return fieldset.collapse;
-    }
+    };
 
     // added to track loaded fieldsets 
     $scope.loadedFieldsets = [];
@@ -600,6 +611,12 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
 
     //ini the fieldset expand/collapse
     $scope.focusFieldset();
+
+    // Fieldsets which cannot be collapsed should start expanded.
+    _.each($scope.model.value.fieldsets, function(fieldset) {
+        fieldset.collapse = $scope.model.config.enableCollapsing;
+    });
+    $scope.loadedFieldsets = _.where($scope.model.value.fieldsets, { collapse: false });
 
     //developerMode helpers
     $scope.model.value.toString = stringify;
@@ -652,6 +669,9 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
         $scope.activeSubmitWatcher = 0;
 
         // init loaded fieldsets tracking
+        _.each($scope.model.value.fieldsets, function (fieldset) {
+            fieldset.collapse = $scope.model.config.enableCollapsing ? true : false;
+        });
         $scope.loadedFieldsets = _.where($scope.model.value.fieldsets, { collapse: false });
 
         // create properties needed for the backoffice to work (data that is not serialized to DB)
