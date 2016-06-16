@@ -13,7 +13,7 @@ var ArchetypeSampleLabelTemplates = (function() {
                 var id = value.split(",")[0];
 
                 if (id) {
-                    var entity = scope.services.archetypeLabelService.getEntityById(scope, id, args.entityType);
+                    var entity = scope.services.archetypeCacheService.getEntityById(scope, id, args.entityType);
 
                     if(entity) {
                         return entity[args.propertyName];
@@ -34,13 +34,13 @@ var ArchetypeSampleLabelTemplates = (function() {
             switch (value.type) {
                 case "content":
                     if(value.typeData.contentId) {
-                        entity = scope.services.archetypeLabelService.getEntityById(scope, value.typeData.contentId, "Document");
+                        entity = scope.services.archetypeCacheService.getEntityById(scope, value.typeData.contentId, "Document");
                     }
                     break;
 
                 case "media":
                     if(value.typeData.mediaId) {
-                        entity = scope.services.archetypeLabelService.getEntityById(scope, value.typeData.mediaId, "Media");
+                        entity = scope.services.archetypeCacheService.getEntityById(scope, value.typeData.mediaId, "Media");
                     }
                     break;
 
