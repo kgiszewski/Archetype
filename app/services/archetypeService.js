@@ -2,7 +2,7 @@ angular.module('umbraco.services').factory('archetypeService', function () {
 
     // Variables.
     var draggedRteArchetype;
-    var rteClass = ".umb-rte textarea";
+    var rteClass = ".archetypeEditor .umb-rte textarea";
     var editorSettings = {};
     var disabledSortables = [];
 
@@ -75,10 +75,12 @@ angular.module('umbraco.services').factory('archetypeService', function () {
             return reversed.join("-");
         },
         getFieldset: function(scope) {
-            return scope.archetypeRenderModel.fieldsets[scope.fieldsetIndex];
+            var renderModel = scope.archetypeRenderModel;
+            return renderModel ? renderModel.fieldsets[scope.fieldsetIndex] : null;
         },
         getFieldsetProperty: function (scope) {
-            return this.getFieldset(scope).properties[scope.renderModelPropertyIndex];
+            var fieldset = this.getFieldset(scope);
+            return fieldset ? fieldset.properties[scope.renderModelPropertyIndex] : null;
         },
         setFieldsetValidity: function (fieldset) {
             // mark the entire fieldset as invalid if there are any invalid properties in the fieldset, otherwise mark it as valid
@@ -146,10 +148,10 @@ angular.module('umbraco.services').factory('archetypeService', function () {
                 // Get the property's temporary ID.
                 var scope = angular.element(this).scope().$parent;
                 var property = self.getFieldsetProperty(scope);
-                var tempId = property.editorState.temporaryId;
+                var tempId = property ? property.editorState.temporaryId : null;
 
                 // Store the editor settings by the temporary ID?
-                if (editor && editor.settings) {
+                if (editor && editor.settings && tempId) {
                     editorSettings[tempId] = editor.settings;
                 }
 
@@ -180,12 +182,14 @@ angular.module('umbraco.services').factory('archetypeService', function () {
                 // Get the stored editor settings.
                 var scope = angular.element(this).scope().$parent;
                 var property = self.getFieldsetProperty(scope);
-                var tempId = property.editorState.temporaryId;
+                var tempId = property ? property.editorState.temporaryId : null;
                 var settings = editorSettings[tempId];
 
                 // Remove and reinitialize the editor.
-                tinyMCE.execCommand("mceRemoveEditor", false, id);
-                tinyMCE.init(settings);
+                if (settings) {
+                    tinyMCE.execCommand("mceRemoveEditor", false, id);
+                    tinyMCE.init(settings);
+                }
 
             });
 
