@@ -211,6 +211,16 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
 
     }
 
+    // Checks if the specified array of fieldsets contains the specified fieldset.
+    function arrayContainsFieldset(fieldset, fieldsets) {
+        for (var i = 0; i < fieldsets.length; i++) {
+            if (fieldsets[i] === fieldset) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     // Confirms that an array of properties is a subset of another array of properties.
     function arePropertiesSubset(subset, superset) {
 
@@ -857,12 +867,15 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
     // The source scope is the scope of the fieldset being dragged.
     // The target scope is the scope of the Archetype to drop into.
     function canMove(sourceScope, targetScope) {
-        var targetFieldsets = targetScope.model.config.fieldsets;
+        var targetFieldsetConfigs = targetScope.model.config.fieldsets;
+        var targetFieldsets = targetScope.model.value.fieldsets;
+        var sourceFieldset = sourceScope.fieldset;
+        var sameArchetype = arrayContainsFieldset(sourceFieldset, targetFieldsets);
         var model = sourceScope.fieldsetConfigModel;
         var canRemove = sourceScope.canRemove();
         var canAdd = targetScope.canAdd();
-        var valid = canRemove && canAdd;
-        valid = valid && modelMatchesAnyFieldset(model, targetFieldsets);
+        var valid = sameArchetype || (canRemove && canAdd);
+        valid = valid && modelMatchesAnyFieldset(model, targetFieldsetConfigs);
         return valid;
     }
 
