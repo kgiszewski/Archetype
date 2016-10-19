@@ -98,7 +98,7 @@ namespace Archetype.Extensions
 
                 return archetype;
             }
-            catch
+            catch (Exception ex)
             {
                 return new ArchetypeModel();
             }

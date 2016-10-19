@@ -252,6 +252,8 @@
     <Compile Include="Properties\VersionInfo.cs" />
     <Compile Include="PropertyConverters\ArchetypeValueConverter.cs" />
     <Compile Include="PropertyEditors\ArchetypePropertyEditor.cs" />
+    <Compile Include="TypeConverters\ArchetypeFieldsetModelConverter.cs" />
+    <Compile Include="TypeConverters\ArchetypeModelConverter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
