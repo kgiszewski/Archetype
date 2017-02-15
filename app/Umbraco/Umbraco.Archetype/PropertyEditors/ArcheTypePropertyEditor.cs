@@ -206,7 +206,7 @@ namespace Archetype.PropertyEditors
 								else if (propDef.EditorState != null && propDef.EditorState.FileNames != null && propDef.EditorState.FileNames.Any())
 								{
 									// pass the uploaded files that belongs to this property (if any) to the value editor
-									var propertyFiles = propDef.EditorState.FileNames.Select(f => uploadedFiles.FirstOrDefault(u => u.FileName == f)).Where(f => f != null).ToList();
+									var propertyFiles = propDef.EditorState.FileNames.Select(f => uploadedFiles.FirstOrDefault(u => u.FileName != null && u.FileName.Equals(f, StringComparison.OrdinalIgnoreCase))).Where(f => f != null).ToList();
 									if(propertyFiles.Any())
 									{
 										additionalData["files"] = propertyFiles;
