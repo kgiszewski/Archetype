@@ -1,15 +1,18 @@
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Web.Security;
+using Archetype.TypeConverters;
 using Newtonsoft.Json;
 using Umbraco.Core;
-using System;
 
 namespace Archetype.Models
 {
     /// <summary>
     /// Model that represents a fieldset stored as content JSON.
     /// </summary>
+    [TypeConverter(typeof(ArchetypeFieldsetModelConverter))]
     public class ArchetypeFieldsetModel
     {
         [JsonProperty("alias")]
@@ -63,7 +66,7 @@ namespace Archetype.Models
         {
             var property = GetProperty(propertyAlias);
 
-            if (IsEmptyProperty(property)) 
+            if (IsEmptyProperty(property))
             {
                 return default(T);
             }
@@ -87,7 +90,7 @@ namespace Archetype.Models
         {
             var property = GetProperty(propertyAlias);
 
-            if (IsEmptyProperty(property)) 
+            if (IsEmptyProperty(property))
             {
                 return defaultValue;
             }
@@ -100,7 +103,7 @@ namespace Archetype.Models
         /// </summary>
         /// <param name="property">The property.</param>
         /// <returns></returns>
-        private bool IsEmptyProperty(ArchetypePropertyModel property) 
+        private bool IsEmptyProperty(ArchetypePropertyModel property)
         {
             return (property == null || property.Value == null || string.IsNullOrEmpty(property.Value.ToString()));
         }
@@ -145,24 +148,24 @@ namespace Archetype.Models
         /// <returns>true if this fieldset is disabled, false otherwise</returns>
         internal bool IsAvailable()
         {
-			// explicitly disabled or implicitly disabled through publishing?
-	        var disabled = Disabled
+            // explicitly disabled or implicitly disabled through publishing?
+            var disabled = Disabled
                    || (ReleaseDate.HasValue && ReleaseDate > DateTime.UtcNow)
                    || (ExpireDate.HasValue && DateTime.UtcNow > ExpireDate);
-	        if(disabled)
-	        {
-	            // yes - the fieldset is not available
-	            return false;
-	        }
-	        // limitation on member group access?
-	        if(string.IsNullOrEmpty(AllowedMemberGroups))
-	        {
-	            // no - the fieldset is available
-	            return true;
-	        }
-	        // maybe - the fieldset is available if the current member is a member of the configured member groups
-	        var currentUserGroups = Roles.GetRolesForUser() ?? new string[0];
-	        return currentUserGroups.ContainsAny(AllowedMemberGroups.Split(','));
+            if (disabled)
+            {
+                // yes - the fieldset is not available
+                return false;
+            }
+            // limitation on member group access?
+            if (string.IsNullOrEmpty(AllowedMemberGroups))
+            {
+                // no - the fieldset is available
+                return true;
+            }
+            // maybe - the fieldset is available if the current member is a member of the configured member groups
+            var currentUserGroups = Roles.GetRolesForUser() ?? new string[0];
+            return currentUserGroups.ContainsAny(AllowedMemberGroups.Split(','));
         }
 
         #endregion

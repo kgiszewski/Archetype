@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using Archetype.TypeConverters;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -11,6 +13,7 @@ namespace Archetype.Models
     /// Model that represents an entire Archetype.
     /// </summary>
     [JsonObject]
+    [TypeConverter(typeof(ArchetypeModelConverter))]
     public class ArchetypeModel : IEnumerable<ArchetypeFieldsetModel>
     {
         [JsonProperty("fieldsets")]
