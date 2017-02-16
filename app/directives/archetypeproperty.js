@@ -123,16 +123,17 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
                     });
 
                     scope.$on('archetypeFormSubmitting', function (ev, args) {
-                        if(args.action !== 'save') {
-                            // validate all fieldset properties
-                            _.each(scope.fieldset.properties, function (property) {
-                                archetypeService.validateProperty(scope.fieldset, property, configFieldsetModel);
-                            });
+                        // #385 - revert the changes made in #311 to avoid publishing invalid fieldsets (leaving the code from #311 here, in case we figure out how to re-introduce "save as draft")
+                        // if(args.action !== 'save') {
+                        // validate all fieldset properties
+                        _.each(scope.fieldset.properties, function (property) {
+                            archetypeService.validateProperty(scope.fieldset, property, configFieldsetModel);
+                        });
 
-                            var validationKey = "validation-f" + scope.fieldsetIndex;
+                        var validationKey = "validation-f" + scope.fieldsetIndex;
 
-                            ngModelCtrl.$setValidity(validationKey, scope.fieldset.isValid);
-                        }
+                        ngModelCtrl.$setValidity(validationKey, scope.fieldset.isValid);
+                        // }
 
                         // did the value change (if it did, it most likely did so during the "formSubmitting" event)
                         var property = archetypeService.getFieldsetProperty(scope);
