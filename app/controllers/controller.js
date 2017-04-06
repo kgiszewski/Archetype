@@ -91,7 +91,7 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
 
             // Variables.
             var targetScope = ui.item.sortable.droptarget.scope();
-            var sourceScope = ui.item.scope();
+            var sourceScope = ui.item.parent().scope();
             var sameScope = sourceScope === targetScope;
             var sourceIndex = ui.item.sortable.index;
 
