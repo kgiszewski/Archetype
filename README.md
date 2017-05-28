@@ -11,10 +11,10 @@ Install the selected <a href='https://github.com/imulus/Archetype/releases'>rele
 https://github.com/kgiszewski/ArchetypeManual
 
 
-##News and Updates##
+## News and Updates ##
 Follow us on Twitter https://twitter.com/ArchetypeKit
 
-##Core Team##
+## Core Team ##
 * Kevin Giszewski (founder/project lead) - University of Notre Dame - https://kevin.giszewski.com/
 * Tom Fulton (founder) - Tonic - http://hellotonic.com/
 * Lee Kelleher - Umbrella - http://www.umbrellainc.co.uk/
