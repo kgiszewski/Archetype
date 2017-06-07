@@ -219,6 +219,15 @@ namespace Archetype.PropertyEditors
 									}
 								}
 							}
+							// #397 - pass along "cuid" and "puid" (part of the Umbraco 7.6 scheme)
+							if(editorValue.AdditionalData.ContainsKey("cuid"))
+							{
+								additionalData["cuid"] = editorValue.AdditionalData["cuid"];
+							}
+							if(editorValue.AdditionalData.ContainsKey("puid"))
+							{
+								additionalData["puid"] = editorValue.AdditionalData["puid"];
+							}
 							var propData = new ContentPropertyData(propDef.Value, preValues, additionalData);
 							var propEditor = PropertyEditorResolver.Current.GetByAlias(dtd.PropertyEditorAlias);
 							// make sure to send the current property value (if any) to the PE ValueEditor
