@@ -63,3 +63,4 @@ VersionInfo.cs
 .svn
 .hg
 .hgignore
+app/Umbraco/.vs/config/applicationhost.config
