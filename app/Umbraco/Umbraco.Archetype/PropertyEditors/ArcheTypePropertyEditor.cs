@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Archetype.Extensions;
-using Archetype.Models;
 using ClientDependency.Core;
 using Newtonsoft.Json;
 using Umbraco.Core;
@@ -96,7 +95,7 @@ namespace Archetype.PropertyEditors
 							if(propDef == null || propDef.DataTypeGuid == null) continue;
 							var dtd = ArchetypeHelper.Instance.GetDataTypeByGuid(Guid.Parse(propDef.DataTypeGuid));
 							var propType = new PropertyType(dtd) {Alias = propDef.Alias};
-							var prop = new Property(propType, propDef.Value);
+							var prop = new Property(propType, (propDef.Value != null) ? propDef.Value.ToString() : null);
 							var propEditor = PropertyEditorResolver.Current.GetByAlias(dtd.PropertyEditorAlias);
 							propDef.Value = propEditor.ValueEditor.ConvertDbToString(prop, propType, dataTypeService);
 						}
@@ -136,7 +135,7 @@ namespace Archetype.PropertyEditors
 						{
 							var dtd = ArchetypeHelper.Instance.GetDataTypeByGuid(Guid.Parse(propDef.DataTypeGuid));
 							var propType = new PropertyType(dtd) {Alias = propDef.Alias};
-							var prop = new Property(propType, propDef.Value);
+                            var prop = new Property(propType, (propDef.Value != null) ? propDef.Value.ToString() : null);
 							var propEditor = PropertyEditorResolver.Current.GetByAlias(dtd.PropertyEditorAlias);
 							propDef.Value = propEditor.ValueEditor.ConvertDbToEditor(prop, propType, dataTypeService);
 						}
@@ -231,7 +230,7 @@ namespace Archetype.PropertyEditors
 							var propData = new ContentPropertyData(propDef.Value, preValues, additionalData);
 							var propEditor = PropertyEditorResolver.Current.GetByAlias(dtd.PropertyEditorAlias);
 							// make sure to send the current property value (if any) to the PE ValueEditor
-							propDef.Value = propEditor.ValueEditor.ConvertEditorToDb(propData, currentProperty != null ? currentProperty.Value : null);
+                            propDef.Value = propEditor.ValueEditor.ConvertEditorToDb(propData, currentProperty != null ? (currentProperty.Value != null) ? currentProperty.Value.ToString() : null : null);
 						}
 						catch (Exception ex)
 						{
