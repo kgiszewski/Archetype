@@ -73,6 +73,34 @@ angular.module('umbraco.services').factory('archetypeCacheService', function (ar
 	        }
 
 	        return null;
-	    }
+     	},
+
+     	getEntityByUmbracoId: function(scope, udi, type) {
+	        var cachedEntity = _.find(entityCache, function (e){
+	            return e.udi == udi;
+	        });
+
+	        if(cachedEntity) {
+	            return cachedEntity;
+	        }
+
+	        //go get it from server
+	        if (!isEntityLookupLoading) {
+	            isEntityLookupLoading = true;
+
+	            scope.resources.entityResource.getByIds([udi], type).then(function (entities) {
+                  // prevent infinite lookups with a default entity
+                  var entity = entities.length > 0 ? entities[0] : { udi: udi, name: "" };
+
+                  entityCache.push(entity);
+
+                  isEntityLookupLoading = false;
+
+	                return entity;
+	            });
+	        }
+
+	        return null;
+     	}
     }
 });

@@ -19,7 +19,6 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
     }
 
     function getNativeLabel(datatype, value, scope) {
-
     	switch (datatype.selectedEditor) {
     		case "Imulus.UrlPicker":
     			return imulusUrlPicker(value, scope, {});
@@ -27,13 +26,22 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
     			return coreTinyMce(value, scope, {});
             case "Umbraco.MultiNodeTreePicker":
                 return coreMntp(value, scope, datatype);
+            case "Umbraco.MultiNodeTreePicker2":
+                return coreMntpV2(value, scope, datatype);
+            case "Umbraco.MultipleMediaPicker":
             case "Umbraco.MediaPicker":
                 return coreMediaPicker(value, scope, datatype);
+            case "Umbraco.MediaPicker2":
+                return coreMediaPickerV2(value, scope, datatype);
             case "Umbraco.DropDown":
                 return coreDropdown(value, scope, datatype);
     	    case "RJP.MultiUrlPicker":
     	        return rjpMultiUrlPicker(value, scope, {});
-    		default:
+    	  case "Umbraco.ContentPickerAlias":
+    	    return coreContentPicker(value, scope, datatype);
+    	  case "Umbraco.ContentPicker2":
+    	    return coreContentPickerV2(value, scope, datatype);
+        default:
     			return "";
     	}
     }
@@ -87,6 +95,39 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
         return entityArray.join(', ');
     }
 
+      function coreMntpV2(value, scope, args) {
+        var ids = value.split(',');
+        if (ids.length == 0) {
+          return "";
+        }
+        var type = "document";
+
+        switch(args.preValues[0].value.type) {
+            case 'content':
+                type = 'document';
+                break;
+            case 'media':
+                type = 'media';
+                break;
+            case 'member':
+                type = 'member';
+                break;
+
+            default:
+                break;
+        }
+
+        var entity;
+
+        _.each(ids, function (id) {            
+            if(id && !entity) {
+              entity = archetypeCacheService.getEntityByUmbracoId(scope, id, type);
+            }
+        });
+
+        return (entity != null ? entity.name : "") + (ids.length > 1 ? ", ..." : "");
+    }
+
     function coreMediaPicker(value, scope, args) {
         if(value) {
              var entity = archetypeCacheService.getEntityById(scope, value, "media");     
@@ -97,6 +138,42 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
         }
 
         return "";
+    }
+
+    function coreMediaPickerV2(value, scope, args) {
+        if(value) {
+            var entity = archetypeCacheService.getEntityByUmbracoId(scope, value, "media");
+             
+            if(entity) {
+                return entity.name; 
+            }
+        }
+
+        return "";
+    }
+
+    function coreContentPicker(value, scope, args) {
+      if (value) {
+        var entity = archetypeCacheService.getEntityById(scope, value, "document");
+
+        if (entity) {
+          return entity.name;
+        }
+      }
+
+      return "";
+    }
+
+    function coreContentPickerV2(value, scope, args) {
+      if (value) {
+        var entity = archetypeCacheService.getEntityByUmbracoId(scope, value, "document");
+
+        if (entity) {
+          return entity.name;
+        }
+      }
+
+      return "";
     }
 
     function imulusUrlPicker(value, scope, args) {
