@@ -12,14 +12,14 @@
                     <i class="icon icon-navigation handle" ng-show="canSortFieldset()"></i>
                 </div>
                 <div class="archetypeFieldsetTitle" ng-click="focusFieldset(fieldset)">{{fieldset.label}}</div>
-                <div class="archetypeFieldsetCollapser" ng-hide="fieldset.collapse && fieldset.label">
+                <div class="archetypeFieldsetCollapser" ng-hide="fieldset.collapse && fieldset.label" ng-if="isLoaded(fieldset)">
                     <div class="archetypeFieldsetOption">
                         <label for="archetypeFieldLabel_{{$index}}"><archetype-localize key="label">Label</archetype-localize></label>
-                        <input type="text" id="archetypeFieldLabel_{{$index}}" ng-model="fieldset.label" on-keyup="autoPopulateAlias(this)" />
+                        <input type="text" id="archetypeFieldLabel_{{$index}}" ng-model="fieldset.label" on-keyup="autoPopulateAlias(fieldset)" />
                     </div>
                     <div class="archetypeFieldsetOption">
                         <label for="archetypeFieldAlias_{{$index}}"><archetype-localize key="alias">Alias</archetype-localize></label>
-                        <input type="text" id="archetypeFieldAlias_{{$index}}" ng-model="fieldset.alias" on-keyup="markAliasDirty(this)" required/>
+                        <input type="text" id="archetypeFieldAlias_{{$index}}" ng-model="fieldset.alias" on-keyup="markAliasDirty(fieldset)" required/>
                     </div>
                     <div class="archetypeFieldsetOption" ng-show="archetypeConfigRenderModel.fieldsetGroups.length">
                         <label for="archetypeFieldsetGroup_{{$index}}"><archetype-localize key="fieldsetGroup">Group</archetype-localize></label>
@@ -50,11 +50,11 @@
                                 <div class="archetypePropertyCollapser" ng-hide="property.collapse && property.label">
                                     <div>
                                         <label for="archetypePropertyLabel_{{$parent.$index}}_{{$index}}"><archetype-localize key="label">Label</archetype-localize></label>
-                                        <input type="text" id="archetypePropertyLabel_{{$parent.$index}}_{{$index}}" ng-model="property.label" on-keyup="autoPopulateAlias(this)"/>
+                                        <input type="text" id="archetypePropertyLabel_{{$parent.$index}}_{{$index}}" ng-model="property.label" on-keyup="autoPopulateAlias(property)"/>
                                     </div>
                                     <div>
                                         <label for="archetypePropertyAlias_{{$parent.$index}}_{{$index}}"><archetype-localize key="alias">Alias</archetype-localize></label>
-                                        <input type="text" id="archetypePropertyAlias_{{$parent.$index}}_{{$index}}" ng-model="property.alias" on-keyup="markAliasDirty(this)" required/>
+                                        <input type="text" id="archetypePropertyAlias_{{$parent.$index}}_{{$index}}" ng-model="property.alias" on-keyup="markAliasDirty(property)" required/>
                                     </div>
                                     <div>
                                         <label for="archetypePropertyHelpText_{{$parent.$index}}_{{$index}}"><archetype-localize key="helpText">Help Text</archetype-localize></label>

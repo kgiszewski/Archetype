@@ -47,6 +47,12 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
         }
     };
 
+    // added to track loaded fieldsets 
+    $scope.loadedFieldsets = [];
+    $scope.isLoaded = function (fieldset) {
+        return $scope.loadedFieldsets.indexOf(fieldset) >= 0;
+    }
+
     //function that determines how to manage expanding/collapsing fieldsets
     $scope.focusFieldset = function(fieldset){
         var iniState;
@@ -60,6 +66,7 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
             if($scope.archetypeConfigRenderModel.fieldsets.length == 1 && fieldset.remove == false)
             {
                 fieldset.collapse = false;
+                $scope.loadedFieldsets.push(fieldset);
                 return;
             }
 
@@ -70,12 +77,14 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
             else
             {
                 fieldset.collapse = false;
+                $scope.loadedFieldsets.push(fieldset);
             }
         });
 
         if(iniState)
         {
             fieldset.collapse = !iniState;
+            $scope.loadedFieldsets.push(fieldset);
         }
     }
 
@@ -123,27 +132,20 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
 
     //watch for changes
     $scope.$watch('archetypeConfigRenderModel', function (v) {
-        //console.log(v);
         if (typeof v === 'string') {
             $scope.archetypeConfigRenderModel = JSON.parse(v);
             $scope.archetypeConfigRenderModel.toString = stringify;
         }
     });
 
-    $scope.autoPopulateAlias = function(s) {
-        var modelType = s.hasOwnProperty('fieldset') ? 'fieldset' : 'property';
-        var modelProperty = s[modelType];
-
-        if (!modelProperty.aliasIsDirty) {
+    $scope.autoPopulateAlias = function (modelProperty) {
+        if (modelProperty && !modelProperty.aliasIsDirty) {
             modelProperty.alias = modelProperty.label.toUmbracoAlias();
         }
     }
 
-    $scope.markAliasDirty = function(s) {
-        var modelType = s.hasOwnProperty('fieldset') ? 'fieldset' : 'property';
-        var modelProperty = s[modelType];
-
-        if (!modelProperty.aliasIsDirty) {
+    $scope.markAliasDirty = function (modelProperty) {
+        if (modelProperty && !modelProperty.aliasIsDirty) {
             modelProperty.aliasIsDirty = true;;
         }
     }
