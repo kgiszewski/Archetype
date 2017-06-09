@@ -340,6 +340,7 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
             }
             
             $scope.focusFieldset(newFieldset);
+            $scope.handleMandatoryValidation();
         }
     }
 
@@ -349,6 +350,7 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
                 $scope.setDirty();
                 $scope.model.value.fieldsets.splice($index, 1);
                 $scope.$broadcast("archetypeRemoveFieldset", {index: $index});
+                $scope.handleMandatoryValidation();
             }
         }
     }
@@ -807,6 +809,20 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
             fieldset.allowedMemberGroups = fieldset.allowedMemberGroupsModel.value;
         });
     });
+
+    $scope.$on("formSubmitting", function (ev, args) {
+        $scope.handleMandatoryValidation();
+    });
+
+    // handle mandatory validation of the entire Archetype
+    // - no fieldsets = not valid
+    $scope.handleMandatoryValidation = function () {
+        var valid = true;
+        if ($scope.model.validation && $scope.model.validation.mandatory) {
+            valid = $scope.model.value.fieldsets && $scope.model.value.fieldsets.length > 0;
+        }
+        $scope.model.mandatoryValidation = valid ? "valid" : null;
+    }
 
     function toUtc(date) {
         if (!date) {
