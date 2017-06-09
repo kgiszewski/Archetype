@@ -10,6 +10,10 @@
         </a>
     </div>
 
+    <!-- Mandatory validation. -->
+    <input type="hidden" name="archetypeMandatory" ng-model="model.mandatoryValidation" ng-required="model.validation.mandatory" />
+    <span class="help-inline" val-msg-for="archetypeMandatory" val-toggle-msg="required">Required</span>
+
     <!-- Fieldsets. -->
     <ul ui-sortable="sortableOptions" class="archetypeSortable" ng-class="{archetypeEmpty: model.value.fieldsets.length === 0 || sortingLastItem()}" ng-model="model.value.fieldsets">
         <li ng-repeat="fieldset in model.value.fieldsets">
