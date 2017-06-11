@@ -607,16 +607,16 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
             return;
         }
 
-        var iniState;
-
-        if(fieldset)
+        // collapse all other fieldsets if "multiple open fieldsets" is not enabled
+        if(!$scope.model.config.enableMultipleOpen) 
         {
-            iniState = fieldset.collapse;
+            _.each($scope.model.value.fieldsets, function (f) {
+                if(f != fieldset)
+                {
+                    f.collapse = true;
+                }
+            });
         }
-
-        _.each($scope.model.value.fieldsets, function(fieldset){
-            fieldset.collapse = true;
-        });
 
         if(!fieldset && $scope.model.value.fieldsets.length == 1)
         {
@@ -625,10 +625,13 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
             return;
         }
 
-        if(iniState && fieldset)
+        if(fieldset)
         {
-            fieldset.collapse = !iniState;
-            $scope.loadedFieldsets.push(fieldset);
+            fieldset.collapse = !fieldset.collapse;
+            if($scope.loadedFieldsets.indexOf(fieldset) < 0)
+            {
+                $scope.loadedFieldsets.push(fieldset);
+            }
         }
     }
 
