@@ -340,7 +340,7 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
             }
             
             $scope.focusFieldset(newFieldset);
-            $scope.handleMandatoryValidation();
+            handleMandatoryValidation();
         }
     }
 
@@ -350,7 +350,7 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
                 $scope.setDirty();
                 $scope.model.value.fieldsets.splice($index, 1);
                 $scope.$broadcast("archetypeRemoveFieldset", {index: $index});
-                $scope.handleMandatoryValidation();
+                handleMandatoryValidation();
             }
         }
     }
@@ -517,6 +517,7 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
     function init() {
         $scope.model.value = removeNulls($scope.model.value);
         addDefaultProperties($scope.model.value.fieldsets);
+        handleMandatoryValidation();
     }
 
     function addDefaultProperties(fieldsets)
@@ -810,13 +811,9 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
         });
     });
 
-    $scope.$on("formSubmitting", function (ev, args) {
-        $scope.handleMandatoryValidation();
-    });
-
     // handle mandatory validation of the entire Archetype
     // - no fieldsets = not valid
-    $scope.handleMandatoryValidation = function () {
+    function handleMandatoryValidation() {
         var valid = true;
         if ($scope.model.validation && $scope.model.validation.mandatory) {
             valid = $scope.model.value.fieldsets && $scope.model.value.fieldsets.length > 0;
