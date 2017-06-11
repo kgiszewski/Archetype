@@ -346,7 +346,10 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
                 if(!templateLabelValue) {
                     templateLabelValue = "";
                 }
-                
+                // handle collapsing dollar signs in labels (#387)
+                if (templateLabelValue.indexOf("$$") >= 0) {
+                    templateLabelValue = templateLabelValue.replace(/\$\$/g, "$$$$$$$$");
+                }
                 parsedTemplate = parsedTemplate.replace(match, templateLabelValue);
             });
 
