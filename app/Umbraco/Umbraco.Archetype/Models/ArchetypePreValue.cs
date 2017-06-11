@@ -25,6 +25,9 @@ namespace Archetype.Models
         [JsonProperty("enableCollapsing")]
         public bool EnableCollapsing { get; set; }
 
+        [JsonProperty("enableMultipleOpen")]
+        public bool EnableMultipleOpen { get; set; }
+
         [JsonProperty("enableCloning")]
         public bool EnableCloning { get; set; }
 
