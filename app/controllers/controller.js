@@ -340,7 +340,7 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
             }
             
             $scope.focusFieldset(newFieldset);
-            handleMandatoryValidation();
+            $scope.handleMandatoryValidation();
         }
     }
 
@@ -350,7 +350,7 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
                 $scope.setDirty();
                 $scope.model.value.fieldsets.splice($index, 1);
                 $scope.$broadcast("archetypeRemoveFieldset", {index: $index});
-                handleMandatoryValidation();
+                $scope.handleMandatoryValidation();
             }
         }
     }
@@ -388,6 +388,7 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
         fieldset.disabled = !fieldset.disabled;
         // explicitly set the form as dirty when manipulating the enabled/disabled state of a fieldset
         $scope.setDirty();
+        $scope.handleMandatoryValidation();
     }
 
     //helpers for determining if a user can do something
@@ -513,11 +514,23 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
         return $scope.isDisabledByPublishing(fieldset);
     }
 
+    $scope.numberOfEnabledFieldsets = function () {
+        if (!$scope.model.value.fieldsets) {
+            return 0;
+        }
+        return _.filter($scope.model.value.fieldsets, function (f) {
+            return $scope.isDisabled(f) == false;
+        }).length;
+    }
+
     //helper, ini the render model from the server (model.value)
     function init() {
         $scope.model.value = removeNulls($scope.model.value);
         addDefaultProperties($scope.model.value.fieldsets);
-        handleMandatoryValidation();
+
+        $timeout(function () {
+            $scope.handleMandatoryValidation();
+        }, 50);
     }
 
     function addDefaultProperties(fieldsets)
@@ -816,10 +829,10 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
 
     // handle mandatory validation of the entire Archetype
     // - no fieldsets = not valid
-    function handleMandatoryValidation() {
+    $scope.handleMandatoryValidation = function() {
         var valid = true;
         if ($scope.model.validation && $scope.model.validation.mandatory) {
-            valid = $scope.model.value.fieldsets && $scope.model.value.fieldsets.length > 0;
+            valid = $scope.numberOfEnabledFieldsets() > 0;
         }
         $scope.model.mandatoryValidation = valid ? "valid" : null;
     }
