@@ -34,7 +34,7 @@
                     </div>
                     <div class="archetypeFieldsetOption">
                         <label for="archetypeFieldPreview_{{$index}}">Preview image</label>
-                        <input type="text" id="archetypeFieldPreview_{{$index}}" ng-model="fieldset.previewImage" on-keyup="markAliasDirty(fieldset)" required />
+                        <input type="text" id="archetypeFieldPreview_{{$index}}" ng-model="fieldset.previewImage" on-keyup="markAliasDirty(fieldset)" />
                         <small>A relative path to a preview image, e.g. "/assets/fieldset.png".</small>
                     </div>
                     <div class="archetypeFieldsetOption" ng-show="archetypeConfigRenderModel.enableMultipleFieldsets">
