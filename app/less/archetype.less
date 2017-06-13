@@ -290,6 +290,12 @@
             overflow: visible;
             vertical-align: top;  
             height: 90px;        
+            .fieldsetPreviewOpen {
+                font-style: italic;
+                a:hover {
+                    text-decoration: underline;
+                }
+            }
         }
         ul.groups {
             display: block;
@@ -307,6 +313,24 @@
                 &.active a, a:hover {
                     color: #999;
                     text-decoration: none;
+                }
+            }
+        }
+
+        .fieldsetPreview {
+            .fieldsetPreviewClose {
+                font-style: italic;
+                font-size: 12px;
+                text-align: center;
+            }
+            .fieldsetPreviewImage {
+                padding: 6px 0px;
+                img {
+                    height: auto;
+                    max-width: 100%;
+                    vertical-align: middle;
+                    border: 0;
+                    cursor: zoom-in;
                 }
             }
         }
@@ -392,10 +416,10 @@
         small {
             margin-left: 5px;
         }
-        
+
         a {
             float: right;
-            
+
             img {
                 width: 35px;
             }
@@ -441,7 +465,8 @@
     .archetypeFieldsetOption {
         margin-bottom: 15px;
         margin-right: 15px;
-        input[type=text]{
+
+        input[type=text] {
             max-width: 100%;
             width: 100%;
         }
@@ -459,7 +484,7 @@
             margin-bottom: 5px;
         }
 
-        label{
+        label {
             width: 400px;
         }
     }
@@ -499,7 +524,7 @@
         label {
             width: 100%;
         }
-        
+
         input[type=text] {
             width: 100%;
         }
@@ -534,10 +559,10 @@
                     }
                 }
             }
-        }        
+        }
     }
 
-    .archetypeMaxFieldsets{
+    .archetypeMaxFieldsets {
         border: 1px solid #ddd;
         width: 40px;
         text-align: right;
@@ -550,7 +575,7 @@
 
     .archetypePropertyCollapser {
         margin-top: 10px;
-        
+
         div {
             margin-bottom: 10px;
             margin-right: 15px;
@@ -563,6 +588,10 @@
 
     .fieldsetIcon {
         margin-right: 10px;
+    }
+
+    small {
+        color: #817f85;
     }
 }
 

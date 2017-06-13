@@ -264,7 +264,8 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
                 alias: fieldset.alias,
                 label: fieldset.label,
                 icon: (fieldset.icon || "icon-document-dashed-line"), // default icon if none is chosen
-                group: fieldset.group ? fieldset.group.name : null
+                group: fieldset.group ? fieldset.group.name : null,
+                previewImage: fieldset.previewImage
             });
         });
         // sanity check
@@ -304,13 +305,22 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
 
     $scope.closeFieldsetPicker = function () {
         $scope.overlayMenu.show = false;
+        $scope.overlayMenu.fieldsetPreview = null;
     };
     
     $scope.pickFieldset = function (fieldsetAlias, $index) {
         $scope.closeFieldsetPicker();
         $scope.addRow(fieldsetAlias, $index);
     };    
-    
+
+    $scope.openFieldsetPreview = function (fieldset) {
+        $scope.overlayMenu.fieldsetPreview = fieldset;
+    }
+
+    $scope.closeFieldsetPreview = function () {
+        $scope.overlayMenu.fieldsetPreview = null;
+    }
+
     $scope.addRow = function (fieldsetAlias, $index) {
         if ($scope.canAdd()) {
             if ($scope.model.config.fieldsets) {

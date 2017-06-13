@@ -26,6 +26,9 @@ namespace Archetype.Models
         [JsonProperty("label")]
         public string Label { get; set; }
 
+        [JsonProperty("previewImage")]
+        public string PreviewImage { get; set; }
+
         [JsonProperty("properties")]
         public IEnumerable<ArchetypePreValueProperty> Properties { get; set; }
 
