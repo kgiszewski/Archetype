@@ -16,10 +16,12 @@
                     <div class="archetypeFieldsetOption">
                         <label for="archetypeFieldLabel_{{$index}}"><archetype-localize key="label">Label</archetype-localize></label>
                         <input type="text" id="archetypeFieldLabel_{{$index}}" ng-model="fieldset.label" on-keyup="autoPopulateAlias(fieldset)" />
+                        <small>The label shown to the editors when adding a new fieldset.</small>
                     </div>
                     <div class="archetypeFieldsetOption">
                         <label for="archetypeFieldAlias_{{$index}}"><archetype-localize key="alias">Alias</archetype-localize></label>
                         <input type="text" id="archetypeFieldAlias_{{$index}}" ng-model="fieldset.alias" on-keyup="markAliasDirty(fieldset)" required/>
+                        <small>The alias used to identify the fieldset when rendering.</small>
                     </div>
                     <div class="archetypeFieldsetOption" ng-show="archetypeConfigRenderModel.fieldsetGroups.length">
                         <label for="archetypeFieldsetGroup_{{$index}}"><archetype-localize key="fieldsetGroup">Group</archetype-localize></label>
@@ -28,6 +30,12 @@
                     <div class="archetypeFieldsetOption">
                         <label for="archetypeFieldLabelTemplate_{{$index}}"><archetype-localize key="labelTemplate">Label Template</archetype-localize></label>
                         <input type="text" id="archetypeFieldLabelTemplate_{{$index}}" ng-model="fieldset.labelTemplate" />
+                        <small>Generates labels per fieldset. Can contain property aliases, e.g. "Article: &#123;&#123;title&#125;&#125;".</small>
+                    </div>
+                    <div class="archetypeFieldsetOption">
+                        <label for="archetypeFieldPreview_{{$index}}">Preview image</label>
+                        <input type="text" id="archetypeFieldPreview_{{$index}}" ng-model="fieldset.previewImage" on-keyup="markAliasDirty(fieldset)" />
+                        <small>A relative path to a preview image, e.g. "/assets/fieldset.png".</small>
                     </div>
                     <div class="archetypeFieldsetOption" ng-show="archetypeConfigRenderModel.enableMultipleFieldsets">
                         <label for="archetypeFieldIcon_{{$index}}"><archetype-localize key="icon">Icon</archetype-localize></label>

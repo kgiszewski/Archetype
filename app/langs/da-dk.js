@@ -55,5 +55,8 @@
   "enableMemberGroups": "Aktivér medlems-grupper",
   "enableMemerGroupsDescription": "Tillad at fieldsets kun vises for specifikke medlems-grupper",
   "allowedMemberGroups": "Tilladte medlems-grupper",
-  "allowedMemberGroupsHelpText": "Vælg de medlems-grupper, der skal kunne se dette element. Hvis der ikke er valgt nogen, kan alle se elementet."
+  "allowedMemberGroupsHelpText": "Vælg de medlems-grupper, der skal kunne se dette element. Hvis der ikke er valgt nogen, kan alle se elementet.",
+  "previewFieldsetOpen": "(se eksempel)",
+  "previewFieldsetHeader": "Eksempel: ",
+  "previewFieldsetClose": "(luk eksempel)"
 }
