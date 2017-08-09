@@ -1,5 +1,6 @@
 ﻿using System;
 using Archetype.Extensions;
+using Umbraco.Core.Logging;
 using Umbraco.Core.Models;
 using Umbraco.Core.Models.PublishedContent;
 
@@ -24,14 +25,22 @@ namespace Archetype.Models
             _property = property;
             _rawValue = property.Value;
 
-            _propertyType = property.CreateDummyPropertyType();
+			// #418 - need to wrap this in a try/catch to prevent orphaned properties from breaking everything
+	        try
+	        {
+				_propertyType = property.CreateDummyPropertyType();
 
-            if (_propertyType != null)
-            {
-                _sourceValue = new Lazy<object>(() => _propertyType.ConvertDataToSource(_rawValue, preview));
-                _objectValue = new Lazy<object>(() => _propertyType.ConvertSourceToObject(_sourceValue.Value, preview));
-                _xpathValue = new Lazy<object>(() => _propertyType.ConvertSourceToXPath(_sourceValue.Value, preview));
-            }
+				if (_propertyType != null)
+				{
+					_sourceValue = new Lazy<object>(() => _propertyType.ConvertDataToSource(_rawValue, preview));
+					_objectValue = new Lazy<object>(() => _propertyType.ConvertSourceToObject(_sourceValue.Value, preview));
+					_xpathValue = new Lazy<object>(() => _propertyType.ConvertSourceToXPath(_sourceValue.Value, preview));
+				}
+	        }
+	        catch(Exception ex)
+	        {
+		        LogHelper.Warn<ArchetypePublishedProperty>(string.Format("Could not create an IPublishedProperty for property: {0} - the error was: {1}", property.Alias, ex.Message));
+	        }
         }
 
         internal ArchetypePropertyModel ArchetypeProperty
