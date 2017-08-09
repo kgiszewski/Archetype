@@ -10,7 +10,6 @@ Install the selected <a href='https://github.com/imulus/Archetype/releases'>rele
 ## Official Docs ##
 https://github.com/kgiszewski/ArchetypeManual
 
-
 ## News and Updates ##
 Follow us on Twitter https://twitter.com/ArchetypeKit
 
@@ -20,6 +19,11 @@ Follow us on Twitter https://twitter.com/ArchetypeKit
 * Lee Kelleher - Umbrella - http://www.umbrellainc.co.uk/
 * Matt Brailsford - The Outfield - http://www.theoutfield.co.uk/
 * Kenn Jacobsen - Vertica - http://kennjacobsen.dk/
+
+## Donate!
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=KBKWLURGLGU6L)
+
+This project is funded by the core team members' time only. We don't charge for Archetype but it does take quite a bit of effort to keep it up-to-date with Umbraco core changes. If you're making a few bucks off of Archetype, we wouldn't refuse a donation :)
 
 ## Contribute ##
 
