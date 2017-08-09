@@ -65,7 +65,8 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
 
                     if (!scope.renderModelPropertyIndex)
                     {
-                        archetypeService.getFieldset(scope).properties.push(JSON.parse('{"alias": "' + alias + '", "value": "' + defaultValue + '"}'));
+                        var propertyValue = { alias: alias, value: defaultValue };
+                        archetypeService.getFieldset(scope).properties.push(propertyValue);
                         scope.renderModelPropertyIndex = archetypeService.getPropertyIndexByAlias(archetypeService.getFieldset(scope).properties, alias);
                     }
 
