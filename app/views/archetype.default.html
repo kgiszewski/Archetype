@@ -14,6 +14,10 @@
     <input type="hidden" name="archetypeMandatory" ng-model="model.mandatoryValidation" ng-required="model.validation.mandatory" />
     <div><span class="help-inline" val-msg-for="archetypeMandatory" val-toggle-msg="required"><archetype-localize key="required">Required</archetype-localize></span></div>
 
+    <!-- Min fieldsets validation. -->
+    <input type="hidden" name="archetypeMinFieldsets" ng-model="model.mandatoryMinFieldsets" ng-required="!minFieldsetsFulfilled()" />
+    <div><span class="help-inline" val-msg-for="archetypeMinFieldsets" val-toggle-msg="required">{{minFieldsetsMessage}}</span></div>
+
     <!-- Fieldsets. -->
     <ul ui-sortable="sortableOptions" class="archetypeSortable" ng-class="{archetypeEmpty: model.value.fieldsets.length === 0 || sortingLastItem(), archetypeCrossDraggable: model.config.enableCrossDragging}" ng-model="model.value.fieldsets">
         <li ng-repeat="fieldset in model.value.fieldsets">

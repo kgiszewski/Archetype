@@ -1,5 +1,5 @@
 {{VERSION}}
-angular.module("umbraco").controller("Imulus.ArchetypeController", function ($scope, $http, $filter, assetsService, angularHelper, notificationsService, $timeout, fileManager, entityResource, archetypeService, archetypeLabelService, archetypeCacheService, archetypePropertyEditorResource) {
+angular.module("umbraco").controller("Imulus.ArchetypeController", function ($scope, $http, $filter, $interpolate, assetsService, angularHelper, notificationsService, $timeout, fileManager, entityResource, archetypeService, archetypeLabelService, archetypeCacheService, archetypePropertyEditorResource, archetypeLocalizationService) {
 
     // Variables.
     var draggedParent;
@@ -541,6 +541,13 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
         $timeout(function () {
             $scope.handleMandatoryValidation();
         }, 50);
+
+        // localize the message for minimum fieldsets validation errors
+        archetypeLocalizationService.localize("minFieldsetsMessage").then(function (value) {
+            value = value || "You must add minimum {{minFieldsets}} items";
+            var exp = $interpolate(value);
+            $scope.minFieldsetsMessage = exp({ minFieldsets: $scope.model.config.minFieldsets });
+        });
     }
 
     function addDefaultProperties(fieldsets)
@@ -796,6 +803,13 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
         if($scope.form) {
             $scope.form.$setDirty();
         }
+    }
+
+    $scope.minFieldsetsFulfilled = function () {
+        if (!$scope.model.config.minFieldsets) {
+            return true;
+        }
+        return $scope.numberOfEnabledFieldsets() >= $scope.model.config.minFieldsets;
     }
 
     //custom js

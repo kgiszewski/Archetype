@@ -49,6 +49,9 @@ namespace Archetype.Models
         [JsonProperty("hidePropertyLabel")]
         public bool HidePropertyLabel { get; set; }
 
+        [JsonProperty("minFieldsets", NullValueHandling = NullValueHandling.Ignore)]
+        public int MinFieldsets { get; set; }
+
         [JsonProperty("maxFieldsets", NullValueHandling = NullValueHandling.Ignore)]
         public int MaxFieldsets { get; set; }
 
