@@ -4,12 +4,12 @@
         <id>Archetype.Binaries</id>
         <version><%= version %></version>
         <title><%= name %></title>
-        <authors>imulus, kgiszewski, tomfulton</authors>
-        <owners>imulus, kgiszewski, tomfulton</owners>
-        <projectUrl>http://github.com/imulus/archetype</projectUrl>
+        <authors>kgiszewski, tomfulton</authors>
+        <owners>kgiszewski, tomfulton</owners>
+        <projectUrl>http://github.com/kgiszewski/archetype</projectUrl>
         <description><![CDATA[Archetype binaries for Umbraco]]></description>
         <tags>umbraco</tags>
-        <iconUrl>http://github.com/imulus/archetype/raw/master/assets/logo.png</iconUrl>
+        <iconUrl>http://imulus.github.io/Archetype/images/logo.png</iconUrl>
         <licenseUrl><%= licenseUrl %></licenseUrl>
         <dependencies>
             <dependency id="UmbracoCms.Core" version="7.2.2" />

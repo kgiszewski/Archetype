@@ -6,10 +6,10 @@
         <title><%= name %></title>
         <authors>leekelleher</authors>
         <owners>kgiszewski, leekelleher</owners>
-        <projectUrl>http://github.com/imulus/archetype</projectUrl>
+        <projectUrl>http://github.com/kgiszewski/archetype</projectUrl>
         <description><![CDATA[Archetype Courier extension for Umbraco]]></description>
         <tags>umbraco</tags>
-        <iconUrl>http://github.com/imulus/archetype/raw/master/assets/logo.png</iconUrl>
+        <iconUrl>http://imulus.github.io/Archetype/images/logo.png</iconUrl>
         <licenseUrl><%= licenseUrl %></licenseUrl>
         <dependencies>
             <dependency id="Archetype.Binaries" version="<%= version %>" />
