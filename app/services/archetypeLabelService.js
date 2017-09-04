@@ -1,4 +1,4 @@
-angular.module('umbraco.services').factory('archetypeLabelService', function (archetypeCacheService) {
+angular.module('umbraco.services').factory('archetypeLabelService', function (archetypeCacheService, $q) {
     //private
 
     function executeFunctionByName(functionName, context) {
@@ -353,7 +353,8 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
                 parsedTemplate = parsedTemplate.replace(match, templateLabelValue);
             });
 
-            return parsedTemplate;
+            // Wrap the title in a promise.
+            return $q.when(parsedTemplate);
         }
 	}
 });
