@@ -255,19 +255,12 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
             if (template.length < 1)
                 return fieldsetConfig.label;
 
-            var rgx = /({{(.*?)}})*/g;
-            var results;
+            var rgx = /{{(.*?)}}/g;
             var parsedTemplate = template;
 
             var rawMatches = template.match(rgx);
             
-            var matches = [];
-
-            _.each(rawMatches, function(match){
-                if(match) {
-                    matches.push(match);
-                }
-            });
+            var matches = rawMatches || [];
 
             _.each(matches, function (match) {
 
