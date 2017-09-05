@@ -331,16 +331,10 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
                             	if(label) {
                         			templateLabelValue = label;
                         		}
-                        		else {
-                        			templateLabelValue = templateLabelValue;
-                        		}
                         	}
                         }
-                        else {
-                        	return templateLabelValue;
-                        }
 
-                    }                
+                    }
                 }
 
                 if(!templateLabelValue) {
