@@ -1,6 +1,78 @@
 angular.module('umbraco.services').factory('archetypeLabelService', function (archetypeCacheService, $q) {
     //private
 
+    /**
+     * Splits a string value into a collection based on a regular expression.
+     * @param rgx The regular expression to use to find matches in the string value.
+     * @param value The string value to split.
+     * @returns {Array} A collection of objects, each representing a portion of the supplied
+     *      string. Each object will contain the substring value, as well as a property
+     *      indicating whether or not that substring was matched the regular expression.
+     */
+    function splitByRegex(rgx, value) {
+
+        // Validate input.
+        if (!rgx || !value) {
+            return [];
+        }
+
+        // Variables.
+        var substring,
+            splitParts = [],
+            nextIndex = 0,
+            index;
+
+        // Reset regex so we get all the matches.
+        rgx.lastIndex = 0;
+
+        // Loop through each match until there are no more matches.
+        var match = rgx.exec(value);
+        while (match) {
+
+            // Extract match index.
+            index = match.index;
+
+            // Is there text between the prior match and this one?
+            if (nextIndex < index) {
+                substring = value.substring(nextIndex, index);
+                splitParts.push({
+                    isMatch: false,
+                    value: substring
+                });
+            }
+
+            // Remember the end of this match for the next loop iteration.
+            nextIndex = rgx.lastIndex;
+
+            // Store info about this match.
+            substring = value.substring(index, nextIndex);
+            splitParts.push({
+                isMatch: true,
+                value: substring
+            });
+
+            // Get next match.
+            match = rgx.exec(value);
+
+        }
+
+        // The text after the last match.
+        if (nextIndex < value.length) {
+            substring = value.substring(nextIndex);
+            splitParts.push({
+                isMatch: false,
+                value: substring
+            });
+        }
+
+        // Reset regex in case somebody else wants to use it.
+        rgx.lastIndex = 0;
+
+        // Return information about the matches.
+        return splitParts;
+
+    }
+
     function executeFunctionByName(functionName, context) {
         var args = Array.prototype.slice.call(arguments).splice(2);
 
@@ -243,8 +315,6 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
 	return {
 		getFieldsetTitle: function(scope, fieldsetConfigModel, fieldsetIndex) {
 
-            //console.log(scope.model.config);
-
             if(!fieldsetConfigModel)
                 return "";
 
@@ -255,22 +325,23 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
             if (template.length < 1)
                 return fieldsetConfig.label;
 
-            var rgx = /{{(.*?)}}/g;
-            var parsedTemplate = template;
-
-            var rawMatches = template.match(rgx);
-            
-            var matches = rawMatches || [];
+            var rgx = /{{.*?}}/g;
+            var matches = splitByRegex(rgx, template);
 
             _.each(matches, function (match) {
 
+                // Skip over substrings that didn't match the regex (they do not require a transformation).
+                if (!match.isMatch) {
+                    return;
+                }
+
                 // split the template in case it consists of multiple property aliases and/or functions
-                var templates = match.replace("{{", '').replace("}}", '').split("|");
+                var templates = match.value.replace("{{", '').replace("}}", '').split("|");
                 var templateLabelValue = "";
 
                 for(var i = 0; i < templates.length; i++) {
                     // stop looking for a template label value if a previous template part already yielded a value
-                    if(templateLabelValue != "") {
+                    if(templateLabelValue !== "") {
                         break;
                     }
                     
@@ -281,7 +352,7 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
                     var endParamsIndexOf = template.indexOf(")");
 
                     //if passed a function
-                    if(beginParamsIndexOf != -1 && endParamsIndexOf != -1)
+                    if(beginParamsIndexOf !== -1 && endParamsIndexOf !== -1)
                     {
                         var functionName = template.substring(0, beginParamsIndexOf);
                         var propertyAlias = template.substring(beginParamsIndexOf + 1, endParamsIndexOf).split(',')[0];
@@ -290,7 +361,7 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
 
                         var beginArgsIndexOf = template.indexOf(',');
 
-                        if(beginArgsIndexOf != -1) {
+                        if(beginArgsIndexOf !== -1) {
 
                             var argsString = template.substring(beginArgsIndexOf + 1, endParamsIndexOf).trim();
 
@@ -310,7 +381,7 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
 
                         //determine the type of editor
                         var propertyConfig = _.find(fieldsetConfigModel.properties, function(property){
-                            return property.alias == propertyAlias;
+                            return property.alias === propertyAlias;
                         });
 
                         if(propertyConfig) {
@@ -337,11 +408,20 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
                 if (templateLabelValue.indexOf("$$") >= 0) {
                     templateLabelValue = templateLabelValue.replace(/\$\$/g, "$$$$$$$$");
                 }
-                parsedTemplate = parsedTemplate.replace(match, templateLabelValue);
+
+                // Set a new value now that it has been processed.
+                match.value = templateLabelValue;
+
             });
 
+            // Extract string values and combine them into a single string.
+            var substrings = _.map(matches, function (value) {
+                return value.value;
+            });
+            var combinedSubstrigs = substrings.join('');
+
             // Wrap the title in a promise.
-            return $q.when(parsedTemplate);
+            return $q.when(combinedSubstrigs);
         }
 	}
 });
