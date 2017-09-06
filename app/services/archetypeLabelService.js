@@ -2,6 +2,32 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
     //private
 
     /**
+     * Checks if the specified value is of type string.
+     * @param value The value to check the type of.
+     * @returns {boolean} True, if the value is a string; otherwise, false.
+     */
+    function isString(value) {
+        if (value === null) {
+            return false;
+        } else if (typeof value === 'string') {
+            return true;
+        } else if (value instanceof String) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Checks if the specified value is a JavaScript promise.
+     * @param value The value that may be a promise.
+     * @returns {*} True, if the value appears to be a promise; otherwise, false.
+     */
+    function isPromise(value) {
+        return value && _.isFunction(value.then);
+    }
+
+    /**
      * Splits a string value into a collection based on a regular expression.
      * @param rgx The regular expression to use to find matches in the string value.
      * @param value The string value to split.
@@ -321,6 +347,7 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
             var fieldset = scope.model.value.fieldsets[fieldsetIndex];
             var fieldsetConfig = scope.getConfigFieldsetByAlias(fieldset.alias);
             var template = fieldsetConfigModel.labelTemplate;
+            var promises = [];
 
             if (template.length < 1)
                 return fieldsetConfig.label;
@@ -401,27 +428,52 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
                     }
                 }
 
+                // Normalize null/undefined values to an empty string.
                 if(!templateLabelValue) {
                     templateLabelValue = "";
                 }
-                // handle collapsing dollar signs in labels (#387)
-                if (templateLabelValue.indexOf("$$") >= 0) {
-                    templateLabelValue = templateLabelValue.replace(/\$\$/g, "$$$$$$$$");
+
+                // Check the type of value (may be a string or a promise).
+                if (isString(templateLabelValue)) {
+
+                    // handle collapsing dollar signs in labels (#387)
+                    if (templateLabelValue.indexOf("$$") >= 0) {
+                        templateLabelValue = templateLabelValue.replace(/\$\$/g, "$$$$$$$$");
+                    }
+
+                    // Set a new value now that it has been processed.
+                    match.value = templateLabelValue;
+
+                } else if (isPromise(templateLabelValue)) {
+
+                    // Remember the promise so we can wait for it to be completed before constructing the
+                    // fieldset label.
+                    promises.push(templateLabelValue);
+                    templateLabelValue.then(function (value) {
+
+                        // Set a new value now that it has been processed.
+                        match.value = value;
+
+                    });
+
                 }
 
-                // Set a new value now that it has been processed.
-                match.value = templateLabelValue;
+            });
+
+            // Wait for all of the promises to resolve before constructing the full fieldset label.
+            return $q.all(promises).then(function () {
+
+                // Extract string values and combine them into a single string.
+                var substrings = _.map(matches, function (value) {
+                    return value.value;
+                });
+                var combinedSubstrigs = substrings.join('');
+
+                // Return the title.
+                return combinedSubstrigs;
 
             });
 
-            // Extract string values and combine them into a single string.
-            var substrings = _.map(matches, function (value) {
-                return value.value;
-            });
-            var combinedSubstrigs = substrings.join('');
-
-            // Wrap the title in a promise.
-            return $q.when(combinedSubstrigs);
         }
 	}
 });
