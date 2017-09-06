@@ -202,12 +202,13 @@ namespace Archetype.Extensions
                         id = Guid.NewGuid().ToString();
                     }
 
-                    var content = new StringContent(new
+                    var content = new StringContent(JsonConvert.SerializeObject(new
                     {
                         umbracoVersion = ConfigurationManager.AppSettings[Constants.UmbracoVersionAlias],
                         archetypeVersion = DllVersion(),
                         id = id
-                    }.ToString(), Encoding.UTF8, "application/json");
+                    }), Encoding.UTF8, "application/json");
+
 
                     var response = client.PostAsync(new Uri(Constants.NotificationUrl), content).Result;
 

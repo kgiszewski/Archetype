@@ -16,6 +16,6 @@
         public const string CheckForUpdatesAlias = "Archetype:CheckForUpdates";
         public const string IdAlias = "Archetype:Id";
         public const string UmbracoVersionAlias = "umbracoConfigurationStatus";
-        public const string NotificationUrl = "https://api.gizmo42.com/v1/archetype/CheckForUpdates";
+        public const string NotificationUrl = "https://api.gizmo42.com/v1/archetype/check-for-updates";
     }
 }
