@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("Archetype")]
 [assembly: AssemblyDescription("Archetype's supporting code library for Umbraco")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Imulus")]
+[assembly: AssemblyCompany("Kevin Giszewski LLC")]
 [assembly: AssemblyProduct("Archetype")]
 [assembly: AssemblyCopyright("MIT Licensed")]
 [assembly: AssemblyTrademark("")]

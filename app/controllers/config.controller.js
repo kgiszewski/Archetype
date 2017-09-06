@@ -1,4 +1,4 @@
-angular.module("umbraco").controller("Imulus.ArchetypeConfigController", function ($scope, $http, assetsService, dialogService, archetypePropertyEditorResource, archetypeGlobalConfigService, notificationService) {
+angular.module("umbraco").controller("Imulus.ArchetypeConfigController", function ($scope, $http, assetsService, dialogService, archetypePropertyEditorResource, archetypeGlobalConfigService, notificationsService) {
 
     //$scope.model.value = "";
     //console.log($scope.model.value);
@@ -17,12 +17,14 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
         $scope.dllVersion = data.dllVersion;
     });
        
-    archetypeGlobalConfigService.checkForUpdates().then(function() {
-        console.log("checked...");
-        notificationService.showNotification({
-            type: 'info',
-            message: 'A new version of Archetype is available!'
-        });
+    archetypeGlobalConfigService.checkForUpdates().then(function(data) {
+        if(data.isUpdateAvailable) {
+            notificationsService.add({
+                headline: data.headline,
+                type: data.type,
+                message: data.message
+            });
+        }
     });
 
     //ini the render model

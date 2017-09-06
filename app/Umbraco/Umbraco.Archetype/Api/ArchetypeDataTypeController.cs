@@ -1,9 +1,7 @@
 using System.Collections.Generic;
 ﻿using System;
-using System.Diagnostics;
 using System.Linq;
 using System.Net;
-using System.Reflection;
 using System.Web.Http;
 using AutoMapper;
 using Umbraco.Core.Models;
@@ -11,29 +9,28 @@ using Umbraco.Web.Models.ContentEditing;
 using Umbraco.Web.Mvc;
 using Umbraco.Web.Editors;
 using Archetype.Extensions;
-using Archetype.Models;
 
 namespace Archetype.Api
-{/// <summary>
+{
+    /// <summary>
     /// Controller that handles datatype related interactions.
     /// </summary>
+    /// <seealso cref="Umbraco.Web.Editors.UmbracoAuthorizedJsonController" />
     [PluginController("ArchetypeApi")]
     public class ArchetypeDataTypeController : UmbracoAuthorizedJsonController
-    {      
-        private readonly ArchetypeHelper _archetypeHelper = new ArchetypeHelper();
-
+    {
         public IEnumerable<object> GetAllPropertyEditors()
         {
             return
                 global::Umbraco.Core.PropertyEditors.PropertyEditorResolver.Current.PropertyEditors
-                    .Select(x => new {defaultPreValues = x.DefaultPreValuesForArchetype(), alias = x.Alias, view = x.ValueEditor.View});
+                    .Select(x => new { defaultPreValues = x.DefaultPreValuesForArchetype(), alias = x.Alias, view = x.ValueEditor.View });
         }
 
         /// <summary>
         /// Gets all datatypes.
         /// </summary>
         /// <returns></returns>
-        public object GetAll() 
+        public object GetAll()
         {
             var dataTypes = Services.DataTypeService.GetAllDataTypeDefinitions();
             return dataTypes.Select(t => new { guid = t.Key, name = t.Name });
@@ -84,40 +81,56 @@ namespace Archetype.Api
         /// <returns></returns>
         public object GetDllVersion()
         {
-            return new {dllVersion = _version()};
+            return new { dllVersion = ArchetypeHelper.Instance.DllVersion() };
         }
 
+        /// <summary>
+        /// Globals the settings.
+        /// </summary>
+        /// <returns>System.Object.</returns>
         [HttpGet]
         public object GlobalSettings()
         {
             return new
             {
-                isCheckingForUpdates = _archetypeHelper.GetGlobalSettings().IsCheckingForUpdates
+                isCheckingForUpdates = ArchetypeHelper.Instance.GetGlobalSettings().IsCheckingForUpdates
             };
         }
 
+        /// <summary>
+        /// Sets the check for updates.
+        /// </summary>
+        /// <param name="isChecking">if set to <c>true</c> [is checking].</param>
         [HttpPost]
         public void SetCheckForUpdates([FromBody] bool isChecking)
         {
-            _archetypeHelper.SetCheckForUpdates(isChecking);
-        }
-
-        [HttpPost]
-        public void CheckForUpdates()
-        {
-            _archetypeHelper.CheckForUpdates();
+            ArchetypeHelper.Instance.SetCheckForUpdates(isChecking);
         }
 
         /// <summary>
-        /// Gets the DLL version from the file.
+        /// Checks for updates.
         /// </summary>
-        /// <returns></returns>
-        private string _version()
+        /// <returns>System.Object.</returns>
+        [HttpPost]
+        public object CheckForUpdates()
         {
-            var asm = Assembly.GetExecutingAssembly();
-            var fvi = FileVersionInfo.GetVersionInfo(asm.Location);
+            if (!ArchetypeHelper.Instance.GetGlobalSettings().IsCheckingForUpdates)
+            {
+                return new
+                {
+                    isUpdateAvailable = false
+                };
+            }
 
-            return fvi.FileVersion;
+            var updateNotificationModel = ArchetypeHelper.Instance.CheckForUpdates();
+
+            return new
+            {
+                isUpdateAvailable = updateNotificationModel.IsUpdateAvailable,
+                headline = updateNotificationModel.Headline,
+                type = updateNotificationModel.Type,
+                message = updateNotificationModel.Message
+            };
         }
     }
 }
