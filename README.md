@@ -10,6 +10,8 @@ Install the selected <a href='https://github.com/imulus/Archetype/releases'>rele
 ## Official Docs ##
 https://github.com/kgiszewski/ArchetypeManual
 
+Get up and running in 15 minutes! https://www.youtube.com/watch?v=79LksNwGjLk
+
 ## News and Updates ##
 Follow us on Twitter https://twitter.com/ArchetypeKit
 
