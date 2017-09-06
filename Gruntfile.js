@@ -85,6 +85,7 @@ module.exports = function(grunt) {
           'app/controllers/controller_versioned.js',
           'app/controllers/config.controller.js',
           'app/controllers/config.dialog.controller.js',
+          'app/controllers/config.global.controller.js',
           'app/directives/archetypeproperty.js',
           'app/directives/archetypesubmitwatcher.js',
           'app/directives/archetypecustomview.js',
@@ -95,7 +96,8 @@ module.exports = function(grunt) {
           'app/resources/archetypePropertyEditorResource.js',
           'app/services/archetypeService.js',
           'app/services/archetypeLabelService.js',
-          'app/services/archetypeCacheService.js'
+          'app/services/archetypeCacheService.js',
+          'app/services/archetypeGlobalConfigService.js'
         ],
         dest: '<%= basePath %>/js/archetype.js'
       }
@@ -269,7 +271,8 @@ module.exports = function(grunt) {
         'app/controllers/*.js',
         '!app/controllers/controller.js',
         '!app/controllers/config.controller.js',
-        '!app/controllers/config.dialog.controller.js'
+        '!app/controllers/config.dialog.controller.js',
+        '!app/controllers/config.global.controller.js'
       ],
       less: [
         'app/less/*.less',

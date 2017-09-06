@@ -129,6 +129,7 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.SqlServerCe, Version=4.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
       <Private>False</Private>
@@ -238,6 +239,7 @@
     <Compile Include="Extensions\ArchetypePropertyModelExtensions.cs" />
     <Compile Include="Extensions\PropertyEditorExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="Models\ArchetypeGlobalSettings.cs" />
     <Compile Include="Models\ArchetypeModel.cs" />
     <Compile Include="Models\ArchetypePreValue.cs" />
     <Compile Include="Models\ArchetypePreValueFieldset.cs" />

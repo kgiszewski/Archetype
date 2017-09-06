@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Web.Configuration;
 using Archetype.Models;
 using Newtonsoft.Json;
 using Umbraco.Core;
@@ -7,6 +8,9 @@ using Umbraco.Core.Logging;
 using Umbraco.Core.Models;
 using Umbraco.Core.Models.PublishedContent;
 
+/// <summary>
+/// The Extensions namespace.
+/// </summary>
 namespace Archetype.Extensions
 {
     /// <summary>
@@ -16,6 +20,7 @@ namespace Archetype.Extensions
     {
         protected JsonSerializerSettings _jsonSettings;
         protected ApplicationContext _app;
+        private ArchetypeGlobalSettings _globalSettings = new ArchetypeGlobalSettings();
 
         private static readonly ArchetypeHelper _instance = new ArchetypeHelper();
 
@@ -112,10 +117,29 @@ namespace Archetype.Extensions
         internal bool IsPropertyValueConverterOverridden(int dataTypeId)
         {
             var prevalues = GetArchetypePreValueFromDataTypeId(dataTypeId);
+
             if (prevalues == null)
                 return false;
 
             return prevalues.OverrideDefaultPropertyValueConverter;
+        }
+
+        internal ArchetypeGlobalSettings GetGlobalSettings()
+        {
+            return _globalSettings;
+        }
+
+        internal void SetCheckForUpdates(bool isChecking)
+        {
+            _globalSettings.IsCheckingForUpdates = isChecking;
+            _globalSettings.Save();
+        }
+
+        internal void CheckForUpdates()
+        {
+            //http request
+            //send umb version
+            //send archetype version
         }
 
         /// <summary>

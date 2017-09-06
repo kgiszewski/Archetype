@@ -11,15 +11,17 @@ using Umbraco.Web.Models.ContentEditing;
 using Umbraco.Web.Mvc;
 using Umbraco.Web.Editors;
 using Archetype.Extensions;
+using Archetype.Models;
 
 namespace Archetype.Api
-{
-    /// <summary>
+{/// <summary>
     /// Controller that handles datatype related interactions.
     /// </summary>
     [PluginController("ArchetypeApi")]
     public class ArchetypeDataTypeController : UmbracoAuthorizedJsonController
-    {
+    {      
+        private readonly ArchetypeHelper _archetypeHelper = new ArchetypeHelper();
+
         public IEnumerable<object> GetAllPropertyEditors()
         {
             return
@@ -83,6 +85,27 @@ namespace Archetype.Api
         public object GetDllVersion()
         {
             return new {dllVersion = _version()};
+        }
+
+        [HttpGet]
+        public object GlobalSettings()
+        {
+            return new
+            {
+                isCheckingForUpdates = _archetypeHelper.GetGlobalSettings().IsCheckingForUpdates
+            };
+        }
+
+        [HttpPost]
+        public void SetCheckForUpdates([FromBody] bool isChecking)
+        {
+            _archetypeHelper.SetCheckForUpdates(isChecking);
+        }
+
+        [HttpPost]
+        public void CheckForUpdates()
+        {
+            _archetypeHelper.CheckForUpdates();
         }
 
         /// <summary>

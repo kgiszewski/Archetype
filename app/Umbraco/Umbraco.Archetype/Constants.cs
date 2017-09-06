@@ -12,5 +12,7 @@
         public const string CacheKey_DataTypeByGuid = "";
 
         public const string CacheKey_PreValueFromDataTypeId = "Archetype_GetArchetypePreValueFromDataTypeId_";
+
+        public const string CheckForUpdatesAlias = "Archetype:CheckForUpdates";
     }
 }
