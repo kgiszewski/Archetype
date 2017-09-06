@@ -8,4 +8,4 @@ Part of the reason we collect this information is to also ascertain how many act
 
 If you do not accept these Terms of Service in their entirety, please refrain from using Archetype in your Umbraco builds.
 
-We would ask that you reach out to the Archetype team via creating an issue on this site. 
+We would ask that you reach out to the Archetype team via creating an issue on this site if you have any questions or concerns. We truly want Archetype to be a win-win for all involved. 
