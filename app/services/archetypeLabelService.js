@@ -38,7 +38,7 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
             labelValue = "";
         }
 
-        // Check the type of value (may be a string or a promise).
+        // Check the type of value (may be a string, promise, function, or other).
         if (isString(labelValue)) {
 
             // handle collapsing dollar signs in labels (#387)
@@ -70,6 +70,11 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
             // Recursively check result (may be a string, promise, or another function (another
             // function would be pretty strange, though I see no reason to disallow it).
             processLabelValue(labelValue, promises, match);
+
+        } else {
+
+            // Some other data type (e.g., number, date, object).
+            match.value = labelValue;
 
         }
 
