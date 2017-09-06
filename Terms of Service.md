@@ -2,7 +2,7 @@
 
 Archetype is provided as-is under the MIT license.
 
-As of version v1.16.0, we are checking your installed version of Archetype against the current version. In this process we collect the current version of Archetype along with the current version of Umbraco that you are running. We use these values to help determine a response message to you. You may opt-out of this process by 'un-checking' the option in any of the Archetype you have configured in the `Developer->Data Types` section of Umbraco. This is a global setting that will set an `AppSetting` and cause your site to restart. We identify your install only by a randomly generated GUID. We WILL NOT store you IP address during the update check.
+As of version v1.16.0, we are checking your installed version of Archetype against the current version. In this process we collect the current version of Archetype along with the current version of Umbraco that you are running. We use these values to help determine a response message to you. You may opt-out of this process by 'un-checking' the option in any of the Archetype you have configured in the `Developer->Data Types` section of Umbraco. This is a global setting that will set an `AppSetting` and cause your site to restart. We identify your install only by a randomly generated GUID. We WILL NOT store your IP address during the update check.
 
 Part of the reason we collect this information is to also ascertain how many active installs exist. If this number is sufficiently high, we can plan accordingly and attempt to keep this project going.
 
