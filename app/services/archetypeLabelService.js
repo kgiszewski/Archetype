@@ -1,5 +1,79 @@
-angular.module('umbraco.services').factory('archetypeLabelService', function (archetypeCacheService, $q) {
+angular.module('umbraco.services').factory('archetypeLabelService', function (archetypeCacheService, $q, $injector) {
     //private
+
+    /**
+     * This will repeatedly wait for all promises in an array of promises to resolve, and it allows
+     * for promises to be added to the array (i.e., if you add more promises, those added promises
+     * will also be resolved too).
+     * @param promises The array of promises.
+     * @returns {*} The promise that will resolve once all promises in the array resolve.
+     */
+    function repeatedlyWaitForPromises(promises) {
+
+        // Remember the original number of promises being resolved.
+        var originalLength = promises.length;
+        return $q.all(promises).then(function () {
+
+            // If there are new promises, resolve those too.
+            if (promises.length > originalLength) {
+                promises = promises.slice(originalLength);
+                return repeatedlyWaitForPromises(promises);
+            }
+
+        });
+
+    }
+
+    /**
+     * Processes a value to be used in a fieldset label. Since it might be a promise or a function, the
+     * value is repeatedly processed until it becomes a string.
+     * @param labelValue The value to be used in the fieldset label.
+     * @param promises The collection of promises to add any promises to.
+     * @param match The current matched substring object in a label template.
+     */
+    function processLabelValue(labelValue, promises, match) {
+
+        // Normalize null/undefined values to an empty string.
+        if(!labelValue) {
+            labelValue = "";
+        }
+
+        // Check the type of value (may be a string or a promise).
+        if (isString(labelValue)) {
+
+            // handle collapsing dollar signs in labels (#387)
+            if (labelValue.indexOf("$$") >= 0) {
+                labelValue = labelValue.replace(/\$\$/g, "$$$$$$$$");
+            }
+
+            // Set a new value now that it has been processed.
+            match.value = labelValue;
+
+        } else if (isPromise(labelValue)) {
+
+            // Remember the promise so we can wait for it to be completed before constructing the
+            // fieldset label.
+            promises.push(labelValue);
+            labelValue.then(function (value) {
+
+                // The value will probably be a string, but recursively process it in case it's
+                // something else.
+                processLabelValue(value, promises, match);
+
+            });
+
+        } else if (_.isFunction(labelValue)) {
+
+            // Allow for the function to accept injected parameters, and invoke it.
+            labelValue = $injector.invoke(labelValue);
+
+            // Recursively check result (may be a string, promise, or another function (another
+            // function would be pretty strange, though I see no reason to disallow it).
+            processLabelValue(labelValue, promises, match);
+
+        }
+
+    }
 
     /**
      * Checks if the specified value is of type string.
@@ -428,40 +502,13 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
                     }
                 }
 
-                // Normalize null/undefined values to an empty string.
-                if(!templateLabelValue) {
-                    templateLabelValue = "";
-                }
-
-                // Check the type of value (may be a string or a promise).
-                if (isString(templateLabelValue)) {
-
-                    // handle collapsing dollar signs in labels (#387)
-                    if (templateLabelValue.indexOf("$$") >= 0) {
-                        templateLabelValue = templateLabelValue.replace(/\$\$/g, "$$$$$$$$");
-                    }
-
-                    // Set a new value now that it has been processed.
-                    match.value = templateLabelValue;
-
-                } else if (isPromise(templateLabelValue)) {
-
-                    // Remember the promise so we can wait for it to be completed before constructing the
-                    // fieldset label.
-                    promises.push(templateLabelValue);
-                    templateLabelValue.then(function (value) {
-
-                        // Set a new value now that it has been processed.
-                        match.value = value;
-
-                    });
-
-                }
+                // Process the value (i.e., reduce any functions or promises down to strings).
+                processLabelValue(templateLabelValue, promises, match);
 
             });
 
             // Wait for all of the promises to resolve before constructing the full fieldset label.
-            return $q.all(promises).then(function () {
+            return repeatedlyWaitForPromises(promises).then(function () {
 
                 // Extract string values and combine them into a single string.
                 var substrings = _.map(matches, function (value) {
