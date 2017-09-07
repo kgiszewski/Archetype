@@ -42,8 +42,53 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
     }
 
     //helper to get $eval the labelTemplate
+    $scope.fieldsetTitles = [];
     $scope.getFieldsetTitle = function (fieldsetConfigModel, fieldsetIndex) {
-        return archetypeLabelService.getFieldsetTitle($scope, fieldsetConfigModel, fieldsetIndex);
+
+        // Ensure the collection of titles is large enough.
+        ensureEnoughTitles(fieldsetIndex + 1);
+        var title = $scope.fieldsetTitles[fieldsetIndex];
+
+        // Return the title if it's already been loaded.
+        if (title.loaded) {
+            return title.value;
+        }
+
+        // Return early if the title is still loading.
+        if (title.loading) {
+            return;
+        }
+
+        // Start loading the title.
+        title.loading = true;
+        title.loaded = false;
+        title.value = null;
+        archetypeLabelService.getFieldsetTitle($scope, fieldsetConfigModel, fieldsetIndex)
+            .then(function(value) {
+
+                // Finished loading the title.
+                title.loaded = true;
+                title.loading = false;
+                title.value = value;
+
+            });
+
+        // Still loading a title, so do not return a title.
+
+    };
+
+    /**
+     * Ensure the collection of fieldset titles is large enough to accommodate the number of fieldsets.
+     * @param count The number of fieldsets.
+     */
+    function ensureEnoughTitles(count) {
+        while ($scope.fieldsetTitles.length < count) {
+            $scope.fieldsetTitles.push({
+                loading: false,
+                loaded: false,
+                value: null
+            });
+        }
     }
 
     //sort config
@@ -696,6 +741,14 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
         // update the selected files for this archetype (by alias)
         fileManager.setFiles($scope.model.alias, archetypeFiles);
     }
+
+    // Deep watch for changes.
+    $scope.$watch('model.value', function () {
+
+        // Empty titles. If the value has changed, the titles may have changed.
+        $scope.fieldsetTitles = [];
+
+    }, true);
 
     //watch for changes
     $scope.$watch('model.value', function (v) {
