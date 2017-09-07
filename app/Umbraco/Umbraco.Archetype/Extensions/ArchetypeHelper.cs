@@ -31,17 +31,10 @@ namespace Archetype.Extensions
         /// The application
         /// </summary>
         protected ApplicationContext _app;
-
-        /// <summary>
-        /// The global settings
-        /// </summary>
-        private readonly ArchetypeGlobalSettings _globalSettings;
-
         /// <summary>
         /// The pad lock
         /// </summary>
         private static readonly object _padLock = new object();
-
         /// <summary>
         /// The instance
         /// </summary>
@@ -79,7 +72,6 @@ namespace Archetype.Extensions
 
             _jsonSettings = new JsonSerializerSettings { ContractResolver = dcr };
             _app = ApplicationContext.Current;
-            _globalSettings = new ArchetypeGlobalSettings();
         }
 
         /// <summary>
@@ -167,25 +159,6 @@ namespace Archetype.Extensions
         }
 
         /// <summary>
-        /// Gets the global settings.
-        /// </summary>
-        /// <returns>ArchetypeGlobalSettings.</returns>
-        internal ArchetypeGlobalSettings GetGlobalSettings()
-        {
-            return _globalSettings;
-        }
-
-        /// <summary>
-        /// Sets the check for updates.
-        /// </summary>
-        /// <param name="isChecking">if set to <c>true</c> [is checking].</param>
-        internal void SetCheckForUpdates(bool isChecking)
-        {
-            _globalSettings.IsCheckingForUpdates = isChecking;
-            _globalSettings.Save();
-        }
-
-        /// <summary>
         /// Checks for updates.
         /// </summary>
         /// <returns>ArchetypeUpdateNotification.</returns>
@@ -195,18 +168,11 @@ namespace Archetype.Extensions
             {
                 using (var client = new HttpClient())
                 {
-                    var id = ConfigurationManager.AppSettings[Constants.IdAlias];
-
-                    if (id == null)
-                    {
-                        id = Guid.NewGuid().ToString();
-                    }
-
                     var content = new StringContent(JsonConvert.SerializeObject(new
                     {
                         umbracoVersion = ConfigurationManager.AppSettings[Constants.UmbracoVersionAlias],
                         archetypeVersion = DllVersion(),
-                        id = id
+                        id = ArchetypeGlobalSettings.Instance.Id
                     }), Encoding.UTF8, "application/json");
                     
                     var response = client.PostAsync(new Uri(Constants.NotificationUrl), content).Result;

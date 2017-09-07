@@ -9,6 +9,7 @@ using Umbraco.Web.Models.ContentEditing;
 using Umbraco.Web.Mvc;
 using Umbraco.Web.Editors;
 using Archetype.Extensions;
+using Archetype.Models;
 
 namespace Archetype.Api
 {
@@ -67,11 +68,14 @@ namespace Archetype.Api
         public object GetByGuid(Guid guid, string contentTypeAlias, string propertyTypeAlias, string archetypeAlias, int nodeId)
         {
             var dataType = Services.DataTypeService.GetDataTypeDefinitionById(guid);
+
             if (dataType == null)
             {
                 throw new HttpResponseException(HttpStatusCode.NotFound);
             }
+
             var dataTypeDisplay = Mapper.Map<IDataTypeDefinition, DataTypeDisplay>(dataType);
+
             return new { selectedEditor = dataTypeDisplay.SelectedEditor, preValues = dataTypeDisplay.PreValues, contentTypeAlias = contentTypeAlias, propertyTypeAlias = propertyTypeAlias, archetypeAlias = archetypeAlias, nodeId = nodeId };
         }
 
@@ -93,7 +97,7 @@ namespace Archetype.Api
         {
             return new
             {
-                isCheckingForUpdates = ArchetypeHelper.Instance.GetGlobalSettings().IsCheckingForUpdates
+                isCheckingForUpdates = ArchetypeGlobalSettings.Instance.CheckForUpdates
             };
         }
 
@@ -104,7 +108,8 @@ namespace Archetype.Api
         [HttpPost]
         public void SetCheckForUpdates([FromBody] bool isChecking)
         {
-            ArchetypeHelper.Instance.SetCheckForUpdates(isChecking);
+            ArchetypeGlobalSettings.Instance.CheckForUpdates = isChecking;
+            ArchetypeGlobalSettings.Instance.Save();
         }
 
         /// <summary>
@@ -114,7 +119,7 @@ namespace Archetype.Api
         [HttpPost]
         public object CheckForUpdates()
         {
-            if (!ArchetypeHelper.Instance.GetGlobalSettings().IsCheckingForUpdates)
+            if (!ArchetypeGlobalSettings.Instance.CheckForUpdates)
             {
                 return new
                 {

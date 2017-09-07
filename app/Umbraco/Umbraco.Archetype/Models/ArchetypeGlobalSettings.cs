@@ -1,56 +1,104 @@
-﻿using System.Web.Configuration;
+﻿using System;
+using System.IO;
+using Newtonsoft.Json;
+using Umbraco.Core.IO;
+using Umbraco.Core.Logging;
 
 namespace Archetype.Models
 {
     public class ArchetypeGlobalSettings
     {
-        private bool? _isCheckingForUpdates;
+        public bool CheckForUpdates { get; set; }
+        public Guid Id { get; set; }
 
-        public bool IsCheckingForUpdates
+        private static ArchetypeGlobalSettings _instance;
+
+        private static string _pathToConfig = @"~/Config/Archetype.config.js";
+
+        private static readonly string _mappedPathToConfig = IOHelper.MapPath(_pathToConfig);
+
+        private static object _padLock = new object();
+
+        private ArchetypeGlobalSettings()
+        {
+            
+        }
+
+        public static ArchetypeGlobalSettings Instance
         {
             get
             {
-                if (_isCheckingForUpdates == null)
+                if (_instance == null)
                 {
-                    var setting = WebConfigurationManager.AppSettings[Constants.CheckForUpdatesAlias];
-
-                    if (setting == null)
+                    lock (_padLock)
                     {
-                        _isCheckingForUpdates = true;
-                    }
+                        if (_instance == null)
+                        {
+                            _instance = new ArchetypeGlobalSettings();
 
-                    var settingValue = true;
-
-                    if (bool.TryParse(setting, out settingValue))
-                    {
-                        _isCheckingForUpdates = settingValue;
-                    }
-                    else
-                    {
-                        _isCheckingForUpdates = true;
+                            _loadSettingsFromConfigFile();
+                        }
                     }
                 }
 
-                return _isCheckingForUpdates.Value;
-            }
-
-            set
-            {
-                _isCheckingForUpdates = value;
+                return _instance;
             }
         }
 
         public void Save()
         {
-            var config = WebConfigurationManager.OpenWebConfiguration("~");
-
-            if (config.AppSettings.Settings[Constants.CheckForUpdatesAlias] != null)
+            //write to JSON
+            var configFileModel = new ArchetypeConfigFileModel
             {
-                config.AppSettings.Settings.Remove(Constants.CheckForUpdatesAlias);
-            }
+                Id = _instance.Id,
+                OptInNewVersionNotification = _instance.CheckForUpdates
+            };
 
-            config.AppSettings.Settings.Add(Constants.CheckForUpdatesAlias, IsCheckingForUpdates.ToString());
-            config.Save();
+            var serializedJson = JsonConvert.SerializeObject(configFileModel, Formatting.Indented);
+
+            File.WriteAllText(_mappedPathToConfig, serializedJson);
+        }
+
+        private static void _loadSettingsFromConfigFile()
+        {
+            try
+            {
+                if (File.Exists(_mappedPathToConfig))
+                {
+                    //load
+                    var deserializedConfigFile = JsonConvert.DeserializeObject<ArchetypeConfigFileModel>(File.ReadAllText(_mappedPathToConfig));
+
+                    if (deserializedConfigFile != null)
+                    {
+                        _instance.Id = deserializedConfigFile.Id;
+                        _instance.CheckForUpdates = deserializedConfigFile.OptInNewVersionNotification;
+                    }
+                    else
+                    {
+                        _createNewConfigFile("Config file model was null!");
+                    }
+                }
+                else
+                {
+                    _createNewConfigFile("Config file was missing!");
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Error<ArchetypeGlobalSettings>(ex.Message, ex);
+
+                _createNewConfigFile("Exception!");
+            }
+        }
+
+        private static void _createNewConfigFile(string reason)
+        {
+            //write a new file with defaults
+            LogHelper.Info<ArchetypeGlobalSettings>(string.Format("Generating a new config file reason: {0}", reason));
+
+            _instance.Id = Guid.NewGuid();
+            _instance.CheckForUpdates = true;
+            _instance.Save();
         }
     }
 }

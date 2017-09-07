@@ -232,7 +232,6 @@
     <Compile Include="Api\ArchetypeDataTypeController.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Events\ExpireCache.cs" />
-    <Compile Include="Events\StartUp.cs" />
     <Compile Include="Extensions\ArchetypeFieldsetModelExtensions.cs" />
     <Compile Include="Extensions\ArchetypeHelper.cs" />
     <Compile Include="Extensions\ArchetypeModelExtensions.cs" />
@@ -240,6 +239,7 @@
     <Compile Include="Extensions\ArchetypePropertyModelExtensions.cs" />
     <Compile Include="Extensions\PropertyEditorExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="Models\ArchetypeConfigFileModel.cs" />
     <Compile Include="Models\ArchetypeGlobalSettings.cs" />
     <Compile Include="Models\ArchetypeModel.cs" />
     <Compile Include="Models\ArchetypePreValue.cs" />
