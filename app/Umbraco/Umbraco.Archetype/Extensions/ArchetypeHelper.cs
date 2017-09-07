@@ -174,7 +174,9 @@ namespace Archetype.Extensions
                         archetypeVersion = DllVersion(),
                         id = ArchetypeGlobalSettings.Instance.Id
                     }), Encoding.UTF8, "application/json");
-                    
+
+                    client.DefaultRequestHeaders.Add("x-api-key-id", ArchetypeGlobalSettings.Instance.ApiKey.ToString());
+
                     var response = client.PostAsync(new Uri(Constants.NotificationUrl), content).Result;
 
                     if (response.StatusCode == HttpStatusCode.OK)
