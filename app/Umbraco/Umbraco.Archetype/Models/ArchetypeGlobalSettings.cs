@@ -51,7 +51,7 @@ namespace Archetype.Models
             var configFileModel = new ArchetypeConfigFileModel
             {
                 Id = _instance.Id,
-                OptInNewVersionNotification = _instance.CheckForUpdates
+                CheckForUpdates = _instance.CheckForUpdates
             };
 
             var serializedJson = JsonConvert.SerializeObject(configFileModel, Formatting.Indented);
@@ -71,7 +71,7 @@ namespace Archetype.Models
                     if (deserializedConfigFile != null)
                     {
                         _instance.Id = deserializedConfigFile.Id;
-                        _instance.CheckForUpdates = deserializedConfigFile.OptInNewVersionNotification;
+                        _instance.CheckForUpdates = deserializedConfigFile.CheckForUpdates;
                     }
                     else
                     {
