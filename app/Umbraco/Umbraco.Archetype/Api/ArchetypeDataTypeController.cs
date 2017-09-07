@@ -129,7 +129,8 @@ namespace Archetype.Api
                 isUpdateAvailable = updateNotificationModel.IsUpdateAvailable,
                 headline = updateNotificationModel.Headline,
                 type = updateNotificationModel.Type,
-                message = updateNotificationModel.Message
+                message = updateNotificationModel.Message,
+                url = updateNotificationModel.Url
             };
         }
     }

@@ -22,7 +22,8 @@ angular.module("umbraco").controller("Imulus.ArchetypeConfigController", functio
             notificationsService.add({
                 headline: data.headline,
                 type: data.type,
-                message: data.message
+                message: data.message,
+                url: data.url
             });
         }
     });
