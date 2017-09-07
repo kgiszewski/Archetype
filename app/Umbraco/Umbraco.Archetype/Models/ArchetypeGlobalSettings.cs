@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Newtonsoft.Json;
@@ -51,16 +50,19 @@ namespace Archetype.Models
 
         public void Save()
         {
-            //write to JSON
-            var configFileModel = new ArchetypeConfigFileModel
+            lock (_padLock)
             {
-                Id = _instance.Id,
-                CheckForUpdates = _instance.CheckForUpdates
-            };
+                //write to JSON
+                var configFileModel = new ArchetypeConfigFileModel
+                {
+                    Id = _instance.Id,
+                    CheckForUpdates = _instance.CheckForUpdates
+                };
 
-            var serializedJson = JsonConvert.SerializeObject(configFileModel, Formatting.Indented);
+                var serializedJson = JsonConvert.SerializeObject(configFileModel, Formatting.Indented);
 
-            File.WriteAllText(_mappedPathToConfig, serializedJson);
+                File.WriteAllText(_mappedPathToConfig, serializedJson);
+            }
         }
 
         private static void _loadSettingsFromConfigFile()
