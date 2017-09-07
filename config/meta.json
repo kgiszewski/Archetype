@@ -1,9 +1,9 @@
 {
 	"name": "Archetype",
 	"version": "1.16.0",
-	"url": "http://github.com/imulus/archetype/",
-	"author": "Imulus - Kevin Giszewski - Tom Fulton - Lee Kelleher - Matt Brailsford - Kenn Jacobsen - Et. Al.",
-	"authorUrl": "http://imulus.com/",
+	"url": "http://github.com/kgiszewski/archetype/",
+	"author": "Kevin Giszewski - Tom Fulton - Lee Kelleher - Matt Brailsford - Kenn Jacobsen - Nicholas Westby - Et. Al.",
+	"authorUrl": "http://github.com/kgiszewski/archetype/",
 	"license": "MIT",
 	"licenseUrl": "http://opensource.org/licenses/MIT"
 }

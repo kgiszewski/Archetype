@@ -208,8 +208,7 @@ namespace Archetype.Extensions
                         archetypeVersion = DllVersion(),
                         id = id
                     }), Encoding.UTF8, "application/json");
-
-
+                    
                     var response = client.PostAsync(new Uri(Constants.NotificationUrl), content).Result;
 
                     if (response.StatusCode == HttpStatusCode.OK)
