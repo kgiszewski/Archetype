@@ -421,7 +421,7 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
 		getFieldsetTitle: function(scope, fieldsetConfigModel, fieldsetIndex) {
 
             if(!fieldsetConfigModel)
-                return "";
+                return $q.when("");
 
             var fieldset = scope.model.value.fieldsets[fieldsetIndex];
             var fieldsetConfig = scope.getConfigFieldsetByAlias(fieldset.alias);
@@ -429,7 +429,7 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
             var promises = [];
 
             if (template.length < 1)
-                return fieldsetConfig.label;
+                return $q.when(fieldsetConfig.label);
 
             var rgx = /{{.*?}}/g;
             var matches = splitByRegex(rgx, template);
