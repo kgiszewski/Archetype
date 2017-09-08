@@ -19,7 +19,7 @@ Get up and running in 15 minutes! https://www.youtube.com/watch?v=79LksNwGjLk
 Follow us on Twitter https://twitter.com/ArchetypeKit
 
 ## Core Team ##
-* Kevin Giszewski (founder/project lead) - University of Notre Dame - https://kevin.giszewski.com/
+* Kevin Giszewski (founder/project lead) - Tonic - https://kevin.giszewski.com/
 * Tom Fulton (founder) - Tonic - http://hellotonic.com/
 * Lee Kelleher - Umbrella - http://www.umbrellainc.co.uk/
 * Matt Brailsford - The Outfield - http://www.theoutfield.co.uk/
