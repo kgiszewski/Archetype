@@ -4,7 +4,7 @@ Are you a company that depends on Archetype? We would love for you to sponsor us
 
 ## Sponsor a Sprint
 
-We have a backlog, it gets done when either we have a personal need, we get bored or when we get a sponsorship. If you want to sponsor a sprint, we can give you thanks on social media and if you're really generous, we can put your logo and link on a well placed spot in a version release. [Contact us](https://twitter.com/ArchetypeKit) to get started.
+We have a [backlog](https://github.com/kgiszewski/Archetype/issues), it gets done when either we have a personal need, we get bored or when we get a sponsorship. If you want to sponsor a sprint, we can give you thanks on social media and if you're really generous, we can put your logo and link on a well placed spot in a version release. [Contact us](https://twitter.com/ArchetypeKit) to get started.
 
 ## Donations
 
