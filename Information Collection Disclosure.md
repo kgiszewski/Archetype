@@ -4,7 +4,7 @@ Archetype is provided as-is under the [MIT license](LICENSE).
 
 As of version v1.16.0, we are checking your installed version of Archetype against the current version. In this process we collect the current version of Archetype along with the current version of Umbraco that you are running. We use these values to help determine a response message to you. You may opt-out of this process by 'un-checking' the option in any of the Archetypes you have configured in the `Developer->Data Types` section of Umbraco. 
 
-![opt out](assets/optout.png)
+![opt out](assets/optout2.png)
 
 This is a global setting that will set an `AppSetting` and update a file located at `~/config/archetype.config.js`. If you manually change the setting it will require an app reload to refresh to runtime values. If somehow this file becomes corrupt, a new file will be generated and you will again have to opt out.
 
