@@ -7,8 +7,8 @@ Archetype
 ## Installation
 Install the selected <a href='https://github.com/kgiszewski/Archetype/releases'>release</a> through the Umbraco package installer or via <a href='http://www.nuget.org/packages/Archetype/'>NuGet</a>.
 
-## Terms of Service
-Please read the the TOS here: https://github.com/kgiszewski/Archetype/blob/master/Terms%20of%20Service.md
+## Information Collection Disclosure
+Please read the information disclosure [here](Information%20Collection%20Disclosure.md).
 
 ## Official Docs ##
 https://github.com/kgiszewski/ArchetypeManual
