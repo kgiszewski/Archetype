@@ -1,7 +1,5 @@
 # Information Collection Disclosure
 
-Archetype is provided as-is under the [MIT license](LICENSE).
-
 As of version v1.16.0, we are checking your installed version of Archetype against the current version. In this process we collect the current version of Archetype along with the current version of Umbraco that you are running. We use these values to help determine a response message to you. You may opt-out of this process by 'un-checking' the option in any of the Archetypes you have configured in the `Developer->Data Types` section of Umbraco. 
 
 ![opt out](assets/optout3.png)
