@@ -6,7 +6,7 @@ As of version v1.16.0, we are checking your installed version of Archetype again
 
 ![opt out](assets/optout.png)
 
-This is a global setting that will set an `AppSetting` and update a file located at `~/config/archetype.config.js`. If you manually change the setting, it will require an app reload to referesh to runtime values. If somehow this file becomes corrupt, a new file will be generated and you will again have to opt out.
+This is a global setting that will set an `AppSetting` and update a file located at `~/config/archetype.config.js`. If you manually change the setting it will require an app reload to refresh to runtime values. If somehow this file becomes corrupt, a new file will be generated and you will again have to opt out.
 
 We identify your install only by a randomly generated GUID. We WILL NOT store your IP address or hostname during the update check. 
 
