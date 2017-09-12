@@ -12,5 +12,8 @@
         public const string CacheKey_DataTypeByGuid = "";
 
         public const string CacheKey_PreValueFromDataTypeId = "Archetype_GetArchetypePreValueFromDataTypeId_";
+
+        public const string UmbracoVersionAlias = "umbracoConfigurationStatus";
+        public const string NotificationUrl = "https://api.gizmo42.com/v1/archetype/check-for-updates";
     }
 }

@@ -1,8 +1,17 @@
 {{VERSION_HTML}}
 <div class="archetypeConfig" ng-controller="Imulus.ArchetypeConfigController">
-    <h2 class="archetype-headline"><img src="../App_Plugins/Archetype/assets/logo_50.png"/>Archetype<small>{{dllVersion}}</small><a href="https://twitter.com/archetypekit" target="_blank"><img src="../App_Plugins/Archetype/assets/twitter.png"/></a></h2>
-    <p>At a minimum your Archetype needs at least one fieldset with at least one property. You can configure it to allow for multiple types of fieldsets within a single Archetype and you can even add another Archetype as a property. Please use the link below for the full manual:</p>
-    <p><a class="manual-link" href="https://github.com/kgiszewski/ArchetypeManual" target="_blank">Archetype Manual</a></p>
+    <h2 class="archetype-headline"><img src="../App_Plugins/Archetype/assets/logo_50.png"/>Archetype<small>{{dllVersion}}</small></h2>
+    <p>At a minimum your Archetype needs at least one fieldset with at least one property. Please use the link below for the full manual. We would really love a donation if you find Archetype useful. Your company can also sponsor a sprint!</p>
+    <p>
+        <a class="manual-link" href="https://github.com/kgiszewski/ArchetypeManual" target="_blank">Archetype Manual</a> | 
+        <a class="manual-link" href="https://github.com/kgiszewski/Archetype/blob/master/Terms%20of%20Service.md" target="_blank">Terms of Service</a> | 
+        <a class="manual-link" href="https://www.youtube.com/watch?v=79LksNwGjLk" target="_blank">Quick Start Video</a> | 
+        <a class="manual-link" href="https://twitter.com/archetypekit" target="_blank">Twitter</a> |
+        <a class="manual-link" href="https://github.com/kgiszewski/Archetype" target="_blank">GitHub</a> |
+        <a class="manual-link" href="https://github.com/kgiszewski/Archetype/blob/master/Sponsors.md" target="_blank">Become a sponsor</a> |
+        <a class="manual-link donate-link" href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=KBKWLURGLGU6L" target="_blank">Donate!</a>
+    </p>
+    
     <ul class="archetypeFieldsets" ui-sortable="sortableOptions" ng-model="archetypeConfigRenderModel.fieldsets">
         <li ng-repeat="fieldset in archetypeConfigRenderModel.fieldsets" ng-hide="fieldset.remove">
             <div class="archetypeFieldsetWrapper" >

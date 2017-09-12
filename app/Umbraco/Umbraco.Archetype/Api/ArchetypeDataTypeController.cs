@@ -1,9 +1,7 @@
 using System.Collections.Generic;
 ﻿using System;
-using System.Diagnostics;
 using System.Linq;
 using System.Net;
-using System.Reflection;
 using System.Web.Http;
 using AutoMapper;
 using Umbraco.Core.Models;
@@ -11,12 +9,14 @@ using Umbraco.Web.Models.ContentEditing;
 using Umbraco.Web.Mvc;
 using Umbraco.Web.Editors;
 using Archetype.Extensions;
+using Archetype.Models;
 
 namespace Archetype.Api
 {
     /// <summary>
     /// Controller that handles datatype related interactions.
     /// </summary>
+    /// <seealso cref="Umbraco.Web.Editors.UmbracoAuthorizedJsonController" />
     [PluginController("ArchetypeApi")]
     public class ArchetypeDataTypeController : UmbracoAuthorizedJsonController
     {
@@ -24,14 +24,14 @@ namespace Archetype.Api
         {
             return
                 global::Umbraco.Core.PropertyEditors.PropertyEditorResolver.Current.PropertyEditors
-                    .Select(x => new {defaultPreValues = x.DefaultPreValuesForArchetype(), alias = x.Alias, view = x.ValueEditor.View});
+                    .Select(x => new { defaultPreValues = x.DefaultPreValuesForArchetype(), alias = x.Alias, view = x.ValueEditor.View });
         }
 
         /// <summary>
         /// Gets all datatypes.
         /// </summary>
         /// <returns></returns>
-        public object GetAll() 
+        public object GetAll()
         {
             var dataTypes = Services.DataTypeService.GetAllDataTypeDefinitions();
             return dataTypes.Select(t => new { guid = t.Key, name = t.Name });
@@ -68,11 +68,14 @@ namespace Archetype.Api
         public object GetByGuid(Guid guid, string contentTypeAlias, string propertyTypeAlias, string archetypeAlias, int nodeId)
         {
             var dataType = Services.DataTypeService.GetDataTypeDefinitionById(guid);
+
             if (dataType == null)
             {
                 throw new HttpResponseException(HttpStatusCode.NotFound);
             }
+
             var dataTypeDisplay = Mapper.Map<IDataTypeDefinition, DataTypeDisplay>(dataType);
+
             return new { selectedEditor = dataTypeDisplay.SelectedEditor, preValues = dataTypeDisplay.PreValues, contentTypeAlias = contentTypeAlias, propertyTypeAlias = propertyTypeAlias, archetypeAlias = archetypeAlias, nodeId = nodeId };
         }
 
@@ -82,19 +85,58 @@ namespace Archetype.Api
         /// <returns></returns>
         public object GetDllVersion()
         {
-            return new {dllVersion = _version()};
+            return new { dllVersion = ArchetypeHelper.Instance.DllVersion() };
         }
 
         /// <summary>
-        /// Gets the DLL version from the file.
+        /// Globals the settings.
         /// </summary>
-        /// <returns></returns>
-        private string _version()
+        /// <returns>System.Object.</returns>
+        [HttpGet]
+        public object GlobalSettings()
         {
-            var asm = Assembly.GetExecutingAssembly();
-            var fvi = FileVersionInfo.GetVersionInfo(asm.Location);
+            return new
+            {
+                isCheckingForUpdates = ArchetypeGlobalSettings.Instance.CheckForUpdates
+            };
+        }
 
-            return fvi.FileVersion;
+        /// <summary>
+        /// Sets the check for updates.
+        /// </summary>
+        /// <param name="isChecking">if set to <c>true</c> [is checking].</param>
+        [HttpPost]
+        public void SetCheckForUpdates([FromBody] bool isChecking)
+        {
+            ArchetypeGlobalSettings.Instance.CheckForUpdates = isChecking;
+            ArchetypeGlobalSettings.Instance.Save();
+        }
+
+        /// <summary>
+        /// Checks for updates.
+        /// </summary>
+        /// <returns>System.Object.</returns>
+        [HttpPost]
+        public object CheckForUpdates()
+        {
+            if (!ArchetypeGlobalSettings.Instance.CheckForUpdates)
+            {
+                return new
+                {
+                    isUpdateAvailable = false
+                };
+            }
+
+            var updateNotificationModel = ArchetypeHelper.Instance.CheckForUpdates();
+
+            return new
+            {
+                isUpdateAvailable = updateNotificationModel.IsUpdateAvailable,
+                headline = updateNotificationModel.Headline,
+                type = updateNotificationModel.Type,
+                message = updateNotificationModel.Message,
+                url = updateNotificationModel.Url
+            };
         }
     }
 }

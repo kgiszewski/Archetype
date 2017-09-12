@@ -1,12 +1,21 @@
 ﻿using System;
+using System.Configuration;
 using System.Linq;
+using System.Net.Http;
+using System.Text;
 using Archetype.Models;
 using Newtonsoft.Json;
 using Umbraco.Core;
 using Umbraco.Core.Logging;
 using Umbraco.Core.Models;
 using Umbraco.Core.Models.PublishedContent;
+using System.Reflection;
+using System.Diagnostics;
+using System.Net;
 
+/// <summary>
+/// The Extensions namespace.
+/// </summary>
 namespace Archetype.Extensions
 {
     /// <summary>
@@ -14,20 +23,52 @@ namespace Archetype.Extensions
     /// </summary>
     public class ArchetypeHelper
     {
+        /// <summary>
+        /// The json settings
+        /// </summary>
         protected JsonSerializerSettings _jsonSettings;
+        /// <summary>
+        /// The application
+        /// </summary>
         protected ApplicationContext _app;
-
-        private static readonly ArchetypeHelper _instance = new ArchetypeHelper();
-
-        internal static ArchetypeHelper Instance { get { return _instance; } }
+        /// <summary>
+        /// The pad lock
+        /// </summary>
+        private static readonly object _padLock = new object();
+        /// <summary>
+        /// The instance
+        /// </summary>
+        private static ArchetypeHelper _instance = new ArchetypeHelper();
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ArchetypeHelper"/> class.
+        /// Gets the instance.
         /// </summary>
-        internal ArchetypeHelper()
+        /// <value>The instance.</value>
+        internal static ArchetypeHelper Instance {
+            get
+            {
+                if (_instance == null)
+                {
+                    lock (_padLock)
+                    {
+                        if (_instance == null)
+                        {
+                            _instance = new ArchetypeHelper();
+                        }
+                    }
+                }
+
+                return _instance;
+            }
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ArchetypeHelper" /> class.
+        /// </summary>
+        private ArchetypeHelper()
         {
             var dcr = new Newtonsoft.Json.Serialization.DefaultContractResolver();
-            dcr.DefaultMembersSearchFlags |= System.Reflection.BindingFlags.NonPublic;
+            dcr.DefaultMembersSearchFlags |= BindingFlags.NonPublic;
 
             _jsonSettings = new JsonSerializerSettings { ContractResolver = dcr };
             _app = ApplicationContext.Current;
@@ -36,9 +77,7 @@ namespace Archetype.Extensions
         /// <summary>
         /// Gets the json serializer settings.
         /// </summary>
-        /// <value>
-        /// The json serializer settings.
-        /// </value>
+        /// <value>The json serializer settings.</value>
         internal JsonSerializerSettings JsonSerializerSettings { get { return _jsonSettings; } }
 
         /// <summary>
@@ -46,7 +85,7 @@ namespace Archetype.Extensions
         /// </summary>
         /// <param name="sourceJson">The source JSON.</param>
         /// <param name="dataTypePreValues">The data type pre values.</param>
-        /// <returns></returns>
+        /// <returns>ArchetypeModel.</returns>
         internal ArchetypeModel DeserializeJsonToArchetype(string sourceJson, PreValueCollection dataTypePreValues)
         {
             try
@@ -78,7 +117,7 @@ namespace Archetype.Extensions
         /// <param name="sourceJson">The source JSON.</param>
         /// <param name="dataTypeId">The data type identifier.</param>
         /// <param name="hostContentType">Type of the host content.</param>
-        /// <returns></returns>
+        /// <returns>ArchetypeModel.</returns>
         internal ArchetypeModel DeserializeJsonToArchetype(string sourceJson, int dataTypeId, PublishedContentType hostContentType = null)
         {
             try
@@ -108,10 +147,11 @@ namespace Archetype.Extensions
         /// Determines whether datatypeId has had it's PVC overridden.
         /// </summary>
         /// <param name="dataTypeId">The data type identifier.</param>
-        /// <returns></returns>
+        /// <returns><c>true</c> if [is property value converter overridden] [the specified data type identifier]; otherwise, <c>false</c>.</returns>
         internal bool IsPropertyValueConverterOverridden(int dataTypeId)
         {
             var prevalues = GetArchetypePreValueFromDataTypeId(dataTypeId);
+
             if (prevalues == null)
                 return false;
 
@@ -119,10 +159,54 @@ namespace Archetype.Extensions
         }
 
         /// <summary>
+        /// Checks for updates.
+        /// </summary>
+        /// <returns>ArchetypeUpdateNotification.</returns>
+        internal ArchetypeUpdateNotification CheckForUpdates()
+        {
+            try
+            {
+                using (var client = new HttpClient())
+                {
+                    var content = new StringContent(JsonConvert.SerializeObject(new
+                    {
+                        umbracoVersion = ConfigurationManager.AppSettings[Constants.UmbracoVersionAlias],
+                        archetypeVersion = DllVersion(),
+                        id = ArchetypeGlobalSettings.Instance.Id
+                    }), Encoding.UTF8, "application/json");
+
+                    client.DefaultRequestHeaders.Add("x-api-key-id", ArchetypeGlobalSettings.Instance.ApiKey.ToString());
+
+                    var response = client.PostAsync(new Uri(Constants.NotificationUrl), content).Result;
+
+                    if (response.StatusCode == HttpStatusCode.OK)
+                    {
+                        var responseString = response.Content.ReadAsStringAsync().Result;
+
+                        return JsonConvert.DeserializeObject<ArchetypeUpdateNotification>(responseString);
+                    }
+
+                    return new ArchetypeUpdateNotification
+                    {
+                        IsUpdateAvailable = false
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                //if anything goes wrong let's make sure we don't break their site
+                return new ArchetypeUpdateNotification
+                {
+                    IsUpdateAvailable = false
+                };
+            }
+        }
+
+        /// <summary>
         /// Gets the archetype pre value from data type identifier.
         /// </summary>
         /// <param name="dataTypeId">The data type identifier.</param>
-        /// <returns></returns>
+        /// <returns>ArchetypePreValue.</returns>
         private ArchetypePreValue GetArchetypePreValueFromDataTypeId(int dataTypeId)
         {
             return _app.ApplicationCache.RuntimeCache.GetCacheItem(
@@ -147,7 +231,7 @@ namespace Archetype.Extensions
         /// Gets the archetype pre value from pre values collection.
         /// </summary>
         /// <param name="dataTypePreValues">The data type pre values.</param>
-        /// <returns></returns>
+        /// <returns>ArchetypePreValue.</returns>
         private ArchetypePreValue GetArchetypePreValueFromPreValuesCollection(PreValueCollection dataTypePreValues)
         {
             var preValueAsString = dataTypePreValues.PreValuesAsDictionary.First().Value.Value;
@@ -159,7 +243,7 @@ namespace Archetype.Extensions
         /// Gets the data type by unique identifier.
         /// </summary>
         /// <param name="guid">The unique identifier.</param>
-        /// <returns></returns>
+        /// <returns>IDataTypeDefinition.</returns>
         internal IDataTypeDefinition GetDataTypeByGuid(Guid guid)
         {
             return (IDataTypeDefinition)ApplicationContext.Current.ApplicationCache.RuntimeCache.GetCacheItem(
@@ -172,6 +256,7 @@ namespace Archetype.Extensions
         /// </summary>
         /// <param name="archetype">The Archetype to add the additional metadata to</param>
         /// <param name="preValue">The configuration of the Archetype</param>
+        /// <param name="hostContentType">Type of the host content.</param>
         private void RetrieveAdditionalProperties(ref ArchetypeModel archetype, ArchetypePreValue preValue, PublishedContentType hostContentType = null)
         {
             foreach (var fieldset in preValue.Fieldsets)
@@ -197,7 +282,6 @@ namespace Archetype.Extensions
         /// <summary>
         /// Retrieves additional metadata that isn't available on the stored model of an ArchetypePreValue
         /// </summary>
-        /// <param name="archetype">The Archetype to add the additional metadata to</param>
         /// <param name="preValue">The configuration of the Archetype</param>
         private void RetrieveAdditionalProperties(ref ArchetypePreValue preValue)
         {
@@ -208,6 +292,19 @@ namespace Archetype.Extensions
                     property.PropertyEditorAlias = GetDataTypeByGuid(property.DataTypeGuid).PropertyEditorAlias;
                 }
             }
+        }
+
+
+        /// <summary>
+        /// Gets the DLL version from the file.
+        /// </summary>
+        /// <returns>System.String.</returns>
+        internal string DllVersion()
+        {
+            var asm = Assembly.GetExecutingAssembly();
+            var fvi = FileVersionInfo.GetVersionInfo(asm.Location);
+
+            return fvi.FileVersion;
         }
     }
 }
