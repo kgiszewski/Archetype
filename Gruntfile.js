@@ -322,4 +322,5 @@ module.exports = function(grunt) {
   grunt.registerTask('nuget',   ['copy:nuget', 'template:nuspec', 'template:nuspec_binaries', 'template:nuspec_courier', 'nugetpack']);
   grunt.registerTask('umbraco', ['copy:umbraco', 'umbracoPackage']);
   grunt.registerTask('package', ['clean:tmp', 'default', 'nuget', 'copy:umbraco', 'umbracoPackage', 'clean:tmp']);
+  grunt.registerTask('assets',  ['clean', 'string-replace', 'less', 'concat', 'assemblyinfo', 'copy:assets', 'copy:html', 'copy:config', 'clean:html', 'clean:js', 'clean:less']);
 };
