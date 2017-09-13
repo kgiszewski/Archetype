@@ -6,6 +6,11 @@ angular.module('umbraco.resources').factory('archetypePropertyEditorResource', f
                 $http.get("backoffice/ArchetypeApi/ArchetypeDataType/GetAll"), 'Failed to retrieve datatypes from tree service'
             );
         },
+        getAllDataTypesForCache: function() {
+            return umbRequestHelper.resourcePromise(
+                $http.get("backoffice/ArchetypeApi/ArchetypeDataType/GetAllDetails"), 'Failed to retrieve datatypes from tree service'
+            );
+        },
         getDataType: function (guid, useDeepDatatypeLookup, contentTypeAlias, propertyTypeAlias, archetypeAlias, nodeId) {
             if(useDeepDatatypeLookup) {
             	return umbRequestHelper.resourcePromise(

@@ -3,6 +3,8 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
 
     // Variables.
     var draggedParent;
+    
+    var isCacheInitialized = false;
 
     //$scope.model.value = "";
     $scope.model.hideLabel = $scope.model.config.hideLabel == 1;
@@ -28,7 +30,7 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
 
     init();
 
-    //hold references to helper resources 
+     //hold references to helper resources 
     $scope.resources = {
         entityResource: entityResource,
         archetypePropertyEditorResource: archetypePropertyEditorResource
@@ -44,7 +46,10 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
     //helper to get $eval the labelTemplate
     $scope.fieldsetTitles = [];
     $scope.getFieldsetTitle = function (fieldsetConfigModel, fieldsetIndex) {
-
+        if(!isCacheInitialized) {         
+            return "";
+        }
+    
         // Ensure the collection of titles is large enough.
         ensureEnoughTitles(fieldsetIndex + 1);
         var title = $scope.fieldsetTitles[fieldsetIndex];
@@ -63,18 +68,15 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
         title.loading = true;
         title.loaded = false;
         title.value = null;
-        archetypeLabelService.getFieldsetTitle($scope, fieldsetConfigModel, fieldsetIndex)
-            .then(function(value) {
-
-                // Finished loading the title.
-                title.loaded = true;
-                title.loading = false;
-                title.value = value;
-
-            });
+        
+        archetypeLabelService.getFieldsetTitle($scope, fieldsetConfigModel, fieldsetIndex).then(function(value) {
+            // Finished loading the title.
+            title.loaded = true;
+            title.loading = false;
+            title.value = value;
+        });
 
         // Still loading a title, so do not return a title.
-
     };
 
     /**
@@ -582,6 +584,10 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
     function init() {
         $scope.model.value = removeNulls($scope.model.value);
         addDefaultProperties($scope.model.value.fieldsets);
+        
+        archetypeCacheService.initialize().then(function() {
+            isCacheInitialized = true;
+        });
 
         $timeout(function () {
             $scope.handleMandatoryValidation();
