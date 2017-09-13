@@ -65,17 +65,20 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
         title.value = null;
         archetypeLabelService.getFieldsetTitle($scope, fieldsetConfigModel, fieldsetIndex)
             .then(function(value) {
-
                 // Finished loading the title.
                 title.loaded = true;
                 title.loading = false;
                 title.value = value;
-
             });
 
         // Still loading a title, so do not return a title.
-
     };
+    
+    $scope.$on('archetypeEntityCacheUpdated', function(event, entity) {      
+        $scope.fieldsetTitles = _.reject($scope.fieldsetTitles, function(title) {
+            return title.loaded;
+        });
+    });
 
     /**
      * Ensure the collection of fieldset titles is large enough to accommodate the number of fieldsets.
