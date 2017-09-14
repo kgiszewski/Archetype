@@ -12,6 +12,7 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
 
         // Remember the original number of promises being resolved.
         var originalLength = promises.length;
+        
         return $q.all(promises).then(function () {
 
             // If there are new promises, resolve those too.
@@ -19,9 +20,7 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
                 promises = promises.slice(originalLength);
                 return repeatedlyWaitForPromises(promises);
             }
-
         });
-
     }
 
     /**
@@ -48,20 +47,16 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
 
             // Set a new value now that it has been processed.
             match.value = labelValue;
-
         } else if (isPromise(labelValue)) {
 
             // Remember the promise so we can wait for it to be completed before constructing the
             // fieldset label.
             promises.push(labelValue);
             labelValue.then(function (value) {
-
                 // The value will probably be a string, but recursively process it in case it's
                 // something else.
                 processLabelValue(value, promises, match);
-
             });
-
         } else if (_.isFunction(labelValue)) {
 
             // Allow for the function to accept injected parameters, and invoke it.
@@ -75,9 +70,7 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
 
             // Some other data type (e.g., number, date, object).
             match.value = labelValue;
-
         }
-
     }
 
     /**
@@ -115,7 +108,6 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
      *      indicating whether or not that substring was matched the regular expression.
      */
     function splitByRegex(rgx, value) {
-
         // Validate input.
         if (!rgx || !value) {
             return [];
@@ -158,7 +150,6 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
 
             // Get next match.
             match = rgx.exec(value);
-
         }
 
         // The text after the last match.
@@ -175,7 +166,6 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
 
         // Return information about the matches.
         return splitParts;
-
     }
 
     function executeFunctionByName(functionName, context) {
@@ -196,31 +186,31 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
     }
 
     function getNativeLabel(datatype, value, scope) {
-    	switch (datatype.selectedEditor) {
-    		case "Imulus.UrlPicker":
-    			return imulusUrlPicker(value, scope, {});
-    		case "Umbraco.TinyMCEv3":
-    			return coreTinyMce(value, scope, {});
-            case "Umbraco.MultiNodeTreePicker":
-                return coreMntp(value, scope, datatype);
-            case "Umbraco.MultiNodeTreePicker2":
-                return coreMntpV2(value, scope, datatype);
-            case "Umbraco.MultipleMediaPicker":
-            case "Umbraco.MediaPicker":
-                return coreMediaPicker(value, scope, datatype);
-            case "Umbraco.MediaPicker2":
-                return coreMediaPickerV2(value, scope, datatype);
-            case "Umbraco.DropDown":
-                return coreDropdown(value, scope, datatype);
-    	    case "RJP.MultiUrlPicker":
-    	        return rjpMultiUrlPicker(value, scope, {});
-    	  case "Umbraco.ContentPickerAlias":
-    	    return coreContentPicker(value, scope, datatype);
-    	  case "Umbraco.ContentPicker2":
-    	    return coreContentPickerV2(value, scope, datatype);
-        default:
-    			return "";
-    	}
+        switch (datatype.selectedEditor) {
+                case "Imulus.UrlPicker":
+                    return imulusUrlPicker(value, scope, {});
+                case "Umbraco.TinyMCEv3":
+                    return coreTinyMce(value, scope, {});
+                case "Umbraco.MultiNodeTreePicker":
+                    return coreMntp(value, scope, datatype);
+                case "Umbraco.MultiNodeTreePicker2":
+                    return coreMntpV2(value, scope, datatype);
+                case "Umbraco.MultipleMediaPicker":
+                case "Umbraco.MediaPicker":
+                    return coreMediaPicker(value, scope, datatype);
+                case "Umbraco.MediaPicker2":
+                    return coreMediaPickerV2(value, scope, datatype);
+                case "Umbraco.DropDown":
+                    return coreDropdown(value, scope, datatype);
+                case "RJP.MultiUrlPicker":
+                    return rjpMultiUrlPicker(value, scope, {});
+                case "Umbraco.ContentPickerAlias":
+                    return coreContentPicker(value, scope, datatype);
+                case "Umbraco.ContentPicker2":
+                    return coreContentPickerV2(value, scope, datatype);
+                default:
+                    return null;
+        }
     }
 
     function coreDropdown(value, scope, args) {
@@ -251,7 +241,6 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
             case 'member':
                 type = 'member';
                 break;
-
             default:
                 break;
         }
@@ -272,7 +261,7 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
         return entityArray.join(', ');
     }
 
-      function coreMntpV2(value, scope, args) {
+    function coreMntpV2(value, scope, args) {
         var ids = value.split(',');
         if (ids.length == 0) {
           return "";
@@ -361,6 +350,10 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
 
         var entity;
 
+        if(value.length) {
+            value = value[0];
+        }
+        
         switch (value.type) {
             case "content":
                 if(value.typeData.contentId) {
@@ -379,10 +372,9 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
                 
             default:
                 break;
-
         }
 
-        if(entity) {
+        if(entity) {          
             return entity[args.propertyName];
         }
 
@@ -399,13 +391,13 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
         var strippedText = $("<div/>").html(value).text();
 
         if(strippedText.length > args.contentLength) {
-        	suffix = "…";
+            suffix = "…";
         }
 
         return strippedText.substring(0, args.contentLength) + suffix;
     }
 
-	function rjpMultiUrlPicker(values, scope, args) {
+    function rjpMultiUrlPicker(values, scope, args) {
         var names = [];
 
         _.each(values, function (value) {
@@ -416,9 +408,9 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
 
         return names.join(", ");
     }
-	
-	return {
-		getFieldsetTitle: function(scope, fieldsetConfigModel, fieldsetIndex) {
+    
+    return {
+        getFieldsetTitle: function(scope, fieldsetConfigModel, fieldsetIndex) {
 
             if(!fieldsetConfigModel)
                 return $q.when("");
@@ -475,12 +467,20 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
 
                             args = JSON.parse(normalizedJsonString);
                         }
-
+                       
                         templateLabelValue = executeFunctionByName(functionName, window, scope.getPropertyValueByAlias(fieldset, propertyAlias), scope, args);
+                        
+                        //if empty, promise to try again
+                        if(!templateLabelValue) {
+                            templateLabelValue = $timeout(function() {
+                                return executeFunctionByName(functionName, window, scope.getPropertyValueByAlias(fieldset, propertyAlias), scope, args);
+                            }, 1000);
+                        }
                     }
                     //normal {{foo}} syntax
                     else {
                         propertyAlias = template;
+                        
                         var rawValue = scope.getPropertyValueByAlias(fieldset, propertyAlias);
 
                         templateLabelValue = rawValue;
@@ -491,25 +491,31 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
                         });
 
                         if(propertyConfig) {
-                        	var datatype = archetypeCacheService.getDatatypeByGuid(propertyConfig.dataTypeGuid);
+                            var datatype = archetypeCacheService.getDatatypeByGuid(propertyConfig.dataTypeGuid);
 
-                        	if(datatype) {
+                            if(datatype) {
 
-                            	//try to get built-in label
-                            	var label = getNativeLabel(datatype, templateLabelValue, scope);
-
-                            	if(label) {
-                        			templateLabelValue = label;
-                        		}
-                        	}
+                                //try to get built-in label
+                                var label = getNativeLabel(datatype, rawValue, scope);
+                                
+                                if(label != "") {
+                                    templateLabelValue = label;
+                                }
+                                
+                                if(label == "") {
+                                    templateLabelValue = $timeout(function() {
+                                        return getNativeLabel(datatype, rawValue, scope);
+                                    }, 1000);
+                                }
+                                
+                                //if label is null, skip all that jazz
+                            }
                         }
-
                     }
                 }
 
                 // Process the value (i.e., reduce any functions or promises down to strings).
                 processLabelValue(templateLabelValue, promises, match);
-
             });
 
             // Wait for all of the promises to resolve before constructing the full fieldset label.
@@ -519,13 +525,12 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
                 var substrings = _.map(matches, function (value) {
                     return value.value;
                 });
-                var combinedSubstrigs = substrings.join('');
+                
+                var combinedSubstrings = substrings.join('');
 
                 // Return the title.
-                return combinedSubstrigs;
-
+                return combinedSubstrings;
             });
-
         }
-	}
+    }
 });
