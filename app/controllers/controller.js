@@ -1004,5 +1004,4 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
         }
         return null;
     }
-
 });

@@ -1,13 +1,7 @@
 angular.module('umbraco.services').factory('archetypeCacheService', function (archetypePropertyEditorResource) {
     //private
-
-    var isEntityLookupLoading = false;
     var entityCache = [];
-
-    var isDatatypeLookupLoading = false;
     var datatypeCache = [];
-    
-
     
     return {
         initialize: function() {
@@ -33,6 +27,7 @@ angular.module('umbraco.services').factory('archetypeCacheService', function (ar
             return null;
         },
 
+        //perhaps this should return a promise?
         getEntityById: function(scope, id, type) {
             var cachedEntity = _.find(entityCache, function (e){
                 return e.id == id;
@@ -43,20 +38,14 @@ angular.module('umbraco.services').factory('archetypeCacheService', function (ar
             }
 
             //go get it from server
-            if (!isEntityLookupLoading) {
-                isEntityLookupLoading = true;
-
-                scope.resources.entityResource.getById(id, type).then(function(entity) {
-
-                    entityCache.push(entity);
-
-                    isEntityLookupLoading = false;
-                });
-            }
+            scope.resources.entityResource.getById(id, type).then(function(entity) {
+                entityCache.push(entity);
+            });
 
             return null;
         },
 
+        //perhaps this should return a promise?
         getEntityByUmbracoId: function(scope, udi, type) {
             var cachedEntity = _.find(entityCache, function (e){
                 return e.udi == udi;
@@ -67,18 +56,13 @@ angular.module('umbraco.services').factory('archetypeCacheService', function (ar
             }
 
             //go get it from server
-            if (!isEntityLookupLoading) {
-                isEntityLookupLoading = true;
+            scope.resources.entityResource.getByIds([udi], type).then(function (entities) {
+              // prevent infinite lookups with a default entity
+              var entity = entities.length > 0 ? entities[0] : { udi: udi, name: "" };
 
-                scope.resources.entityResource.getByIds([udi], type).then(function (entities) {
-                  // prevent infinite lookups with a default entity
-                  var entity = entities.length > 0 ? entities[0] : { udi: udi, name: "" };
+              entityCache.push(entity);
 
-                  entityCache.push(entity);
-
-                  isEntityLookupLoading = false;
-                });
-            }
+            });
 
             return null;
         }
