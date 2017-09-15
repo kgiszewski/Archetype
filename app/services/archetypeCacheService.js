@@ -44,7 +44,7 @@ angular.module('umbraco.services').factory('archetypeCacheService', function (ar
             scope.resources.entityResource.getById(id, type).then(function(entity) {
                 entityCache.push(entity);
                 
-                console.log("entity is now resolved into cache...");
+                //console.log("entity is now resolved into cache...");
                 
                 deferred.resolve(entity);
             });
