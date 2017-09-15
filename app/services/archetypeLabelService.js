@@ -250,7 +250,7 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
 
         _.each(ids, function(id){
             if(id) {
-               promises.push(archetypeCacheService.getEntityById(scope, id, type).then(function(entity){                
+               promises.push(archetypeCacheService.getEntityById(id, type).then(function(entity){                
                     if(entity) {
                         entityArray.push(entity.name);
                     }
@@ -296,7 +296,7 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
 
         _.each(ids, function (id) {            
             if(id) {
-                promises.push(archetypeCacheService.getEntityByUmbracoId(scope, id, type).then(function(entity) {
+                promises.push(archetypeCacheService.getEntityByUmbracoId(id, type).then(function(entity) {
                     if(entity) {
                         entityArray.push(entity.name);
                     }
@@ -323,7 +323,7 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
         var deferred = $q.defer();
         
         if(value) {
-            archetypeCacheService.getEntityById(scope, value, "media").then(function(entity) {
+            archetypeCacheService.getEntityById(value, "media").then(function(entity) {
                 deferred.resolve(entity.name);
             });
         }
@@ -342,7 +342,7 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
         //console.log(value);       
        
         if(value) {
-            archetypeCacheService.getEntityByUmbracoId(scope, value, "media").then(function(entity) {
+            archetypeCacheService.getEntityByUmbracoId(value, "media").then(function(entity) {
                 deferred.resolve(entity.name);
             });
         }
@@ -358,7 +358,7 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
         var deferred = $q.defer();
         
         if(value) {
-            archetypeCacheService.getEntityById(scope, value, "document").then(function(entity) {
+            archetypeCacheService.getEntityById(value, "document").then(function(entity) {
                 deferred.resolve(entity.name);
             });
         }
@@ -374,7 +374,7 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
         var deferred = $q.defer();
       
         if (value) {
-            archetypeCacheService.getEntityByUmbracoId(scope, value, "document").then(function(entity) {
+            archetypeCacheService.getEntityByUmbracoId(value, "document").then(function(entity) {
                 deferred.resolve(entity.name);
             });
         }
@@ -413,7 +413,7 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
         switch (value.type) {
             case "content":
                 if(value.typeData.contentId) {
-                    archetypeCacheService.getEntityById(scope, value.typeData.contentId, "Document").then(function(entity) {
+                    archetypeCacheService.getEntityById(value.typeData.contentId, "Document").then(function(entity) {
                         //console.log("Retrived entity from cache!");
                         //console.log("Resolving the entity name with " + entity[args.propertyName]);
                         deferred.resolve(entity[args.propertyName]);
@@ -423,7 +423,7 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
 
             case "media":
                 if(value.typeData.mediaId) {
-                    archetypeCacheService.getEntityById(scope, value.typeData.mediaId, "Media").then(function(entity) {
+                    archetypeCacheService.getEntityById(value.typeData.mediaId, "Media").then(function(entity) {
                         deferred.resolve(entity[args.propertyName]);
                     });
                 }

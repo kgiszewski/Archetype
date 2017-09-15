@@ -1,4 +1,4 @@
-angular.module('umbraco.services').factory('archetypeCacheService', function (archetypePropertyEditorResource, $q) {
+angular.module('umbraco.services').factory('archetypeCacheService', function (archetypePropertyEditorResource, $q, entityResource) {
     //private
     var entityCache = [];
     var datatypeCache = [];
@@ -27,7 +27,7 @@ angular.module('umbraco.services').factory('archetypeCacheService', function (ar
         },
 
         //perhaps this should return a promise?
-        getEntityById: function(scope, id, type) {
+        getEntityById: function(id, type) {
             var deferred = $q.defer();
             
             var cachedEntity = _.find(entityCache, function (e){
@@ -41,7 +41,7 @@ angular.module('umbraco.services').factory('archetypeCacheService', function (ar
             }
 
             //go get it from server
-            scope.resources.entityResource.getById(id, type).then(function(entity) {
+            entityResource.getById(id, type).then(function(entity) {
                 entityCache.push(entity);
                 
                 //console.log("entity is now resolved into cache...");
@@ -53,7 +53,7 @@ angular.module('umbraco.services').factory('archetypeCacheService', function (ar
         },
 
         //perhaps this should return a promise?
-        getEntityByUmbracoId: function(scope, udi, type) {
+        getEntityByUmbracoId: function(udi, type) {
             var deferred = $q.defer();
             
             var cachedEntity = _.find(entityCache, function (e){
@@ -67,7 +67,7 @@ angular.module('umbraco.services').factory('archetypeCacheService', function (ar
             }
 
             //go get it from server
-            scope.resources.entityResource.getByIds([udi], type).then(function (entities) {
+            entityResource.getByIds([udi], type).then(function (entities) {
                 // prevent infinite lookups with a default entity
                 var entity = entities.length > 0 ? entities[0] : { udi: udi, name: "" };
 
