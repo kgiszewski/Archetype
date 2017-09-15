@@ -1,4 +1,4 @@
-angular.module('umbraco.services').factory('archetypeCacheService', function (archetypePropertyEditorResource) {
+angular.module('umbraco.services').factory('archetypeCacheService', function (archetypePropertyEditorResource, $q) {
     //private
     var entityCache = [];
     var datatypeCache = [];
@@ -18,7 +18,6 @@ angular.module('umbraco.services').factory('archetypeCacheService', function (ar
  
         getDatatypeByGuid: function(guid) {
             var cachedDatatype = this.getDataTypeFromCache(guid);
-
             
             if(cachedDatatype) {
                 return cachedDatatype;
@@ -29,42 +28,55 @@ angular.module('umbraco.services').factory('archetypeCacheService', function (ar
 
         //perhaps this should return a promise?
         getEntityById: function(scope, id, type) {
+            var deferred = $q.defer();
+            
             var cachedEntity = _.find(entityCache, function (e){
                 return e.id == id;
             });
 
             if(cachedEntity) {
-                return cachedEntity;
+                deferred.resolve(cachedEntity);
+                
+                return deferred.promise;
             }
 
             //go get it from server
             scope.resources.entityResource.getById(id, type).then(function(entity) {
                 entityCache.push(entity);
+                
+                console.log("entity is now resolved into cache...");
+                
+                deferred.resolve(entity);
             });
 
-            return null;
+            return deferred.promise;
         },
 
         //perhaps this should return a promise?
         getEntityByUmbracoId: function(scope, udi, type) {
+            var deferred = $q.defer();
+            
             var cachedEntity = _.find(entityCache, function (e){
                 return e.udi == udi;
             });
 
             if(cachedEntity) {
-                return cachedEntity;
+                deferred.resolve(cachedEntity);
+                
+                return deferred.promise;
             }
 
             //go get it from server
             scope.resources.entityResource.getByIds([udi], type).then(function (entities) {
-              // prevent infinite lookups with a default entity
-              var entity = entities.length > 0 ? entities[0] : { udi: udi, name: "" };
+                // prevent infinite lookups with a default entity
+                var entity = entities.length > 0 ? entities[0] : { udi: udi, name: "" };
 
-              entityCache.push(entity);
+                entityCache.push(entity);
 
+                deferred.resolve(entity);
             });
 
-            return null;
+            return deferred.promise;
         }
     }
 });
