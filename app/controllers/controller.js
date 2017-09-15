@@ -29,20 +29,7 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
     };
 
     init();
-
-     //hold references to helper resources 
-    $scope.resources = {
-        entityResource: entityResource,
-        archetypePropertyEditorResource: archetypePropertyEditorResource
-    }
-
-    //hold references to helper services 
-    $scope.services = {
-        archetypeService: archetypeService,
-        archetypeLabelService: archetypeLabelService,
-        archetypeCacheService: archetypeCacheService
-    }
-
+    
     //helper to get $eval the labelTemplate
     $scope.fieldsetTitles = [];
     $scope.getFieldsetTitle = function (fieldsetConfigModel, fieldsetIndex) {
