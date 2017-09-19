@@ -32,11 +32,15 @@ ArchetypeSampleLabelHelpers.testEntityPromise = function(value, scope, args) {
     }
 }
 
-ArchetypeSampleLabelHelpers.testEntityPromise2 = function(value) {          
+ArchetypeSampleLabelHelpers.testEntityPromise2 = function(value, scope, args) {  
+    //hey look, args but we're also using the built-in archetypeCacheService
+    //{{ArchetypeSampleLabelHelpers.testEntityPromise(someArchetypePropertyAlias, {foo: 1234})}}
+    console.log(args);        
+    
     return function ($q, archetypeCacheService) {    
         var deferred = $q.defer();
     
-        archetypeCacheService.getEntityById(1054, 'document').then(function(entity) {
+        archetypeCacheService.getEntityById(args.foo, 'document').then(function(entity) {
             console.log("Hello from testEntityPromise2");
             console.log(entity);
             deferred.resolve(entity.name);

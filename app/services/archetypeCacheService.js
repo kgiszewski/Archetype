@@ -6,14 +6,14 @@ angular.module('umbraco.services').factory('archetypeCacheService', function (ar
     return {
         initialize: function() {
             return archetypePropertyEditorResource.getAllDataTypesForCache().then(function(data) {
-                datatypeCache = data;
+                _.each(data, function(datatype) {
+                    datatypeCache[datatype.dataTypeGuid] = datatype;
+                });
             });
         },
         
         getDataTypeFromCache: function(guid) {
-            return _.find(datatypeCache, function (dt){
-                return dt.dataTypeGuid == guid;
-            });
+            return datatypeCache[guid];
         },
  
         getDatatypeByGuid: function(guid) {
@@ -26,15 +26,16 @@ angular.module('umbraco.services').factory('archetypeCacheService', function (ar
             return null;
         },
 
-        //perhaps this should return a promise?
         getEntityById: function(id, type) {
             var deferred = $q.defer();
             
-            var cachedEntity = _.find(entityCache, function (e){
-                return e.id == id;
-            });
+            //console.log(entityCache);
+                
+            var cachedEntity = entityCache[id];
 
             if(cachedEntity) {
+                //console.log("Found ID " + id);
+                
                 deferred.resolve(cachedEntity);
                 
                 return deferred.promise;
@@ -42,9 +43,10 @@ angular.module('umbraco.services').factory('archetypeCacheService', function (ar
 
             //go get it from server
             entityResource.getById(id, type).then(function(entity) {
-                entityCache.push(entity);
+                entityCache[id] = entity;
                 
-                //console.log("entity is now resolved into cache...");
+                //console.log("entity ID is now resolved into cache...");
+                //console.log(entityCache);
                 
                 deferred.resolve(entity);
             });
@@ -56,11 +58,11 @@ angular.module('umbraco.services').factory('archetypeCacheService', function (ar
         getEntityByUmbracoId: function(udi, type) {
             var deferred = $q.defer();
             
-            var cachedEntity = _.find(entityCache, function (e){
-                return e.udi == udi;
-            });
+            var cachedEntity = entityCache[udi];
 
             if(cachedEntity) {
+                //console.log("Found UDI " + udi);
+                
                 deferred.resolve(cachedEntity);
                 
                 return deferred.promise;
@@ -71,7 +73,10 @@ angular.module('umbraco.services').factory('archetypeCacheService', function (ar
                 // prevent infinite lookups with a default entity
                 var entity = entities.length > 0 ? entities[0] : { udi: udi, name: "" };
 
-                entityCache.push(entity);
+                entityCache[udi] = entity;
+                
+                //console.log("entity UDI is now resolved into cache...");
+                //console.log(entityCache);
 
                 deferred.resolve(entity);
             });
