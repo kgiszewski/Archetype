@@ -38,6 +38,26 @@ namespace Archetype.Api
         }
 
         /// <summary>
+        /// Gets all details.
+        /// </summary>
+        /// <returns>System.Object.</returns>
+        public object GetAllDetails()
+        {
+            var dataTypes = Services.DataTypeService.GetAllDataTypeDefinitions();
+
+            var list = new List<object>();
+
+            foreach (var dataType in dataTypes)
+            {
+                var dataTypeDisplay = Mapper.Map<IDataTypeDefinition, DataTypeDisplay>(dataType);
+
+                list.Add(new { selectedEditor = dataTypeDisplay.SelectedEditor, preValues = dataTypeDisplay.PreValues, dataTypeGuid = dataType.Key });
+            }
+
+            return list;
+        }
+
+        /// <summary>
         /// Gets the datatype by GUID.
         /// </summary>
         /// <param name="guid">The unique identifier.</param>

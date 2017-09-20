@@ -1,70 +1,51 @@
-var ArchetypeSampleLabelTemplates = (function() {
+//create a namespace (optional)
+var ArchetypeSampleLabelHelpers = {};
 
-    //public functions
-    return {
-        Entity: function (value, scope, args) {
-
-           if(!args.entityType) {
-                args = {entityType: "Document", propertyName: "name"}
-            }
-
-            if (value) {
-                //if handed a csv list, take the first only
-                var id = value.split(",")[0];
-
-                if (id) {
-                    var entity = scope.services.archetypeCacheService.getEntityById(scope, id, args.entityType);
-
-                    if(entity) {
-                        return entity[args.propertyName];
-                    }
-                }
-            }
-
-            return "";
-        },
-        UrlPicker: function(value, scope, args) {
-
-            if(!args.propertyName) {
-                args = {propertyName: "name"}
-            }
-
-            var entity;
-
-            switch (value.type) {
-                case "content":
-                    if(value.typeData.contentId) {
-                        entity = scope.services.archetypeCacheService.getEntityById(scope, value.typeData.contentId, "Document");
-                    }
-                    break;
-
-                case "media":
-                    if(value.typeData.mediaId) {
-                        entity = scope.services.archetypeCacheService.getEntityById(scope, value.typeData.mediaId, "Media");
-                    }
-                    break;
-
-                case "url":
-                    return value.typeData.url;
-                    
-                default:
-                    break;
-
-            }
-
-            if(entity) {
-                return entity[args.propertyName];
-            }
-
-            return "";
-        },
-        Rte: function (value, scope, args) {
-
-            if(!args.contentLength) {
-                args = {contentLength: 50}
-            }
-
-            return $(value).text().substring(0, args.contentLength);
-        }
+//create a function
+//you will add it to your label template field as `{{ArchetypeSampleLabelHelpers.testPromise(someArchetypePropertyAlias)}}`
+ArchetypeSampleLabelHelpers.testPromise = function(value) {   
+    //you can inject services
+    return function ($timeout, archetypeCacheService) {        
+        //best to return a promise
+        //NOTE: $timeout returns a promise
+        return $timeout(function () {
+            return "As Promised: " + value;
+        }, 1000);
     }
-})();
+}
+
+ArchetypeSampleLabelHelpers.testEntityPromise = function(value, scope, args) {
+    //hey look, args!
+    //{{ArchetypeSampleLabelHelpers.testEntityPromise(someArchetypePropertyAlias, {foo: 1})}}
+    console.log(args);
+    
+    return function ($q, entityResource) {    
+        var deferred = $q.defer();
+    
+        entityResource.getById(args.foo, 'document').then(function(entity) {
+            console.log("Hello from testEntityPromise");
+            console.log(entity);
+            deferred.resolve(entity.name);
+        });
+    
+        return deferred.promise;
+    }
+}
+
+ArchetypeSampleLabelHelpers.testEntityPromise2 = function(value, scope, args) {  
+    //hey look, args but we're also using the built-in archetypeCacheService
+    //{{ArchetypeSampleLabelHelpers.testEntityPromise(someArchetypePropertyAlias, {foo: 1234})}}
+    console.log(args);        
+    
+    return function ($q, archetypeCacheService) {    
+        var deferred = $q.defer();
+    
+        archetypeCacheService.getEntityById(args.foo, 'document').then(function(entity) {
+            console.log("Hello from testEntityPromise2");
+            console.log(entity);
+            deferred.resolve(entity.name);
+        });
+    
+        return deferred.promise;
+    }
+}

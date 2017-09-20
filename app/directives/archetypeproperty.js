@@ -1,4 +1,4 @@
-angular.module("umbraco.directives").directive('archetypeProperty', function ($compile, $http, archetypePropertyEditorResource, umbPropEditorHelper, $timeout, $rootScope, $q, fileManager, editorState, archetypeService, archetypeCacheService) {
+angular.module("umbraco.directives").directive('archetypeProperty', function ($compile, $http, archetypePropertyEditorResource, umbPropEditorHelper, $timeout, $rootScope, $q, fileManager, editorState, archetypeService) {
 
     var linker = function (scope, element, attrs, ngModelCtrl) {
         var configFieldsetModel = archetypeService.getFieldsetByAlias(scope.archetypeConfig.fieldsets, scope.fieldset.alias);
@@ -24,9 +24,6 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
             });
             
             config = configObj;
-
-            //caching for use by label templates later
-            archetypeCacheService.addDatatypeToCache(data, dataTypeGuid);
 
             //determine the view to use [...] and load it
             archetypePropertyEditorResource.getPropertyEditorMapping(data.selectedEditor).then(function(propertyEditor) {

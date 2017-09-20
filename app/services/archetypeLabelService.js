@@ -1,4 +1,4 @@
-angular.module('umbraco.services').factory('archetypeLabelService', function (archetypeCacheService, $q, $injector) {
+angular.module('umbraco.services').factory('archetypeLabelService', function (archetypeCacheService, $q, $injector, $timeout) {
     //private
 
     /**
@@ -12,6 +12,7 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
 
         // Remember the original number of promises being resolved.
         var originalLength = promises.length;
+        
         return $q.all(promises).then(function () {
 
             // If there are new promises, resolve those too.
@@ -19,9 +20,7 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
                 promises = promises.slice(originalLength);
                 return repeatedlyWaitForPromises(promises);
             }
-
         });
-
     }
 
     /**
@@ -47,21 +46,18 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
             }
 
             // Set a new value now that it has been processed.
+            //console.log("Processing string..." + labelValue);
             match.value = labelValue;
-
         } else if (isPromise(labelValue)) {
-
             // Remember the promise so we can wait for it to be completed before constructing the
             // fieldset label.
             promises.push(labelValue);
             labelValue.then(function (value) {
-
+                //console.log("Processing final value..." + value);
                 // The value will probably be a string, but recursively process it in case it's
                 // something else.
                 processLabelValue(value, promises, match);
-
             });
-
         } else if (_.isFunction(labelValue)) {
 
             // Allow for the function to accept injected parameters, and invoke it.
@@ -70,14 +66,10 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
             // Recursively check result (may be a string, promise, or another function (another
             // function would be pretty strange, though I see no reason to disallow it).
             processLabelValue(labelValue, promises, match);
-
         } else {
-
             // Some other data type (e.g., number, date, object).
             match.value = labelValue;
-
         }
-
     }
 
     /**
@@ -115,7 +107,6 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
      *      indicating whether or not that substring was matched the regular expression.
      */
     function splitByRegex(rgx, value) {
-
         // Validate input.
         if (!rgx || !value) {
             return [];
@@ -158,7 +149,6 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
 
             // Get next match.
             match = rgx.exec(value);
-
         }
 
         // The text after the last match.
@@ -175,7 +165,6 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
 
         // Return information about the matches.
         return splitParts;
-
     }
 
     function executeFunctionByName(functionName, context) {
@@ -196,31 +185,31 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
     }
 
     function getNativeLabel(datatype, value, scope) {
-    	switch (datatype.selectedEditor) {
-    		case "Imulus.UrlPicker":
-    			return imulusUrlPicker(value, scope, {});
-    		case "Umbraco.TinyMCEv3":
-    			return coreTinyMce(value, scope, {});
-            case "Umbraco.MultiNodeTreePicker":
-                return coreMntp(value, scope, datatype);
-            case "Umbraco.MultiNodeTreePicker2":
-                return coreMntpV2(value, scope, datatype);
-            case "Umbraco.MultipleMediaPicker":
-            case "Umbraco.MediaPicker":
-                return coreMediaPicker(value, scope, datatype);
-            case "Umbraco.MediaPicker2":
-                return coreMediaPickerV2(value, scope, datatype);
-            case "Umbraco.DropDown":
-                return coreDropdown(value, scope, datatype);
-    	    case "RJP.MultiUrlPicker":
-    	        return rjpMultiUrlPicker(value, scope, {});
-    	  case "Umbraco.ContentPickerAlias":
-    	    return coreContentPicker(value, scope, datatype);
-    	  case "Umbraco.ContentPicker2":
-    	    return coreContentPickerV2(value, scope, datatype);
-        default:
-    			return "";
-    	}
+        switch (datatype.selectedEditor) {
+                case "Imulus.UrlPicker":
+                    return imulusUrlPicker(value, scope, {});
+                case "Umbraco.TinyMCEv3":
+                    return coreTinyMce(value, scope, {});
+                case "Umbraco.MultiNodeTreePicker":
+                    return coreMntp(value, scope, datatype);
+                case "Umbraco.MultiNodeTreePicker2":
+                    return coreMntpV2(value, scope, datatype);
+                case "Umbraco.MultipleMediaPicker":
+                case "Umbraco.MediaPicker":
+                    return coreMediaPicker(value, scope, datatype);
+                case "Umbraco.MediaPicker2":
+                    return coreMediaPickerV2(value, scope, datatype);
+                case "Umbraco.DropDown":
+                    return coreDropdown(value, scope, datatype);
+                case "RJP.MultiUrlPicker":
+                    return rjpMultiUrlPicker(value, scope, {});
+                case "Umbraco.ContentPickerAlias":
+                    return coreContentPicker(value, scope, datatype);
+                case "Umbraco.ContentPicker2":
+                    return coreContentPickerV2(value, scope, datatype);
+                default:
+                    return null;
+        }
     }
 
     function coreDropdown(value, scope, args) {
@@ -240,6 +229,7 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
     function coreMntp(value, scope, args) {
         var ids = value.split(',');
         var type = "Document";
+        var deferred = $q.defer();
 
         switch(args.preValues[0].value.type) {
             case 'content':
@@ -251,32 +241,39 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
             case 'member':
                 type = 'member';
                 break;
-
             default:
                 break;
         }
 
         var entityArray = [];
+        var promises = [];
 
         _.each(ids, function(id){
             if(id) {
-
-                var entity = archetypeCacheService.getEntityById(scope, id, type);
-                
-                if(entity) {
-                    entityArray.push(entity.name);
-                }
+               promises.push(archetypeCacheService.getEntityById(id, type).then(function(entity){                
+                    if(entity) {
+                        entityArray.push(entity.name);
+                    }
+               }).promise);
             }
         });
 
-        return entityArray.join(', ');
+        $q.all(promises).then(function() {
+            deferred.resolve(entityArray.join(', '));
+        });
+                
+        return deferred.promise;
     }
 
-      function coreMntpV2(value, scope, args) {
+    function coreMntpV2(value, scope, args) {
+        var deferred = $q.defer();
+        
         var ids = value.split(',');
+        
         if (ids.length == 0) {
           return "";
         }
+        
         var type = "document";
 
         switch(args.preValues[0].value.type) {
@@ -293,104 +290,158 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
             default:
                 break;
         }
-
-        var entity;
+        
+        var entityArray = [];
+        var promises = [];
 
         _.each(ids, function (id) {            
-            if(id && !entity) {
-              entity = archetypeCacheService.getEntityByUmbracoId(scope, id, type);
+            if(id) {
+                promises.push(archetypeCacheService.getEntityByUmbracoId(id, type).then(function(entity) {
+                    if(entity) {
+                        entityArray.push(entity.name);
+                    }
+                }).promise);
             }
         });
-
-        return (entity != null ? entity.name : "") + (ids.length > 1 ? ", ..." : "");
+        
+        $q.all(promises).then(function() {           
+            if(entityArray.length == 0) {
+                deferred.resolve("");
+            }
+            
+            var firstEntityName = entityArray[0];
+            
+            var value = firstEntityName + (ids.length > 1 ? ", ..." : "");
+            
+            deferred.resolve(value);
+        });
+                
+        return deferred.promise;
     }
 
     function coreMediaPicker(value, scope, args) {
+        var deferred = $q.defer();
+        
         if(value) {
-             var entity = archetypeCacheService.getEntityById(scope, value, "media");     
-             
-            if(entity) {
-                return entity.name; 
-            }
+            archetypeCacheService.getEntityById(value, "media").then(function(entity) {
+                deferred.resolve(entity.name);
+            });
+        }
+        else
+        {
+            deferred.resolve("");
         }
 
-        return "";
+        return deferred.promise;
     }
 
     function coreMediaPickerV2(value, scope, args) {
+        var deferred = $q.defer();
+       
+        //console.log("value=");
+        //console.log(value);       
+       
         if(value) {
-            var entity = archetypeCacheService.getEntityByUmbracoId(scope, value, "media");
-             
-            if(entity) {
-                return entity.name; 
-            }
+            archetypeCacheService.getEntityByUmbracoId(value, "media").then(function(entity) {
+                deferred.resolve(entity.name);
+            });
+        }
+        else
+        {
+            deferred.resolve("");
         }
 
-        return "";
+        return deferred.promise;
     }
 
     function coreContentPicker(value, scope, args) {
-      if (value) {
-        var entity = archetypeCacheService.getEntityById(scope, value, "document");
-
-        if (entity) {
-          return entity.name;
+        var deferred = $q.defer();
+        
+        if(value) {
+            archetypeCacheService.getEntityById(value, "document").then(function(entity) {
+                deferred.resolve(entity.name);
+            });
         }
-      }
-
-      return "";
+        else 
+        {
+            deferred.resolve("");
+        }
+        
+        return deferred.promise;
     }
 
     function coreContentPickerV2(value, scope, args) {
-      if (value) {
-        var entity = archetypeCacheService.getEntityByUmbracoId(scope, value, "document");
-
-        if (entity) {
-          return entity.name;
+        var deferred = $q.defer();
+      
+        if (value) {
+            archetypeCacheService.getEntityByUmbracoId(value, "document").then(function(entity) {
+                deferred.resolve(entity.name);
+            });
         }
-      }
+        else 
+        {
+            deferred.resolve("");
+        }
 
-      return "";
+        return deferred.promise;
     }
 
     function imulusUrlPicker(value, scope, args) {
-
+        var deferred = $q.defer();        
+        
+        if(!value) {
+            deferred.resolve("");
+            
+            return deferred.promise;
+        }
+        
         if(!args.propertyName) {
             args = {propertyName: "name"}
         }
+        
+        if(typeof(value) != "object") {
+            value = JSON.parse(value);
+        }
 
-        var entity;
-
+        //console.log("urlpicker value...");
+        //console.log(value);
+        
+        if(value.length) {
+            value = value[0];
+        }       
+               
         switch (value.type) {
             case "content":
                 if(value.typeData.contentId) {
-                    entity = archetypeCacheService.getEntityById(scope, value.typeData.contentId, "Document");
+                    archetypeCacheService.getEntityById(value.typeData.contentId, "Document").then(function(entity) {
+                        //console.log("Retrived entity from cache!");
+                        //console.log("Resolving the entity name with " + entity[args.propertyName]);
+                        deferred.resolve(entity[args.propertyName]);
+                    });
                 }
                 break;
 
             case "media":
                 if(value.typeData.mediaId) {
-                    entity = archetypeCacheService.getEntityById(scope, value.typeData.mediaId, "Media");
+                    archetypeCacheService.getEntityById(value.typeData.mediaId, "Media").then(function(entity) {
+                        deferred.resolve(entity[args.propertyName]);
+                    });
                 }
                 break;
 
             case "url":
-                return value.typeData.url;
+                deferred.resolve(value.typeData.url);
+                
+                return deferred.promise;
                 
             default:
                 break;
-
         }
-
-        if(entity) {
-            return entity[args.propertyName];
-        }
-
-        return "";
+        
+        return deferred.promise;
     }
 
     function coreTinyMce(value, scope, args) {
-
         if(!args.contentLength) {
             args = {contentLength: 50}
         }
@@ -399,13 +450,13 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
         var strippedText = $("<div/>").html(value).text();
 
         if(strippedText.length > args.contentLength) {
-        	suffix = "…";
+            suffix = "…";
         }
 
         return strippedText.substring(0, args.contentLength) + suffix;
     }
 
-	function rjpMultiUrlPicker(values, scope, args) {
+    function rjpMultiUrlPicker(values, scope, args) {
         var names = [];
 
         _.each(values, function (value) {
@@ -416,9 +467,9 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
 
         return names.join(", ");
     }
-	
-	return {
-		getFieldsetTitle: function(scope, fieldsetConfigModel, fieldsetIndex) {
+    
+    return {
+        getFieldsetTitle: function(scope, fieldsetConfigModel, fieldsetIndex) {
 
             if(!fieldsetConfigModel)
                 return $q.when("");
@@ -475,12 +526,13 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
 
                             args = JSON.parse(normalizedJsonString);
                         }
-
+                       
                         templateLabelValue = executeFunctionByName(functionName, window, scope.getPropertyValueByAlias(fieldset, propertyAlias), scope, args);
                     }
                     //normal {{foo}} syntax
                     else {
                         propertyAlias = template;
+                        
                         var rawValue = scope.getPropertyValueByAlias(fieldset, propertyAlias);
 
                         templateLabelValue = rawValue;
@@ -491,41 +543,39 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
                         });
 
                         if(propertyConfig) {
-                        	var datatype = archetypeCacheService.getDatatypeByGuid(propertyConfig.dataTypeGuid);
+                            var datatype = archetypeCacheService.getDatatypeByGuid(propertyConfig.dataTypeGuid);
 
-                        	if(datatype) {
-
-                            	//try to get built-in label
-                            	var label = getNativeLabel(datatype, templateLabelValue, scope);
-
-                            	if(label) {
-                        			templateLabelValue = label;
-                        		}
-                        	}
+                            if(datatype) {
+                                //try to get built-in label
+                                var templateLabelValue = getNativeLabel(datatype, rawValue, scope);
+                                
+                                //console.log("Native label...");
+                                //console.log(templateLabelValue);
+                            }
                         }
-
                     }
                 }
 
                 // Process the value (i.e., reduce any functions or promises down to strings).
                 processLabelValue(templateLabelValue, promises, match);
-
             });
 
             // Wait for all of the promises to resolve before constructing the full fieldset label.
             return repeatedlyWaitForPromises(promises).then(function () {
 
+                //console.log("done waiting...")
                 // Extract string values and combine them into a single string.
                 var substrings = _.map(matches, function (value) {
                     return value.value;
                 });
-                var combinedSubstrigs = substrings.join('');
+                
+                var combinedSubstrings = substrings.join('');
 
+                //console.log(combinedSubstrings);
+                
                 // Return the title.
-                return combinedSubstrigs;
-
+                return combinedSubstrings;
             });
-
         }
-	}
+    }
 });
