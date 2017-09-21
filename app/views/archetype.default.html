@@ -22,10 +22,10 @@
     <ul ui-sortable="sortableOptions" class="archetypeSortable" ng-class="{archetypeEmpty: model.value.fieldsets.length === 0 || sortingLastItem(), archetypeCrossDraggable: model.config.enableCrossDragging}" ng-model="model.value.fieldsets">
         <li ng-repeat="fieldset in model.value.fieldsets">
             <fieldset ng-class="['archetype-fieldset-' + fieldset.alias, (getFieldsetValidity(fieldset) == false ? 'archetypeFieldsetError' : '')]" ng-init="fieldsetConfigModel = getConfigFieldsetByAlias(fieldset.alias)">
-                <div class="archetypeFieldsetLabel" ng-class="{enableCollapsing: model.config.enableCollapsing}">
+                <div class="archetypeFieldsetLabel" ng-class="{enableCollapsing: model.config.enableCollapsing, dimmed: isDisabled(fieldset)}">
                     <div ng-click="focusFieldset(fieldset)" class="label-sub module-label">
                         <span class="caret" ng-class="{'caret-right': isCollapsed(fieldset)}" ng-show="model.config.enableCollapsing"></span>
-                        <label ng-class="{dimmed: isDisabled(fieldset)}">
+                        <label>
                             <i class="fieldsetIcon icon ng-class:fieldsetConfigModel.icon"></i>
                             <span ng-bind="getFieldsetTitle(fieldsetConfigModel, $index)"></span>
                         </label>
@@ -34,9 +34,9 @@
                         <i class="icon icon-add" ng-show="canAdd()" ng-click="openFieldsetPicker($index, $event)"></i>
                         <i class="icon icon-navigation handle" ng-show="canSort()"></i>
                         <i class="icon icon-documents" ng-click="cloneRow($index)" ng-show="canClone()"></i>
-                        <i class="icon icon-power" ng-class="{'icon-active': fieldset.disabled}" ng-click="enableDisable(fieldset)" ng-show="showDisableIcon(fieldset)"></i>
+                        <i class="icon icon-eye" ng-class="{'icon-active': fieldset.disabled}" ng-click="enableDisable(fieldset)" ng-show="showDisableIcon(fieldset)"></i>
                         <i class="icon icon-time icon-disabled" ng-class="{'icon-active': isDisabledByPublishing(fieldset)}" ng-show="showPublishingIcon(fieldset)"></i>
-                        <i class="icon icon-delete" ng-click="removeRow($index)" ng-show="canRemove()"></i>
+                        <i class="icon icon-trash" ng-click="removeRow($index)" ng-show="canRemove()"></i>
                     </div>
                 </div>
                 <div class="archetypeCollapser animate-hide" ng-hide="model.config.enableCollapsing && isCollapsed(fieldset)" ng-if="isLoaded(fieldset)">

@@ -36,7 +36,6 @@
     .fieldsetIcon {
         float: left;
         padding: 0 10px 0 0;
-        color: #333;
         vertical-align: text-bottom;
     }
 
@@ -152,10 +151,11 @@
                     overflow: hidden;
                     text-overflow: ellipsis;
                 }
-                &.dimmed {
-                    i, span {
-                        color: #d9d9d9 !important;
-                    }
+            }
+
+            &.dimmed {
+                label {
+                    color: #d9d9d9 !important;
                 }
             }
 
@@ -166,6 +166,10 @@
                 top: 50%;
                 margin-top: -15px;
                 padding: 0;
+                opacity: 0;
+                transition: opacity .15s ease-in-out;
+                -moz-transition: opacity .15s ease-in-out;
+                -webkit-transition: opacity .15s ease-in-out;
 
                 .icon {
                     display: inline-block;
@@ -179,28 +183,35 @@
                     font-size: 16px;
                     text-align: center;
                     margin-left: 4px;
+
                     &:hover {
-                        color: #333;
+                        background: #35c786;
+                        border-color: #35c786;
+                        color: white;
                     }
-                    &.icon-delete:hover {
-                        color: #b94a48;
+                    &.icon-trash:hover {
+                        background: #fe5b57;
+                        border-color: #fe5b57;
                     }
                     &.icon-disabled {
                         cursor: default;
                         &:hover {
                             color: #ddd;
+                            background: white;
+                            border-color: #b6b6b6;
                         }
                     }
                     &.icon-active {
-                        color: #333;
+                        color: #bbb;
                         &:hover {
-                            color: #333;
+                            color: white;
                         }
                     }
                 }
             }
-            
-            &:hover {
+
+            &:hover .archetypeEditorControls {
+                opacity: 1;
             }
         }
 
