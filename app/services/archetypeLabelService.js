@@ -547,10 +547,11 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
 
                             if(datatype) {
                                 //try to get built-in label
-                                var templateLabelValue = getNativeLabel(datatype, rawValue, scope);
+                                var label = getNativeLabel(datatype, rawValue, scope);
                                 
-                                //console.log("Native label...");
-                                //console.log(templateLabelValue);
+                                if (label) {
+                                    templateLabelValue = label;
+                                }
                             }
                         }
                     }
