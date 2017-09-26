@@ -266,25 +266,48 @@
         border: 1px solid #b94a48;
     }
 
+    .archetypeFooter {
+        text-align: center;
+        margin-top: 20px;
+    }
+
     .archetypeAddButton {
-        color: #ddd;
-        .icon {
-            vertical-align: middle;
-        }
+        display: inline-block;
+        height: 28px;
+        width: 28px;
+        line-height: 28px;
+        border-radius: 14px;
+        border: 1px solid #b6b6b6;
+        color: #5f5f5f;
+        background: white;
+        font-size: 16px;
+        text-align: center;
+        text-decoration: none;
+        cursor: pointer;
+
         &:hover {
-            color: #333;
-            text-decoration: none;
-            cursor: pointer;
-
-            .archetypeAddButtonText {
-                text-decoration: underline;
-            }
-
-            .icon {
-                color: #333;
-            }
+            background: #35c786;
+            border-color: #35c786;
+            color: white;
         }
+    }
 
+    .archetypeEmptyContent {
+        text-align: center;
+
+        span {
+            display: inline-block;
+            padding: 10px 20px;
+            clear: both;
+            font-size: 14px;
+            color: #555;
+            background: #f8f8f8;
+            border-radius: 15px;
+        }
+    }
+
+    .archetypeCollapser .archetypeEmptyContent span {
+        background: #f2f2f2;
     }
 
     .multiPropertyTextbox {
