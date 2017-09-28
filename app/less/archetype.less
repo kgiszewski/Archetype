@@ -52,7 +52,6 @@
 
     fieldset {
         border-bottom: 1px dashed #dddddd;
-        background: white;
         padding: 0;
         clear: both;
         display: inline-block;
@@ -92,6 +91,7 @@
         .archetypeFieldsetLabel {
             position: relative;
             width: 100%;
+            background: white;
 
             .label-sub {
                 padding: 18px 0;
@@ -173,8 +173,7 @@
                 -webkit-transition: opacity .15s ease-in-out;
                 background: white;
 
-                &:before
-                {
+                &:before {
                     content: ' ';
                     position: absolute;
                     display: block; 
@@ -250,6 +249,20 @@
             background-color: #fafafa;
             border-top: 1px dashed #e0e0e0;
             line-height: 20px;
+
+            .archetypeFieldsetLabel {
+                background: #fafafa;
+            }
+
+            .archetypeEditorControls {
+                background: #fafafa;
+
+                &:before {
+                    background: -webkit-linear-gradient(90deg, rgba(250,250,250,0), #fafafa);
+                    background: -moz-linear-gradient(90deg, rgba(250,250,250,0), #fafafa);
+                    background: linear-gradient(90deg, rgba(250,250,250,0), #fafafa);
+                }
+            }
 
             form {
                 margin-left:20px;
