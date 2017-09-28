@@ -52,6 +52,7 @@
 
     fieldset {
         border-bottom: 1px dashed #dddddd;
+        background: white;
         padding: 0;
         clear: both;
         display: inline-block;
@@ -142,10 +143,8 @@
             label {
                 margin-bottom: 0;
                 margin-left: 18px;
-                white-space: nowrap;
                 padding: 0;
-                width: ~"calc(100% - 144px)";
-                position: absolute;
+                display: block;
                 span {
                     display: block;
                     overflow: hidden;
@@ -162,14 +161,31 @@
             .archetypeEditorControls {
                 float: none;
                 position: absolute;
-                right: 15px;
-                top: 50%;
-                margin-top: -15px;
+                right: 0;
+                top: 0;
+                height: 100%; 
                 padding: 0;
+                display: flex;
+                align-items: center;
                 opacity: 0;
                 transition: opacity .15s ease-in-out;
                 -moz-transition: opacity .15s ease-in-out;
                 -webkit-transition: opacity .15s ease-in-out;
+                background: white;
+
+                &:before
+                {
+                    content: ' ';
+                    position: absolute;
+                    display: block; 
+                    left: -40px;
+                    width: 40px;
+                    top: 0;
+                    bottom: 0;
+                    background: -webkit-linear-gradient(90deg, rgba(255,255,255,0), white);
+                    background: -moz-linear-gradient(90deg, rgba(255,255,255,0), white);
+                    background: linear-gradient(90deg, rgba(255,255,255,0), white);
+                }
 
                 .icon {
                     display: inline-block;
@@ -177,28 +193,26 @@
                     width: 28px;
                     line-height: 28px;
                     border-radius: 14px;
-                    border: 1px solid #b6b6b6;
+                    border: 1px solid #d6d6d6;
                     color: #5f5f5f;
                     background: white;
                     font-size: 16px;
                     text-align: center;
-                    margin-left: 4px;
+                    margin-left: 8px;
 
                     &:hover {
-                        background: #35c786;
-                        border-color: #35c786;
-                        color: white;
+                        background: #f3f3f5;
                     }
                     &.icon-trash:hover {
                         background: #fe5b57;
                         border-color: #fe5b57;
+                        color: white;
                     }
                     &.icon-disabled {
                         cursor: default;
                         &:hover {
                             color: #ddd;
                             background: white;
-                            border-color: #b6b6b6;
                         }
                     }
                     &.icon-active {
