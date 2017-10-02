@@ -20,7 +20,7 @@
     <!-- Fieldsets. -->
     <ul ui-sortable="sortableOptions" class="archetypeSortable" ng-class="{archetypeEmpty: model.value.fieldsets.length === 0 || sortingLastItem(), archetypeCrossDraggable: model.config.enableCrossDragging}" ng-model="model.value.fieldsets">
         <li ng-repeat="fieldset in model.value.fieldsets">
-            <fieldset ng-class="['archetype-fieldset-' + fieldset.alias, (getFieldsetValidity(fieldset) == false ? 'archetypeFieldsetError' : '')]" ng-init="fieldsetConfigModel = getConfigFieldsetByAlias(fieldset.alias)">
+            <fieldset ng-class="['archetype-fieldset-' + fieldset.alias, (getFieldsetValidity(fieldset) == false ? 'archetypeFieldsetError' : ''), (isCollapsed(fieldset) ? '' : 'is-open')]" ng-init="fieldsetConfigModel = getConfigFieldsetByAlias(fieldset.alias)">
                 <div class="archetypeFieldsetLabel" ng-class="{enableCollapsing: model.config.enableCollapsing, dimmed: isDisabled(fieldset)}">
                     <div ng-click="focusFieldset(fieldset)" class="label-sub module-label">
                         <span class="caret" ng-class="{'caret-right': isCollapsed(fieldset)}" ng-show="model.config.enableCollapsing"></span>
