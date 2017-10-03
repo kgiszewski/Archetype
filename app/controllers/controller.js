@@ -114,6 +114,7 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
 
         },
         start: function(ev, ui) {
+            archetypeService.getEditors().addClass('archetypeDragging');
             archetypeService.storeEditors(ui.item.parent());
             $scope.$apply(function() {
                 draggedParent = ui.item.parent();
@@ -175,7 +176,6 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
 
         },
         stop: function (ev, ui) {
-
             // Done sorting.
             draggedParent.scope().doingSort = false;
 
@@ -190,6 +190,7 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
             }
             archetypeService.restoreEditors(parent);
 
+            archetypeService.getEditors().removeClass('archetypeDragging');
         }
     };
 

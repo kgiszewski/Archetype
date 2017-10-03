@@ -321,14 +321,15 @@
         cursor: pointer;
 
         &:hover {
-            background: #35c786;
-            border-color: #35c786;
+            background: #00aea2;
+            border-color: #00aea2;
             color: white;
         }
     }
 
     .archetypeEmptyContent {
         text-align: center;
+        margin-bottom: 20px;
 
         span {
             display: inline-block;
@@ -340,6 +341,26 @@
             border-radius: 15px;
         }
     }
+
+    .archetypeCrossDraggable + .archetypeEmptyContent {
+        margin-top: -42px;
+    }
+
+    &.archetypeDragging .archetypeCrossDraggable + .archetypeEmptyContent {
+        display: none;
+    }
+
+    // Necessary to ensure empty lists can be dropped onto when sorting nested fieldsets.
+    .archetypeSortable.archetypeEmpty.archetypeCrossDraggable {
+        min-height: 40px;
+        border: 1px dashed transparent;
+    }
+
+    &.archetypeDragging .archetypeSortable.archetypeEmpty.archetypeCrossDraggable {
+        min-height: 56px;
+        border-color: #dddddd;
+    }
+
 
     .archetypeCollapser .archetypeEmptyContent span {
         background: #f2f2f2;
@@ -456,15 +477,6 @@
                     }
                 }
             }
-        }
-    }
-
-    // Necessary to ensure empty lists can be dropped onto when sorting nested fieldsets.
-    .archetypeSortable.archetypeEmpty {
-        &.archetypeCrossDraggable {
-            min-height: 42px;
-            border: 1px dashed #dddddd;
-            margin-top: 5px;
         }
     }
 }

@@ -2,13 +2,6 @@
 <div class="archetypeEditor ng-class:model.config.customCssClass">
     <textarea class="archetypeDeveloperModel" ng-show="model.config.developerMode" ng-model="model.value"></textarea>
 
-    <!-- Empty content display. -->
-    <div class="archetypeEmptyContent" ng-show="showEmptyContentHint()">
-        <span>
-            <archetype-localize key="addFieldset">Add an item</archetype-localize>
-        </span>
-    </div>
-
     <!-- Mandatory validation. -->
     <input type="hidden" name="archetypeMandatory" ng-model="model.mandatoryValidation" ng-required="model.validation.mandatory" />
     <div><span class="help-inline" val-msg-for="archetypeMandatory" val-toggle-msg="required"><archetype-localize key="required">Required</archetype-localize></span></div>
@@ -107,6 +100,13 @@
             </fieldset>
         </li>
     </ul>
+
+    <!-- Empty content display. -->
+    <div class="archetypeEmptyContent" ng-show="showEmptyContentHint()">
+        <span>
+            <archetype-localize key="addFieldset">Add an item</archetype-localize>
+        </span>
+    </div>
 
     <!-- "Add" button. -->
     <div class="archetypeFooter" ng-show="showAddButton()">
