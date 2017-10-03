@@ -142,15 +142,7 @@ namespace Archetype.Api
         [HttpPost]
         public object CheckForUpdates()
         {
-            if (!IsItTimeToCheck())
-            {
-                return new
-                {
-                    isUpdateAvailable = false
-                };
-            }
-
-            if (!ArchetypeGlobalSettings.Instance.CheckForUpdates)
+            if (!ArchetypeGlobalSettings.Instance.CheckForUpdates || !IsItTimeToCheck())
             {
                 return new
                 {
