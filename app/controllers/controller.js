@@ -114,6 +114,7 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
 
         },
         start: function(ev, ui) {
+            archetypeService.getEditors().addClass('archetypeDragging');
             archetypeService.storeEditors(ui.item.parent());
             $scope.$apply(function() {
                 draggedParent = ui.item.parent();
@@ -175,7 +176,6 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
 
         },
         stop: function (ev, ui) {
-
             // Done sorting.
             draggedParent.scope().doingSort = false;
 
@@ -190,6 +190,7 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
             }
             archetypeService.restoreEditors(parent);
 
+            archetypeService.getEditors().removeClass('archetypeDragging');
         }
     };
 
@@ -488,6 +489,13 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
 
     //helpers for determining if the add button should be shown
     $scope.showAddButton = function () {
+        var visible = countVisible();
+        return (visible === 0 && $scope.model.config.startWithAddButton) 
+            || (visible > 0 && $scope.canAdd());
+    }
+
+    //helper for determining if no content is available yet
+    $scope.showEmptyContentHint = function () {
         return $scope.model.config.startWithAddButton
             && countVisible() === 0;
             ///&& $scope.model.config.fieldsets.length == 1;

@@ -35,8 +35,7 @@
 
     .fieldsetIcon {
         float: left;
-        padding: 0 4px 0 0;
-        color: #333;
+        padding: 0 10px 0 0;
         vertical-align: text-bottom;
     }
 
@@ -54,7 +53,6 @@
     fieldset {
         border-bottom: 1px dashed #dddddd;
         padding: 0;
-        margin-bottom: 5px;
         clear: both;
         display: inline-block;
         width: 100%;
@@ -93,10 +91,10 @@
         .archetypeFieldsetLabel {
             position: relative;
             width: 100%;
-            min-height: 42px;
+            background: white;
 
             .label-sub {
-                padding: 8px 0 8px 0;
+                padding: 18px 0;
                 display: inline-block;
                 min-height: 20px; /* this makes the header clickable when there's no icon and no text */
                 &.module-label {
@@ -106,9 +104,9 @@
                     cursor: pointer;
     
                     label  {
-                        span {
-                            text-decoration: underline;
-                        }
+                        // span {
+                        //     text-decoration: underline;
+                        // }
                         &:hover {
                             cursor: pointer;
                         }
@@ -129,7 +127,7 @@
             }
 
             span {
-                font-weight: bold;
+                // font-weight: bold;
 
                 &.menu-label { font-weight: normal; }
             }
@@ -145,55 +143,97 @@
             label {
                 margin-bottom: 0;
                 margin-left: 18px;
-                white-space: nowrap;
                 padding: 0;
-                width: ~"calc(100% - 144px)";
-                position: absolute;
+                display: block;
                 span {
                     display: block;
                     overflow: hidden;
                     text-overflow: ellipsis;
+                    max-height: 40px;
+                    -webkit-line-clamp: 2;
+                    -webkit-box-orient: vertical;
+                    display: -webkit-box;
                 }
-                &.dimmed {
-                    i, span {
-                        color: #d9d9d9 !important;
-                    }
+            }
+
+            &.dimmed {
+                label {
+                    color: #d9d9d9 !important;
                 }
             }
 
             .archetypeEditorControls {
                 float: none;
                 position: absolute;
-                right: 15px;
+                right: 0;
                 top: 0;
+                height: 100%; 
+                padding: 0;
+                display: flex;
+                align-items: center;
+                opacity: 0;
+                transition: opacity .15s ease-in-out;
+                -moz-transition: opacity .15s ease-in-out;
+                -webkit-transition: opacity .15s ease-in-out;
+                background: white;
+
+                &:before {
+                    content: ' ';
+                    position: absolute;
+                    display: block; 
+                    left: -40px;
+                    width: 40px;
+                    top: 0;
+                    bottom: 0;
+                    background: -webkit-linear-gradient(90deg, rgba(255,255,255,0), white);
+                    background: -moz-linear-gradient(90deg, rgba(255,255,255,0), white);
+                    background: linear-gradient(90deg, rgba(255,255,255,0), white);
+                }
 
                 .icon {
-                    color: #ddd;
-                    padding: 2px;
+                    display: inline-block;
+                    height: 28px;
+                    width: 28px;
+                    line-height: 28px;
+                    border-radius: 14px;
+                    border: 1px solid #d6d6d6;
+                    color: #5f5f5f;
+                    background: white;
                     font-size: 16px;
+                    text-align: center;
+                    margin-left: 8px;
+
                     &:hover {
-                        color: #333;
+                        background: #f3f3f5;
                     }
-                    &.icon-delete:hover {
-                        color: #b94a48;
+                    &.icon-trash:hover {
+                        background: #fe5b57;
+                        border-color: #fe5b57;
+                        color: white;
                     }
                     &.icon-disabled {
                         cursor: default;
                         &:hover {
                             color: #ddd;
+                            background: white;
                         }
                     }
                     &.icon-active {
-                        color: #333;
+                        color: #bbb;
                         &:hover {
-                            color: #333;
+                            color: white;
                         }
                     }
                 }
             }
-            
-            &:hover {
+
+            &:hover .archetypeEditorControls {
+                opacity: 1;
             }
+        }
+
+        &.is-open > .archetypeFieldsetLabel .archetypeEditorControls {
+            opacity: 1;
         }
 
         .archetypePropertyError {
@@ -213,9 +253,24 @@
         .archetypeCollapser {
             clear: both;
             height: 100%;
-            padding: 12px 0 0 20px;
-            background-color: #fff;
-            border-radius: 0 0 0 5px;
+            padding: 24px 20px 0 20px;
+            background-color: #fafafa;
+            border-top: 1px dashed #e0e0e0;
+            line-height: 20px;
+
+            .archetypeFieldsetLabel {
+                background: #fafafa;
+            }
+
+            .archetypeEditorControls {
+                background: #fafafa;
+
+                &:before {
+                    background: -webkit-linear-gradient(90deg, rgba(250,250,250,0), #fafafa);
+                    background: -moz-linear-gradient(90deg, rgba(250,250,250,0), #fafafa);
+                    background: linear-gradient(90deg, rgba(250,250,250,0), #fafafa);
+                }
+            }
 
             form {
                 margin-left:20px;
@@ -246,25 +301,69 @@
         border: 1px solid #b94a48;
     }
 
+    .archetypeFooter {
+        text-align: center;
+        margin-top: 20px;
+    }
+
     .archetypeAddButton {
-        color: #ddd;
-        .icon {
-            vertical-align: middle;
-        }
+        display: inline-block;
+        height: 28px;
+        width: 28px;
+        line-height: 28px;
+        border-radius: 14px;
+        border: 1px solid #b6b6b6;
+        color: #5f5f5f;
+        background: white;
+        font-size: 16px;
+        text-align: center;
+        text-decoration: none;
+        cursor: pointer;
+
         &:hover {
-            color: #333;
-            text-decoration: none;
-            cursor: pointer;
-
-            .archetypeAddButtonText {
-                text-decoration: underline;
-            }
-
-            .icon {
-                color: #333;
-            }
+            background: #00aea2;
+            border-color: #00aea2;
+            color: white;
         }
+    }
 
+    .archetypeEmptyContent {
+        text-align: center;
+        margin-bottom: 20px;
+
+        span {
+            display: inline-block;
+            padding: 10px 20px;
+            clear: both;
+            font-size: 14px;
+            color: #555;
+            background: #f8f8f8;
+            border-radius: 15px;
+        }
+    }
+
+    .archetypeCrossDraggable + .archetypeEmptyContent {
+        margin-top: -42px;
+    }
+
+    &.archetypeDragging .archetypeCrossDraggable + .archetypeEmptyContent {
+        display: none;
+    }
+
+    // Necessary to ensure empty lists can be dropped onto when sorting nested fieldsets.
+    .archetypeSortable.archetypeEmpty.archetypeCrossDraggable {
+        min-height: 40px;
+        border: 1px dashed transparent;
+    }
+
+    &.archetypeDragging .archetypeSortable.archetypeEmpty.archetypeCrossDraggable {
+        min-height: 56px;
+        border-color: #dddddd;
+    }
+
+
+    .archetypeCollapser .archetypeEmptyContent span {
+        background: #f2f2f2;
     }
 
     .multiPropertyTextbox {
@@ -274,6 +373,9 @@
     ul {
         list-style: none;
         margin-left: 0;
+    }
+    li {
+        line-height: 0;
     }
 
     .show-validation.ng-invalid .control-group.error .control-label {
@@ -375,15 +477,6 @@
                     }
                 }
             }
-        }
-    }
-
-    // Necessary to ensure empty lists can be dropped onto when sorting nested fieldsets.
-    .archetypeSortable.archetypeEmpty {
-        &.archetypeCrossDraggable {
-            min-height: 42px;
-            border: 1px dashed #dddddd;
-            margin-top: 5px;
         }
     }
 }

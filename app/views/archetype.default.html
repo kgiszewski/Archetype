@@ -2,14 +2,6 @@
 <div class="archetypeEditor ng-class:model.config.customCssClass">
     <textarea class="archetypeDeveloperModel" ng-show="model.config.developerMode" ng-model="model.value"></textarea>
 
-    <!-- "Add" button. -->
-    <div ng-show="showAddButton()">
-        <a class="archetypeAddButton" ng-click="openFieldsetPicker(0, $event)" prevent-default>
-            <i class="icon icon-add"></i>
-            <archetype-localize key="addFieldset">Add an item</archetype-localize>
-        </a>
-    </div>
-
     <!-- Mandatory validation. -->
     <input type="hidden" name="archetypeMandatory" ng-model="model.mandatoryValidation" ng-required="model.validation.mandatory" />
     <div><span class="help-inline" val-msg-for="archetypeMandatory" val-toggle-msg="required"><archetype-localize key="required">Required</archetype-localize></span></div>
@@ -21,11 +13,11 @@
     <!-- Fieldsets. -->
     <ul ui-sortable="sortableOptions" class="archetypeSortable" ng-class="{archetypeEmpty: model.value.fieldsets.length === 0 || sortingLastItem(), archetypeCrossDraggable: model.config.enableCrossDragging}" ng-model="model.value.fieldsets">
         <li ng-repeat="fieldset in model.value.fieldsets">
-            <fieldset ng-class="['archetype-fieldset-' + fieldset.alias, (getFieldsetValidity(fieldset) == false ? 'archetypeFieldsetError' : '')]" ng-init="fieldsetConfigModel = getConfigFieldsetByAlias(fieldset.alias)">
-                <div class="archetypeFieldsetLabel" ng-class="{enableCollapsing: model.config.enableCollapsing}">
+            <fieldset ng-class="['archetype-fieldset-' + fieldset.alias, (getFieldsetValidity(fieldset) == false ? 'archetypeFieldsetError' : ''), (isCollapsed(fieldset) ? '' : 'is-open')]" ng-init="fieldsetConfigModel = getConfigFieldsetByAlias(fieldset.alias)">
+                <div class="archetypeFieldsetLabel" ng-class="{enableCollapsing: model.config.enableCollapsing, dimmed: isDisabled(fieldset)}">
                     <div ng-click="focusFieldset(fieldset)" class="label-sub module-label">
                         <span class="caret" ng-class="{'caret-right': isCollapsed(fieldset)}" ng-show="model.config.enableCollapsing"></span>
-                        <label ng-class="{dimmed: isDisabled(fieldset)}">
+                        <label>
                             <i class="fieldsetIcon icon ng-class:fieldsetConfigModel.icon"></i>
                             <span ng-bind="getFieldsetTitle(fieldsetConfigModel, $index)"></span>
                         </label>
@@ -34,9 +26,9 @@
                         <i class="icon icon-add" ng-show="canAdd()" ng-click="openFieldsetPicker($index, $event)"></i>
                         <i class="icon icon-navigation handle" ng-show="canSort()"></i>
                         <i class="icon icon-documents" ng-click="cloneRow($index)" ng-show="canClone()"></i>
-                        <i class="icon icon-power" ng-class="{'icon-active': fieldset.disabled}" ng-click="enableDisable(fieldset)" ng-show="showDisableIcon(fieldset)"></i>
+                        <i class="icon icon-eye" ng-class="{'icon-active': fieldset.disabled}" ng-click="enableDisable(fieldset)" ng-show="showDisableIcon(fieldset)"></i>
                         <i class="icon icon-time icon-disabled" ng-class="{'icon-active': isDisabledByPublishing(fieldset)}" ng-show="showPublishingIcon(fieldset)"></i>
-                        <i class="icon icon-delete" ng-click="removeRow($index)" ng-show="canRemove()"></i>
+                        <i class="icon icon-trash" ng-click="removeRow($index)" ng-show="canRemove()"></i>
                     </div>
                 </div>
                 <div class="archetypeCollapser animate-hide" ng-hide="model.config.enableCollapsing && isCollapsed(fieldset)" ng-if="isLoaded(fieldset)">
@@ -108,6 +100,20 @@
             </fieldset>
         </li>
     </ul>
+
+    <!-- Empty content display. -->
+    <div class="archetypeEmptyContent" ng-show="showEmptyContentHint()">
+        <span>
+            <archetype-localize key="addFieldset">Add an item</archetype-localize>
+        </span>
+    </div>
+
+    <!-- "Add" button. -->
+    <div class="archetypeFooter" ng-show="showAddButton()">
+        <a class="archetypeAddButton" ng-click="openFieldsetPicker(model.value.fieldsets.length, $event)" prevent-default> 
+            <i class="icon icon-add"></i>
+        </a>
+    </div>
 
     <!-- Fieldset picker. -->
     <div class="usky-grid fieldsetPicker" ng-class="{withGroups: overlayMenu.fieldsetGroups.length > 1}" ng-if="overlayMenu.show">

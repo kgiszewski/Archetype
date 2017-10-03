@@ -2,6 +2,7 @@ angular.module('umbraco.services').factory('archetypeService', function () {
 
     // Variables.
     var draggedRteArchetype;
+    var archetypeEditors;
     var rteClass = ".archetypeEditor .umb-rte textarea";
     var editorSettings = {};
     var disabledSortables = [];
@@ -215,6 +216,13 @@ angular.module('umbraco.services').factory('archetypeService', function () {
                 sortable.enable();
             });
             disabledSortables = [];
+        },
+        // Get all active archetype editors on the current page
+        getEditors: function() {
+            if (archetypeEditors == null) {
+                archetypeEditors = $('.archetypeEditor');
+            }
+            return archetypeEditors;
         }
     }
 });

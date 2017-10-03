@@ -443,7 +443,7 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
 
     function coreTinyMce(value, scope, args) {
         if(!args.contentLength) {
-            args = {contentLength: 50}
+            args = {contentLength: 160}
         }
 
         var suffix = "";
