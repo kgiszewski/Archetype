@@ -20,6 +20,9 @@ namespace Archetype.Api
     [PluginController("ArchetypeApi")]
     public class ArchetypeDataTypeController : UmbracoAuthorizedJsonController
     {
+        private static DateTime _lastVersionCheck;
+        private const int IntervalInDaysBetweenVersionChecks = 7;
+
         public IEnumerable<object> GetAllPropertyEditors()
         {
             return
@@ -30,7 +33,7 @@ namespace Archetype.Api
         /// <summary>
         /// Gets all datatypes.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>System.Object.</returns>
         public object GetAll()
         {
             var dataTypes = Services.DataTypeService.GetAllDataTypeDefinitions();
@@ -139,7 +142,7 @@ namespace Archetype.Api
         [HttpPost]
         public object CheckForUpdates()
         {
-            if (!ArchetypeGlobalSettings.Instance.CheckForUpdates)
+            if (!ArchetypeGlobalSettings.Instance.CheckForUpdates || !IsItTimeToCheck())
             {
                 return new
                 {
@@ -148,6 +151,7 @@ namespace Archetype.Api
             }
 
             var updateNotificationModel = ArchetypeHelper.Instance.CheckForUpdates();
+            _lastVersionCheck = DateTime.UtcNow;
 
             return new
             {
@@ -157,6 +161,11 @@ namespace Archetype.Api
                 message = updateNotificationModel.Message,
                 url = updateNotificationModel.Url
             };
+        }
+
+        internal bool IsItTimeToCheck()
+        {
+            return _lastVersionCheck.AddDays(IntervalInDaysBetweenVersionChecks) < DateTime.UtcNow;
         }
     }
 }
