@@ -164,6 +164,11 @@ namespace Archetype.Extensions
         /// <returns>ArchetypeUpdateNotification.</returns>
         internal ArchetypeUpdateNotification CheckForUpdates()
         {
+            return new ArchetypeUpdateNotification
+            {
+                IsUpdateAvailable = false
+            };
+
             try
             {
                 using (var client = new HttpClient())
