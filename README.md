@@ -4,6 +4,9 @@ Archetype
 
 ![alt tag](http://kgiszewski.github.io/Archetype/images/example1.png)
 
+# Important, please read!
+This project has been sunset. No further updates will be coming. Thank you to all of the contributors over the years. We had a good run. Please consider using Nested Content for similar needs.
+
 ## Installation
 Install the selected <a href='https://github.com/kgiszewski/Archetype/releases'>release</a> through the Umbraco package installer or via <a href='http://www.nuget.org/packages/Archetype/'>NuGet</a>.
 
