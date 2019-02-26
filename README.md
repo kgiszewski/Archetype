@@ -7,6 +7,8 @@ Archetype
 # Important, please read!
 This project has been sunset. No further updates will be coming. Thank you to all of the contributors over the years. We had a good run. Please consider using Nested Content for similar needs.
 
+This project will work with all versions of Umbraco 7. It will not (that we know of), work with V8+.
+
 ## Installation
 Install the selected <a href='https://github.com/kgiszewski/Archetype/releases'>release</a> through the Umbraco package installer or via <a href='http://www.nuget.org/packages/Archetype/'>NuGet</a>.
 
